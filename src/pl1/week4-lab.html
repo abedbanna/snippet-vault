@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4: Lab — OOP Basics | PL1 - Java (601112)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        [data-theme="light"] .navbar{background:var(--bg)}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero::before{display:none}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px}
+
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+        .section-title i{color:var(--primary);font-size:1.2rem}
+
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+
+        .usecase-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.9rem;line-height:1.7;color:var(--text2)}
+        .usecase-box i{color:var(--secondary);margin-right:.4rem}
+        .usecase-box strong{color:var(--secondary)}
+
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}
+            .nav-links.open{display:flex}
+            .mobile-toggle{display:block}
+            .hero h1{font-size:1.8rem}
+            .exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week4.html">&larr; Week 4</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week4.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 4</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 4: Lab — <span class="gradient">OOP Basics</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 9</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 5 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1: Create a Rectangle Class -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Create a Rectangle Class</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A graphics program needs to represent rectangles. Each rectangle has a width and a height, and you need to compute its area and perimeter. Instead of juggling separate variables for every rectangle, you can define a <strong>class</strong> — a blueprint that bundles the data and behavior together. Then you just create objects from it!</div>
+                <div class="info-box">Create a class called <code>Rectangle</code> with two <strong>data fields</strong>: <code>width</code> and <code>height</code> (both <code>double</code>). Add a <strong>no-arg constructor</strong> that sets both to <code>1.0</code>, and a <strong>parameterized constructor</strong> that takes width and height. Add methods <code>getArea()</code> and <code>getPerimeter()</code>. In <code>main</code>, create two rectangles and print their areas and perimeters.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Rectangle 1: width=1.0, height=1.0
+Area: 1.0, Perimeter: 4.0
+Rectangle 2: width=4.0, height=5.0
+Area: 20.0, Perimeter: 18.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" rows="36" spellcheck="false">class Rectangle {
+    double width;
+    double height;
+    
+    // No-arg constructor: set width and height to 1.0
+    
+    
+    // Parameterized constructor: takes width and height
+    
+    
+    // Method: getArea() — returns width * height
+    
+    
+    // Method: getPerimeter() — returns 2 * (width + height)
+    
+}
+
+public class TestRectangle {
+    public static void main(String[] args) {
+        // Create Rectangle r1 using no-arg constructor
+        
+        
+        System.out.println("Rectangle 1: width=" + r1.width + ", height=" + r1.height);
+        System.out.println("Area: " + r1.getArea() + ", Perimeter: " + r1.getPerimeter());
+        
+        // Create Rectangle r2 with width=4.0 and height=5.0
+        
+        
+        System.out.println("Rectangle 2: width=" + r2.width + ", height=" + r2.height);
+        System.out.println("Area: " + r2.getArea() + ", Perimeter: " + r2.getPerimeter());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">No-arg constructor: <code>Rectangle() { width = 1.0; height = 1.0; }</code>. Parameterized: <code>Rectangle(double width, double height) { this.width = width; this.height = height; }</code>. In main: <code>Rectangle r1 = new Rectangle();</code> and <code>Rectangle r2 = new Rectangle(4.0, 5.0);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Encapsulate a Student Class -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>Encapsulate a Student Class</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A university system stores student data — name and GPA. If the GPA field is public, someone could accidentally set it to <code>-5.0</code> or <code>99.0</code>. That's invalid! By making the field <strong>private</strong> and using a <strong>setter with validation</strong>, you ensure only valid values (0.0 to 4.0) are accepted. This is <strong>encapsulation</strong> in action.</div>
+                <div class="info-box">Create a <code>Student</code> class with <strong>private</strong> fields: <code>name</code> (String) and <code>gpa</code> (double). Add a constructor that takes both values. Add <strong>getters</strong> for both fields, and a <strong>setter</strong> for <code>gpa</code> that only accepts values between <code>0.0</code> and <code>4.0</code>. In <code>main</code>, create a student, try setting an invalid GPA, and show that it doesn't change.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Name: Ali, GPA: 3.5
+Setting GPA to 5.0...
+Name: Ali, GPA: 3.5
+Setting GPA to 3.9...
+Name: Ali, GPA: 3.9</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" rows="38" spellcheck="false">class Student {
+    // Declare private fields: name (String) and gpa (double)
+    
+    
+    // Constructor that takes name and gpa
+    
+    
+    // Getter for name
+    
+    
+    // Getter for gpa
+    
+    
+    // Setter for gpa with validation (0.0 to 4.0 only)
+    
+}
+
+public class TestStudent {
+    public static void main(String[] args) {
+        // Create a Student with name "Ali" and gpa 3.5
+        
+        
+        System.out.println("Name: " + s.getName() + ", GPA: " + s.getGpa());
+        
+        System.out.println("Setting GPA to 5.0...");
+        s.setGpa(5.0);  // Should be rejected
+        System.out.println("Name: " + s.getName() + ", GPA: " + s.getGpa());
+        
+        System.out.println("Setting GPA to 3.9...");
+        s.setGpa(3.9);  // Should be accepted
+        System.out.println("Name: " + s.getName() + ", GPA: " + s.getGpa());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Declare: <code>private String name; private double gpa;</code>. Constructor: <code>Student(String name, double gpa) { this.name = name; this.gpa = gpa; }</code>. Setter: <code>public void setGpa(double gpa) { if (gpa &gt;= 0.0 && gpa &lt;= 4.0) this.gpa = gpa; }</code>. In main: <code>Student s = new Student("Ali", 3.5);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Static Object Counter -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Count Objects with a Static Variable</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A car rental company wants to know how many <code>Car</code> objects have been created in their system at any point. Each individual car has its own brand and year, but the <strong>count</strong> should be shared across all cars — it doesn't belong to any single car. This is the perfect use case for a <strong>static variable</strong>: one copy shared by the entire class.</div>
+                <div class="info-box">Create a <code>Car</code> class with instance fields <code>brand</code> (String) and <code>year</code> (int), and a <strong>static</strong> field <code>count</code> initialized to <code>0</code>. In each constructor, <strong>increment</strong> <code>count</code>. Add a <strong>static method</strong> <code>getCount()</code>. In <code>main</code>, create 3 cars and print the count after each creation.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Created: Toyota 2022 — Total cars: 1
+Created: Honda 2023 — Total cars: 2
+Created: BMW 2024 — Total cars: 3</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" rows="34" spellcheck="false">class Car {
+    // Instance fields: brand (String), year (int)
+    
+    
+    // Static field: count (int) = 0
+    
+    
+    // Constructor that takes brand and year, increments count
+    
+    
+    // Static method: getCount() returns count
+    
+}
+
+public class TestCar {
+    public static void main(String[] args) {
+        // Create car1: "Toyota", 2022
+        
+        System.out.println("Created: " + c1.brand + " " + c1.year + " — Total cars: " + Car.getCount());
+        
+        // Create car2: "Honda", 2023
+        
+        System.out.println("Created: " + c2.brand + " " + c2.year + " — Total cars: " + Car.getCount());
+        
+        // Create car3: "BMW", 2024
+        
+        System.out.println("Created: " + c3.brand + " " + c3.year + " — Total cars: " + Car.getCount());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Fields: <code>String brand; int year; static int count = 0;</code>. Constructor: <code>Car(String brand, int year) { this.brand = brand; this.year = year; count++; }</code>. Static method: <code>public static int getCount() { return count; }</code>. In main: <code>Car c1 = new Car("Toyota", 2022);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4: BankAccount with this -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>BankAccount — Deposit & Withdraw</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A banking app manages accounts. Each account has an owner name and a balance. You should be able to deposit and withdraw money — but a withdrawal should be <strong>rejected</strong> if it exceeds the balance (no overdrafts!). This exercise combines <strong>encapsulation</strong> (private balance), <strong>the this keyword</strong>, and <strong>validation logic</strong> inside methods.</div>
+                <div class="info-box">Create a <code>BankAccount</code> class with <strong>private</strong> fields <code>owner</code> (String) and <code>balance</code> (double). Use <code>this</code> in the constructor. Add methods: <code>deposit(double amount)</code> — adds to balance (only if amount &gt; 0), <code>withdraw(double amount)</code> — subtracts from balance (only if amount &gt; 0 and amount &lt;= balance), and <code>getBalance()</code>. Print a message for rejected withdrawals.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Owner: Sara, Balance: 1000.0
+After deposit 500.0: Balance: 1500.0
+After withdraw 200.0: Balance: 1300.0
+Withdraw 2000.0: Insufficient funds!
+Balance: 1300.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" rows="42" spellcheck="false">class BankAccount {
+    // Private fields: owner (String), balance (double)
+    
+    
+    // Constructor using this keyword
+    
+    
+    // deposit method: add amount if amount > 0
+    
+    
+    // withdraw method: subtract if amount > 0 AND amount <= balance
+    // Otherwise print "Insufficient funds!"
+    
+    
+    // Getter for balance
+    
+    
+    // Getter for owner
+    
+}
+
+public class TestBankAccount {
+    public static void main(String[] args) {
+        // Create account for "Sara" with balance 1000.0
+        
+        
+        System.out.println("Owner: " + acc.getOwner() + ", Balance: " + acc.getBalance());
+        
+        acc.deposit(500.0);
+        System.out.println("After deposit 500.0: Balance: " + acc.getBalance());
+        
+        acc.withdraw(200.0);
+        System.out.println("After withdraw 200.0: Balance: " + acc.getBalance());
+        
+        acc.withdraw(2000.0);  // Should print "Insufficient funds!"
+        System.out.println("Balance: " + acc.getBalance());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4">Fields: <code>private String owner; private double balance;</code>. Constructor: <code>BankAccount(String owner, double balance) { this.owner = owner; this.balance = balance; }</code>. Withdraw: <code>public void withdraw(double amount) { if (amount &gt; 0 && amount &lt;= balance) balance -= amount; else System.out.println("Insufficient funds!"); }</code>. In main: <code>BankAccount acc = new BankAccount("Sara", 1000.0);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5: Full OOP Challenge -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>Product Inventory System</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A small shop needs a simple inventory system. Each product has a name, price, and quantity. You need to be able to <strong>sell</strong> items (decrease quantity) and <strong>restock</strong> them (increase quantity). You also want to track how many product types exist using a <strong>static counter</strong>. This exercise brings together everything from this week: classes, constructors, encapsulation, <code>this</code>, and static members.</div>
+                <div class="info-box">Create a <code>Product</code> class with <strong>private</strong> fields: <code>name</code>, <code>price</code>, <code>quantity</code>, and a <strong>static</strong> <code>productCount</code>. Add a constructor (use <code>this</code>), getters, a <code>sell(int qty)</code> method (reject if not enough stock), a <code>restock(int qty)</code> method, and a <code>toString()</code> method. Create an <strong>array</strong> of 3 products, perform operations, and display the inventory.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Total product types: 3
+--- Inventory ---
+Product: Laptop, Price: 999.99, Stock: 10
+Product: Mouse, Price: 29.99, Stock: 50
+Product: Keyboard, Price: 79.99, Stock: 30
+Selling 3 Laptops...
+Selling 100 Mice... Not enough stock!
+Restocking 20 Keyboards...
+--- Updated Inventory ---
+Product: Laptop, Price: 999.99, Stock: 7
+Product: Mouse, Price: 29.99, Stock: 50
+Product: Keyboard, Price: 79.99, Stock: 50</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" rows="52" spellcheck="false">class Product {
+    // Private fields: name (String), price (double), quantity (int)
+    
+    
+    // Static field: productCount (int) = 0
+    
+    
+    // Constructor using this, increment productCount
+    
+    
+    // Getters for name, price, quantity
+    
+    
+    // sell(int qty): decrease quantity if enough stock
+    // Otherwise print "Not enough stock!"
+    
+    
+    // restock(int qty): increase quantity
+    
+    
+    // Static method: getProductCount()
+    
+    
+    // toString(): return formatted string
+    // "Product: name, Price: price, Stock: quantity"
+    
+}
+
+public class TestProduct {
+    public static void main(String[] args) {
+        // Create array of 3 products
+        // Product("Laptop", 999.99, 10)
+        // Product("Mouse", 29.99, 50)
+        // Product("Keyboard", 79.99, 30)
+        
+        
+        System.out.println("Total product types: " + Product.getProductCount());
+        
+        System.out.println("--- Inventory ---");
+        // Loop and print each product using toString()
+        
+        
+        // Sell 3 Laptops
+        System.out.println("Selling 3 Laptops...");
+        
+        
+        // Try to sell 100 Mice (should fail)
+        System.out.println("Selling 100 Mice...");
+        
+        
+        // Restock 20 Keyboards
+        System.out.println("Restocking 20 Keyboards...");
+        
+        
+        System.out.println("--- Updated Inventory ---");
+        // Loop and print each product again
+        
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Constructor: <code>Product(String name, double price, int quantity) { this.name = name; this.price = price; this.quantity = quantity; productCount++; }</code>. Sell: <code>public void sell(int qty) { if (qty &lt;= quantity) quantity -= qty; else System.out.println("Not enough stock!"); }</code>. Array: <code>Product[] products = { new Product("Laptop", 999.99, 10), new Product("Mouse", 29.99, 50), new Product("Keyboard", 79.99, 30) };</code>. Use <code>for (Product p : products) System.out.println(p);</code> to print.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  { skeleton: "class Rectangle {\n    double width;\n    double height;\n    \n    // No-arg constructor: set width and height to 1.0\n    \n    \n    // Parameterized constructor: takes width and height\n    \n    \n    // Method: getArea() — returns width * height\n    \n    \n    // Method: getPerimeter() — returns 2 * (width + height)\n    \n}\n\npublic class TestRectangle {\n    public static void main(String[] args) {\n        // Create Rectangle r1 using no-arg constructor\n        \n        \n        System.out.println(\"Rectangle 1: width=\" + r1.width + \", height=\" + r1.height);\n        System.out.println(\"Area: \" + r1.getArea() + \", Perimeter: \" + r1.getPerimeter());\n        \n        // Create Rectangle r2 with width=4.0 and height=5.0\n        \n        \n        System.out.println(\"Rectangle 2: width=\" + r2.width + \", height=\" + r2.height);\n        System.out.println(\"Area: \" + r2.getArea() + \", Perimeter: \" + r2.getPerimeter());\n    }\n}", keywords: ["Rectangle()", "getArea", "getPerimeter", "new Rectangle"] },
+  { skeleton: "class Student {\n    // Declare private fields: name (String) and gpa (double)\n    \n    \n    // Constructor that takes name and gpa\n    \n    \n    // Getter for name\n    \n    \n    // Getter for gpa\n    \n    \n    // Setter for gpa with validation (0.0 to 4.0 only)\n    \n}\n\npublic class TestStudent {\n    public static void main(String[] args) {\n        // Create a Student with name \"Ali\" and gpa 3.5\n        \n        \n        System.out.println(\"Name: \" + s.getName() + \", GPA: \" + s.getGpa());\n        \n        System.out.println(\"Setting GPA to 5.0...\");\n        s.setGpa(5.0);  // Should be rejected\n        System.out.println(\"Name: \" + s.getName() + \", GPA: \" + s.getGpa());\n        \n        System.out.println(\"Setting GPA to 3.9...\");\n        s.setGpa(3.9);  // Should be accepted\n        System.out.println(\"Name: \" + s.getName() + \", GPA: \" + s.getGpa());\n    }\n}", keywords: ["private", "this.", "getName", "getGpa", "setGpa", "new Student"] },
+  { skeleton: "class Car {\n    // Instance fields: brand (String), year (int)\n    \n    \n    // Static field: count (int) = 0\n    \n    \n    // Constructor that takes brand and year, increments count\n    \n    \n    // Static method: getCount() returns count\n    \n}\n\npublic class TestCar {\n    public static void main(String[] args) {\n        // Create car1: \"Toyota\", 2022\n        \n        System.out.println(\"Created: \" + c1.brand + \" \" + c1.year + \" — Total cars: \" + Car.getCount());\n        \n        // Create car2: \"Honda\", 2023\n        \n        System.out.println(\"Created: \" + c2.brand + \" \" + c2.year + \" — Total cars: \" + Car.getCount());\n        \n        // Create car3: \"BMW\", 2024\n        \n        System.out.println(\"Created: \" + c3.brand + \" \" + c3.year + \" — Total cars: \" + Car.getCount());\n    }\n}", keywords: ["static", "count", "getCount", "this.", "new Car"] },
+  { skeleton: "class BankAccount {\n    // Private fields: owner (String), balance (double)\n    \n    \n    // Constructor using this keyword\n    \n    \n    // deposit method: add amount if amount > 0\n    \n    \n    // withdraw method: subtract if amount > 0 AND amount <= balance\n    // Otherwise print \"Insufficient funds!\"\n    \n    \n    // Getter for balance\n    \n    \n    // Getter for owner\n    \n}\n\npublic class TestBankAccount {\n    public static void main(String[] args) {\n        // Create account for \"Sara\" with balance 1000.0\n        \n        \n        System.out.println(\"Owner: \" + acc.getOwner() + \", Balance: \" + acc.getBalance());\n        \n        acc.deposit(500.0);\n        System.out.println(\"After deposit 500.0: Balance: \" + acc.getBalance());\n        \n        acc.withdraw(200.0);\n        System.out.println(\"After withdraw 200.0: Balance: \" + acc.getBalance());\n        \n        acc.withdraw(2000.0);  // Should print \"Insufficient funds!\"\n        System.out.println(\"Balance: \" + acc.getBalance());\n    }\n}", keywords: ["private", "this.", "deposit", "withdraw", "getBalance", "getOwner", "new BankAccount"] },
+  { skeleton: "class Product {\n    // Private fields: name (String), price (double), quantity (int)\n    \n    \n    // Static field: productCount (int) = 0\n    \n    \n    // Constructor using this, increment productCount\n    \n    \n    // Getters for name, price, quantity\n    \n    \n    // sell(int qty): decrease quantity if enough stock\n    // Otherwise print \"Not enough stock!\"\n    \n    \n    // restock(int qty): increase quantity\n    \n    \n    // Static method: getProductCount()\n    \n    \n    // toString(): return formatted string\n    // \"Product: name, Price: price, Stock: quantity\"\n    \n}\n\npublic class TestProduct {\n    public static void main(String[] args) {\n        // Create array of 3 products\n        // Product(\"Laptop\", 999.99, 10)\n        // Product(\"Mouse\", 29.99, 50)\n        // Product(\"Keyboard\", 79.99, 30)\n        \n        \n        System.out.println(\"Total product types: \" + Product.getProductCount());\n        \n        System.out.println(\"--- Inventory ---\");\n        // Loop and print each product using toString()\n        \n        \n        // Sell 3 Laptops\n        System.out.println(\"Selling 3 Laptops...\");\n        \n        \n        // Try to sell 100 Mice (should fail)\n        System.out.println(\"Selling 100 Mice...\");\n        \n        \n        // Restock 20 Keyboards\n        System.out.println(\"Restocking 20 Keyboards...\");\n        \n        \n        System.out.println(\"--- Updated Inventory ---\");\n        // Loop and print each product again\n        \n    }\n}", keywords: ["private", "static", "this.", "sell", "restock", "getProductCount", "toString", "Product[]", "new Product"] }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied to clipboard! Paste it in the compiler tab that just opened (Ctrl+V / \u2318+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use the required constructs: ' + missing.map(k=>'<code>'+k+'</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+// Tab key inserts spaces
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){const t=localStorage.getItem('theme')||'dark';if(t==='light')document.getElementById('themeIcon').className='fas fa-sun';})();
+
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+
+</body>
+</html>

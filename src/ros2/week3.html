@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 3: ROS2 Publishers & Subscribers - Complete Tutorial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #1e3a5f;
+            --secondary-color: #e74c3c;
+            --accent-color: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c5282 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c5282 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 1rem;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-header {
+            background: #1e1e1e;
+            padding: 0.5rem 1rem;
+            color: #888;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .copy-button:hover {
+            background: #45a049;
+        }
+
+        .copy-button.copied {
+            background: #2196F3;
+        }
+
+        .copy-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .alert-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .diagram-container {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .diagram-title {
+            color: #2196f3;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .table-custom {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .table-custom thead {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-left: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .sidebar .nav-link:hover {
+            background: #f8f9fa;
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar .nav-link.active {
+            color: var(--accent-color);
+            border-left-color: var(--accent-color);
+            background: #f8f9fa;
+        }
+
+        .badge-custom {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+        }
+
+        pre[class*="language-"] {
+            margin: 0;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    
+        /* DARK THEME OVERRIDE */
+        *{box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --warning:#f59e0b;--danger:#ef4444;
+            --text:#f1f5f9;--text2:#94a3b8;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --warning:#d97706;--danger:#dc2626;
+            --text:#0f172a;--text2:#334155;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --code:#1e293b;
+        }
+        body{
+            font-family:'Inter',sans-serif !important;
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            line-height:1.7;
+        }
+        a{color:var(--primary);transition:color .2s}
+        a:hover{color:#60a5fa}
+
+        /* Bootstrap overrides */
+        .navbar{
+            background:rgba(11,15,25,.92) !important;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border) !important;
+            padding:0 24px !important;
+            box-shadow:none !important;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{
+            font-weight:700 !important;font-size:1.15rem !important;
+            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
+        }
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{
+            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
+            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
+        }
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        .navbar-collapse{background:transparent !important}
+        @media(max-width:991px){
+            .navbar-collapse{
+                background:rgba(11,15,25,.98) !important;
+                border-radius:0 0 12px 12px;padding:12px 0;
+                border:1px solid var(--border);border-top:none;
+            }
+            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
+        }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            background:none !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
+            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+            transition:all .2s;margin-left:8px;
+        }
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Hero */
+        .hero, .hero-section{
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            position:relative;overflow:hidden;
+            padding:80px 0 60px !important;
+            margin-bottom:0 !important;
+        }
+        .hero::before,.hero-section::before{
+            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
+        }
+        .hero::after,.hero-section::after{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:32px 32px;pointer-events:none;
+        }
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
+        .hero h1,.hero-section h1{
+            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
+            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
+            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+            color:transparent !important;
+        }
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
+            color:var(--text2) !important;opacity:1 !important;
+        }
+        .hero .display-4{font-size:2.8rem !important}
+
+        /* Cards */
+        .card{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:12px !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-bottom:1px solid var(--border) !important;
+            font-weight:600;
+        }
+        .card-title{color:var(--text) !important}
+        .card-text{color:var(--text2) !important}
+
+        /* Section titles */
+        .section-title, h2.section-title, h3.section-title{
+            color:var(--text) !important;
+            border-bottom-color:var(--primary) !important;
+        }
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
+        p{color:var(--text2)}
+
+        /* Info/Warning/Success boxes */
+        .info-box,.alert-info-custom,.alert-info,.key-concept{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--primary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        
+        .warning-box,.alert-warning-custom,.alert-warning{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--warning) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
+        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
+        
+        .success-box,.alert-success-custom,.alert-success{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--success) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .success-box strong{color:var(--success) !important}
+        .success-box p{color:var(--text2) !important}
+
+        .alert-tip-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--secondary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert-danger,.alert-danger-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--danger) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+
+        /* Code blocks */
+        pre, pre[class*="language-"]{
+            background:var(--code) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:8px !important;
+            color:#e6edf3 !important;
+            font-family:'JetBrains Mono',monospace !important;
+            font-size:.875rem !important;
+            line-height:1.6 !important;
+            padding:20px !important;
+        }
+        code{
+            font-family:'JetBrains Mono',monospace !important;
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            padding:2px 6px;border-radius:4px;
+            font-size:.85em !important;
+        }
+        pre code{
+            background:transparent !important;
+            color:#e6edf3 !important;
+            padding:0 !important;
+        }
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn, .copy-btn{
+            position:absolute;top:10px;right:10px;
+            background:var(--surface2) !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
+            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
+        }
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Tables */
+        .table,.dark-table,table{
+            color:var(--text) !important;
+            border-color:var(--border) !important;
+        }
+        .table th,table th{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-color:var(--border2) !important;
+            font-weight:600;
+        }
+        .table td,table td{
+            color:var(--text2) !important;
+            border-color:var(--border) !important;
+            background:transparent !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>*{
+            background:rgba(255,255,255,.02) !important;
+            color:var(--text2) !important;
+        }
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        .table-bordered{border-color:var(--border2) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
+        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
+
+        /* Sidebar / TOC */
+        .sidebar,.toc{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:10px !important;
+            padding:16px !important;
+        }
+        .sidebar a,.toc a,.toc .nav-link{
+            color:var(--text2) !important;
+            border-left-color:transparent !important;
+        }
+        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
+            color:var(--primary) !important;
+            border-left-color:var(--primary) !important;
+            background:rgba(59,130,246,.05) !important;
+        }
+        .list-group-item{
+            background:var(--surface) !important;
+            border-color:var(--border) !important;
+            color:var(--text2) !important;
+        }
+        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
+
+        /* Badges */
+        .badge,.badge-custom{
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            border:1px solid var(--border2);
+        }
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+
+        /* Buttons */
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
+        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
+
+        /* Misc Bootstrap */
+        .breadcrumb{background:var(--surface) !important}
+        .breadcrumb-item a{color:var(--primary) !important}
+        .breadcrumb-item.active{color:var(--text2) !important}
+        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
+        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
+        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
+        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
+        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .modal-header{border-bottom-color:var(--border) !important}
+        .modal-footer{border-top-color:var(--border) !important}
+        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
+        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
+        .nav-tabs{border-bottom-color:var(--border2) !important}
+        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
+        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
+        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
+        .nav-pills .nav-link{color:var(--text2) !important}
+        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
+        .progress{background:var(--surface2) !important}
+        .progress-bar{background:var(--primary) !important}
+        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}
+        .text-dark{color:var(--text) !important}
+        .bg-light{background:var(--surface2) !important}
+        .bg-white{background:var(--surface) !important}
+        .border{border-color:var(--border2) !important}
+        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
+        .lead{color:var(--text2) !important}
+        strong,b{color:var(--text) !important}
+        ::selection{background:rgba(59,130,246,.3);color:#fff}
+
+        /* Step cards / numbered steps */
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+
+        /* Scroll to top */
+        .scroll-top{
+            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
+            color:var(--text2);display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
+        }
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* Footer override */
+        footer,.footer{
+            background:var(--surface) !important;
+            border-top:1px solid var(--border) !important;
+            color:var(--text2) !important;
+        }
+        footer a{color:var(--primary) !important}
+        footer p,footer span,footer div{color:var(--text2) !important}
+
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <strong>ROS2 Jazzy | Week 3</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#communication">Communication</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tutorials">Tutorials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#project">Project</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4">Week 3: ROS2 Publishers & Subscribers</h1>
+            <p class="lead">Topic Communication and Data Streaming</p>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.3);">
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <h6>Instructor</h6>
+                    <p>Dr. Abdulkarim Albanna</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Department</h6>
+                    <p>Artificial Intelligence</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>University</h6>
+                    <p>University of Petra</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Duration</h6>
+                    <p>3 hours (Week 3 of 16)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <h5 class="mb-3">Contents</h5>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="#overview">Week Overview</a>
+                        <a class="nav-link" href="#communication">Topic Communication</a>
+                        <a class="nav-link" href="#patterns">Communication Patterns</a>
+                        <a class="nav-link" href="#messages">Message Types</a>
+                        <a class="nav-link" href="#publisher">Creating Publishers</a>
+                        <a class="nav-link" href="#subscriber">Creating Subscribers</a>
+                        <a class="nav-link" href="#vision-tutorial">Vision Pipeline</a>
+                        <a class="nav-link" href="#nav-tutorial">Navigation System</a>
+                        <a class="nav-link" href="#complete-example">Complete Example</a>
+                        <a class="nav-link" href="#running">Running Tutorials</a>
+                        <a class="nav-link" href="#multiple">Multiple Pub/Sub</a>
+                        <a class="nav-link" href="#qos">Quality of Service</a>
+                        <a class="nav-link" href="#debugging">Debugging</a>
+                        <a class="nav-link" href="#best-practices">Best Practices</a>
+                        <a class="nav-link" href="#project">Week 3 Project</a>
+                        <a class="nav-link" href="#resources">Resources</a>
+                        <a class="nav-link" href="#next-week">Next Week</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Week Overview -->
+                <section id="overview">
+                    <h2 class="section-title">Week Overview</h2>
+
+                    <h4 class="mt-4">Learning Objectives</h4>
+                    <p>By the end of this week, students will be able to:</p>
+                    <ol>
+                        <li>Understand the publish-subscribe communication pattern</li>
+                        <li>Create publishers to send data on topics</li>
+                        <li>Create subscribers to receive data from topics</li>
+                        <li>Work with standard ROS2 message types</li>
+                        <li>Handle callback functions effectively</li>
+                        <li>Implement real-time data processing</li>
+                        <li>Build a multi-sensor data fusion system</li>
+                        <li>Debug topic communication issues</li>
+                    </ol>
+
+                    <h4 class="mt-4">Topics Covered</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Publish-subscribe pattern</li>
+                                <li>Topic communication</li>
+                                <li>Creating publishers</li>
+                                <li>Creating subscribers</li>
+                                <li>Message types</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Callback functions</li>
+                                <li>Timer-based publishing</li>
+                                <li>Data processing</li>
+                                <li>Multi-topic communication</li>
+                                <li>Debugging techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Understanding Topic Communication -->
+                <section id="communication" class="mt-5">
+                    <h2 class="section-title">Understanding Topic Communication</h2>
+
+                    <h4 class="mt-4">ROS2 Nodes in Practice</h4>
+                    <p>A <strong>node</strong> in ROS2 is a process representing the smallest program unit within the framework. Each node runs in its own independent memory space and is designed for a specific purpose, such as controlling a motor, capturing images from a camera, or performing path planning. Nodes communicate with one another by exchanging messages, facilitating collaborative functionality within the robotic system.</p>
+
+                    <h5 class="mt-4">Example 1: Computer Vision Pipeline</h5>
+                    <div class="diagram-container">
+                        <svg width="100%" height="200" viewBox="0 0 800 200">
+                            <ellipse cx="100" cy="100" rx="80" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="100" y="105" text-anchor="middle" font-size="14" font-weight="bold">Camera_Driver</text>
+
+                            <line x1="180" y1="100" x2="250" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                            <ellipse cx="330" cy="100" rx="60" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="330" y="105" text-anchor="middle" font-size="14" font-weight="bold">Filter</text>
+
+                            <line x1="390" y1="100" x2="430" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                            <ellipse cx="540" cy="100" rx="90" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="540" y="105" text-anchor="middle" font-size="13" font-weight="bold">Feature_Extraction</text>
+
+                            <line x1="630" y1="100" x2="660" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                            <ellipse cx="740" cy="100" rx="80" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="740" y="105" text-anchor="middle" font-size="13" font-weight="bold">Object_Detection</text>
+
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                    <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <ul>
+                        <li>A <strong>camera_driver</strong> node captures <span class="badge-custom">raw image</span> data</li>
+                        <li>A <strong>Filter</strong> node <span class="badge-custom">processes</span> these images to enhance their quality</li>
+                        <li>A <strong>feature_extraction</strong> node <span class="badge-custom">analyzes</span> the processed image to identify relevant patterns</li>
+                        <li>An <strong>object_detection</strong> node uses these features to <span class="badge-custom">locate and identify</span> objects</li>
+                    </ul>
+
+                    <h5 class="mt-4">Example 2: Navigation System</h5>
+                    <div class="diagram-container">
+                        <svg width="100%" height="150" viewBox="0 0 600 150">
+                            <ellipse cx="200" cy="75" rx="90" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="200" y="80" text-anchor="middle" font-size="14" font-weight="bold">Path_Planning</text>
+
+                            <line x1="290" y1="60" x2="310" y2="60" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                            <line x1="310" y1="90" x2="290" y2="90" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead2)"/>
+
+                            <ellipse cx="400" cy="75" rx="80" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="400" y="80" text-anchor="middle" font-size="14" font-weight="bold">Motor_Driver</text>
+
+                            <defs>
+                                <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                    <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <ul>
+                        <li>A <strong>path_planning</strong> node <span class="badge-custom">calculates</span> the optimal route for navigation</li>
+                        <li>A <strong>Motor_Driver</strong> node <span class="badge-custom">translates</span> the planned path into motion by controlling the robot's motors</li>
+                    </ul>
+
+                    <h4 class="mt-5">The Publish-Subscribe Pattern</h4>
+                    <p>The publish-subscribe (pub-sub) pattern is a messaging paradigm where:</p>
+                    <div class="info-box">
+                        <ul class="mb-0">
+                            <li><strong>Publishers</strong> send messages to topics</li>
+                            <li><strong>Subscribers</strong> receive messages from topics</li>
+                            <li>Communication is <strong>anonymous</strong> and <strong>decoupled</strong></li>
+                            <li>Multiple publishers and subscribers can use the same topic</li>
+                            <li>No direct connection between publisher and subscriber</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Communication Patterns - COMPLETE WITH ALL 4 PATTERNS -->
+                <section id="patterns" class="mt-5">
+                    <h2 class="section-title">Node Communication Patterns</h2>
+
+                    <p>ROS2 supports different communication patterns between nodes. Understanding these patterns is crucial for designing efficient robotic systems.</p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Pattern 1: One-to-One (1:1)</h5>
+                            <p>One publisher sends data to exactly one subscriber.</p>
+                            <div class="diagram-container">
+                                <div class="diagram-title">1:1 Communication</div>
+                                <svg width="100%" height="120" viewBox="0 0 500 120">
+                                    <ellipse cx="80" cy="60" rx="60" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="65" text-anchor="middle" font-size="13" font-weight="bold">Publisher</text>
+
+                                    <line x1="140" y1="60" x2="190" y2="60" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow1)"/>
+
+                                    <rect x="190" y="40" width="80" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="230" y="55" text-anchor="middle" font-size="11" font-weight="bold">Topic:</text>
+                                    <text x="230" y="70" text-anchor="middle" font-size="11">/data</text>
+
+                                    <line x1="270" y1="60" x2="320" y2="60" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow1)"/>
+
+                                    <ellipse cx="390" cy="60" rx="60" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="390" y="65" text-anchor="middle" font-size="13" font-weight="bold">Subscriber</text>
+
+                                    <defs>
+                                        <marker id="arrow1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <p><strong>Use Case:</strong> Direct sensor-to-controller communication, dedicated data streams.</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Pattern 2: One-to-Many (1:M)</h5>
+                            <p>One publisher broadcasts data to multiple subscribers.</p>
+                            <div class="diagram-container">
+                                <div class="diagram-title">1:M Communication</div>
+                                <svg width="100%" height="160" viewBox="0 0 500 160">
+                                    <ellipse cx="80" cy="80" rx="60" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="85" text-anchor="middle" font-size="13" font-weight="bold">Publisher</text>
+
+                                    <line x1="140" y1="80" x2="190" y2="80" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow2)"/>
+
+                                    <rect x="190" y="60" width="80" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="230" y="75" text-anchor="middle" font-size="11" font-weight="bold">Topic:</text>
+                                    <text x="230" y="90" text-anchor="middle" font-size="11">/sensor</text>
+
+                                    <line x1="270" y1="70" x2="330" y2="40" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow2)"/>
+                                    <line x1="270" y1="80" x2="330" y2="80" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow2)"/>
+                                    <line x1="270" y1="90" x2="330" y2="120" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow2)"/>
+
+                                    <ellipse cx="400" cy="40" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="400" y="45" text-anchor="middle" font-size="12" font-weight="bold">Subscriber 1</text>
+
+                                    <ellipse cx="400" cy="80" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="400" y="85" text-anchor="middle" font-size="12" font-weight="bold">Subscriber 2</text>
+
+                                    <ellipse cx="400" cy="120" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="400" y="125" text-anchor="middle" font-size="12" font-weight="bold">Subscriber 3</text>
+
+                                    <defs>
+                                        <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <p><strong>Use Case:</strong> Broadcasting sensor data, system status updates, camera feeds.</p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Pattern 3: Many-to-One (M:1)</h5>
+                            <p>Multiple publishers send data to one subscriber (data aggregation).</p>
+                            <div class="diagram-container">
+                                <div class="diagram-title">M:1 Communication</div>
+                                <svg width="100%" height="160" viewBox="0 0 500 160">
+                                    <ellipse cx="80" cy="40" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="45" text-anchor="middle" font-size="12" font-weight="bold">Publisher 1</text>
+
+                                    <ellipse cx="80" cy="80" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="85" text-anchor="middle" font-size="12" font-weight="bold">Publisher 2</text>
+
+                                    <ellipse cx="80" cy="120" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="125" text-anchor="middle" font-size="12" font-weight="bold">Publisher 3</text>
+
+                                    <line x1="135" y1="40" x2="190" y2="70" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+                                    <line x1="135" y1="80" x2="190" y2="80" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+                                    <line x1="135" y1="120" x2="190" y2="90" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+
+                                    <rect x="190" y="60" width="80" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="230" y="75" text-anchor="middle" font-size="11" font-weight="bold">Topic:</text>
+                                    <text x="230" y="90" text-anchor="middle" font-size="11">/sensors</text>
+
+                                    <line x1="270" y1="80" x2="310" y2="80" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+
+                                    <ellipse cx="380" cy="80" rx="60" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="380" y="85" text-anchor="middle" font-size="13" font-weight="bold">Aggregator</text>
+
+                                    <defs>
+                                        <marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <p><strong>Use Case:</strong> Sensor fusion, multi-robot coordination, distributed data collection.</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Pattern 4: Many-to-Many (M:M)</h5>
+                            <p>Multiple publishers and multiple subscribers share the same topic.</p>
+                            <div class="diagram-container">
+                                <div class="diagram-title">M:M Communication</div>
+                                <svg width="100%" height="160" viewBox="0 0 500 160">
+                                    <ellipse cx="70" cy="60" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="70" y="65" text-anchor="middle" font-size="12" font-weight="bold">Publisher 1</text>
+
+                                    <ellipse cx="70" cy="100" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="70" y="105" text-anchor="middle" font-size="12" font-weight="bold">Publisher 2</text>
+
+                                    <line x1="125" y1="65" x2="180" y2="75" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+                                    <line x1="125" y1="95" x2="180" y2="85" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+
+                                    <rect x="180" y="60" width="80" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="220" y="75" text-anchor="middle" font-size="11" font-weight="bold">Topic:</text>
+                                    <text x="220" y="90" text-anchor="middle" font-size="11">/data</text>
+
+                                    <line x1="260" y1="70" x2="320" y2="40" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+                                    <line x1="260" y1="80" x2="320" y2="80" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+                                    <line x1="260" y1="90" x2="320" y2="120" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+
+                                    <ellipse cx="390" cy="40" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="390" y="45" text-anchor="middle" font-size="12" font-weight="bold">Subscriber 1</text>
+
+                                    <ellipse cx="390" cy="80" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="390" y="85" text-anchor="middle" font-size="12" font-weight="bold">Subscriber 2</text>
+
+                                    <ellipse cx="390" cy="120" rx="55" ry="25" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="390" y="125" text-anchor="middle" font-size="12" font-weight="bold">Subscriber 3</text>
+
+                                    <defs>
+                                        <marker id="arrow4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <p><strong>Use Case:</strong> Multi-robot systems, distributed logging, collaborative tasks.</p>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Communication Pattern Comparison</h4>
+                    <table class="table table-custom table-striped">
+                        <thead>
+                            <tr>
+                                <th>Pattern</th>
+                                <th>Publishers</th>
+                                <th>Subscribers</th>
+                                <th>Best Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1:1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>Direct dedicated communication</td>
+                            </tr>
+                            <tr>
+                                <td>1:M</td>
+                                <td>1</td>
+                                <td>Many</td>
+                                <td>Broadcasting data to multiple nodes</td>
+                            </tr>
+                            <tr>
+                                <td>M:1</td>
+                                <td>Many</td>
+                                <td>1</td>
+                                <td>Data aggregation and fusion</td>
+                            </tr>
+                            <tr>
+                                <td>M:M</td>
+                                <td>Many</td>
+                                <td>Many</td>
+                                <td>Complex distributed systems</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 class="mt-4">Key Concepts</h4>
+                    <table class="table table-custom table-striped">
+                        <thead>
+                            <tr>
+                                <th>Concept</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Topic</td>
+                                <td>Named channel for messages</td>
+                            </tr>
+                            <tr>
+                                <td>Message</td>
+                                <td>Data structure sent over topic</td>
+                            </tr>
+                            <tr>
+                                <td>Publisher</td>
+                                <td>Node that sends messages</td>
+                            </tr>
+                            <tr>
+                                <td>Subscriber</td>
+                                <td>Node that receives messages</td>
+                            </tr>
+                            <tr>
+                                <td>Callback</td>
+                                <td>Function called when message arrives</td>
+                            </tr>
+                            <tr>
+                                <td>Queue Size</td>
+                                <td>Number of messages buffered</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- ROS2 Message Types -->
+                <section id="messages" class="mt-5">
+                    <h2 class="section-title">ROS2 Message Types</h2>
+
+                    <h4 class="mt-4">Standard Message Packages</h4>
+                    <p>ROS2 provides several standard message packages:</p>
+                    <ul>
+                        <li><code>std_msgs</code>: Basic data types (Int, Float, String, Bool)</li>
+                        <li><code>geometry_msgs</code>: Geometric data (Pose, Twist, Transform)</li>
+                        <li><code>sensor_msgs</code>: Sensor data (Image, LaserScan, Imu, Temperature)</li>
+                        <li><code>nav_msgs</code>: Navigation data (Odometry, Path, OccupancyGrid)</li>
+                    </ul>
+
+                    <h4 class="mt-4">Common Message Types</h4>
+                    <table class="table table-custom table-striped">
+                        <thead>
+                            <tr>
+                                <th>Package</th>
+                                <th>Message</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>std_msgs</td>
+                                <td>String</td>
+                                <td>Text messages</td>
+                            </tr>
+                            <tr>
+                                <td>std_msgs</td>
+                                <td>Int32</td>
+                                <td>Integer values</td>
+                            </tr>
+                            <tr>
+                                <td>std_msgs</td>
+                                <td>Float32</td>
+                                <td>Floating point values</td>
+                            </tr>
+                            <tr>
+                                <td>std_msgs</td>
+                                <td>Bool</td>
+                                <td>Boolean values</td>
+                            </tr>
+                            <tr>
+                                <td>geometry_msgs</td>
+                                <td>Twist</td>
+                                <td>Velocity commands (linear & angular)</td>
+                            </tr>
+                            <tr>
+                                <td>geometry_msgs</td>
+                                <td>Pose</td>
+                                <td>Position and orientation</td>
+                            </tr>
+                            <tr>
+                                <td>sensor_msgs</td>
+                                <td>Temperature</td>
+                                <td>Temperature readings</td>
+                            </tr>
+                            <tr>
+                                <td>sensor_msgs</td>
+                                <td>Imu</td>
+                                <td>IMU sensor data</td>
+                            </tr>
+                            <tr>
+                                <td>sensor_msgs</td>
+                                <td>Image</td>
+                                <td>Camera images</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 class="mt-4">Message Structure Example</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>geometry_msgs/Twist - Used for velocity commands</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python"># Example: geometry_msgs/Twist
+# Used for velocity commands
+
+geometry_msgs/Vector3 linear
+  float64 x  # Forward/backward velocity
+  float64 y  # Left/right velocity
+  float64 z  # Up/down velocity
+
+geometry_msgs/Vector3 angular
+  float64 x  # Roll rate
+  float64 y  # Pitch rate
+  float64 z  # Yaw rate (turning)</code></pre>
+                    </div>
+                </section>
+
+                <!-- Creating a Publisher - COMPLETE -->
+                <section id="publisher" class="mt-5">
+                    <h2 class="section-title">Creating a Publisher</h2>
+
+                    <h4 class="mt-4">Publisher Basics</h4>
+                    <p>A publisher node sends messages to a topic at regular or event-driven intervals.</p>
+
+                    <h4 class="mt-4">Simple Publisher Example</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>temperature_publisher.py</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Temperature
+import random
+
+
+class TemperaturePublisher(Node):
+    def __init__(self):
+        super().__init__('temperature_publisher')
+
+        # Create publisher
+        self.publisher_ = self.create_publisher(
+            Temperature,        # Message type
+            'temperature_data', # Topic name
+            10                  # Queue size
+        )
+
+        # Create timer (publish every 1 second)
+        self.timer_ = self.create_timer(1.0, self.publish_temperature)
+
+        self.get_logger().info('Temperature Publisher started')
+
+    def publish_temperature(self):
+        # Create message
+        msg = Temperature()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = 'temperature_sensor'
+        msg.temperature = 20.0 + random.uniform(-5.0, 5.0)  # Simulate sensor
+        msg.variance = 0.5
+
+        # Publish message
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'Published temperature: {msg.temperature:.2f} C')
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TemperaturePublisher()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Publisher Code Breakdown</h4>
+
+                    <h5>Creating a Publisher</h5>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Creating Publisher</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">self.publisher_ = self.create_publisher(
+    Temperature,        # Message type
+    'temperature_data', # Topic name
+    10                  # Queue size (QoS)
+)</code></pre>
+                    </div>
+
+                    <p><strong>Parameters:</strong></p>
+                    <ul>
+                        <li><code>msg_type</code>: The message class to publish</li>
+                        <li><code>topic</code>: Name of the topic (string)</li>
+                        <li><code>qos_profile</code>: Queue size or QoS settings</li>
+                    </ul>
+
+                    <h5 class="mt-4">Creating a Timer</h5>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Creating Timer</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">self.timer_ = self.create_timer(
+    1.0,                        # Period in seconds
+    self.publish_temperature    # Callback function
+)</code></pre>
+                    </div>
+
+                    <h5 class="mt-4">Publishing a Message</h5>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Publishing Message</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python"># Create message instance
+msg = Temperature()
+
+# Fill message fields
+msg.temperature = 25.5
+msg.variance = 0.5
+
+# Publish
+self.publisher_.publish(msg)</code></pre>
+                    </div>
+                </section>
+
+                <!-- Creating a Subscriber - COMPLETE -->
+                <section id="subscriber" class="mt-5">
+                    <h2 class="section-title">Creating a Subscriber</h2>
+
+                    <h4 class="mt-4">Subscriber Basics</h4>
+                    <p>A subscriber node receives messages from a topic and processes them in a callback function.</p>
+
+                    <h4 class="mt-4">Simple Subscriber Example</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>temperature_subscriber.py</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Temperature
+
+
+class TemperatureSubscriber(Node):
+    def __init__(self):
+        super().__init__('temperature_subscriber')
+
+        # Create subscriber
+        self.subscription_ = self.create_subscription(
+            Temperature,              # Message type
+            'temperature_data',       # Topic name
+            self.temperature_callback,  # Callback function
+            10                        # Queue size
+        )
+
+        self.get_logger().info('Temperature Subscriber started')
+
+    def temperature_callback(self, msg):
+        """Called when a message is received"""
+        temp = msg.temperature
+        self.get_logger().info(f'Received temperature: {temp:.2f} C')
+
+        # Process data
+        if temp > 30.0:
+            self.get_logger().warn('High temperature detected!')
+        elif temp < 10.0:
+            self.get_logger().warn('Low temperature detected!')
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TemperatureSubscriber()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Subscriber Code Breakdown</h4>
+
+                    <h5>Creating a Subscriber</h5>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Creating Subscriber</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">self.subscription_ = self.create_subscription(
+    Temperature,              # Message type
+    'temperature_data',       # Topic name
+    self.temperature_callback,  # Callback function
+    10                        # Queue size
+)</code></pre>
+                    </div>
+
+                    <h5 class="mt-4">Callback Function</h5>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Callback Function</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">def temperature_callback(self, msg):
+    """Automatically called when message arrives"""
+    # Access message data
+    temperature = msg.temperature
+    variance = msg.variance
+
+    # Process the data
+    self.get_logger().info(f'Temperature: {temperature}')</code></pre>
+                    </div>
+
+                    <div class="info-box mt-4">
+                        <h6><strong>Callback Function Rules</strong></h6>
+                        <ul class="mb-0">
+                            <li>Must accept one parameter: the message</li>
+                            <li>Called automatically when message arrives</li>
+                            <li>Should be fast (non-blocking)</li>
+                            <li>Avoid long computations</li>
+                            <li>Don't use <code>time.sleep()</code></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Continue in next part due to length... -->
+
+                <!-- Quality of Service (QoS) -->
+                <section id="qos" class="mt-5">
+                    <h2 class="section-title">Quality of Service (QoS)</h2>
+
+                    <h4 class="mt-4">Understanding QoS</h4>
+                    <p>Quality of Service (QoS) policies control how messages are delivered between publishers and subscribers.</p>
+
+                    <table class="table table-custom table-striped">
+                        <thead>
+                            <tr>
+                                <th>Policy</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Reliability</td>
+                                <td>Reliable (guaranteed) or Best Effort</td>
+                            </tr>
+                            <tr>
+                                <td>Durability</td>
+                                <td>Transient Local (keep last) or Volatile</td>
+                            </tr>
+                            <tr>
+                                <td>History</td>
+                                <td>Keep Last N or Keep All</td>
+                            </tr>
+                            <tr>
+                                <td>Depth</td>
+                                <td>Queue size (number of messages)</td>
+                            </tr>
+                            <tr>
+                                <td>Lifespan</td>
+                                <td>How long messages are valid</td>
+                            </tr>
+                            <tr>
+                                <td>Deadline</td>
+                                <td>Maximum time between messages</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 class="mt-4">QoS Profiles</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>QoS Configuration</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+
+# Custom QoS
+qos_profile = QoSProfile(
+    reliability=ReliabilityPolicy.RELIABLE,
+    history=HistoryPolicy.KEEP_LAST,
+    depth=10
+)
+
+# Use with publisher
+self.publisher_ = self.create_publisher(
+    Temperature,
+    'temperature',
+    qos_profile
+)
+
+# Predefined profiles
+from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_system_default
+
+self.sensor_pub_ = self.create_publisher(
+    Temperature,
+    'temperature',
+    qos_profile_sensor_data
+)</code></pre>
+                    </div>
+                </section>
+
+                <!-- Debugging Topics -->
+                <section id="debugging" class="mt-5">
+                    <h2 class="section-title">Debugging Topics</h2>
+
+                    <h4 class="mt-4">Command Line Tools</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ROS2 Topic Commands</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-bash"># List all topics
+ros2 topic list
+
+# Show topic information
+ros2 topic info /temperature
+
+# Echo topic messages
+ros2 topic echo /temperature
+
+# Show message type
+ros2 topic type /temperature
+
+# Publish from command line
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
+  "{linear: {x: 1.0}, angular: {z: 0.5}}"
+
+# Check publishing rate
+ros2 topic hz /temperature
+
+# Bandwidth usage
+ros2 topic bw /camera/image_raw
+
+# Find topics by type
+ros2 topic find sensor_msgs/msg/Temperature</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Common Issues and Solutions</h4>
+
+                    <div class="alert-box">
+                        <h6><strong>Topic Not Found</strong></h6>
+                        <p><strong>Problem:</strong> Subscriber doesn't receive messages</p>
+                        <p><strong>Solutions:</strong></p>
+                        <ul class="mb-0">
+                            <li>Check topic names match exactly (case-sensitive)</li>
+                            <li>Verify publisher is running: <code>ros2 node list</code></li>
+                            <li>Check QoS compatibility</li>
+                            <li>Ensure ROS_DOMAIN_ID matches</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box mt-3">
+                        <h6><strong>QoS Incompatibility</strong></h6>
+                        <p><strong>Problem:</strong> Messages not received despite matching topics</p>
+                        <p><strong>Solution:</strong></p>
+                        <ul class="mb-0">
+                            <li>Publisher and subscriber must have compatible QoS</li>
+                            <li>Use <code>ros2 topic info /topic_name</code> to check QoS</li>
+                            <li>Match reliability settings</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Best Practices -->
+                <section id="best-practices" class="mt-5">
+                    <h2 class="section-title">Best Practices</h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Publisher Best Practices</h4>
+                            <ul>
+                                <li>Use descriptive topic names: <code>/robot/sensors/temperature</code></li>
+                                <li>Set appropriate publishing rates</li>
+                                <li>Fill all message fields properly</li>
+                                <li>Include timestamps in header</li>
+                                <li>Use appropriate QoS for data type</li>
+                                <li>Log important events</li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>Subscriber Best Practices</h4>
+                            <ul>
+                                <li>Keep callbacks fast and non-blocking</li>
+                                <li>Don't use <code>time.sleep()</code> in callbacks</li>
+                                <li>Handle missing or invalid data gracefully</li>
+                                <li>Use class variables to store latest data</li>
+                                <li>Implement proper error handling</li>
+                                <li>Log warnings for unexpected data</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Code Organization</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Best Practice Structure</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">class RobotNode(Node):
+    def __init__(self):
+        super().__init__('robot_node')
+
+        # Publishers
+        self._setup_publishers()
+
+        # Subscribers
+        self._setup_subscribers()
+
+        # Timers
+        self._setup_timers()
+
+        # State variables
+        self._initialize_state()
+
+        self.get_logger().info('Node initialized')
+
+    def _setup_publishers(self):
+        """Initialize all publishers"""
+        self.cmd_pub_ = self.create_publisher(...)
+
+    def _setup_subscribers(self):
+        """Initialize all subscribers"""
+        self.sensor_sub_ = self.create_subscription(...)
+
+    def _setup_timers(self):
+        """Initialize all timers"""
+        self.timer_ = self.create_timer(...)
+
+    def _initialize_state(self):
+        """Initialize state variables"""
+        self.robot_state_ = "idle"</code></pre>
+                    </div>
+                </section>
+
+                <!-- Week 3 Project -->
+                <section id="project" class="mt-5">
+                    <h2 class="section-title">Week 3 Project</h2>
+
+                    <div class="alert alert-info">
+                        <h4>Project: Multi-Sensor Data Fusion System</h4>
+                        <p>Create a complete sensor monitoring and fusion system for a simulated robot.</p>
+                    </div>
+
+                    <h4 class="mt-4">Requirements</h4>
+                    <p><strong>Package Name:</strong> <code>sensor_fusion_system</code></p>
+
+                    <h5 class="mt-3">Nodes to Implement:</h5>
+                    <ol>
+                        <li>
+                            <strong>Sensor Publisher Node</strong> (<code>sensor_publisher.py</code>)
+                            <ul>
+
+                                <li>
+                                <strong>Sensor Publisher Node</strong> (<code>sensor_publisher.py</code>)
+                                <ul>
+                                    <li>Publish IMU data (10 Hz)</li>
+                                    <li>Publish GPS data (1 Hz)</li>
+                                    <li>Publish Temperature data (2 Hz)</li>
+                                    <li>Publish Barometer/Altitude data (2 Hz)</li>
+                                    <li>Simulate realistic sensor noise</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>Data Logger Node</strong> (<code>data_logger.py</code>)
+                                <ul>
+                                    <li>Subscribe to all sensor topics</li>
+                                    <li>Log data with timestamps</li>
+                                    <li>Calculate statistics (min, max, average)</li>
+                                    <li>Print summary every 5 seconds</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>Alert System Node</strong> (<code>alert_system.py</code>)
+                                <ul>
+                                    <li>Monitor all sensors</li>
+                                    <li>Detect anomalies (out of range values)</li>
+                                    <li>Publish alerts on /alerts topic</li>
+                                    <li>Log warnings for critical conditions</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong>Fusion Node</strong> (<code>sensor_fusion.py</code>)
+                                <ul>
+                                    <li>Subscribe to multiple sensors</li>
+                                    <li>Combine data for state estimation</li>
+                                    <li>Publish fused output</li>
+                                    <li>Calculate altitude from barometer</li>
+                                </ul>
+                            </li>
+                        </ol>
+
+                        <h4 class="mt-4">Technical Requirements</h4>
+                        <ul>
+                            <li>Use appropriate message types from standard packages</li>
+                            <li>Implement proper error handling</li>
+                            <li>Include comprehensive logging</li>
+                            <li>Use timers for periodic operations</li>
+                            <li>Follow ROS2 naming conventions</li>
+                            <li>Document all functions</li>
+                        </ul>
+
+                        <h4 class="mt-4">Bonus Challenges (+10 points)</h4>
+                        <ul>
+                            <li>Implement data filtering (moving average)</li>
+                            <li>Add data visualization (plot over time)</li>
+                            <li>Create launch file for all nodes</li>
+                            <li>Implement QoS profiles appropriately</li>
+                            <li>Add parameter configuration</li>
+                            <li>Write unit tests</li>
+                        </ul>
+
+                        <h4 class="mt-4">Deliverables</h4>
+                        <ul>
+                            <li><strong>Source Code:</strong> Complete package with all 4 nodes</li>
+                            <li><strong>Documentation:</strong>
+                                <ul>
+                                    <li>README with setup instructions</li>
+                                    <li>Node architecture diagram</li>
+                                    <li>Topic diagram showing all connections</li>
+                                    <li>API documentation for each node</li>
+                                </ul>
+                            </li>
+                            <li><strong>Screenshots:</strong>
+                                <ul>
+                                    <li>All nodes running simultaneously</li>
+                                    <li>Topic list output</li>
+                                    <li>Sample log outputs</li>
+                                    <li>Alert system in action</li>
+                                </ul>
+                            </li>
+                            <li><strong>Demo Video:</strong> 3-5 minutes showing system operation</li>
+                        </ul>
+
+                        <h4 class="mt-4">Grading Rubric</h4>
+                        <table class="table table-custom table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sensor Publisher Node</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>Data Logger Node</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>Alert System Node</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>Fusion Node</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>Code Quality & Documentation</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>Testing & Demonstration</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>Bonus Challenges</td>
+                                    <td>+10</td>
+                                </tr>
+                                <tr class="table-active">
+                                    <th>Total</th>
+                                    <th>100 (+10)</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <!-- Resources & References -->
+                    <section id="resources" class="mt-5">
+                        <h2 class="section-title">Resources & References</h2>
+
+                        <h4 class="mt-4">Official Documentation</h4>
+                        <ul>
+                            <li><a href="https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html" target="_blank">ROS2 Publisher/Subscriber Tutorial</a></li>
+                            <li><a href="https://docs.ros2.org/latest/api/" target="_blank">Message Types Documentation</a></li>
+                            <li><a href="https://docs.ros.org/en/jazzy/Concepts/About-Quality-of-Service-Settings.html" target="_blank">QoS Documentation</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- Next Week Preview -->
+                    <section id="next-week" class="mt-5 mb-5">
+                        <h2 class="section-title">Next Week Preview</h2>
+
+                        <h4>Week 4: Services and Clients</h4>
+                        <ul>
+                            <li>Request-response communication</li>
+                            <li>Creating service servers</li>
+                            <li>Creating service clients</li>
+                            <li>Synchronous vs asynchronous calls</li>
+                            <li>Custom service definitions</li>
+                            <li>Error handling in services</li>
+                        </ul>
+
+                        <div class="info-box">
+                            <h6><strong>Preparation</strong></h6>
+                            <p class="mb-0">Complete Week 3 project and review callback functions</p>
+                        </div>
+                    </section>
+
+                    <!-- Summary -->
+                    <section class="mt-5 mb-5">
+                        <h2 class="section-title">Summary</h2>
+                        <p>This week covered topic-based communication in ROS2, including publishers, subscribers, message types, and data fusion concepts. We implemented practical examples based on the Computer Vision Pipeline and Navigation System architectures.</p>
+
+                        <div class="info-box mt-4">
+                            <h5>Key Takeaways</h5>
+                            <ul class="mb-0">
+                                <li>Publishers and subscribers enable decoupled communication</li>
+                                <li>Topics are named channels for message exchange</li>
+                                <li>Callbacks handle incoming messages asynchronously</li>
+                                <li>QoS policies control message delivery guarantees</li>
+                                <li>Multiple communication patterns support different architectures</li>
+                                <li>Proper debugging tools help troubleshoot topic issues</li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Contact</h5>
+                        <p>Dr. Abdulkarim Albanna<br>
+                        Innovation Center - Robotics Lab<br>
+                        University of Petra</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Office Hours</h5>
+                        <p>Every Day, 10:00 AM - 12:00 PM<br>
+                        Location: Innovation Center / Online (Teams)</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Resources</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://docs.ros.org/en/jazzy/" class="text-white" target="_blank">ROS2 Jazzy Documentation</a></li>
+                            <li><a href="https://docs.ros2.org/" class="text-white" target="_blank">ROS2 API Documentation</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-3" style="border-color: rgba(255,255,255,0.1);">
+                <p class="text-center mb-0">ROS2 Jazzy | Ubuntu 24.04 | Python 3.12+ | Week 3 of 16</p>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+        <script>
+            // Copy code function with improved feedback
+            function copyCode(button) {
+                const codeBlock = button.closest('.code-block').querySelector('code');
+                const text = codeBlock.textContent;
+
+                navigator.clipboard.writeText(text).then(() => {
+                    // Store original content
+                    const originalHTML = button.innerHTML;
+
+                    // Change to success state
+                    button.innerHTML = `
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Copied!
+                    `;
+                    button.classList.add('copied');
+
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy code:', err);
+
+                    // Fallback: show error message
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = `
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        Failed
+                    `;
+
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const offsetTop = target.offsetTop - 80; // Account for fixed header
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Active navigation highlighting on scroll
+            window.addEventListener('scroll', () => {
+                let current = '';
+                const sections = document.querySelectorAll('section[id]');
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.clientHeight;
+
+                    if (pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                // Update sidebar navigation
+                document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // Initialize syntax highlighting
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+
+            // Add scroll-to-top button
+            const scrollBtn = document.createElement('button');
+            scrollBtn.innerHTML = '↑';
+            scrollBtn.className = 'btn btn-primary';
+            scrollBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; display: none; z-index: 1000; border-radius: 50%; width: 50px; height: 50px; font-size: 20px;';
+            document.body.appendChild(scrollBtn);
+
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.style.display = 'block';
+                } else {
+                    scrollBtn.style.display = 'none';
+                }
+            });
+
+            scrollBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        </script>
+    
+<script>
+// Theme toggle
+function toggleTheme(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+}
+(function(){
+    const saved=localStorage.getItem('theme');
+    if(saved==='light'){
+        document.body.classList.add('light-mode');
+        const icon=document.getElementById('themeIcon');
+        if(icon) icon.className='fa-solid fa-moon';
+    }
+})();
+
+// Copy code
+function copyCode(btn){
+    const code=btn.closest('pre,.code-block,.code-container').querySelector('code,pre');
+    const text=code?code.textContent:btn.parentElement.textContent;
+    navigator.clipboard.writeText(text.replace(/^Copy\s*/,''));
+    btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+    setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
+}
+
+// Add copy buttons to all code blocks
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
+        if(pre.querySelector('.copy-btn')) return;
+        pre.classList.add('has-copy');
+        pre.style.position='relative';
+        var btn=document.createElement('button');
+        btn.className='copy-btn';
+        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
+        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5;transition:all .2s';
+        btn.onmouseover=function(){this.style.borderColor='#3b82f6';this.style.color='#3b82f6'};
+        btn.onmouseout=function(){this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'};
+        btn.onclick=function(e){
+            e.stopPropagation();
+            var code=pre.querySelector('code')||pre;
+            navigator.clipboard.writeText(code.textContent.replace(/^Copy\s*/,''));
+            this.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+            var b=this;
+            setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);
+        };
+        pre.appendChild(btn);
+    });
+
+    // Scroll to top button
+    var st=document.createElement('button');
+    st.id='scrollTopBtn';
+    st.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
+    st.style.cssText='position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface,#111827);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;opacity:0;pointer-events:none;z-index:900;transition:all .2s';
+    st.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+    document.body.appendChild(st);
+    window.addEventListener('scroll',function(){
+        st.style.opacity=window.scrollY>500?'1':'0';
+        st.style.pointerEvents=window.scrollY>500?'auto':'none';
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam: Topic 4.1 - Data Analysis with Pandas and NumPy | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a><a href="../topics/topic4-1.html">Study Material</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../topics/topic4-1.html" onclick="this.parentElement.classList.remove('open')">Study Material</a>
+    </div>
+    <section class="hero"><div class="hero-content">
+        <h1>Exam: Data Analysis with Pandas and NumPy</h1>
+        <p class="hero-sub">Topic 4.1 &middot; Block 4: Data Science in Practice</p>
+        <p class="hero-sub" style="font-size:1.05rem;">20 Questions &middot; 20 Minutes</p>
+    </div></section>
+    <div class="container narrow">
+        <div class="section" id="exam-controls">
+            <div class="exam-header">
+                <div class="exam-timer" id="timer"><i class="fa-solid fa-clock"></i> <span id="time-display">20:00</span></div>
+                <div class="exam-progress">Question <strong id="answered-count">0</strong> of <strong>20</strong> answered</div>
+            </div>
+            <div class="exam-nav" id="question-nav"></div>
+        </div>
+        <div id="questions-container"></div>
+        <div class="exam-actions" id="submit-section">
+            <button class="exam-submit" id="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Exam</button>
+        </div>
+        <div class="exam-result" id="result-section" style="display:none;">
+            <h2><i class="fa-solid fa-chart-bar" style="color:var(--primary);"></i> Exam Results</h2>
+            <div class="score-big" id="score-display"></div>
+            <div class="exam-result-details">
+                <div class="exam-result-item"><div class="num green" id="correct-count">0</div><div class="label">Correct</div></div>
+                <div class="exam-result-item"><div class="num red" id="incorrect-count">0</div><div class="label">Incorrect</div></div>
+                <div class="exam-result-item"><div class="num orange" id="skipped-count">0</div><div class="label">Skipped</div></div>
+            </div>
+            <div>
+                <button class="review-btn" onclick="reviewExam()"><i class="fa-solid fa-magnifying-glass"></i> Review Answers</button>
+                <button class="retake-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Retake Exam</button>
+                <a href="../index.html" class="retake-btn" style="text-decoration:none;"><i class="fa-solid fa-house"></i> Back to Course</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+    <script>
+    function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+    (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+    window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>500);});
+
+    const questions = [
+        {
+            q: "What does <code>df.dropna()</code> do in pandas?",
+            options: ["Drops all columns with missing values", "Drops all rows containing at least one missing (NaN) value", "Replaces NaN values with 0", "Drops duplicate rows"],
+            correct: 1,
+            explanation: "<code>df.dropna()</code> removes any row that contains one or more NaN values. To drop columns instead, use <code>df.dropna(axis=1)</code>."
+        },
+        {
+            q: "Which method fills missing values with a specified value in pandas?",
+            options: ["<code>df.dropna()</code>", "<code>df.fillna(value)</code>", "<code>df.replace(np.nan)</code>", "<code>df.isna()</code>"],
+            correct: 1,
+            explanation: "<code>df.fillna(value)</code> replaces all NaN entries with the specified value. You can pass a scalar, dictionary, Series, or use methods like 'ffill' or 'bfill'."
+        },
+        {
+            q: "What does <code>df.sort_values('price', ascending=False)</code> return?",
+            options: ["The DataFrame sorted by price in ascending order", "The DataFrame sorted by price in descending order (highest first)", "Only the 'price' column, sorted", "An error because ascending must be True"],
+            correct: 1,
+            explanation: "Setting <code>ascending=False</code> sorts from the largest to smallest value. The entire DataFrame is returned with rows reordered by the 'price' column."
+        },
+        {
+            q: "How does <code>df.replace()</code> differ from <code>df.fillna()</code>?",
+            options: ["They are identical in functionality", "<code>replace()</code> can substitute any value (not just NaN), while <code>fillna()</code> only handles NaN", "<code>fillna()</code> works on any value, <code>replace()</code> only works on NaN", "<code>replace()</code> only works on strings"],
+            correct: 1,
+            explanation: "<code>df.replace(old, new)</code> can replace any specified value with another. <code>df.fillna()</code> specifically targets NaN/missing values only."
+        },
+        {
+            q: "What is the result of <code>pd.merge(df1, df2, on='id', how='inner')</code>?",
+            options: ["All rows from both DataFrames, with NaN where keys don't match", "Only rows where 'id' exists in both df1 and df2", "All rows from df1, matched with df2 where possible", "A concatenation of df1 and df2 stacked vertically"],
+            correct: 1,
+            explanation: "An inner merge returns only the rows where the key ('id') is found in both DataFrames. Rows without a match in either DataFrame are excluded."
+        },
+        {
+            q: "What does <code>pd.concat([df1, df2], axis=0)</code> do?",
+            options: ["Merges DataFrames on a common column", "Stacks DataFrames vertically (row-wise)", "Joins DataFrames side by side (column-wise)", "Pivots the combined DataFrame"],
+            correct: 1,
+            explanation: "<code>pd.concat()</code> with <code>axis=0</code> (default) stacks DataFrames on top of each other, appending rows. Use <code>axis=1</code> to concatenate column-wise (side by side)."
+        },
+        {
+            q: "Which pandas method converts a wide-format DataFrame to long format?",
+            options: ["<code>df.pivot()</code>", "<code>pd.melt(df)</code>", "<code>df.unstack()</code>", "<code>df.transpose()</code>"],
+            correct: 1,
+            explanation: "<code>pd.melt()</code> unpivots a DataFrame from wide to long format, turning column headers into row values. <code>df.pivot()</code> does the opposite (long to wide)."
+        },
+        {
+            q: "What is the key difference between a pandas Series and a DataFrame?",
+            options: ["A Series can hold multiple data types; a DataFrame cannot", "A Series is one-dimensional; a DataFrame is two-dimensional", "A DataFrame is one-dimensional; a Series is two-dimensional", "There is no difference"],
+            correct: 1,
+            explanation: "A Series is a one-dimensional labeled array (like a single column). A DataFrame is a two-dimensional labeled data structure (like a table with rows and columns)."
+        },
+        {
+            q: "What does <code>df.loc[2:5, 'name']</code> select?",
+            options: ["Rows with integer positions 2 through 4 in the 'name' column", "Rows with index labels 2 through 5 (inclusive) in the 'name' column", "The first 5 rows of the 'name' column", "An error because you cannot mix row and column selection"],
+            correct: 1,
+            explanation: "<code>.loc</code> uses label-based indexing and is inclusive on both ends. So <code>df.loc[2:5, 'name']</code> selects rows with labels 2, 3, 4, and 5 from the 'name' column."
+        },
+        {
+            q: "How does <code>.iloc</code> differ from <code>.loc</code>?",
+            options: ["<code>.iloc</code> uses label-based indexing; <code>.loc</code> uses integer positions", "<code>.iloc</code> uses integer position-based indexing; <code>.loc</code> uses label-based indexing", "They are interchangeable", "<code>.iloc</code> only works with columns, not rows"],
+            correct: 1,
+            explanation: "<code>.iloc</code> selects by integer position (0-based, exclusive of the end). <code>.loc</code> selects by label (inclusive of the end). This distinction matters when the index is not a default integer range."
+        },
+        {
+            q: "What does NumPy broadcasting allow?",
+            options: ["Only arrays of identical shapes to be combined", "Arrays of different shapes to be combined in arithmetic operations following specific rules", "Automatic data type conversion only", "Parallel processing of array operations"],
+            correct: 1,
+            explanation: "Broadcasting allows NumPy to perform element-wise operations on arrays of different shapes by automatically expanding the smaller array. For example, adding a scalar to an array or adding a 1D array to each row of a 2D array."
+        },
+        {
+            q: "What does <code>np.array([1, 2, 3]) * 2</code> produce?",
+            options: ["<code>[1, 2, 3, 1, 2, 3]</code>", "<code>array([2, 4, 6])</code>", "<code>array([1, 2, 3, 2])</code>", "An error"],
+            correct: 1,
+            explanation: "NumPy performs element-wise multiplication. Each element is multiplied by 2, giving <code>array([2, 4, 6])</code>. This is different from Python lists, where <code>* 2</code> would repeat the list."
+        },
+        {
+            q: "Which NumPy function returns the sum of all elements along a given axis?",
+            options: ["<code>np.count()</code>", "<code>np.sum()</code>", "<code>np.add()</code>", "<code>np.total()</code>"],
+            correct: 1,
+            explanation: "<code>np.sum(arr)</code> returns the total sum of all elements. You can specify <code>axis=0</code> for column sums or <code>axis=1</code> for row sums in a 2D array."
+        },
+        {
+            q: "What does <code>df.groupby('category')['sales'].mean()</code> return?",
+            options: ["The overall mean of the 'sales' column", "The mean of 'sales' for each unique value in 'category'", "A DataFrame grouped by 'sales'", "The sum of 'sales' per category"],
+            correct: 1,
+            explanation: "<code>groupby('category')</code> splits the DataFrame by unique categories, and <code>['sales'].mean()</code> calculates the average sales within each group. The result is a Series indexed by category."
+        },
+        {
+            q: "What does the <code>.agg()</code> method allow you to do with groupby?",
+            options: ["Only compute the mean", "Apply multiple aggregation functions at once (e.g., mean, sum, count)", "Filter groups based on a condition", "Sort the groups alphabetically"],
+            correct: 1,
+            explanation: "<code>.agg()</code> lets you apply one or more aggregation functions to grouped data. For example, <code>df.groupby('city').agg({'sales': ['mean', 'sum', 'count']})</code> computes all three statistics at once."
+        },
+        {
+            q: "What does <code>pd.crosstab(df['gender'], df['purchased'])</code> produce?",
+            options: ["A scatter plot of gender vs purchased", "A frequency table showing counts for each combination of gender and purchased", "A merged DataFrame", "A correlation matrix"],
+            correct: 1,
+            explanation: "<code>pd.crosstab()</code> computes a cross-tabulation (contingency table) of two or more factors, showing the frequency of each combination."
+        },
+        {
+            q: "Why are NumPy operations generally faster than Python list operations?",
+            options: ["NumPy uses interpreted Python loops internally", "NumPy arrays are stored in contiguous memory and operations are implemented in C", "Python lists use less memory", "NumPy only works with integers"],
+            correct: 1,
+            explanation: "NumPy arrays store elements in contiguous blocks of memory with a fixed data type, and operations are executed in optimized compiled C code. Python lists store pointers to objects scattered in memory, requiring interpreted loops."
+        },
+        {
+            q: "What does <code>df.pivot_table(values='revenue', index='region', columns='quarter', aggfunc='sum')</code> create?",
+            options: ["A melted (long-format) DataFrame", "A table with regions as rows, quarters as columns, and summed revenue as values", "A bar chart of revenue by region", "A filtered DataFrame showing only summed rows"],
+            correct: 1,
+            explanation: "<code>pivot_table()</code> reshapes data into a spreadsheet-like format. Here, each row is a region, each column is a quarter, and the cell values are the sum of revenue for that region-quarter combination."
+        },
+        {
+            q: "Given <code>df.iloc[0:3, 1:4]</code>, how many rows and columns are selected?",
+            options: ["3 rows, 3 columns", "4 rows, 4 columns", "3 rows, 4 columns", "4 rows, 3 columns"],
+            correct: 0,
+            explanation: "<code>.iloc</code> uses exclusive end indexing. Rows 0, 1, 2 (3 rows) and columns at positions 1, 2, 3 (3 columns) are selected."
+        },
+        {
+            q: "What happens when you run <code>pd.concat([df1, df2], axis=1)</code>?",
+            options: ["DataFrames are stacked vertically", "DataFrames are joined side by side (column-wise)", "An inner merge is performed", "Only matching columns are kept"],
+            correct: 1,
+            explanation: "With <code>axis=1</code>, <code>pd.concat()</code> combines DataFrames horizontally, placing their columns next to each other. Rows are aligned by index."
+        }
+    ];
+
+    let userAnswers=new Array(questions.length).fill(-1),examSubmitted=false,timerInterval,timeLeft=20*60;
+    function init(){renderQuestions();renderNav();startTimer();}
+    function renderQuestions(){document.getElementById('questions-container').innerHTML=questions.map((q,i)=>`<div class="exam-question" id="q${i}"><div class="exam-q-header"><div class="exam-q-number">${i+1}</div><div class="exam-q-text">${q.q}</div></div>${q.options.map((opt,j)=>`<div class="exam-option" onclick="selectAnswer(${i},${j})" id="q${i}o${j}"><div class="exam-option-letter">${String.fromCharCode(65+j)}</div><div>${opt}</div></div>`).join('')}<div class="exam-explanation" id="exp${i}">${q.explanation}</div></div>`).join('');}
+    function renderNav(){document.getElementById('question-nav').innerHTML=questions.map((_,i)=>`<div class="exam-nav-btn" id="nav${i}" onclick="scrollToQ(${i})">${i+1}</div>`).join('');}
+    function selectAnswer(qi,oi){if(examSubmitted)return;userAnswers[qi]=oi;questions[qi].options.forEach((_,j)=>{document.getElementById(`q${qi}o${j}`).classList.toggle('selected',j===oi);});document.getElementById(`q${qi}`).classList.add('answered');document.getElementById(`nav${qi}`).classList.add('answered');updateProgress();}
+    function scrollToQ(i){document.getElementById(`q${i}`).scrollIntoView({behavior:'smooth',block:'center'});}
+    function updateProgress(){document.getElementById('answered-count').textContent=userAnswers.filter(a=>a!==-1).length;}
+    function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);submitExam();}},1000);}
+    function updateTimerDisplay(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('time-display').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;const t=document.getElementById('timer');t.classList.remove('warning','danger');if(timeLeft<=120)t.classList.add('danger');else if(timeLeft<=300)t.classList.add('warning');}
+    function submitExam(){if(examSubmitted)return;examSubmitted=true;clearInterval(timerInterval);let c=0,ic=0,sk=0;questions.forEach((q,i)=>{if(userAnswers[i]===-1)sk++;else if(userAnswers[i]===q.correct)c++;else ic++;});const pct=Math.round(c/questions.length*100);document.getElementById('score-display').textContent=pct+'%';document.getElementById('score-display').className='score-big '+(pct>=75?'pass':'fail');document.getElementById('correct-count').textContent=c;document.getElementById('incorrect-count').textContent=ic;document.getElementById('skipped-count').textContent=sk;document.getElementById('submit-section').style.display='none';document.getElementById('result-section').style.display='block';document.getElementById('result-section').scrollIntoView({behavior:'smooth'});document.querySelectorAll('.exam-option').forEach(el=>el.style.pointerEvents='none');}
+    function reviewExam(){questions.forEach((q,i)=>{const qEl=document.getElementById(`q${i}`),navEl=document.getElementById(`nav${i}`);if(userAnswers[i]===-1){qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-missed');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status skipped">Skipped</div>');}else if(userAnswers[i]===q.correct){qEl.classList.add('review-correct');navEl.classList.add('review-correct');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status correct"><i class="fa-solid fa-check"></i> Correct</div>');}else{qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${userAnswers[i]}`).classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status incorrect"><i class="fa-solid fa-xmark"></i> Incorrect</div>');}document.getElementById(`exp${i}`).classList.add('show');});document.getElementById('q0').scrollIntoView({behavior:'smooth'});}
+    init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2: Arrays - 1D, 2D, Copying, Passing - PL1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --footer:#080c14;--code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --text:#0f172a;--text2:#334155;--warning:#d97706;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --footer:#e2e8f0;--code:#1e293b;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}
+        body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}
+        body.light-mode .hero::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#1e3a5f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}
+        body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#2563eb}
+        body.light-mode .info-box h3{color:#0f172a}
+        body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .quiz-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .quiz-question{color:#0f172a}
+        body.light-mode .quiz-option{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .quiz-option:hover{border-color:#2563eb;color:#0f172a}
+        body.light-mode .quiz-option.correct{background:rgba(5,150,105,.12);border-color:#059669;color:#047857}
+        body.light-mode .quiz-option.incorrect{background:rgba(220,38,38,.1);border-color:#dc2626;color:#dc2626}
+        body.light-mode .trace-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .trace-box h4{color:#0f172a}
+        body.light-mode .trace-input{background:#fff;border-color:rgba(0,0,0,.12);color:#0f172a}
+        body.light-mode .bug-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}
+        body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#2563eb;border-left-color:#2563eb;background:rgba(37,99,235,.06)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}
+        body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .score-summary{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}
+        body.light-mode .dark-table td{color:#1e293b}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}
+        a:hover{color:#60a5fa}
+        ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu a{color:var(--text2);padding:12px 16px;border-radius:8px;font-size:.95rem;font-weight:500;display:block}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.15rem;color:var(--text2);margin-bottom:6px}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:20px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:0}
+        .info-box li{padding:3px 0;display:flex;align-items:flex-start;gap:8px}
+        .info-box li i{color:var(--success);margin-top:5px;font-size:.75rem;flex-shrink:0}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border)}
+        .dark-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .quiz-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .quiz-question{font-weight:600;color:var(--text);margin-bottom:14px;font-size:1rem}
+        .quiz-option{background:var(--surface);border:1px solid var(--border2);padding:12px 16px;margin:6px 0;border-radius:8px;cursor:pointer;transition:all .2s;color:var(--text2);font-size:.9rem}
+        .quiz-option:hover{border-color:var(--primary);color:var(--text)}
+        .quiz-option.correct{background:rgba(16,185,129,.12);border-color:var(--success);color:var(--success);cursor:default}
+        .quiz-option.incorrect{background:rgba(239,68,68,.1);border-color:#ef4444;color:#ef4444;cursor:default}
+        .quiz-explanation{display:none;margin-top:10px;padding:12px;background:rgba(59,130,246,.08);border-radius:8px;font-size:.88rem;color:var(--text2);border-left:3px solid var(--primary)}
+        .quiz-explanation.show{display:block}
+        .trace-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .trace-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .trace-box h4 i{color:var(--warning)}
+        .trace-input{background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;width:100%;margin:8px 0}
+        .trace-input:focus{outline:none;border-color:var(--primary)}
+        .check-btn{background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;margin-top:6px}
+        .check-btn:hover{background:#2563eb}
+        .trace-result{margin-top:8px;font-size:.88rem;padding:8px 12px;border-radius:6px;display:none}
+        .trace-result.correct{display:block;background:rgba(16,185,129,.12);color:var(--success)}
+        .trace-result.incorrect{display:block;background:rgba(239,68,68,.1);color:#ef4444}
+        .bug-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid #ef4444;border-radius:12px;padding:24px;margin:20px 0}
+        .bug-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .bug-box h4 i{color:#ef4444}
+        .score-summary{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin:24px 0;text-align:center}
+        .score-summary h4{font-size:1rem;font-weight:600;margin-bottom:8px}
+        .score-summary .score{font-size:2rem;font-weight:800;color:var(--primary)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:200px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.8rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(59,130,246,.05)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--success);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){
+            .hero h1{font-size:2rem}
+            .hero{padding:60px 20px 40px}
+            .section{padding:24px 16px}
+            .nav-links{display:none}
+            .hamburger{display:block}
+            .page-nav{flex-direction:column;gap:12px}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#basics">Basics</a>
+                <a href="#processing">Processing</a>
+                <a href="#copying">Copying</a>
+                <a href="#passing">Passing</a>
+                <a href="#twod">2D Arrays</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="#basics" onclick="this.parentElement.classList.remove('open')">Basics</a>
+        <a href="#processing" onclick="this.parentElement.classList.remove('open')">Processing</a>
+        <a href="#copying" onclick="this.parentElement.classList.remove('open')">Copying</a>
+        <a href="#passing" onclick="this.parentElement.classList.remove('open')">Passing</a>
+        <a href="#twod" onclick="this.parentElement.classList.remove('open')">2D Arrays</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Week 2: Arrays - 1D, 2D, Copying, Passing</h1>
+            <p class="hero-sub">Liang Chapter 7: Array Basics, Processing, Copying, Passing to Methods, and 2D Arrays</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- ============ SECTION 1: ARRAY BASICS ============ -->
+        <div class="section fade-up" id="basics">
+            <h2 class="section-title"><i class="fa-solid fa-list"></i> Array Basics</h2>
+            <p class="section-desc">An array is a data structure that stores a fixed-size sequential collection of elements of the same type. An array is used to store a collection of data, but it is often more useful to think of an array as a collection of variables of the same type. (Liang, Ch. 7)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-plus"></i> Declaring and Creating Arrays</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">To use an array in Java, you must first declare a variable to reference the array, then create the array using the <code>new</code> keyword. (Liang, Section 7.2)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">double</span>[] myList = <span class="kw">new</span> <span class="type">double</span>[<span class="num">10</span>];  <span class="cm">// declares and creates an array of 10 doubles</span></div>
+                <table class="dark-table">
+                    <tr><th>Syntax</th><th>Description</th></tr>
+                    <tr><td><code>dataType[] arrayName;</code></td><td>Declares an array variable (preferred style)</td></tr>
+                    <tr><td><code>dataType arrayName[];</code></td><td>Declares an array variable (C-style, valid but not preferred)</td></tr>
+                    <tr><td><code>arrayName = new dataType[size];</code></td><td>Creates the array with the given size</td></tr>
+                    <tr><td><code>dataType[] arrayName = new dataType[size];</code></td><td>Declaration and creation in one step</td></tr>
+                    <tr><td><code>dataType[] arrayName = {v1, v2, ...};</code></td><td>Declaration, creation, and initialization</td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-braces-curly"></i> Array Initializers</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Java provides a shorthand notation, known as the array initializer, which combines declaring, creating, and initializing in one statement. (Liang, Section 7.2.4)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] numbers = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>};
+<span class="type">String</span>[] names = {<span class="str">"Ali"</span>, <span class="str">"Sara"</span>, <span class="str">"Omar"</span>};</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrow-pointer"></i> Accessing Elements and Length</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Array elements are accessed through the index. Array indices are 0-based: the first element is at index 0, and the last is at index <code>arrayName.length - 1</code>. (Liang, Section 7.2.5)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] a = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>};
+System.out.println(a[<span class="num">0</span>]);      <span class="cm">// 10 (first element)</span>
+System.out.println(a[<span class="num">2</span>]);      <span class="cm">// 30 (last element)</span>
+System.out.println(a.length);  <span class="cm">// 3</span></div>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fa-solid fa-circle-info"></i> Default Values</h3>
+                <p>When an array is created using <code>new</code>, its elements are automatically initialized to default values:</p>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> <code>0</code> for <code>int</code>, <code>byte</code>, <code>short</code>, <code>long</code></li>
+                    <li><i class="fa-solid fa-check"></i> <code>0.0</code> for <code>float</code> and <code>double</code></li>
+                    <li><i class="fa-solid fa-check"></i> <code>false</code> for <code>boolean</code></li>
+                    <li><i class="fa-solid fa-check"></i> <code>null</code> for object types (e.g., <code>String</code>)</li>
+                    <li><i class="fa-solid fa-check"></i> <code>'\u0000'</code> for <code>char</code></li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: Read and Print Array (Liang, Listing 7.1 Style)</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">ReadArray</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        Scanner input = <span class="kw">new</span> Scanner(System.in);
+        <span class="type">int</span>[] numbers = <span class="kw">new</span> <span class="type">int</span>[<span class="num">5</span>];
+
+        System.out.println(<span class="str">"Enter 5 integers:"</span>);
+        <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < numbers.length; i++) {
+            numbers[i] = input.nextInt();
+        }
+
+        System.out.println(<span class="str">"The array contains:"</span>);
+        <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < numbers.length; i++) {
+            System.out.print(numbers[i] + <span class="str">" "</span>);
+        }
+    }
+}</div>
+            </div>
+
+            <!-- MCQ 1 -->
+            <div class="quiz-box" data-section="basics">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the index of the last element in an array of size 10?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">A) 10</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'basics')">B) 9</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">C) 1</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">D) -1</div>
+                <div class="quiz-explanation">Array indices are 0-based. For an array of size 10, valid indices are 0 through 9. The last element is at index 9. (Liang, Section 7.2.5)</div>
+            </div>
+
+            <!-- MCQ 2 -->
+            <div class="quiz-box" data-section="basics">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What is the default value of elements in <code>new boolean[5]</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">A) true</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'basics')">B) false</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">C) null</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">D) 0</div>
+                <div class="quiz-explanation">The default value for boolean array elements is false. (Liang, Section 7.2.3)</div>
+            </div>
+
+            <!-- Trace -->
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] x = {<span class="num">2</span>, <span class="num">4</span>, <span class="num">6</span>, <span class="num">8</span>};
+x[<span class="num">1</span>] = x[<span class="num">3</span>] + x[<span class="num">0</span>];
+System.out.println(x[<span class="num">1</span>] + <span class="str">" "</span> + x[<span class="num">3</span>]);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-basics1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-basics1','10 8')">Check Answer</button>
+                <div class="trace-result" id="trace-basics1-result"></div>
+            </div>
+
+            <!-- Bug -->
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] arr = <span class="kw">new</span> <span class="type">int</span>[<span class="num">5</span>];
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i <= <span class="num">5</span>; i++) {
+    arr[i] = i * <span class="num">2</span>;
+}</div>
+                <div class="quiz-box" style="margin-top:12px;background:transparent;border:none;padding:0" data-section="basics">
+                    <div class="quiz-question" style="font-size:.9rem;">What is the error?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'basics')">A) ArrayIndexOutOfBoundsException: index 5 is out of bounds (condition should be i < 5)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">B) Missing semicolon</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'basics')">C) Cannot multiply index by 2</div>
+                    <div class="quiz-explanation">The array has indices 0-4, but the loop runs up to i=5 (<code>i <= 5</code>). Accessing arr[5] throws ArrayIndexOutOfBoundsException. Fix: use <code>i < 5</code> or <code>i < arr.length</code>. (Liang, Section 7.2.6)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-basics">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="basics-correct">0</span> / <span id="basics-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 2: PROCESSING ARRAYS ============ -->
+        <div class="section fade-up" id="processing">
+            <h2 class="section-title"><i class="fa-solid fa-gears"></i> Processing Arrays</h2>
+            <p class="section-desc">Once an array is created, you can process its elements using loops. Common operations include computing the sum, finding the maximum/minimum, random shuffling, and more. (Liang, Section 7.3)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-calculator"></i> Common Array Operations</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Sum all elements</span>
+<span class="type">int</span>[] list = {<span class="num">4</span>, <span class="num">2</span>, <span class="num">8</span>, <span class="num">1</span>, <span class="num">5</span>};
+<span class="type">int</span> sum = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < list.length; i++) {
+    sum += list[i];
+}
+System.out.println(<span class="str">"Sum: "</span> + sum);  <span class="cm">// Sum: 20</span></div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Find the maximum element</span>
+<span class="type">int</span> max = list[<span class="num">0</span>];
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">1</span>; i < list.length; i++) {
+    <span class="kw">if</span> (list[i] > max) {
+        max = list[i];
+    }
+}
+System.out.println(<span class="str">"Max: "</span> + max);  <span class="cm">// Max: 8</span></div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Random shuffling</span>
+<span class="kw">for</span> (<span class="type">int</span> i = list.length - <span class="num">1</span>; i > <span class="num">0</span>; i--) {
+    <span class="type">int</span> j = (<span class="type">int</span>)(Math.random() * (i + <span class="num">1</span>));
+    <span class="type">int</span> temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-rotate"></i> Enhanced for Loop (for-each)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Java provides an enhanced for loop (for-each) for iterating through array elements without using an index variable. (Liang, Section 7.3.7)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] numbers = {<span class="num">3</span>, <span class="num">6</span>, <span class="num">9</span>, <span class="num">12</span>};
+<span class="kw">for</span> (<span class="type">int</span> e : numbers) {
+    System.out.print(e + <span class="str">" "</span>);
+}
+<span class="cm">// Output: 3 6 9 12</span></div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> When to Use for-each</h3>
+                    <p>Use the enhanced for loop when you need to read all elements sequentially. Use a regular for loop when you need the index (e.g., to modify elements or access specific positions).</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: Find the Largest Element (Liang, Listing 7.3 Style)</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">FindLargest</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">double</span>[] scores = {<span class="num">67.5</span>, <span class="num">89.0</span>, <span class="num">95.3</span>, <span class="num">72.1</span>, <span class="num">88.6</span>};
+        <span class="type">double</span> max = scores[<span class="num">0</span>];
+        <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">1</span>; i < scores.length; i++) {
+            <span class="kw">if</span> (scores[i] > max)
+                max = scores[i];
+        }
+        System.out.println(<span class="str">"The largest score is: "</span> + max);
+        <span class="cm">// Output: The largest score is: 95.3</span>
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: Computing Average</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] values = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>};
+<span class="type">int</span> total = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> v : values) {
+    total += v;
+}
+<span class="type">double</span> average = (<span class="type">double</span>) total / values.length;
+System.out.println(<span class="str">"Average: "</span> + average);  <span class="cm">// Average: 30.0</span></div>
+            </div>
+
+            <!-- MCQ 1 -->
+            <div class="quiz-box" data-section="processing">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: Which loop is best for reading all array elements without needing the index?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'processing')">A) while loop</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'processing')">B) do-while loop</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'processing')">C) Enhanced for loop (for-each)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'processing')">D) Nested for loop</div>
+                <div class="quiz-explanation">The enhanced for loop (for-each) is designed for sequentially iterating through all elements without needing an index variable. (Liang, Section 7.3.7)</div>
+            </div>
+
+            <!-- MCQ 2 -->
+            <div class="quiz-box" data-section="processing">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: When finding the max in an array, why should <code>max</code> be initialized to <code>list[0]</code> instead of <code>0</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'processing')">A) It is faster</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'processing')">B) The array might contain only negative numbers</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'processing')">C) It prevents ArrayIndexOutOfBoundsException</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'processing')">D) Java requires it</div>
+                <div class="quiz-explanation">If all elements are negative and max starts at 0, the result would be 0, which is incorrect. Initializing to list[0] ensures correctness for any values. (Liang, Section 7.3.2)</div>
+            </div>
+
+            <!-- Trace -->
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] a = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>};
+<span class="type">int</span> result = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> e : a) {
+    <span class="kw">if</span> (e % <span class="num">2</span> != <span class="num">0</span>)
+        result += e;
+}
+System.out.println(result);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-proc1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-proc1','9')">Check Answer</button>
+                <div class="trace-result" id="trace-proc1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-processing">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="processing-correct">0</span> / <span id="processing-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 3: COPYING ARRAYS ============ -->
+        <div class="section fade-up" id="copying">
+            <h2 class="section-title"><i class="fa-solid fa-copy"></i> Copying Arrays</h2>
+            <p class="section-desc">Copying arrays requires care because arrays are objects in Java. Using the assignment operator copies only the reference, not the actual array contents. (Liang, Section 7.4)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Shallow Copy Pitfall</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Using the assignment operator <code>=</code> on arrays does NOT copy the array contents. Instead, both variables point to the same array in memory. (Liang, Section 7.4)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] list1 = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>};
+<span class="type">int</span>[] list2 = list1;  <span class="cm">// list2 now references the SAME array as list1</span>
+list2[<span class="num">0</span>] = <span class="num">99</span>;
+System.out.println(list1[<span class="num">0</span>]);  <span class="cm">// 99 (list1 is also affected!)</span></div>
+            </div>
+
+            <div class="info-box" style="border-left-color:#ef4444;">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Reference vs. Value Copy</h3>
+                <p><strong>Reference copy</strong> (<code>list2 = list1</code>): Both variables point to the same array object. Changing one affects the other.</p>
+                <p style="margin-top:8px;"><strong>Value copy</strong> (using a loop, <code>System.arraycopy</code>, or <code>Arrays.copyOf</code>): Creates a new, independent array with the same values. Changes to one do not affect the other.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-rotate"></i> Copying with a Loop</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] source = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>};
+<span class="type">int</span>[] dest = <span class="kw">new</span> <span class="type">int</span>[source.length];
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < source.length; i++) {
+    dest[i] = source[i];
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-bolt"></i> System.arraycopy</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">The <code>System.arraycopy</code> method provides a fast, native way to copy array elements. (Liang, Section 7.4)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// System.arraycopy(src, srcPos, dest, destPos, length)</span>
+<span class="type">int</span>[] src = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>};
+<span class="type">int</span>[] dst = <span class="kw">new</span> <span class="type">int</span>[<span class="num">5</span>];
+System.arraycopy(src, <span class="num">0</span>, dst, <span class="num">0</span>, src.length);</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-clone"></i> Arrays.copyOf</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">The <code>java.util.Arrays.copyOf</code> method creates a new array by copying elements from an existing array. (Liang, Section 7.4)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> java.util.Arrays;
+
+<span class="type">int</span>[] original = {<span class="num">5</span>, <span class="num">10</span>, <span class="num">15</span>};
+<span class="type">int</span>[] copy = Arrays.copyOf(original, original.length);
+<span class="cm">// copy is {5, 10, 15} - independent of original</span>
+
+<span class="type">int</span>[] bigger = Arrays.copyOf(original, <span class="num">5</span>);
+<span class="cm">// bigger is {5, 10, 15, 0, 0} - padded with default values</span></div>
+            </div>
+
+            <!-- MCQ 1 -->
+            <div class="quiz-box" data-section="copying">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: After <code>int[] b = a;</code>, what happens when you change <code>b[0]</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'copying')">A) a[0] also changes because both reference the same array</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">B) Only b[0] changes</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">C) Compilation error</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">D) Runtime error</div>
+                <div class="quiz-explanation">The assignment <code>b = a</code> copies the reference, not the array. Both a and b point to the same array object in memory. (Liang, Section 7.4)</div>
+            </div>
+
+            <!-- MCQ 2 -->
+            <div class="quiz-box" data-section="copying">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What does <code>Arrays.copyOf(arr, arr.length + 2)</code> do?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">A) Throws an exception</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">B) Copies only half the array</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'copying')">C) Creates a new array with all original elements plus 2 extra default-valued elements</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">D) Modifies the original array</div>
+                <div class="quiz-explanation">Arrays.copyOf creates a new array of the specified length. If the new length exceeds the original, extra elements are filled with default values (0 for int). (Liang, Section 7.4)</div>
+            </div>
+
+            <!-- Trace -->
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] a = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>};
+<span class="type">int</span>[] b = <span class="kw">new</span> <span class="type">int</span>[a.length];
+System.arraycopy(a, <span class="num">0</span>, b, <span class="num">0</span>, a.length);
+b[<span class="num">0</span>] = <span class="num">99</span>;
+System.out.println(a[<span class="num">0</span>] + <span class="str">" "</span> + b[<span class="num">0</span>]);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-copy1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-copy1','1 99')">Check Answer</button>
+                <div class="trace-result" id="trace-copy1-result"></div>
+            </div>
+
+            <!-- Bug -->
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[] original = {<span class="num">5</span>, <span class="num">10</span>, <span class="num">15</span>};
+<span class="type">int</span>[] backup = original;
+backup[<span class="num">1</span>] = <span class="num">999</span>;
+System.out.println(<span class="str">"Original[1] = "</span> + original[<span class="num">1</span>]);
+<span class="cm">// Programmer expects: Original[1] = 10</span></div>
+                <div class="quiz-box" style="margin-top:12px;background:transparent;border:none;padding:0" data-section="copying">
+                    <div class="quiz-question" style="font-size:.9rem;">Why does it print 999 instead of 10?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">A) The println statement is wrong</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'copying')">B) backup = original copies the reference, not the array; both point to the same data</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'copying')">C) Arrays cannot store the value 999</div>
+                    <div class="quiz-explanation">The assignment <code>backup = original</code> makes both variables reference the same array. To create an independent copy, use a loop, System.arraycopy, or Arrays.copyOf. (Liang, Section 7.4)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-copying">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="copying-correct">0</span> / <span id="copying-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 4: PASSING ARRAYS TO METHODS ============ -->
+        <div class="section fade-up" id="passing">
+            <h2 class="section-title"><i class="fa-solid fa-right-to-bracket"></i> Passing Arrays to Methods</h2>
+            <p class="section-desc">When an array is passed to a method, the reference of the array is passed. This means the method can modify the contents of the original array. (Liang, Section 7.5)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-share"></i> Pass by Reference (of the Reference)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Java passes the reference value to the method. The method receives a copy of the reference, which points to the same array object. Therefore, changes to array elements inside the method affect the original array. (Liang, Section 7.5)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static void</span> <span class="fn">fill</span>(<span class="type">int</span>[] arr, <span class="type">int</span> value) {
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < arr.length; i++) {
+        arr[i] = value;
+    }
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+    <span class="type">int</span>[] nums = <span class="kw">new</span> <span class="type">int</span>[<span class="num">5</span>];
+    fill(nums, <span class="num">7</span>);
+    <span class="cm">// nums is now {7, 7, 7, 7, 7}</span>
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: printArray Method</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static void</span> <span class="fn">printArray</span>(<span class="type">int</span>[] arr) {
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < arr.length; i++) {
+        System.out.print(arr[i] + <span class="str">" "</span>);
+    }
+    System.out.println();
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: reverse Method</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static void</span> <span class="fn">reverse</span>(<span class="type">int</span>[] arr) {
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>, j = arr.length - <span class="num">1</span>; i < j; i++, j--) {
+        <span class="type">int</span> temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+    <span class="type">int</span>[] data = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>};
+    reverse(data);
+    <span class="cm">// data is now {5, 4, 3, 2, 1}</span>
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrow-turn-down"></i> Returning Arrays from Methods</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">A method can return an array. The return type is declared as <code>dataType[]</code>. (Liang, Section 7.5)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static</span> <span class="type">int</span>[] <span class="fn">createArray</span>(<span class="type">int</span> size) {
+    <span class="type">int</span>[] arr = <span class="kw">new</span> <span class="type">int</span>[size];
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < size; i++) {
+        arr[i] = i * <span class="num">2</span>;
+    }
+    <span class="kw">return</span> arr;
+}
+
+<span class="type">int</span>[] result = createArray(<span class="num">4</span>);  <span class="cm">// result is {0, 2, 4, 6}</span></div>
+            </div>
+
+            <!-- MCQ 1 -->
+            <div class="quiz-box" data-section="passing">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: If a method modifies an array element, does the change persist after the method returns?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'passing')">A) Yes, because arrays are passed by reference</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">B) No, changes are local to the method</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">C) Only if the method returns the array</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">D) Only for static methods</div>
+                <div class="quiz-explanation">When an array is passed to a method, the method receives the reference to the original array. Any modifications to the array elements inside the method affect the original. (Liang, Section 7.5)</div>
+            </div>
+
+            <!-- MCQ 2 -->
+            <div class="quiz-box" data-section="passing">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What is the return type of a method that returns an <code>int</code> array?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">A) int</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'passing')">B) int[]</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">C) Array</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">D) void</div>
+                <div class="quiz-explanation">To return an array of integers, the method's return type must be declared as <code>int[]</code>. (Liang, Section 7.5)</div>
+            </div>
+
+            <!-- Trace -->
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static void</span> <span class="fn">modify</span>(<span class="type">int</span>[] arr) {
+    arr[<span class="num">0</span>] = <span class="num">100</span>;
+    arr = <span class="kw">new</span> <span class="type">int</span>[]{<span class="num">200</span>, <span class="num">300</span>};
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+    <span class="type">int</span>[] data = {<span class="num">1</span>, <span class="num">2</span>};
+    modify(data);
+    System.out.println(data[<span class="num">0</span>] + <span class="str">" "</span> + data[<span class="num">1</span>]);
+}</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-pass1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-pass1','100 2')">Check Answer</button>
+                <div class="trace-result" id="trace-pass1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-passing">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="passing-correct">0</span> / <span id="passing-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 5: TWO-DIMENSIONAL ARRAYS ============ -->
+        <div class="section fade-up" id="twod">
+            <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> Two-Dimensional Arrays</h2>
+            <p class="section-desc">A two-dimensional array is an array of arrays. It can be used to represent a matrix or a table of values. (Liang, Section 7.8)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-plus"></i> Declaring and Creating 2D Arrays</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Declaration and creation</span>
+<span class="type">int</span>[][] matrix = <span class="kw">new</span> <span class="type">int</span>[<span class="num">3</span>][<span class="num">4</span>];  <span class="cm">// 3 rows, 4 columns</span>
+
+<span class="cm">// Using an initializer</span>
+<span class="type">int</span>[][] grid = {
+    {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>},
+    {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>},
+    {<span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>}
+};</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrow-pointer"></i> Accessing Elements</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Elements are accessed using two indices: <code>matrix[row][col]</code>. The number of rows is <code>matrix.length</code> and the number of columns in row <code>i</code> is <code>matrix[i].length</code>. (Liang, Section 7.8)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[][] m = {{<span class="num">1</span>, <span class="num">2</span>}, {<span class="num">3</span>, <span class="num">4</span>}, {<span class="num">5</span>, <span class="num">6</span>}};
+System.out.println(m[<span class="num">0</span>][<span class="num">1</span>]);   <span class="cm">// 2 (row 0, col 1)</span>
+System.out.println(m[<span class="num">2</span>][<span class="num">0</span>]);   <span class="cm">// 5 (row 2, col 0)</span>
+System.out.println(m.length);   <span class="cm">// 3 (number of rows)</span>
+System.out.println(m[<span class="num">0</span>].length); <span class="cm">// 2 (columns in row 0)</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-rotate"></i> Processing with Nested Loops</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Print all elements of a 2D array</span>
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < matrix.length; i++) {
+    <span class="kw">for</span> (<span class="type">int</span> j = <span class="num">0</span>; j < matrix[i].length; j++) {
+        System.out.print(matrix[i][j] + <span class="str">" "</span>);
+    }
+    System.out.println();
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: Sum All Elements</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[][] data = {{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}, {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}};
+<span class="type">int</span> total = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < data.length; i++) {
+    <span class="kw">for</span> (<span class="type">int</span> j = <span class="num">0</span>; j < data[i].length; j++) {
+        total += data[i][j];
+    }
+}
+System.out.println(<span class="str">"Total: "</span> + total);  <span class="cm">// Total: 21</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-stairs"></i> Ragged Arrays</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">In Java, each row of a 2D array can have a different length. Such arrays are called ragged arrays. (Liang, Section 7.8.3)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[][] ragged = <span class="kw">new</span> <span class="type">int</span>[<span class="num">3</span>][];
+ragged[<span class="num">0</span>] = <span class="kw">new</span> <span class="type">int</span>[<span class="num">2</span>];   <span class="cm">// row 0 has 2 columns</span>
+ragged[<span class="num">1</span>] = <span class="kw">new</span> <span class="type">int</span>[<span class="num">4</span>];   <span class="cm">// row 1 has 4 columns</span>
+ragged[<span class="num">2</span>] = <span class="kw">new</span> <span class="type">int</span>[<span class="num">1</span>];   <span class="cm">// row 2 has 1 column</span>
+
+<span class="cm">// Or with initializer:</span>
+<span class="type">int</span>[][] triangle = {
+    {<span class="num">1</span>},
+    {<span class="num">2</span>, <span class="num">3</span>},
+    {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}
+};</div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Why Ragged Arrays Work</h3>
+                    <p>A 2D array in Java is actually an array of arrays. Each row is an independent array object, so rows can have different lengths. Use <code>matrix[i].length</code> (not a fixed column count) when iterating.</p>
+                </div>
+            </div>
+
+            <!-- MCQ 1 -->
+            <div class="quiz-box" data-section="twod">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What does <code>matrix.length</code> return for a 2D array?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'twod')">A) The number of rows</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">B) The number of columns</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">C) The total number of elements</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">D) The number of rows times columns</div>
+                <div class="quiz-explanation"><code>matrix.length</code> returns the number of rows. To get the number of columns in row i, use <code>matrix[i].length</code>. (Liang, Section 7.8)</div>
+            </div>
+
+            <!-- MCQ 2 -->
+            <div class="quiz-box" data-section="twod">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: Which declaration creates a ragged array?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">A) <code>int[][] a = new int[3][3];</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'twod')">B) <code>int[][] a = new int[3][];</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">C) <code>int[] a = new int[3];</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">D) <code>int[][] a = new int[][3];</code></div>
+                <div class="quiz-explanation"><code>new int[3][]</code> creates an array of 3 rows where each row can be assigned a different-length array. Option D is invalid syntax. (Liang, Section 7.8.3)</div>
+            </div>
+
+            <!-- Trace -->
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[][] m = {{<span class="num">1</span>, <span class="num">2</span>}, {<span class="num">3</span>, <span class="num">4</span>}, {<span class="num">5</span>, <span class="num">6</span>}};
+<span class="type">int</span> sum = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < m.length; i++) {
+    sum += m[i][<span class="num">0</span>];
+}
+System.out.println(sum);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-twod1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-twod1','9')">Check Answer</button>
+                <div class="trace-result" id="trace-twod1-result"></div>
+            </div>
+
+            <!-- Bug -->
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span>[][] matrix = <span class="kw">new</span> <span class="type">int</span>[<span class="num">3</span>][<span class="num">4</span>];
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < matrix.length; i++) {
+    <span class="kw">for</span> (<span class="type">int</span> j = <span class="num">0</span>; j < matrix.length; j++) {
+        matrix[i][j] = i + j;
+    }
+}</div>
+                <div class="quiz-box" style="margin-top:12px;background:transparent;border:none;padding:0" data-section="twod">
+                    <div class="quiz-question" style="font-size:.9rem;">What is the bug?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'twod')">A) Inner loop uses matrix.length (rows=3) instead of matrix[i].length (cols=4), so column 3 is never filled</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">B) i + j is wrong</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'twod')">C) Cannot use new int[3][4]</div>
+                    <div class="quiz-explanation">The inner loop condition should be <code>j < matrix[i].length</code> (which is 4), not <code>j < matrix.length</code> (which is 3). This means the last column (index 3) is never accessed. (Liang, Section 7.8)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-twod">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="twod-correct">0</span> / <span id="twod-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="week1.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Week 1: Java Basics</a>
+            <a href="week3.html" class="nav-btn next">Week 3 <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-bottom">601112 - Programming Language 1 (Java) - University of Petra - Dr. Abdulkarim Albanna</div>
+    </footer>
+
+    <div class="toc" id="toc">
+        <h4>Week 2</h4>
+        <a class="toc-item" href="#basics">Basics</a>
+        <a class="toc-item" href="#processing">Processing</a>
+        <a class="toc-item" href="#copying">Copying</a>
+        <a class="toc-item" href="#passing">Passing</a>
+        <a class="toc-item" href="#twod">2D Arrays</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Theme
+        function toggleTheme(){
+            document.body.classList.toggle('light-mode');
+            const isLight=document.body.classList.contains('light-mode');
+            localStorage.setItem('pl1-theme',isLight?'light':'dark');
+            document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+        }
+        (function(){const s=localStorage.getItem('pl1-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+
+        // Copy
+        function copyCode(btn){
+            const block=btn.parentElement;
+            const text=block.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();
+            navigator.clipboard.writeText(text).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});
+        }
+
+        // Scores
+        const scores={basics:{c:0,t:0},processing:{c:0,t:0},copying:{c:0,t:0},passing:{c:0,t:0},twod:{c:0,t:0}};
+        function updateScore(sec){
+            const ce=document.getElementById(sec+'-correct');
+            const te=document.getElementById(sec+'-total');
+            if(ce)ce.textContent=scores[sec].c;
+            if(te)te.textContent=scores[sec].t;
+        }
+
+        // Quiz
+        function checkQuiz(el,correct,section){
+            const box=el.closest('.quiz-box');
+            if(box.dataset.answered) return;
+            box.dataset.answered='true';
+            const opts=box.querySelectorAll('.quiz-option');
+            opts.forEach(o=>o.style.pointerEvents='none');
+            scores[section].t++;
+            if(correct){
+                el.classList.add('correct');
+                el.innerHTML+=' <i class="fa-solid fa-circle-check"></i>';
+                scores[section].c++;
+            }else{
+                el.classList.add('incorrect');
+                el.innerHTML+=' <i class="fa-solid fa-circle-xmark"></i>';
+                opts.forEach(o=>{if(!o.classList.contains('incorrect')&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');});
+            }
+            const exp=box.querySelector('.quiz-explanation');
+            if(exp)exp.classList.add('show');
+            updateScore(section);
+        }
+
+        // Trace
+        function checkTrace(id,answer){
+            const input=document.getElementById(id);
+            const result=document.getElementById(id+'-result');
+            const val=input.value.trim();
+            if(val===answer){
+                result.className='trace-result correct';
+                result.innerHTML='<i class="fa-solid fa-circle-check"></i> Correct! The output is: '+answer;
+            }else{
+                result.className='trace-result incorrect';
+                result.innerHTML='<i class="fa-solid fa-circle-xmark"></i> Incorrect. The correct output is: '+answer;
+            }
+        }
+
+        // Scroll & TOC
+        const scrollTop=document.getElementById('scrollTop');
+        const toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{
+            const y=window.scrollY;
+            scrollTop.classList.toggle('visible',y>500);
+            toc.classList.toggle('visible',y>500);
+        });
+        const secs=['basics','processing','copying','passing','twod'];
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{
+            const y=window.scrollY+150;
+            secs.forEach((s,i)=>{
+                const el=document.getElementById(s);
+                if(!el)return;
+                tocItems[i].classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);
+            });
+        });
+
+        // Fade-up
+        const obs=new IntersectionObserver((entries)=>{
+            entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+        },{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

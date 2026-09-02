@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Search &amp; Optimization (Simulated Annealing, Genetic Algorithms, Tabu Search) - AI Course</title>
+    <meta name="description" content="Local search and optimization: simulated annealing, local beam search, genetic algorithms, and tabu search. Worked examples on a Diophantine equation and a constrained minimum spanning tree. Based on the course slides &amp; Russell &amp; Norvig, AIMA Chapter 4.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#8b5cf6;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#7c3aed;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#5b21b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#7c3aed}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(139,92,246,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#7c3aed}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#a78bfa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#7c3aed;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(139,92,246,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> AI Course</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#annealing">Annealing</a>
+                <a href="#genetic">Genetic</a>
+                <a href="#tabu">Tabu</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#annealing" onclick="this.parentElement.classList.remove('open')">Annealing</a>
+        <a href="#genetic" onclick="this.parentElement.classList.remove('open')">Genetic</a>
+        <a href="#tabu" onclick="this.parentElement.classList.remove('open')">Tabu</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Local Search &amp; Optimization</h1>
+            <p class="hero-sub">Simulated annealing, local beam search, genetic algorithms and tabu search &mdash; how to keep improving a single solution when the state space is far too large to search in full.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 7 &middot; Based on the course slides &amp; Russell &amp; Norvig, AIMA Chapter 4</p>
+            <span class="diff-badge" style="background:#ef4444">Advanced</span>
+            <span class="cat-badge"><i class="fa-solid fa-mountain-sun" style="margin-right:6px"></i>Optimization</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~60 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Understand <strong>local search</strong> &mdash; optimising a single current state instead of building a path from a root</li>
+                    <li>Escape local maxima with <strong>simulated annealing</strong> and its acceptance probability <code>e<sup>&Delta;E/T</sup></code></li>
+                    <li>Keep several candidates alive at once with <strong>local beam search</strong></li>
+                    <li>Evolve a population of solutions with a <strong>genetic algorithm</strong> &mdash; selection, crossover and mutation</li>
+                    <li>Escape cycling with <strong>tabu search</strong> and apply it to a <strong>constrained minimum spanning tree</strong></li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 6 (Informed Search &amp; A*), where <em>hill climbing</em> and heuristic evaluation were introduced. Local search is what you reach for when hill climbing alone keeps getting stuck.</p>
+        </div>
+
+        <!-- Intro: local search -->
+        <div class="section fade-up" id="intro">
+            <h2 class="section-title"><i class="fa-solid fa-mountain-sun"></i> A Different Kind of Search</h2>
+            <p class="section-desc">Every search so far &mdash; BFS, DFS, A*, minimax &mdash; built a <strong>path</strong> from a start state to a goal, and the path itself was the answer. But for a huge class of problems the path is irrelevant: we only care about the <strong>final configuration</strong>. Where should eight queens sit so none attack? Which layout minimises wire length on a chip? What assignment of variables satisfies an equation? These are <strong>optimisation problems</strong>, and for them we use <strong>local search</strong>.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-location-crosshairs"></i> The idea of local search</h3>
+                <ul>
+                    <li>Keep <strong>one current state</strong> (not a frontier of paths) and try to <strong>improve it</strong> by moving to a neighbour.</li>
+                    <li>Use almost no memory &mdash; you forget how you got here &mdash; and can run on enormous or even infinite state spaces.</li>
+                    <li>Judge a state by an <strong>objective function</strong> (also called the <strong>fitness</strong> or evaluation function). We picture it as a <strong>landscape</strong>: we want to climb to the highest peak (a <em>global maximum</em>) &mdash; or, equivalently, descend to the lowest valley (a <em>global minimum</em>).</li>
+                </ul>
+            </div>
+            <p class="section-desc">The trouble with plain <strong>hill climbing</strong> &mdash; always step to the best neighbour, never step down &mdash; is that it halts at the first peak it reaches, even if that peak is a mere <strong>local maximum</strong>. The four methods in this module are all ways to <em>break out</em> of local optima and keep searching toward the global one.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/l_annealing_landscape.png" alt="A one-dimensional objective landscape with a local peak, a valley, and a taller global maximum" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The objective landscape. Plain hill climbing from the <em>current state</em> would climb the small peak and stop; to reach the <strong>global max</strong> it must first accept a <strong>bad (downhill) move</strong> through the valley. <em>(From the course notes.)</em></figcaption>
+            </figure>
+        </div>
+
+        <!-- Simulated Annealing -->
+        <div class="section fade-up" id="annealing">
+            <h2 class="section-title"><i class="fa-solid fa-temperature-half"></i> Simulated Annealing</h2>
+            <p class="section-desc">A hill-climbing algorithm that <em>never</em> moves downhill is <strong>incomplete</strong> &mdash; it can get stuck on a local maximum. A purely <strong>random walk</strong> &mdash; move to a random neighbour regardless of value &mdash; is <strong>complete but hopelessly inefficient</strong>. <strong>Simulated annealing</strong> combines the two: mostly climb, but occasionally allow a "bad" move, and <em>gradually reduce</em> how often and how badly you are willing to go downhill.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-fire"></i> Why "annealing"?</h3>
+                <p><strong>Annealing</strong> is the metallurgical process of heating a metal and cooling it slowly so its atoms settle into a strong, low-energy crystalline structure. Simulated annealing borrows the metaphor: a <strong>temperature</strong> parameter <code>T</code> starts <strong>high</strong> and is slowly lowered. Each time we cool, the probability of taking a bad move gets <strong>lower</strong>. Early on the search wanders freely (like a random walk); as it cools it behaves more and more like greedy hill climbing.</p>
+            </div>
+            <p class="section-desc">At each step, instead of picking the <em>best</em> neighbour, we pick a <strong>random</strong> neighbour and look at the change in objective value <code>&Delta;E = next.VALUE &minus; current.VALUE</code>:</p>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-dice"></i> The acceptance rule</h3>
+                <ul>
+                    <li>If <code>&Delta;E &gt; 0</code> (the move <strong>improves</strong> the state) &mdash; <strong>always accept</strong> it. We are on the right path.</li>
+                    <li>If <code>&Delta;E &le; 0</code> (a <strong>downhill</strong> move) &mdash; accept it only <strong>with probability <code>e<sup>&Delta;E/T</sup></code></strong>, a number less than 1.</li>
+                </ul>
+                <p style="margin-top:8px">That probability decreases <strong>exponentially with the "badness"</strong> of the move (the bigger the drop <code>&minus;&Delta;E</code>, the less likely it is accepted) and also decreases <strong>as <code>T</code> falls</strong> (bad moves are common when hot, rare when cool).</p>
+            </div>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">function</span> <span class="fn">SIMULATED-ANNEALING</span>(problem, schedule) <span class="kw">returns</span> a solution state
+    <span class="cm">// schedule maps time -> temperature</span>
+    current := <span class="fn">MAKE-NODE</span>(problem.INITIAL-STATE)
+    <span class="kw">for</span> t := 1 <span class="kw">to</span> &infin; <span class="kw">do</span>
+        T := <span class="fn">schedule</span>(t)
+        <span class="kw">if</span> T = 0 <span class="kw">then return</span> current           <span class="cm">// frozen: stop and return</span>
+        next := a randomly selected successor of current
+        &Delta;E := next.VALUE &minus; current.VALUE
+        <span class="kw">if</span> &Delta;E &gt; 0 <span class="kw">then</span> current := next          <span class="cm">// uphill: always take it</span>
+        <span class="kw">else</span> current := next <span class="kw">only with probability</span> e<sup>&Delta;E/T</sup>  <span class="cm">// downhill: maybe</span></div>
+            <p class="section-desc">Read the schedule as a <strong>cooling table</strong>: it hands out a temperature for each time step, starting high and shrinking toward zero.</p>
+            <table class="dark-table">
+                <thead><tr><th>Time</th><th>Temperature <code>T</code></th><th>Behaviour</th></tr></thead>
+                <tbody>
+                    <tr><td><code>t&#8321;</code></td><td>0.95</td><td>Hot &mdash; downhill moves accepted readily (near random walk)</td></tr>
+                    <tr><td><code>t&#8322;</code></td><td>0.90</td><td>Cooling &mdash; still fairly exploratory</td></tr>
+                    <tr><td><code>t&#8323;</code></td><td>0.85</td><td>Bad moves becoming less likely</td></tr>
+                    <tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr>
+                    <tr><td><code>t&#8345;</code></td><td>0</td><td><strong>Frozen</strong> &mdash; no more changes possible; return the current state</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Cool slowly, or miss the peak</h3>
+                <p>Once <code>T</code> reaches 0 the algorithm can no longer change &mdash; whatever state it is on is final, so if it froze on a local optimum it will <strong>not</strong> reach the goal. The theoretical guarantee is precise: <strong>if the schedule lowers <code>T</code> slowly enough, simulated annealing finds a global optimum with probability approaching 1.</strong> Cool too fast and you gamble. Simulated annealing is widely used in real optimisation such as <strong>VLSI chip layout</strong> and <strong>airline scheduling</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Local Beam Search -->
+        <div class="section fade-up" id="beam">
+            <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> Local Beam Search</h2>
+            <p class="section-desc">Simulated annealing keeps a single state. <strong>Local beam search</strong> keeps <strong>several</strong>. Instead of one current state it holds the <strong>k most promising nodes</strong> at once &mdash; the number <code>k</code> (also written <code>B</code>) is the <strong>beam width</strong>. At each level it expands all <code>k</code> nodes, gathers all their successors, and keeps only the best <code>k</code> of those to carry to the next level. The rest are discarded.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-flashlight"></i> Definition</h3>
+                <p>A heuristic search algorithm that examines a graph by <strong>extending the most promising nodes within a limited set</strong>. More than one node can be kept at each level &mdash; exactly <code>k</code> of them (the beam width). It is a middle ground between greedy best-first (which keeps everything on a frontier) and hill climbing (which keeps just one state).</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/l_beam_fan.png" alt="A node fanning out to several successors, with only some kept in the beam" loading="lazy" style="max-width:78%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">A node expands to many successors, but only the best few are kept in the beam. Widening the beam (a larger <code>k</code>) explores more and improves the result at the cost of memory. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <table class="dark-table">
+                <thead><tr><th>Property</th><th>Local beam search</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Complete?</strong></td><td>No &mdash; all <code>k</code> beams can converge and miss the goal.</td></tr>
+                    <tr><td><strong>Optimal?</strong></td><td>No &mdash; a better solution may be pruned away early.</td></tr>
+                    <tr><td><strong>Time</strong></td><td><code>O(B &middot; m)</code></td></tr>
+                    <tr><td><strong>Space</strong></td><td><code>O(B &middot; m)</code></td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc" style="font-size:.95rem"><em>Here <code>B</code> is the beam width and <code>m</code> is the maximum path length.</em></p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-route"></i> Worked example (beam width <code>k = 2</code>)</h3>
+                <p class="section-desc">Each node carries a heuristic estimate of its distance to the goal &mdash; <strong>smaller is better</strong>, and the goal node <strong>Z</strong> has value 0. We keep only the <strong>2 most promising</strong> (lowest-value) nodes at each step. The numbers next to nodes are their heuristic values.</p>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_beam_example.png" alt="A search tree rooted at C, with node heuristic values, and the solution path C to O to I to Z highlighted" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Local beam search with <code>k = 2</code> toward goal <strong>Z</strong>; the highlighted path is the solution <strong>C &rarr; O &rarr; I &rarr; Z</strong>. <em>(From the course notes.)</em></figcaption>
+                </figure>
+                <p class="section-desc">We track two lists: <strong>Open</strong> (nodes still to expand, capped at <code>k = 2</code>) and <strong>Closed</strong> (already expanded).</p>
+                <table class="dark-table">
+                    <thead><tr><th>Step</th><th>Expand</th><th>Open (best 2)</th><th>Closed</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>&mdash;</td><td><code>[C]</code></td><td><code>[ ]</code></td></tr>
+                        <tr><td>1</td><td><code>C</code> &rarr; B14, T5, O7, E12, P15</td><td><code>[T5, O7]</code></td><td><code>[C]</code></td></tr>
+                        <tr><td>2</td><td><code>T</code> (a leaf, no children)</td><td><code>[O7]</code></td><td><code>[C, T]</code></td></tr>
+                        <tr><td>3</td><td><code>O</code> &rarr; I4, N44</td><td><code>[I4, N44]</code></td><td><code>[C, T, O]</code></td></tr>
+                        <tr><td>4</td><td><code>I</code> &rarr; Z0</td><td><code>[Z0, N44]</code></td><td><code>[C, T, O, I]</code></td></tr>
+                        <tr><td>5</td><td><code>Z</code> is the goal &#10003;</td><td colspan="2"><strong>Solution path: C &rarr; O &rarr; I &rarr; Z</strong></td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">At every step the Open list is trimmed back to the two lowest-valued nodes, so weak branches such as <code>B</code>, <code>E</code> and <code>P</code> are dropped immediately after <code>C</code> is expanded. Follow the surviving nodes and the path <strong>C &rarr; O &rarr; I &rarr; Z</strong> emerges &mdash; the goal is reached without ever expanding most of the tree.</p>
+            </div>
+        </div>
+
+        <!-- Genetic Algorithms -->
+        <div class="section fade-up" id="genetic">
+            <h2 class="section-title"><i class="fa-solid fa-dna"></i> Genetic Algorithms</h2>
+            <p class="section-desc">A <strong>genetic algorithm (GA)</strong> is a search heuristic developed at the University of Michigan in the 1970s (John Holland), inspired by <strong>Darwin's theory of natural evolution</strong>. It mimics <strong>natural selection</strong>: the fittest individuals of a population are chosen to <strong>reproduce</strong>, passing their traits to the next generation. Instead of improving one state, a GA evolves a whole <strong>population</strong> of candidate solutions, generation after generation, until it converges on a global optimum.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-language"></i> The vocabulary of a GA</h3>
+                <ul>
+                    <li><strong>Gene</strong> &mdash; a single variable of the problem (e.g. <code>x&#8321;</code>, <code>x&#8322;</code>, <code>x&#8323;</code>).</li>
+                    <li><strong>Chromosome</strong> &mdash; a group of genes: one complete candidate solution, e.g. <code>[x&#8321;&nbsp;|&nbsp;x&#8322;&nbsp;|&nbsp;x&#8323;]</code>.</li>
+                    <li><strong>Population</strong> &mdash; a group of chromosomes (many candidate solutions at once).</li>
+                    <li><strong>Fitness function</strong> &mdash; measures how good a chromosome is (its ability to "compete"). It <em>is</em> the objective function.</li>
+                </ul>
+            </div>
+            <p class="section-desc">Say we must solve <code>2x&#8321; + 3x&#8322; + 4x&#8323; = 40</code>, i.e. drive <code>f = 2x&#8321; + 3x&#8322; + 4x&#8323; &minus; 40</code> to <strong>0</strong>. The genes are <code>x&#8321;, x&#8322;, x&#8323;</code>. An initial population is generated <strong>at random</strong> &mdash; each chromosome is just a guess:</p>
+            <table class="dark-table">
+                <thead><tr><th>Chromosome</th><th>x&#8321;</th><th>x&#8322;</th><th>x&#8323;</th><th>Binary encoding (alternative)</th></tr></thead>
+                <tbody>
+                    <tr><td><code>C&#8321;</code></td><td>9</td><td>10</td><td>1</td><td><code>1001 1100 1000</code></td></tr>
+                    <tr><td><code>C&#8322;</code></td><td>2</td><td>3</td><td>4</td><td><code>1010 1001 111</code></td></tr>
+                    <tr><td><code>C&#8323;</code></td><td>5</td><td>6</td><td>7</td><td>&hellip;</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc">Chromosomes can be encoded as <strong>integers</strong> or as <strong>binary strings</strong> &mdash; binary makes the crossover and mutation operators especially simple, as we will see.</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrows-spin"></i> The genetic algorithm loop</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="num">1.</span> <span class="fn">Initialize</span> population        <span class="cm">// random chromosomes</span>
+<span class="num">2.</span> <span class="fn">Evaluate</span> population          <span class="cm">// compute fitness of each chromosome</span>
+<span class="num">3.</span> <span class="kw">while</span> (stopping condition not met):
+       <span class="fn">Select</span> parents for reproduction   <span class="cm">// fitter parents preferred</span>
+       <span class="fn">Crossover</span> (recombination)        <span class="cm">// mix two parents -> offspring</span>
+       <span class="fn">Mutate</span> the offspring             <span class="cm">// random small change</span>
+       <span class="fn">Evaluate</span> population              <span class="cm">// re-score by fitness</span></div>
+                <p class="section-desc">We keep producing offspring (&ldquo;spring&rdquo;) generation after generation until the population reaches the <strong>global</strong> optimum &mdash; or we accept the best local solution found. The <strong>fitness function</strong> determines how fit each individual is: its <em>fitness score</em> ranks it against the rest.</p>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-bullseye"></i> Reading fitness on our equation</h3>
+                    <p>For <code>f(x) = 2x&sup2; + 3x &minus; 44</code> the goal is <code>f(x) = 0</code>. Trying <code>x = 3, 6, 7, 4</code> gives fitness values <code>&minus;17, 46, 76, 0</code>. The value <strong>nearest zero is the best fitness</strong> &mdash; here <code>x = 4</code> gives exactly 0, so it is the fittest (in fact an exact solution). This "distance from the target" is precisely what selection will reward.</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-hand-pointer"></i> Selection techniques</h3>
+                <p class="section-desc">How do we pick which chromosomes get to reproduce? Four common techniques:</p>
+                <div class="info-box">
+                    <ul>
+                        <li><strong>Random selection</strong> &mdash; pick parents at random (ignores fitness).</li>
+                        <li><strong>Roulette-wheel selection</strong> &mdash; give each chromosome a slice of a wheel proportional to its fitness, then "spin".</li>
+                        <li><strong>Elitism</strong> &mdash; always carry the <em>best</em> chromosome unchanged into the next generation, so the best solution is never lost.</li>
+                        <li><strong>Rank selection</strong> &mdash; rank all chromosomes and select by rank (helps when fitness values are very close).</li>
+                    </ul>
+                </div>
+                <p class="section-desc">In <strong>roulette-wheel</strong> selection each chromosome's selection probability is its fitness divided by the total fitness, and the <strong>cumulative</strong> probabilities carve the wheel into slices. Spinning a random number in <code>[0, 1)</code> lands in one slice &mdash; fatter slices (fitter chromosomes) are hit more often.</p>
+                <table class="dark-table">
+                    <thead><tr><th>Chromosome</th><th>Fitness</th><th>Selection prob.</th><th>Cumulative</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>A</code></td><td>10</td><td>10/50 = 0.20</td><td>0.20</td></tr>
+                        <tr><td><code>B</code></td><td>20</td><td>20/50 = 0.40</td><td>0.60</td></tr>
+                        <tr><td><code>C</code></td><td>15</td><td>15/50 = 0.30</td><td>0.90</td></tr>
+                        <tr><td><code>D</code></td><td>5</td><td>5/50 = 0.10</td><td>1.00</td></tr>
+                        <tr><td><strong>Total</strong></td><td><strong>50</strong></td><td>1.00</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_roulette.png" alt="A cumulative probability bar from 0 to 1 and a pie chart split A 20 percent, B 40, C 30, D 10" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The wheel as a bar over <code>[0, 1]</code> (cut at 0.20, 0.60, 0.90) and as a pie: <strong>A</strong> 20%, <strong>B</strong> 40%, <strong>C</strong> 30%, <strong>D</strong> 10%. A spin of, say, 0.75 falls in <strong>C</strong>'s slice. <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-shuffle"></i> Crossover (recombination)</h3>
+                <p class="section-desc">Crossover creates new individuals by <strong>combining parts of two selected parents</strong>. Two parents go in, two offspring come out. The common types:</p>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_crossover.png" alt="Single-point and double-point crossover on two binary parent strings" loading="lazy" style="max-width:82%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><strong>Single-point</strong> crossover swaps everything after one cut point; <strong>double-point</strong> crossover swaps the segment between two cut points. <em>(From the course notes.)</em></figcaption>
+                </figure>
+                <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1rem;line-height:1.9;margin:8px 0">
+                    <li><strong>Single-point:</strong> choose one cut point; offspring&nbsp;1 = parent&nbsp;1's head + parent&nbsp;2's tail, offspring&nbsp;2 the reverse.</li>
+                    <li><strong>Double-point:</strong> choose two cut points; swap the middle segment between the parents.</li>
+                    <li><strong>Uniform / arithmetic:</strong> decide each gene independently (uniform uses a random mask; arithmetic blends numeric genes).</li>
+                </ul>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_uniform_mutation.png" alt="Uniform crossover using a binary mask, and a mutation flipping a single bit" loading="lazy" style="max-width:88%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><strong>Uniform crossover:</strong> a random mask <code>&alpha;</code> decides, gene by gene, which parent each offspring inherits from. <strong>Mutation:</strong> flip a random bit of a chromosome (<code>1010110 &rarr; 1000110</code>). <em>(From the course notes.)</em></figcaption>
+                </figure>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Mutation keeps diversity alive</h3>
+                    <p>After crossover, <strong>mutation</strong> randomly alters a gene &mdash; flipping a bit in a binary chromosome, or nudging an integer. It happens with low probability, but it is essential: it injects fresh genetic material so the population does not prematurely converge and get stuck on a local optimum. Crossover <em>exploits</em> what the population already knows; mutation <em>explores</em> beyond it.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabu Search -->
+        <div class="section fade-up" id="tabu">
+            <h2 class="section-title"><i class="fa-solid fa-ban"></i> Tabu Search</h2>
+            <p class="section-desc"><strong>Tabu search</strong> is a high-level <strong>meta-heuristic</strong>. Like the others it uses an iterative-improvement strategy &mdash; start from a random initial solution and keep moving to a better one &mdash; but it adds memory. Plain local search can <strong>get stuck</strong> on a local optimum, or worse, <strong>cycle</strong> back and forth between the same few states. Tabu search forbids recently visited moves so the search is forced to explore somewhere new. Together with genetic algorithms it is widely regarded as one of the most promising methods for hard practical problems.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-diagram-successor"></i> "Meta-heuristic" = a constraint on the solution</h3>
+                <p>A meta-heuristic sits <em>above</em> a basic search and steers it &mdash; imposing constraints that trade completeness for speed. It uses <strong>less time</strong> than an exhaustive search, but the constraints <strong>may cause it to miss the very best path</strong>. That is the bargain: good solutions fast, without a guarantee of the optimum.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/l_tabu_flow.png" alt="Flowchart: initial solution, create candidate list, evaluate, choose best admissible, check stopping condition, loop or finish" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The tabu search loop: from an initial solution, build a <strong>candidate list</strong> of neighbouring moves, evaluate them, choose the <strong>best admissible</strong> (non-tabu) one, and repeat until a stopping condition is met. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-list-check"></i> The three elements of tabu search</h3>
+                <ul>
+                    <li><strong>Current solution</strong> <code>X<sup>j</sup><sub>current</sub></code> &mdash; the optimised solution of <code>n</code> parameter values at iteration <code>j</code>.</li>
+                    <li><strong>Moves</strong> &mdash; the operations that generate <em>trial</em> (candidate) solutions from the current one.</li>
+                    <li><strong>Tabu restrictions</strong> &mdash; conditions that mark some moves as <strong>forbidden</strong> ("tabu"). Forbidden moves are held in a <strong>tabu list</strong> of a fixed size. Their purpose: <strong>prevent cycling</strong> and stop the search from <strong>returning to a local optimum it just left</strong>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- MST + constrained MST -->
+        <div class="section fade-up" id="mst">
+            <h2 class="section-title"><i class="fa-solid fa-share-nodes"></i> Application: Spanning Trees &amp; a Constrained MST</h2>
+            <p class="section-desc">A perfect setting for tabu search is the <strong>constrained minimum spanning tree</strong>. First, the plain version.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-tree"></i> Spanning tree &mdash; definition</h3>
+                <p>A <strong>spanning tree</strong> of a graph is a subgraph that <strong>includes all the vertices</strong>, is <strong>connected</strong>, and has <strong>no cycle</strong> (it is acyclic). It always has exactly <code>|edges| = |vertices| &minus; 1</code>. A graph is <strong>connected</strong> when, from every node, you can reach every other node. The <strong>minimum spanning tree (MST)</strong> is the spanning tree of least total edge cost.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/l_spanning_tree.png" alt="A connected weighted graph and a spanning tree that keeps all vertices with no cycle" loading="lazy" style="max-width:80%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">A connected graph on 4 vertices and a spanning tree: 4 vertices &rarr; <code>4 &minus; 1 = 3</code> edges, all connected, no cycle. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-sort"></i> Kruskal's algorithm for the MST</h3>
+                <p class="section-desc"><strong>Kruskal's algorithm</strong> builds the MST greedily: <strong>sort the edges by cost</strong>, then add the cheapest edge that <strong>does not create a cycle</strong>, repeating until the tree spans every vertex.</p>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_kruskal.png" alt="Kruskal's algorithm ordering edge costs and building a minimum spanning tree of cost 40" loading="lazy" style="max-width:82%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Sort the costs (a,b = 10; c,d = 15; a,d = 15; b,d = 20; a,c = 20), then accept the cheapest edges that avoid a cycle. Accepting a-b, c-d, a-d gives an MST of cost <strong>10 + 15 + 15 = 40</strong> &mdash; the global optimum; b,d and a,c are skipped because they would close a cycle. <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-lock"></i> Now add constraints &mdash; and let tabu search solve it</h3>
+                <p class="section-desc">Kruskal finds the cheapest tree, but real networks come with <strong>side constraints</strong> that a greedy build cannot honour. Consider this graph with edge costs <code>AB=20, BE=30, AC=10, CE=5, AD=15, CD=25, DE=40</code>, plus two rules enforced by <strong>penalties</strong> added to the cost:</p>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_mst_constraint.png" alt="The constrained MST graph and an initial spanning tree solution" loading="lazy" style="max-width:52%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Top: the full weighted graph. Bottom: an initial spanning tree (AB, AC, AD, CE). <em>(From the course notes.)</em></figcaption>
+                </figure>
+                <div class="info-box warning">
+                    <h3><i class="fa-solid fa-scale-unbalanced"></i> The two constraints (as penalties)</h3>
+                    <ul>
+                        <li><strong>Constraint 1:</strong> link <code>AD</code> may be included <strong>only if</strong> link <code>DE</code> is also included &mdash; otherwise a <strong>penalty of 100</strong>.</li>
+                        <li><strong>Constraint 2:</strong> at most <em>one</em> of the three links <code>AD, CD, AB</code> may be included &mdash; <strong>penalty 100</strong> if two of the three are selected, <strong>200</strong> if all three.</li>
+                    </ul>
+                </div>
+                <p class="section-desc">Without any constraint the MST costs <code>AC(10) + CE(5) + AB(20) + AD(15) = <strong>50</strong></code> &mdash; the true global optimum. But that tree includes <code>AD</code> without <code>DE</code> (breaks Constraint&nbsp;1) and includes two of <code>{AD, AB}</code> (Constraint&nbsp;2), so its <em>real</em> cost with penalties is much higher. The initial solution shown scores <strong>250</strong>. Tabu search now improves it step by step.</p>
+                <p class="section-desc"><strong>Generating candidates.</strong> To change a spanning tree you <strong>add one edge</strong> &mdash; which creates a cycle &mdash; and <strong>delete one edge from that cycle</strong> to restore the tree. Each add/delete pair is a candidate move; we score all of them (base cost + penalties) and pick the best <strong>admissible</strong> one.</p>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/l_candidate.png" alt="Adding a dashed edge to the tree creates a cycle that must be broken by deleting one edge" loading="lazy" style="max-width:62%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Adding an edge (dashed) creates a cycle; to keep a valid tree you must delete one edge from that cycle. <em>(From the course notes.)</em></figcaption>
+                </figure>
+                <table class="dark-table">
+                    <thead><tr><th>Add</th><th>Delete</th><th>Cost = base + penalties</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="3"><code>BE</code></td><td><code>CE</code></td><td>75 + 100 + 100 = 275</td></tr>
+                        <tr><td><code>AC</code></td><td>70 + 100 + 100 = 270</td></tr>
+                        <tr><td><code>AB</code></td><td>60 + 100 + 0 = 160</td></tr>
+                        <tr><td rowspan="2"><code>CD</code></td><td><code>AD</code></td><td>60 + 100 = 160</td></tr>
+                        <tr><td><code>AC</code></td><td>65 + 100 + 200 = 365</td></tr>
+                        <tr><td rowspan="3"><code>DE</code></td><td><code>CE</code></td><td>85 + 100 + 0 = 185</td></tr>
+                        <tr><td><code>AC</code></td><td>80 + 100 + 0 = 180</td></tr>
+                        <tr><td><code>AD</code></td><td style="color:var(--success);font-weight:700">75 + 0 + 0 = 75 &nbsp;&#10003; admissible</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box success">
+                    <h3><i class="fa-solid fa-trophy"></i> The winning move &mdash; and the tabu list</h3>
+                    <p>The best admissible candidate is <strong>add <code>DE</code>, delete <code>AD</code></strong>, scoring <strong>75</strong> with <em>zero</em> penalties: <code>DE</code> is now in (so <code>AD</code>'s Constraint&nbsp;1 no longer applies) and only one of <code>{AD, CD, AB}</code> remains (Constraint&nbsp;2 satisfied). This tree (AB, AC, CE, DE) becomes the new current solution. Cost <strong>75</strong> is a local optimum, so the search will iterate again &mdash; and crucially, <strong>if an already-visited solution reappears it is forbidden and added to the tabu list</strong>, guaranteeing the search cannot cycle back.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise</h2>
+            <p class="section-desc">Three problems, one per method. Work each on paper <em>before</em> revealing the solution.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Simulated annealing: accept or reject?</h3>
+                    <p class="section-desc">The current state has value 50. A randomly chosen neighbour has value 46, so <code>&Delta;E = &minus;4</code> (a downhill move). Should simulated annealing accept it? Compute the acceptance probability <code>e<sup>&Delta;E/T</sup></code> at a <strong>hot</strong> temperature <code>T = 8</code> and a <strong>cool</strong> temperature <code>T = 1</code>, and explain what the two numbers tell you.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Because <code>&Delta;E = &minus;4 &lt; 0</code> the move is <strong>not automatically accepted</strong>; it is taken only with probability <code>e<sup>&Delta;E/T</sup></code>.</p>
+                        <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1.02rem;line-height:1.9">
+                            <li>At <code>T = 8</code>: <code>e<sup>&minus;4/8</sup> = e<sup>&minus;0.5</sup> &asymp; <strong>0.61</strong></code> &mdash; a 61% chance of accepting. When hot, even a fairly bad move is likely taken.</li>
+                            <li>At <code>T = 1</code>: <code>e<sup>&minus;4/1</sup> = e<sup>&minus;4</sup> &asymp; <strong>0.018</strong></code> &mdash; under a 2% chance. When cool, the same bad move is almost always rejected.</li>
+                        </ul>
+                        <p class="section-desc">This is the whole point of the cooling schedule: early on (hot) the search explores freely and can climb out of local optima; later (cool) it commits, behaving like greedy hill climbing. Note also that a <em>worse</em> move &mdash; say <code>&Delta;E = &minus;20</code> &mdash; would give <code>e<sup>&minus;2.5</sup> &asymp; 0.08</code> even at <code>T = 8</code>: the bigger the drop, the less likely the acceptance.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Genetic algorithm: fitness, selection &amp; crossover</h3>
+                    <p class="section-desc">Solve <code>3x&#8321; &minus; 2x&#8322; + 4x&#8323; + 5x&#8324; = 82</code> with genes constrained to <code>0 &le; x&#8341; &le; 9</code>. Fitness is the error <code>|3x&#8321; &minus; 2x&#8322; + 4x&#8323; + 5x&#8324; &minus; 82|</code> (so <strong>0 is a perfect solution</strong>). Using the population below: (a) verify the fitness values, (b) compute each chromosome's selection probability <code>F&#8341;/&Sigma;F</code> and the cumulative probabilities, and (c) do a <strong>single-point crossover</strong> (cut after gene 2) of parents <code>E</code> and <code>B</code>.</p>
+                    <table class="dark-table">
+                        <thead><tr><th>Chromosome</th><th>x&#8321;</th><th>x&#8322;</th><th>x&#8323;</th><th>x&#8324;</th><th>Fitness</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>A</code></td><td>4</td><td>5</td><td>3</td><td>8</td><td>28</td></tr>
+                            <tr><td><code>B</code></td><td>3</td><td>7</td><td>8</td><td>2</td><td>45</td></tr>
+                            <tr><td><code>C</code></td><td>7</td><td>6</td><td>5</td><td>9</td><td>8</td></tr>
+                            <tr><td><code>D</code></td><td>9</td><td>4</td><td>2</td><td>6</td><td>25</td></tr>
+                            <tr><td><code>E</code></td><td>2</td><td>1</td><td>5</td><td>7</td><td>23</td></tr>
+                            <tr><td><code>F</code></td><td>3</td><td>8</td><td>0</td><td>9</td><td>44</td></tr>
+                        </tbody>
+                    </table>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>(a) Verify fitness</strong> &mdash; plug into <code>|3x&#8321; &minus; 2x&#8322; + 4x&#8323; + 5x&#8324; &minus; 82|</code>:</p>
+                        <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1rem;line-height:1.8">
+                            <li><code>A:</code> 12 &minus; 10 + 12 + 40 = 54; |54 &minus; 82| = <strong>28</strong> &#10003;</li>
+                            <li><code>B:</code> 9 &minus; 14 + 32 + 10 = 37; |37 &minus; 82| = <strong>45</strong> &#10003;</li>
+                            <li><code>C:</code> 21 &minus; 12 + 20 + 45 = 74; |74 &minus; 82| = <strong>8</strong> &#10003; (fittest)</li>
+                            <li><code>D:</code> 27 &minus; 8 + 8 + 30 = 57; |57 &minus; 82| = <strong>25</strong> &#10003;</li>
+                            <li><code>E:</code> 6 &minus; 2 + 20 + 35 = 59; |59 &minus; 82| = <strong>23</strong> &#10003;</li>
+                            <li><code>F:</code> 9 &minus; 16 + 0 + 45 = 38; |38 &minus; 82| = <strong>44</strong> &#10003;</li>
+                        </ul>
+                        <p class="section-desc"><strong>(b) Selection probabilities.</strong> Total fitness <code>&Sigma;F = 28+45+8+25+23+44 = 173</code>. Dividing each by 173 and running the cumulative sum:</p>
+                        <table class="dark-table">
+                            <thead><tr><th>Chromosome</th><th>F&#8341;/&Sigma;F</th><th>Cumulative</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>A</code></td><td>28/173 = 0.162</td><td>0.162</td></tr>
+                                <tr><td><code>B</code></td><td>45/173 = 0.260</td><td>0.422</td></tr>
+                                <tr><td><code>C</code></td><td>8/173 = 0.046</td><td>0.468</td></tr>
+                                <tr><td><code>D</code></td><td>25/173 = 0.145</td><td>0.613</td></tr>
+                                <tr><td><code>E</code></td><td>23/173 = 0.133</td><td>0.746</td></tr>
+                                <tr><td><code>F</code></td><td>44/173 = 0.254</td><td>1.000</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="section-desc">These cumulative cut-points (0.162, 0.422, 0.468, 0.613, 0.746, 1.0) are the roulette-wheel slices: a random spin lands in exactly one chromosome's interval. <em>(Note: because fitness here is an error we want to <strong>minimise</strong>, a practical GA would select on an inverted score so that low-error chromosomes get the fat slices; the mechanics of computing the wheel are identical.)</em></p>
+                        <p class="section-desc"><strong>(c) Single-point crossover of <code>E</code> and <code>B</code>, cut after gene 2:</strong></p>
+                        <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1.02rem;line-height:1.9">
+                            <li><code>E = (2, 1 | 5, 7)</code>, <code>B = (3, 7 | 8, 2)</code></li>
+                            <li>Offspring&nbsp;1 = E's head + B's tail = <strong>(2, 1, 8, 2)</strong></li>
+                            <li>Offspring&nbsp;2 = B's head + E's tail = <strong>(3, 7, 5, 7)</strong></li>
+                        </ul>
+                        <p class="section-desc">A subsequent <strong>mutation</strong> might then flip one gene of an offspring (e.g. the first gene) before it re-enters the population for the next round of evaluation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Tabu search: pick the best admissible move</h3>
+                    <p class="section-desc">In the constrained-MST example, from the initial tree the candidate move <strong>&ldquo;add <code>DE</code>&rdquo;</strong> can break its cycle by deleting <code>CE</code> (cost 185), <code>AC</code> (cost 180), or <code>AD</code> (cost 75). Which of the three do you choose, and <em>why</em> is its penalty zero? What role does the tabu list play afterwards?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Choose <strong>add <code>DE</code>, delete <code>AD</code></strong> &mdash; cost <strong>75</strong>, the lowest of the three (and the best admissible move in the whole candidate list).</p>
+                        <p class="section-desc">Its penalty is <strong>zero</strong> because both constraints are now satisfied:</p>
+                        <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1.02rem;line-height:1.9">
+                            <li><strong>Constraint 1</strong> (AD only if DE): we removed <code>AD</code> entirely, so the rule cannot be violated &mdash; no 100 penalty.</li>
+                            <li><strong>Constraint 2</strong> (at most one of AD, CD, AB): with <code>AD</code> gone, only <code>AB</code> remains from that trio &mdash; one link, so no penalty.</li>
+                        </ul>
+                        <p class="section-desc">The other two options keep <code>AD</code> in the tree, so they still carry the 100 penalty from Constraint&nbsp;1 (hence 185 and 180). After committing to the cost-75 tree, the search continues from there; should a <strong>previously visited solution</strong> resurface as a candidate, it is declared <strong>tabu</strong> and added to the tabu list, which stops the search from cycling back to a local optimum it has already left.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; Where Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now know</h3>
+                <ul>
+                    <li><strong>Local search</strong> optimises a single current state (or a small set) using an objective/fitness function &mdash; ideal when only the final configuration matters and the state space is huge.</li>
+                    <li><strong>Simulated annealing</strong> escapes local maxima by accepting bad moves with probability <code>e<sup>&Delta;E/T</sup></code>, cooling from exploration to exploitation; slow cooling &rarr; global optimum with probability &rarr; 1.</li>
+                    <li><strong>Local beam search</strong> keeps the best <code>k</code> nodes at each level &mdash; <code>O(B&middot;m)</code> time and space, complete/optimal: no.</li>
+                    <li><strong>Genetic algorithms</strong> evolve a population via <strong>selection</strong> (roulette wheel, elitism, rank), <strong>crossover</strong> (single/double/uniform) and <strong>mutation</strong>.</li>
+                    <li><strong>Tabu search</strong> is a meta-heuristic that uses a <strong>tabu list</strong> to forbid recent moves and prevent cycling &mdash; demonstrated on a <strong>constrained minimum spanning tree</strong> built with Kruskal-style add/delete moves.</li>
+                </ul>
+            </div>
+            <p class="section-desc">Local search builds on the systematic search of Modules 4&ndash;6, trading path-finding for the optimisation of a final configuration. Next comes <strong>Module 8: Adversarial Search &amp; Games</strong> &mdash; searching when a second, hostile agent is making moves too. After that the syllabus turns to <strong>knowledge and reasoning</strong> &mdash; knowledge representation, logic and inference, and then machine learning &mdash; where the question shifts from "how do we search?" to "how do we represent what we know and draw conclusions from it?"</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="06_informed_search_astar.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 6: Informed Search &amp; A*</a>
+            <a href="08_adversarial_search.html" class="nav-btn next">Module 8: Adversarial Search &amp; Games <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Introduction to Artificial Intelligence &middot; Based on Russell &amp; Norvig, AIMA 4th ed. &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Local Search</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#intro">A Different Kind of Search</a>
+        <a class="toc-item" href="#annealing">Simulated Annealing</a>
+        <a class="toc-item" href="#beam">Local Beam Search</a>
+        <a class="toc-item" href="#genetic">Genetic Algorithms</a>
+        <a class="toc-item" href="#tabu">Tabu Search</a>
+        <a class="toc-item" href="#mst">Spanning Trees &amp; MST</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ai-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('ai-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam: Topic 2.3 - Object-Oriented Programming for Data Modeling | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a><a href="../topics/topic2-3.html">Study Material</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../topics/topic2-3.html" onclick="this.parentElement.classList.remove('open')">Study Material</a>
+    </div>
+    <section class="hero"><div class="hero-content">
+        <h1>Exam: Object-Oriented Programming for Data Modeling</h1>
+        <p class="hero-sub">Topic 2.3 &middot; Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">20 Questions &middot; 20 Minutes</p>
+    </div></section>
+    <div class="container narrow">
+        <div class="section" id="exam-controls">
+            <div class="exam-header">
+                <div class="exam-timer" id="timer"><i class="fa-solid fa-clock"></i> <span id="time-display">20:00</span></div>
+                <div class="exam-progress">Question <strong id="answered-count">0</strong> of <strong>20</strong> answered</div>
+            </div>
+            <div class="exam-nav" id="question-nav"></div>
+        </div>
+        <div id="questions-container"></div>
+        <div class="exam-actions" id="submit-section">
+            <button class="exam-submit" id="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Exam</button>
+        </div>
+        <div class="exam-result" id="result-section" style="display:none;">
+            <h2><i class="fa-solid fa-chart-bar" style="color:var(--primary);"></i> Exam Results</h2>
+            <div class="score-big" id="score-display"></div>
+            <div class="exam-result-details">
+                <div class="exam-result-item"><div class="num green" id="correct-count">0</div><div class="label">Correct</div></div>
+                <div class="exam-result-item"><div class="num red" id="incorrect-count">0</div><div class="label">Incorrect</div></div>
+                <div class="exam-result-item"><div class="num orange" id="skipped-count">0</div><div class="label">Skipped</div></div>
+            </div>
+            <div>
+                <button class="review-btn" onclick="reviewExam()"><i class="fa-solid fa-magnifying-glass"></i> Review Answers</button>
+                <button class="retake-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Retake Exam</button>
+                <a href="../index.html" class="retake-btn" style="text-decoration:none;"><i class="fa-solid fa-house"></i> Back to Course</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+    <script>
+    function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+    (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+    window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>500);});
+
+    const questions = [
+        {
+            q: "What is the purpose of the <code>__init__</code> method in a Python class?",
+            options: [
+                "It deletes the object when it goes out of scope",
+                "It is the constructor that initializes instance attributes when an object is created",
+                "It defines class-level constants shared by all instances",
+                "It imports required modules for the class"
+            ],
+            correct: 1,
+            explanation: "<code>__init__</code> is the constructor method. It runs automatically when a new instance is created and sets up the object's initial state through <code>self.attribute = value</code> assignments."
+        },
+        {
+            q: "What does the <code>self</code> parameter represent in an instance method?",
+            options: [
+                "The class itself (not an instance)",
+                "The parent class in an inheritance hierarchy",
+                "The specific instance the method is called on",
+                "A global variable accessible from any method"
+            ],
+            correct: 2,
+            explanation: "<code>self</code> refers to the specific instance of the class that the method is being called on. It allows the method to access and modify that instance's attributes."
+        },
+        {
+            q: "What does Python do when an attribute is named with double underscores, like <code>self.__secret</code>?",
+            options: [
+                "It makes the attribute truly private and completely inaccessible",
+                "It triggers name mangling, renaming it to <code>_ClassName__secret</code>",
+                "It raises a <code>SyntaxError</code>",
+                "It creates a class-level variable instead of an instance variable"
+            ],
+            correct: 1,
+            explanation: "Double-underscore prefix triggers <strong>name mangling</strong>. Python renames <code>__secret</code> to <code>_ClassName__secret</code>. This is designed to prevent accidental name collisions in inheritance, not for true security."
+        },
+        {
+            q: "Which decorator allows a method to be accessed like an attribute (without parentheses)?",
+            options: [
+                "<code>@staticmethod</code>",
+                "<code>@classmethod</code>",
+                "<code>@property</code>",
+                "<code>@getter</code>"
+            ],
+            correct: 2,
+            explanation: "The <code>@property</code> decorator defines a getter that allows a method to be accessed using attribute syntax, e.g., <code>obj.name</code> instead of <code>obj.name()</code>. You can also define a setter with <code>@name.setter</code>."
+        },
+        {
+            q: "What OOP concept is demonstrated when a <code>Survey</code> class contains a list of <code>Question</code> objects as an attribute?",
+            options: [
+                "Inheritance",
+                "Polymorphism",
+                "Composition",
+                "Abstraction"
+            ],
+            correct: 2,
+            explanation: "Composition is a 'has-a' relationship where one class contains instances of another class as attributes. A Survey <em>has</em> Questions, rather than <em>being</em> a Question."
+        },
+        {
+            q: "What does <code>super().__init__(data)</code> do inside a subclass constructor?",
+            options: [
+                "It creates a new instance of the parent class",
+                "It calls the parent class's <code>__init__</code> method to initialize inherited attributes",
+                "It overrides the parent's constructor entirely",
+                "It copies all methods from the parent to the child class"
+            ],
+            correct: 1,
+            explanation: "<code>super().__init__(data)</code> calls the parent class's constructor, ensuring that any initialization defined in the parent is properly executed for the subclass instance."
+        },
+        {
+            q: "What is the output of this code?<br><code>a = [1, 2, 3]<br>b = [1, 2, 3]<br>print(a == b, a is b)</code>",
+            options: [
+                "<code>True True</code>",
+                "<code>True False</code>",
+                "<code>False True</code>",
+                "<code>False False</code>"
+            ],
+            correct: 1,
+            explanation: "<code>==</code> checks value equality (the lists have the same content, so <code>True</code>). <code>is</code> checks identity (whether they are the same object in memory). Since <code>a</code> and <code>b</code> are separate list objects, <code>a is b</code> is <code>False</code>."
+        },
+        {
+            q: "What is the output of this code?<br><code>class Box:<br>&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, items):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.items = items<br><br>a = Box([1, 2])<br>b = a<br>b.items.append(3)<br>print(a.items)</code>",
+            options: [
+                "<code>[1, 2]</code>",
+                "<code>[1, 2, 3]</code>",
+                "<code>[3]</code>",
+                "An <code>AttributeError</code> is raised"
+            ],
+            correct: 1,
+            explanation: "<code>b = a</code> creates an alias, not a copy. Both <code>a</code> and <code>b</code> reference the same object in memory. When <code>b.items.append(3)</code> modifies the list, the change is visible through <code>a</code> as well."
+        },
+        {
+            q: "When a subclass defines a method with the same name as one in the parent class, this is called:",
+            options: [
+                "Method overloading",
+                "Method overriding",
+                "Method chaining",
+                "Method binding"
+            ],
+            correct: 1,
+            explanation: "Method overriding occurs when a subclass provides its own implementation of a method already defined in the parent class. The subclass version replaces the parent's version for instances of the subclass."
+        },
+        {
+            q: "What is polymorphism in OOP?",
+            options: [
+                "The ability to hide internal data from outside access",
+                "The ability to inherit methods from multiple parent classes",
+                "Calling the same method name on different objects and getting behavior specific to each object's class",
+                "The process of converting one data type to another"
+            ],
+            correct: 2,
+            explanation: "Polymorphism means calling the same method name on different objects and getting behavior specific to each object's class. For example, calling <code>.export()</code> on different exporter objects produces different output formats."
+        },
+        {
+            q: "What does the <code>__eq__</code> method allow you to customize?",
+            options: [
+                "How an object is printed with <code>print()</code>",
+                "How the <code>==</code> operator compares two objects",
+                "How an object is created in memory",
+                "How an object is converted to a string"
+            ],
+            correct: 1,
+            explanation: "By default, <code>==</code> on custom objects checks identity (same as <code>is</code>). Implementing <code>__eq__</code> lets you define custom value-based equality, such as comparing objects by their data fields."
+        },
+        {
+            q: "What is the difference between <code>__repr__</code> and <code>__str__</code>?",
+            options: [
+                "<code>__repr__</code> is for user-friendly output; <code>__str__</code> is for developers",
+                "<code>__repr__</code> is for unambiguous developer-facing representation; <code>__str__</code> is for readable user-facing output",
+                "They are identical in purpose and behavior",
+                "<code>__repr__</code> is called by <code>print()</code>; <code>__str__</code> is called by <code>repr()</code>"
+            ],
+            correct: 1,
+            explanation: "<code>__repr__</code> produces an unambiguous, developer-facing representation (called by <code>repr()</code> and in interactive shells). <code>__str__</code> produces a readable, user-facing string (called by <code>print()</code> and <code>str()</code>)."
+        },
+        {
+            q: "Which of the following is the recommended way to check if a variable is <code>None</code>?",
+            options: [
+                "<code>if x == None:</code>",
+                "<code>if x is None:</code>",
+                "<code>if x.isNone():</code>",
+                "<code>if type(x) is None:</code>"
+            ],
+            correct: 1,
+            explanation: "The Pythonic way to check for <code>None</code> is <code>if x is None</code> (using identity). While <code>== None</code> works, it can be overridden by a custom <code>__eq__</code> method, so <code>is None</code> is safer and preferred."
+        },
+        {
+            q: "What does the single underscore prefix convention (e.g., <code>self._cache</code>) indicate?",
+            options: [
+                "The attribute is truly private and cannot be accessed",
+                "The attribute is a constant that should not change",
+                "The attribute is protected/internal &mdash; a convention signal to not access it directly",
+                "The attribute will be automatically deleted after use"
+            ],
+            correct: 2,
+            explanation: "A single leading underscore (<code>_cache</code>) is a convention signaling that the attribute is intended for internal use. It is not enforced by Python &mdash; you can still access it, but you are expected not to."
+        },
+        {
+            q: "Given this code, what is the relationship between <code>CSVExporter</code> and <code>BaseExporter</code>?<br><code>class CSVExporter(BaseExporter):<br>&nbsp;&nbsp;&nbsp;&nbsp;pass</code>",
+            options: [
+                "Composition &mdash; CSVExporter <em>has a</em> BaseExporter",
+                "Inheritance &mdash; CSVExporter <em>is a</em> specialized BaseExporter",
+                "Polymorphism &mdash; CSVExporter replaces BaseExporter",
+                "Aggregation &mdash; CSVExporter contains BaseExporter"
+            ],
+            correct: 1,
+            explanation: "This is inheritance (an 'is-a' relationship). <code>CSVExporter</code> is a subclass of <code>BaseExporter</code> and inherits all its methods and attributes, while being able to override or extend them."
+        },
+        {
+            q: "What happens when you assign <code>b = a</code> where <code>a</code> is a custom object?",
+            options: [
+                "A deep copy of <code>a</code> is created and assigned to <code>b</code>",
+                "A shallow copy of <code>a</code> is created and assigned to <code>b</code>",
+                "<code>b</code> becomes an alias &mdash; both variables point to the same object in memory",
+                "A new empty object of the same class is created"
+            ],
+            correct: 2,
+            explanation: "Assignment in Python creates a new reference (alias) to the same object, not a copy. Both <code>a</code> and <code>b</code> point to the same object in memory, so modifying one affects the other."
+        },
+        {
+            q: "What does <code>copy.deepcopy(obj)</code> do compared to <code>copy.copy(obj)</code>?",
+            options: [
+                "They are identical in behavior",
+                "<code>deepcopy</code> copies the object and all nested objects recursively; <code>copy</code> only copies the top-level object",
+                "<code>deepcopy</code> is faster but uses more memory",
+                "<code>copy</code> creates a deep copy while <code>deepcopy</code> creates a shallow copy"
+            ],
+            correct: 1,
+            explanation: "<code>copy.copy()</code> creates a shallow copy (top-level object is new, but nested objects are still shared). <code>copy.deepcopy()</code> recursively copies everything, creating a fully independent object."
+        },
+        {
+            q: "In the following code, what does <code>@celsius.setter</code> define?<br><code>class Temp:<br>&nbsp;&nbsp;&nbsp;&nbsp;@property<br>&nbsp;&nbsp;&nbsp;&nbsp;def celsius(self): return self._c<br>&nbsp;&nbsp;&nbsp;&nbsp;@celsius.setter<br>&nbsp;&nbsp;&nbsp;&nbsp;def celsius(self, val): self._c = val</code>",
+            options: [
+                "A method that is called when <code>obj.celsius</code> is read",
+                "A method that is called when <code>obj.celsius = value</code> is assigned",
+                "A class method for creating new instances",
+                "A static method that does not need <code>self</code>"
+            ],
+            correct: 1,
+            explanation: "<code>@celsius.setter</code> defines the setter method that runs when you assign to the property: <code>obj.celsius = 30</code>. The <code>@property</code> decorator defines the getter (when reading), and the setter allows controlled assignment."
+        },
+        {
+            q: "If only <code>__repr__</code> is defined (not <code>__str__</code>), what does <code>print(obj)</code> use?",
+            options: [
+                "It raises an <code>AttributeError</code>",
+                "It prints the memory address of the object",
+                "It falls back to <code>__repr__</code>",
+                "It prints <code>None</code>"
+            ],
+            correct: 2,
+            explanation: "Python falls back to <code>__repr__</code> when <code>__str__</code> is not defined. This is why it is recommended to implement <code>__repr__</code> first if you only define one &mdash; it serves as the fallback for both <code>repr()</code> and <code>str()</code>."
+        },
+        {
+            q: "What is the output of this code?<br><code>class Animal:<br>&nbsp;&nbsp;&nbsp;&nbsp;def speak(self): return '...'<br><br>class Dog(Animal):<br>&nbsp;&nbsp;&nbsp;&nbsp;def speak(self): return 'Woof!'<br><br>class Cat(Animal):<br>&nbsp;&nbsp;&nbsp;&nbsp;def speak(self): return 'Meow!'<br><br>pets = [Dog(), Cat(), Dog()]<br>print([p.speak() for p in pets])</code>",
+            options: [
+                "<code>['...', '...', '...']</code>",
+                "<code>['Woof!', 'Meow!', 'Woof!']</code>",
+                "<code>['Dog', 'Cat', 'Dog']</code>",
+                "A <code>TypeError</code> is raised"
+            ],
+            correct: 1,
+            explanation: "This demonstrates polymorphism. Each subclass overrides the <code>speak()</code> method. When iterating and calling <code>.speak()</code>, each object uses its own class's implementation: Dog returns 'Woof!' and Cat returns 'Meow!'."
+        }
+    ];
+
+    let userAnswers=new Array(questions.length).fill(-1), examSubmitted=false, timerInterval, timeLeft=20*60;
+    function init(){renderQuestions();renderNav();startTimer();}
+    function renderQuestions(){document.getElementById('questions-container').innerHTML=questions.map((q,i)=>`<div class="exam-question" id="q${i}"><div class="exam-q-header"><div class="exam-q-number">${i+1}</div><div class="exam-q-text">${q.q}</div></div>${q.options.map((opt,j)=>`<div class="exam-option" onclick="selectAnswer(${i},${j})" id="q${i}o${j}"><div class="exam-option-letter">${String.fromCharCode(65+j)}</div><div>${opt}</div></div>`).join('')}<div class="exam-explanation" id="exp${i}">${q.explanation}</div></div>`).join('');}
+    function renderNav(){document.getElementById('question-nav').innerHTML=questions.map((_,i)=>`<div class="exam-nav-btn" id="nav${i}" onclick="scrollToQ(${i})">${i+1}</div>`).join('');}
+    function selectAnswer(qi,oi){if(examSubmitted)return;userAnswers[qi]=oi;questions[qi].options.forEach((_,j)=>{document.getElementById(`q${qi}o${j}`).classList.toggle('selected',j===oi);});document.getElementById(`q${qi}`).classList.add('answered');document.getElementById(`nav${qi}`).classList.add('answered');updateProgress();}
+    function scrollToQ(i){document.getElementById(`q${i}`).scrollIntoView({behavior:'smooth',block:'center'});}
+    function updateProgress(){document.getElementById('answered-count').textContent=userAnswers.filter(a=>a!==-1).length;}
+    function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);submitExam();}},1000);}
+    function updateTimerDisplay(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('time-display').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;const t=document.getElementById('timer');t.classList.remove('warning','danger');if(timeLeft<=120)t.classList.add('danger');else if(timeLeft<=300)t.classList.add('warning');}
+    function submitExam(){if(examSubmitted)return;examSubmitted=true;clearInterval(timerInterval);let c=0,ic=0,sk=0;questions.forEach((q,i)=>{if(userAnswers[i]===-1)sk++;else if(userAnswers[i]===q.correct)c++;else ic++;});const pct=Math.round(c/questions.length*100);document.getElementById('score-display').textContent=pct+'%';document.getElementById('score-display').className='score-big '+(pct>=75?'pass':'fail');document.getElementById('correct-count').textContent=c;document.getElementById('incorrect-count').textContent=ic;document.getElementById('skipped-count').textContent=sk;document.getElementById('submit-section').style.display='none';document.getElementById('result-section').style.display='block';document.getElementById('result-section').scrollIntoView({behavior:'smooth'});document.querySelectorAll('.exam-option').forEach(el=>el.style.pointerEvents='none');}
+    function reviewExam(){questions.forEach((q,i)=>{const qEl=document.getElementById(`q${i}`),navEl=document.getElementById(`nav${i}`);if(userAnswers[i]===-1){qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-missed');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status skipped">Skipped</div>');}else if(userAnswers[i]===q.correct){qEl.classList.add('review-correct');navEl.classList.add('review-correct');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status correct"><i class="fa-solid fa-check"></i> Correct</div>');}else{qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${userAnswers[i]}`).classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status incorrect"><i class="fa-solid fa-xmark"></i> Incorrect</div>');}document.getElementById(`exp${i}`).classList.add('show');});document.getElementById('q0').scrollIntoView({behavior:'smooth'});}
+    init();
+    </script>
+</body>
+</html>

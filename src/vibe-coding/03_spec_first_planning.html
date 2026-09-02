@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spec-First Planning - Vibe Coding, Shipped Right</title>
+    <meta name="description" content="Turn a vague idea into an executable spec the AI can build without wandering: user stories, acceptance criteria, a small data model, and milestone slices — captured in a living SPEC.md.">
+    <link rel="alternate" hreflang="en" href="https://albanna-tutorials.com/vibe-coding/03_spec_first_planning.html">
+    <link rel="alternate" hreflang="ar" href="https://albanna-tutorials.com/vibe-coding/ar/03_spec_first_planning.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#ec4899;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#be185d;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#9d174d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#be185d}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#be185d;border-left-color:#be185d;background:rgba(236,72,153,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#f472b6}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .mobile-menu a{color:var(--text2);padding:10px 12px;border-radius:8px;font-size:.9rem}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre-wrap}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#f472b6}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#be185d;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(236,72,153,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-wand-magic-sparkles"></i> Vibe Coding</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#why">Why Spec-First</a>
+                <a href="#anatomy">Anatomy</a>
+                <a href="#stories">User Stories</a>
+                <a href="#slicing">Slicing</a>
+                <a href="ar/03_spec_first_planning.html" lang="ar" dir="rtl"><i class="fa-solid fa-globe" style="margin-right:6px"></i>عربي</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#why" onclick="this.parentElement.classList.remove('open')">Why Spec-First</a>
+        <a href="#anatomy" onclick="this.parentElement.classList.remove('open')">Anatomy</a>
+        <a href="#stories" onclick="this.parentElement.classList.remove('open')">User Stories</a>
+        <a href="#slicing" onclick="this.parentElement.classList.remove('open')">Slicing</a>
+        <a href="ar/03_spec_first_planning.html" lang="ar" dir="rtl" onclick="this.parentElement.classList.remove('open')">عربي</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Spec-First Planning</h1>
+            <p class="hero-sub">Turn a vague idea into an executable plan the assistant can follow &mdash; without wandering.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 3 &middot; Decide what to build, before you build it.</p>
+            <span class="diff-badge" style="background:#10b981">Beginner</span>
+            <span class="cat-badge"><i class="fa-solid fa-file-lines" style="margin-right:6px"></i>Planning</span>
+            <span class="cat-badge"><i class="fa-solid fa-flask" style="margin-right:6px"></i>Includes Lab</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~45 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Why a written spec is the antidote to scope creep and context rot</li>
+                    <li>The anatomy of a lightweight, living <code>SPEC.md</code></li>
+                    <li>How to write <strong>user stories</strong> with testable acceptance criteria</li>
+                    <li>How to define a small data model and API surface &mdash; MVP first</li>
+                    <li>How to slice the work into milestones the assistant builds one at a time</li>
+                    <li><strong>Hands-on lab:</strong> write and commit <code>SPEC.md</code> for the snippet vault, with the AI drafting and you deciding</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 2 &mdash; the <code>snippet-vault</code> repo with its scaffold and context file.</p>
+        </div>
+
+        <!-- Why -->
+        <div class="section fade-up" id="why">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> Why Spec-First?</h2>
+            <p class="section-desc">Vibe coding without a plan feels fast &mdash; for about twenty minutes. Then the assistant starts guessing what you meant, adds things you didn't ask for, contradicts an earlier choice, and you're firefighting instead of building. A spec is simply <strong>the decisions made once, in writing</strong>, so neither you nor the AI has to re-guess them.</p>
+            <table class="dark-table">
+                <thead><tr><th>Without a spec</th><th>With a spec</th></tr></thead>
+                <tbody>
+                    <tr><td>The AI invents scope you never wanted</td><td>Scope is fixed and visible &mdash; easy to say "not now"</td></tr>
+                    <tr><td>"Done" is a feeling, argued about later</td><td>"Done" is acceptance criteria you can check</td></tr>
+                    <tr><td>Context rot: the model forgets earlier decisions</td><td>The spec is durable memory the model re-reads</td></tr>
+                    <tr><td>One giant vague prompt, unpredictable result</td><td>Small tasks sliced from the plan, one at a time</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-file-signature"></i> A spec is a contract, not a novel</h3>
+                <p>It's a short, living <code>SPEC.md</code> in your repo &mdash; a page or two. It's the shared contract between you and the assistant. You'll update it as you learn; that's expected. Its job is to make "what are we building?" answerable at a glance.</p>
+            </div>
+        </div>
+
+        <!-- Anatomy -->
+        <div class="section fade-up" id="anatomy">
+            <h2 class="section-title"><i class="fa-solid fa-list-check"></i> Anatomy of a Good Spec</h2>
+            <p class="section-desc">Keep it lightweight. Six sections cover almost any small app:</p>
+            <table class="dark-table">
+                <thead><tr><th>Section</th><th>Answers</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Problem &amp; goal</strong></td><td>What are we solving, and for whom?</td></tr>
+                    <tr><td><strong>User stories</strong></td><td>What can a user actually do?</td></tr>
+                    <tr><td><strong>In scope / Non-goals</strong></td><td>What we will &mdash; and explicitly won't &mdash; build now.</td></tr>
+                    <tr><td><strong>Data model</strong></td><td>The core things we store and their fields.</td></tr>
+                    <tr><td><strong>API / screens</strong></td><td>The endpoints or pages that deliver the stories.</td></tr>
+                    <tr><td><strong>Milestones</strong></td><td>The order we'll build it in, smallest useful slice first.</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc">Here's the skeleton you'll fill in during the lab:</p>
+            <div class="code-block"># Snippet Vault — SPEC
+
+## Problem &amp; goal
+Developers lose useful code snippets. Give them one place to save,
+tag, and quickly find snippets.
+
+## User stories
+- (filled in below)
+
+## In scope
+- Create, list, search, and delete snippets.
+
+## Non-goals (not now)
+- Accounts / login, sharing, syntax highlighting, folders.
+
+## Data model
+Snippet: id, title, language, code, createdAt
+
+## API
+GET /snippets?q=      list + search
+POST /snippets        create
+DELETE /snippets/:id  delete
+
+## Milestones
+1. Create + list   2. Search   3. Delete</div>
+        </div>
+
+        <!-- User stories -->
+        <div class="section fade-up" id="stories">
+            <h2 class="section-title"><i class="fa-solid fa-user-pen"></i> From Idea to User Stories</h2>
+            <p class="section-desc">A user story captures one thing a user can do, from their point of view, plus how you'll know it works. The classic shape:</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-quote-left"></i> The template</h3>
+                <p><strong>As a</strong> [who], <strong>I want</strong> [what], <strong>so that</strong> [why]. <br>Then: <strong>Acceptance criteria</strong> &mdash; the checkable conditions for "done".</p>
+            </div>
+            <p class="section-desc">For the snippet vault:</p>
+            <div class="code-block">Story: Save a snippet
+  As a developer, I want to save a snippet with a title and language,
+  so that I can find it again later.
+  Acceptance:
+   - A form takes title, language, and code.
+   - On submit, the snippet appears in the list.
+   - Empty title is rejected with a message.
+
+Story: Search snippets
+  As a developer, I want to search by title,
+  so that I can find a snippet fast.
+  Acceptance:
+   - Typing in the search box filters the list live.
+   - Search is case-insensitive.
+   - No match shows a friendly "nothing found" state.</div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-vial-circle-check"></i> Why criteria matter here</h3>
+                <p>Those acceptance lines aren't bureaucracy &mdash; they become your <strong>test cases</strong> in Module 6, and they tell the assistant exactly when to stop. "Done" stops being an argument.</p>
+            </div>
+        </div>
+
+        <!-- Slicing -->
+        <div class="section fade-up" id="slicing">
+            <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> Slice Into Milestones</h2>
+            <p class="section-desc">Never hand the assistant the whole spec and say "build it." Slice into <strong>thin vertical milestones</strong> &mdash; each one a small, working, shippable increment. Build the smallest useful thing first (your MVP), then layer on.</p>
+            <div class="code-block"># Milestone plan (task list)
+[ ] M1  Create + list snippets (title, language, code) end to end
+[ ] M2  Search box filters the list by title
+[ ] M3  Delete a snippet
+[ ] M4  Validation + empty/error states
+# Each milestone: one branch, tests, review, commit.</div>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-scissors"></i> Ruthlessly cut the MVP</h3>
+                <p>The fastest way to finish is to build less. Every "wouldn't it be cool if&hellip;" goes under <strong>Non-goals</strong>, not into M1. You can always promote a non-goal later &mdash; but a bloated first milestone is how projects stall.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-robot"></i> Let the AI draft, you decide</h3>
+                <p>Great use of the assistant: give it your brief and the skeleton, and ask it to <em>propose</em> user stories, a data model, and a milestone slice. Then you edit &mdash; cut scope, fix the model, reorder. The AI is a fast drafter; the product decisions stay yours.</p>
+            </div>
+        </div>
+
+        <!-- Practical Lab -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-flask"></i> Practical Lab: Write the Spec for Your Snippet Vault</h2>
+            <p class="section-desc">You'll produce a real <code>SPEC.md</code> &mdash; AI-drafted, you-decided &mdash; with user stories, acceptance criteria, a small data model, and a milestone slice. You'll hand in the committed spec.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-screwdriver-wrench"></i> What you need</h3>
+                <p>Your <code>snippet-vault</code> repo from Module 2 (scaffold + context file), and your assistant.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Write a one-paragraph brief</h3>
+                    <p class="section-desc">In your own words: what problem the snippet vault solves and who it's for. Two or three sentences is plenty.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Have the AI draft SPEC.md</h3>
+                    <p class="section-desc">Paste this, then review what comes back:</p>
+                    <div class="code-block">Using my brief and CLAUDE.md, draft SPEC.md with these sections:
+Problem &amp; goal, User stories (with acceptance criteria), In scope,
+Non-goals, Data model, API, Milestones.
+Keep the MVP tiny. Propose it — I'll edit. Don't write app code.</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Make it yours &mdash; cut scope</h3>
+                    <p class="section-desc">Edit the draft. Move anything non-essential to <strong>Non-goals</strong>. Keep 3&ndash;5 user stories, each with concrete acceptance criteria. Confirm the data model is just <code>Snippet: id, title, language, code, createdAt</code>.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Slice the milestones</h3>
+                    <p class="section-desc">Order the work smallest-useful-first as a checkbox task list (M1 create+list, M2 search, M3 delete&hellip;). This list drives every remaining module.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>Commit the spec</h3>
+                    <div class="code-block">git add SPEC.md
+git commit -m "Add SPEC: stories, data model, milestones"</div>
+                    <p class="section-desc">Then add to <code>REFLECTION.md</code>: which non-goal did you cut to keep M1 tiny, and one place the AI's draft over-scoped that you trimmed? Commit it.</p>
+                </div>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-paper-plane"></i> What to hand in</h3>
+                <p>Your <code>snippet-vault</code> repo with <code>SPEC.md</code>. Self-check before submitting:</p>
+                <ul>
+                    <li><code>SPEC.md</code> has all six sections, MVP kept tiny</li>
+                    <li>3&ndash;5 user stories, each with checkable acceptance criteria</li>
+                    <li>A milestone task list, smallest useful slice first</li>
+                    <li>New commits for the spec and the reflection</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Glossary -->
+        <div class="section fade-up" id="glossary">
+            <h2 class="section-title"><i class="fa-solid fa-book"></i> Mini Glossary</h2>
+            <table class="dark-table">
+                <thead><tr><th>Term</th><th>Plain meaning</th></tr></thead>
+                <tbody>
+                    <tr><td>Spec</td><td>A short living document of what you're building and why (<code>SPEC.md</code>).</td></tr>
+                    <tr><td>User story</td><td>One capability from the user's view: as a &hellip; I want &hellip; so that &hellip;</td></tr>
+                    <tr><td>Acceptance criteria</td><td>The checkable conditions that make a story "done".</td></tr>
+                    <tr><td>Non-goal</td><td>Something you deliberately choose <em>not</em> to build now.</td></tr>
+                    <tr><td>Milestone / slice</td><td>A thin, working increment you can build and ship on its own.</td></tr>
+                    <tr><td>MVP</td><td>Minimum viable product &mdash; the smallest version that's actually useful.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now have</h3>
+                <p>A committed <code>SPEC.md</code>: the problem, user stories with acceptance criteria, a tiny data model, an API surface, and a milestone slice. The assistant now has a durable contract to build against &mdash; and you have a definition of "done".</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 4 &mdash; Version Control from Line One</strong>. Before we build M1, we sharpen the Git habits &mdash; branches per milestone, clean commits, and reviewing every AI-generated diff like a pull request.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="02_ai_coding_workflow.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 2</a>
+            <a href="04_version_control.html" class="nav-btn next">Module 4: Version Control <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Vibe Coding, Shipped Right &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Spec-First Planning</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#why">Why Spec-First</a>
+        <a class="toc-item" href="#anatomy">Anatomy</a>
+        <a class="toc-item" href="#stories">User Stories</a>
+        <a class="toc-item" href="#slicing">Slicing</a>
+        <a class="toc-item" href="#lab">Practical Lab</a>
+        <a class="toc-item" href="#glossary">Glossary</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('vibe-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('vibe-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

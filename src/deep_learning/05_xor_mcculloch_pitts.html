@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOR with McCulloch-Pitts Neurons - Deep Learning</title>
+    <meta name="description" content="Build the XOR function by hand from McCulloch-Pitts threshold neurons. See why a single neuron can't solve XOR (it is not linearly separable), then construct and verify a two-layer network of three threshold neurons against the truth table. From Dr. Albanna's Deep Learning lecture notes.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#059669;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#065f46);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#059669}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#059669;border-left-color:#059669;background:rgba(16,185,129,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#059669}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#34d399}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#34d399}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(16,185,129,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+    <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]}};</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> Deep Learning</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#mp">The Problem</a>
+                <a href="#build">Building XOR</a>
+                <a href="#verify">Verify</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#mp" onclick="this.parentElement.classList.remove('open')">The Problem</a>
+        <a href="#build" onclick="this.parentElement.classList.remove('open')">Building XOR</a>
+        <a href="#verify" onclick="this.parentElement.classList.remove('open')">Verify</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>XOR with McCulloch&ndash;Pitts Neurons</h1>
+            <p class="hero-sub">Build the XOR function by hand from threshold neurons &mdash; and see why a single neuron can't.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 5 &middot; Lecture notes by Dr. Abdulkarim Albanna &mdash; a worked example</p>
+            <span class="diff-badge" style="background:#f59e0b">Worked Example</span>
+            <span class="cat-badge"><i class="fa-solid fa-circle-nodes" style="margin-right:6px"></i>Neural Nets</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~30 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Understand <strong>McCulloch&ndash;Pitts (M&ndash;P) threshold neurons</strong> &mdash; units that fire when a weighted sum reaches a threshold \(\theta\)</li>
+                    <li>See why <strong>XOR is not linearly separable</strong>, so a single neuron cannot compute it</li>
+                    <li>Build XOR from <strong>three M&ndash;P neurons</strong> (two hidden, one output) entirely by hand &mdash; <em>no training</em></li>
+                    <li>Verify the network against the XOR <strong>truth table</strong>, row by row</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 4 (Activation Functions). You should be comfortable with the idea of a weighted sum passing through a threshold (step) activation before starting.</p>
+        </div>
+
+        <!-- McCulloch-Pitts / the problem -->
+        <div class="section fade-up" id="mp">
+            <h2 class="section-title"><i class="fa-solid fa-circle-nodes"></i> McCulloch&ndash;Pitts Neurons</h2>
+            <p class="section-desc"><strong>Goal:</strong> implement the XOR function using McCulloch&ndash;Pitts (M&ndash;P) neurons &mdash; threshold units. In an M&ndash;P neuron there is <strong>no training, only analysis</strong>: we choose the weights by hand and verify them against the truth table.</p>
+            <p class="section-desc">An M&ndash;P neuron computes a weighted sum of its inputs, the <strong>net input</strong>, and fires (outputs 1) when that sum reaches a threshold \(\theta\); otherwise it outputs 0. Its threshold activation is:</p>
+            <p class="section-desc">\[ f(y_{\text{in}}) = \begin{cases} 1 & \text{if } y_{\text{in}} \ge \theta \\[2pt] 0 & \text{if } y_{\text{in}} < \theta \end{cases} \qquad (\theta = 1) \]</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-hand"></i> No training here</h3>
+                <p>There is <strong>no learning</strong> in this exercise. We do not run gradient descent or adjust anything. Instead we <em>choose the weights and thresholds by hand</em> and then <strong>verify</strong> that the resulting network reproduces the desired truth table. This is how the very first neural models were designed &mdash; by construction, not by training.</p>
+            </div>
+            <p class="section-desc"><strong>XOR cannot be represented by a simple single logic function.</strong> It is written as a combination of two terms:</p>
+            <p class="section-desc">\[ y = x_1 \cdot \lnot x_2 \;+\; \lnot x_1 \cdot x_2 \]</p>
+            <p class="section-desc">The function outputs 1 when <em>exactly one</em> of its two inputs is 1, and 0 otherwise:</p>
+            <table class="dark-table">
+                <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>\(\text{XOR}(x_1, x_2)\)</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td><strong>0</strong></td></tr>
+                    <tr><td>0</td><td>1</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>1</td><td><strong>0</strong></td></tr>
+                </tbody>
+            </table>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/xor_truth.png" alt="The XOR problem: the two 1-outputs and two 0-outputs sit on opposite corners of the input square" loading="lazy" style="max-width:520px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The XOR problem plotted on the input square: the two points that output 1 &mdash; \((0,1)\) and \((1,0)\) &mdash; sit on <em>opposite</em> corners, and so do the two 0-points. No single straight line can separate the 1s from the 0s. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Why one neuron can't do XOR</h3>
+                <p>A single M&ndash;P neuron draws exactly <strong>one straight decision boundary</strong> &mdash; the line where \(\text{net} = \theta\). On one side it outputs 1, on the other 0. That means a single neuron can only compute functions whose 1-outputs can be separated from the 0-outputs by a single line: it is <strong>linearly separable only</strong>. But XOR's two 1-outputs, \((0,1)\) and \((1,0)\), sit on <em>opposite corners</em> of the input square, with the 0-outputs on the other diagonal. No single line can put both 1s on one side and both 0s on the other. XOR therefore needs a <strong>hidden layer</strong> &mdash; an intermediate stage of neurons.</p>
+            </div>
+            <p class="section-desc">So we <strong>decompose XOR into three simpler functions</strong>, each of which <em>is</em> linearly separable:</p>
+            <p class="section-desc">\[ z_1 = x_1 \wedge \lnot x_2 \qquad z_2 = \lnot x_1 \wedge x_2 \qquad y = z_1 \vee z_2 \]</p>
+        </div>
+
+        <!-- Building -->
+        <div class="section fade-up" id="build">
+            <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> Building XOR from Three Neurons</h2>
+            <p class="section-desc">Each of the two AND-clauses is linearly separable, so each can be built with a single M&ndash;P neuron. We call these two <strong>hidden neurons</strong> \(z_1\) and \(z_2\), then combine them with an OR output neuron.</p>
+
+            <!-- 13.1 -->
+            <div class="subsection">
+                <h3><i class="fa-solid fa-1"></i> Step 1 &mdash; First function \(z_1 = x_1 \wedge \lnot x_2\)</h3>
+                <p class="section-desc"><strong>Target:</strong> \(z_1\) should fire only for \((x_1, x_2) = (1, 0)\). The net input is \(z_{1,\text{in}} = x_1 w_{11} + x_2 w_{21}\), and the neuron fires if \(z_{1,\text{in}} \ge \theta\) with \(\theta = 1\).</p>
+
+                <p class="section-desc"><strong>Attempt:</strong> initialise \(w_{11} = w_{21} = 1\).</p>
+                <table class="dark-table">
+                    <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>net input \(z_{1,\text{in}}\)</th><th>fires (\(\theta=1\))?</th><th>target \(z_1\)</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>0</td><td>\(0\cdot 1 + 0\cdot 1 = 0\)</td><td>0</td><td>0</td></tr>
+                        <tr><td>0</td><td>1</td><td>\(0\cdot 1 + 1\cdot 1 = 1\)</td><td><strong>1</strong></td><td>0</td></tr>
+                        <tr><td>1</td><td>0</td><td>\(1\cdot 1 + 0\cdot 1 = 1\)</td><td>1</td><td>1</td></tr>
+                        <tr><td>1</td><td>1</td><td>\(1\cdot 1 + 1\cdot 1 = 2\)</td><td><strong>1</strong></td><td>0</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc"><strong>Two rows disagree</strong> with the target (rows \((0,1)\) and \((1,1)\)) &mdash; these weights fail.</p>
+
+                <p class="section-desc"><strong>Correct choice:</strong> \(w_{11} = 1,\; w_{21} = -1\), so \(z_{1,\text{in}} = x_1 - x_2\).</p>
+                <table class="dark-table">
+                    <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>net input \(z_{1,\text{in}}\)</th><th>fires (\(\theta=1\))?</th><th>target \(z_1\)</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>0</td><td>\(0\cdot 1 + 0\cdot(-1) = 0\)</td><td>0</td><td>0</td></tr>
+                        <tr><td>0</td><td>1</td><td>\(0\cdot 1 + 1\cdot(-1) = -1\)</td><td>0</td><td>0</td></tr>
+                        <tr><td>1</td><td>0</td><td>\(1\cdot 1 + 0\cdot(-1) = 1\)</td><td><strong>1</strong></td><td>1</td></tr>
+                        <tr><td>1</td><td>1</td><td>\(1\cdot 1 + 1\cdot(-1) = 0\)</td><td>0</td><td>0</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">The neuron fires <strong>only for \((1, 0)\)</strong> &mdash; exactly \(z_1\). Hence \(w_{11} = 1,\; w_{21} = -1\).</p>
+            </div>
+
+            <!-- 13.2 -->
+            <div class="subsection">
+                <h3><i class="fa-solid fa-2"></i> Step 2 &mdash; Second function \(z_2 = \lnot x_1 \wedge x_2\)</h3>
+                <p class="section-desc"><strong>Target:</strong> \(z_2\) should fire only for \((x_1, x_2) = (0, 1)\). Trying \(w_{12} = w_{22} = 1\) fails the same way as above &mdash; those weights cannot produce \(z_2\). By symmetry we take \(w_{12} = -1,\; w_{22} = 1\), so the net input is \(z_{2,\text{in}} = x_1 w_{12} + x_2 w_{22} = -x_1 + x_2\), firing if \(z_{2,\text{in}} \ge 1\).</p>
+                <table class="dark-table">
+                    <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>net input \(z_{2,\text{in}}\)</th><th>fires (\(\theta=1\))?</th><th>target \(z_2\)</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>0</td><td>\(0\cdot(-1) + 0\cdot 1 = 0\)</td><td>0</td><td>0</td></tr>
+                        <tr><td>0</td><td>1</td><td>\(0\cdot(-1) + 1\cdot 1 = 1\)</td><td><strong>1</strong></td><td>1</td></tr>
+                        <tr><td>1</td><td>0</td><td>\(1\cdot(-1) + 0\cdot 1 = -1\)</td><td>0</td><td>0</td></tr>
+                        <tr><td>1</td><td>1</td><td>\(1\cdot(-1) + 1\cdot 1 = 0\)</td><td>0</td><td>0</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">The neuron fires <strong>only for \((0, 1)\)</strong> &mdash; exactly \(z_2\). Hence \(w_{12} = -1,\; w_{22} = 1\).</p>
+            </div>
+
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/xor_net1.png" alt="The first sub-network: the two hidden threshold neurons z1 and z2 with their weights" loading="lazy" style="max-width:640px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The first sub-network: inputs \(x_1\) and \(x_2\) feed the two hidden neurons \(z_1\) (weights \(1, -1\)) and \(z_2\) (weights \(-1, 1\)), each with threshold \(\theta = 1\). Between them they detect the two &ldquo;exactly one input on&rdquo; cases. <em>(From the course notes.)</em></figcaption>
+            </figure>
+        </div>
+
+        <!-- 13.3 Output neuron -->
+        <div class="section fade-up" id="output">
+            <h2 class="section-title"><i class="fa-solid fa-code-merge"></i> Step 3 &mdash; Output \(y = z_1 \vee z_2\)</h2>
+            <p class="section-desc">Between them, \(z_1\) and \(z_2\) fire for exactly the two rows where XOR should be 1 &mdash; and they never fire together. So an <strong>OR</strong> of \(z_1\) and \(z_2\) is precisely XOR.</p>
+            <p class="section-desc">Build OR with a third M&ndash;P neuron \(Y\) that receives \(z_1\) and \(z_2\) with weights \(v_1 = v_2 = 1\) and threshold \(\theta = 1\):</p>
+            <p class="section-desc">\[ y_{\text{in}} = z_1 v_1 + z_2 v_2 \qquad y = 1 \text{ if } y_{\text{in}} \ge 1 \]</p>
+            <table class="dark-table">
+                <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>\(z_1\)</th><th>\(z_2\)</th><th>\(y_{\text{in}} = z_1 + z_2\)</th><th>\(y\) (\(\ge 1\)?)</th><th>XOR target</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>\(0\)</td><td><strong>0</strong></td><td><strong>0</strong> &#10003;</td></tr>
+                    <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>\(1\)</td><td><strong>1</strong></td><td><strong>1</strong> &#10003;</td></tr>
+                    <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>\(1\)</td><td><strong>1</strong></td><td><strong>1</strong> &#10003;</td></tr>
+                    <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>\(0\)</td><td><strong>0</strong></td><td><strong>0</strong> &#10003;</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> All four rows match</h3>
+                <p>The output column \(y\) is \((0, 1, 1, 0)\) &mdash; identical to the XOR target for every one of the four input combinations. The hand-built network computes XOR exactly.</p>
+            </div>
+        </div>
+
+        <!-- Verify / full network -->
+        <div class="section fade-up" id="verify">
+            <h2 class="section-title"><i class="fa-solid fa-network-wired"></i> The Full Network</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/xor_net_full.png" alt="The complete two-layer XOR network: two hidden threshold neurons feeding a single OR output neuron" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The full two-layer XOR network: inputs \(x_1, x_2\) &rarr; two hidden threshold neurons \(z_1, z_2\) (weights \(1/-1\) and \(-1/1\), \(\theta=1\)) &rarr; an OR output neuron \(Y\) (weights \(1, 1\), \(\theta=1\)). Three threshold neurons in two layers reproduce XOR exactly. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <p class="section-desc">The <strong>final network</strong> is fixed by these hand-chosen weights and thresholds:</p>
+            <p class="section-desc">\[ w_{11} = 1,\quad w_{21} = -1,\quad w_{12} = -1,\quad w_{22} = 1,\quad v_1 = v_2 = 1,\quad \theta = 1 \]</p>
+            <p class="section-desc"><strong>Key lesson:</strong> XOR needs a hidden layer &mdash; a single M&ndash;P neuron can only realize linearly separable functions. The hidden units \(z_1\) and \(z_2\) each solve a separable sub-problem, and the output combines them with an OR. This is the classic demonstration that <strong>depth buys representational power</strong> that a single neuron simply does not have.</p>
+            <p class="section-desc">This ties directly back to <strong>Module 3's argument for why non-linearity and depth matter</strong>: stacking layers (with a non-linear activation like the threshold between them) lets a network represent functions that no single layer ever could. XOR is the smallest, sharpest example of that principle &mdash; and historically the one that stalled the field until multi-layer networks were understood.</p>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise</h2>
+            <p class="section-desc">Work each part on paper <em>before</em> opening the solution. Tracing a threshold network by hand once is worth ten readings.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Verify the final network for input \((0, 1)\)</h3>
+                    <p class="section-desc">Trace the full network on the input \(x_1 = 0,\; x_2 = 1\). Compute \(z_{1,\text{in}}\) and \(z_1\); \(z_{2,\text{in}}\) and \(z_2\); then \(y_{\text{in}}\) and \(y\). Does the result match \(\text{XOR}(0, 1) = 1\)?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>Hidden neuron \(z_1\):</strong></p>
+                        <p class="section-desc">\[ z_{1,\text{in}} = (0\cdot 1) + (1\cdot -1) = -1 < 1 \;\Rightarrow\; z_1 = 0 \]</p>
+                        <p class="section-desc"><strong>Hidden neuron \(z_2\):</strong></p>
+                        <p class="section-desc">\[ z_{2,\text{in}} = (0\cdot -1) + (1\cdot 1) = 1 \ge 1 \;\Rightarrow\; z_2 = 1 \]</p>
+                        <p class="section-desc"><strong>Output neuron \(Y\):</strong></p>
+                        <p class="section-desc">\[ y_{\text{in}} = z_1 + z_2 = 0 + 1 = 1 \ge 1 \;\Rightarrow\; y = 1 = \text{XOR}(0,1) \;\checkmark \]</p>
+                        <p class="section-desc">The network outputs 1, which matches \(\text{XOR}(0, 1) = 1\).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Design M&ndash;P neurons for AND and OR</h3>
+                    <p class="section-desc">Design a single M&ndash;P neuron that computes <strong>AND</strong>, and another that computes <strong>OR</strong>, of two binary inputs \(x_1, x_2\). Choose \(w_1, w_2\) and a threshold \(\theta\), and check all four input rows.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>AND:</strong> weights \(w_1 = w_2 = 1\), threshold \(\theta = 2\). The net input \(x_1 + x_2\) reaches \(2\) only when <em>both</em> inputs are 1, so the neuron fires only for \((1, 1)\) &mdash; that is AND.</p>
+                        <table class="dark-table">
+                            <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>\(\text{net} = x_1 + x_2\)</th><th>AND (\(\ge 2\)?)</th></tr></thead>
+                            <tbody>
+                                <tr><td>0</td><td>0</td><td>\(0\)</td><td><strong>0</strong></td></tr>
+                                <tr><td>0</td><td>1</td><td>\(1\)</td><td><strong>0</strong></td></tr>
+                                <tr><td>1</td><td>0</td><td>\(1\)</td><td><strong>0</strong></td></tr>
+                                <tr><td>1</td><td>1</td><td>\(2\)</td><td><strong>1</strong></td></tr>
+                            </tbody>
+                        </table>
+                        <p class="section-desc"><strong>OR:</strong> weights \(w_1 = w_2 = 1\), threshold \(\theta = 1\). Now the net input reaches \(1\) as soon as <em>either</em> input is 1, so the neuron fires for every row except \((0, 0)\) &mdash; that is OR.</p>
+                        <table class="dark-table">
+                            <thead><tr><th>\(x_1\)</th><th>\(x_2\)</th><th>\(\text{net} = x_1 + x_2\)</th><th>OR (\(\ge 1\)?)</th></tr></thead>
+                            <tbody>
+                                <tr><td>0</td><td>0</td><td>\(0\)</td><td><strong>0</strong></td></tr>
+                                <tr><td>0</td><td>1</td><td>\(1\)</td><td><strong>1</strong></td></tr>
+                                <tr><td>1</td><td>0</td><td>\(1\)</td><td><strong>1</strong></td></tr>
+                                <tr><td>1</td><td>1</td><td>\(2\)</td><td><strong>1</strong></td></tr>
+                            </tbody>
+                        </table>
+                        <p class="section-desc">Both AND and OR are linearly separable, so each needs only a single neuron &mdash; the difference is entirely in the threshold.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Why can't one neuron do XOR?</h3>
+                    <p class="section-desc">Explain, in one sentence, why no single M&ndash;P neuron can compute XOR &mdash; and what fixes it.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">A single M&ndash;P neuron implements exactly <strong>one linear threshold boundary</strong> (the line \(\text{net} = \theta\)): one side outputs 1, the other 0. XOR is <strong>not linearly separable</strong> &mdash; no single weighted-sum threshold can separate \(\{(0,1), (1,0)\}\) from \(\{(0,0), (1,1)\}\), since its two 1-points sit on opposite corners of the input square. Therefore no single neuron can compute XOR. The fix is to add an <strong>intermediate (hidden) layer</strong>: the two hidden neurons \(z_1\) and \(z_2\) each carve one linear region, and the OR output neuron combines them into the non-linear XOR pattern.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; Where Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now know</h3>
+                <ul>
+                    <li><strong>M&ndash;P neurons</strong> are threshold units: fire (output 1) when \(\text{net} = \sum_i w_i x_i \ge \theta\), else 0 &mdash; with no training, weights chosen by hand.</li>
+                    <li><strong>XOR is not linearly separable</strong>, so a single neuron (one straight boundary) cannot compute it.</li>
+                    <li>\(\text{XOR} = (x_1 \wedge \lnot x_2) \vee (\lnot x_1 \wedge x_2)\), built from <strong>two hidden neurons</strong> \(z_1, z_2\) and an <strong>OR output neuron</strong> \(Y\).</li>
+                    <li>The full three-neuron, two-layer network reproduces the XOR truth table exactly &mdash; <strong>depth buys representational power</strong> a single neuron lacks.</li>
+                </ul>
+            </div>
+            <p class="section-desc">We built XOR by hand, choosing every weight and threshold ourselves. But for real problems we cannot design weights by inspection &mdash; the network must <em>learn</em> them from data. <strong>Next up: Module 6 &mdash; Backpropagation</strong>, the algorithm that trains multi-layer networks by propagating error gradients backward through the layers.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="04_activation_functions.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 4: Activation Functions</a>
+            <a href="06_backpropagation.html" class="nav-btn next">Module 6: Backpropagation <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Deep Learning &middot; Course notes by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>XOR Network</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#mp">McCulloch&ndash;Pitts</a>
+        <a class="toc-item" href="#build">Building XOR</a>
+        <a class="toc-item" href="#output">Output Neuron</a>
+        <a class="toc-item" href="#verify">The Full Network</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpropagation - Deep Learning</title>
+    <meta name="description" content="Backpropagation as the chain rule applied backward. A full worked forward and backward pass through a 2-2-1 sigmoid network: computing output and hidden deltas, updating the weights, and watching the error shrink. Based on Dr. Abdulkarim Albanna's Activation Functions notes, Section 14.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#059669;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#065f46);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#059669}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#059669;border-left-color:#059669;background:rgba(16,185,129,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#059669}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#34d399}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#34d399}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(16,185,129,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+    <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]}};</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> Deep Learning</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#chain">Chain Rule</a>
+                <a href="#forward">Forward Pass</a>
+                <a href="#backward">Backward Pass</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#chain" onclick="this.parentElement.classList.remove('open')">Chain Rule</a>
+        <a href="#forward" onclick="this.parentElement.classList.remove('open')">Forward Pass</a>
+        <a href="#backward" onclick="this.parentElement.classList.remove('open')">Backward Pass</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Backpropagation</h1>
+            <p class="hero-sub">The chain rule that trains a network &mdash; walked through a full forward and backward pass.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 6 &middot; Lecture notes by Dr. Abdulkarim Albanna &mdash; a worked example</p>
+            <span class="diff-badge" style="background:#f59e0b">Worked Example</span>
+            <span class="cat-badge"><i class="fa-solid fa-backward" style="margin-right:6px"></i>Training</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~45 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Understand <strong>backpropagation as the chain rule applied backward</strong> through a network</li>
+                    <li>Run a full <strong>forward pass</strong> through a 2&ndash;2&ndash;1 sigmoid network</li>
+                    <li>Compute the <strong>output and hidden deltas</strong> and use them to <strong>update the weights</strong></li>
+                    <li>See the <strong>error shrink</strong> on a second forward pass &mdash; the essence of training</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 3 (the perceptron and the weighted sum) and Module 4 (activation functions and the sigmoid derivative). You should be comfortable with the weighted sum \(s = \sum_i x_i w_i + b\), the sigmoid \(\sigma(s)\), and its derivative \(\sigma'(s) = \sigma(s)\,(1 - \sigma(s))\) before starting.</p>
+        </div>
+
+        <!-- What is backprop -->
+        <div class="section fade-up" id="what">
+            <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> What Is Backpropagation?</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/backprop_intro.png" alt="Schematic of backpropagation: a forward pass computes the output, then the error is propagated backward to update every weight" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Backpropagation in one picture: signal flows forward to produce an output, then the error gradient flows backward through the same connections to correct every weight. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <p class="section-desc"><strong>Backpropagation</strong> is short for &ldquo;backward propagation of errors.&rdquo; It is the fundamental algorithm for training feedforward neural networks (FFNNs) &mdash; the workhorse behind virtually every deep model in use today.</p>
+            <p class="section-desc">It is a <strong>supervised</strong> learning algorithm: for each training example we know the target output, and backpropagation adjusts the weights of the network to <em>minimise the error</em> between the network's actual output and that target. It searches for the weight values that minimise the network's total mean squared error over the training set, and it does so by repeating two passes. Do this over and over, across many examples, and the network gradually learns.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-arrows-left-right"></i> Two phases per training step</h3>
+                <p>Every training step has two phases: a <strong>forward pass</strong> that computes the outputs of all units in the network and the error of the output layer, then a <strong>backward pass</strong> that uses the network error to update the weights &mdash; starting at the output layer and propagating the error backward through the network, layer by layer, by recursively computing the <em>local gradient</em> of each neuron. The forward pass says <em>what the network predicted</em>; the backward pass says <em>how each weight should change to predict better next time</em>.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-gears"></i> The weight-update rule (gradient descent)</h3>
+                <p class="section-desc">Backprop is gradient descent on the error surface. Each weight moves against the gradient of the error:</p>
+                <p style="text-align:center">\[ w_i(\text{new}) = w_i(\text{old}) - \eta \cdot \frac{\partial E}{\partial w_i} \]</p>
+                <p class="section-desc">Here \(\eta\) (eta) is the <strong>learning rate</strong> and \(\partial E / \partial w_i\) is the partial derivative of the error with respect to weight \(w_i\). Written out for a sigmoid neuron, the increment applied to a weight has a very readable anatomy:</p>
+                <p style="text-align:center">\[ \Delta w_i = \alpha \cdot \underbrace{y_j(1 - y_j)}_{\text{sigmoid slope}} \cdot \underbrace{(t_j - y_j)}_{\text{error of neuron } j} \cdot \underbrace{x_i}_{\text{pre-synaptic activation}} \]</p>
+                <p class="section-desc">where \(\alpha\) is the learning rate, \(y_j(1 - y_j)\) is the derivative of the sigmoid activation, \((t_j - y_j)\) is the error \(\delta_j\) of the post-synaptic neuron, and \(x_i\) is the activation of the pre-synaptic neuron.</p>
+            </div>
+        </div>
+
+        <!-- Chain rule -->
+        <div class="section fade-up" id="chain">
+            <h2 class="section-title"><i class="fa-solid fa-link"></i> The Chain Rule Behind Backprop</h2>
+            <p class="section-desc">A single neuron chains three simple steps together: it forms a weighted sum (the sum of products, SOP), squashes it through an activation function, and (at the output) contributes to an error. Written out for a two-input neuron with a sigmoid activation:</p>
+            <p style="text-align:center">\[ s = x_1 w_1 + x_2 w_2 + b \;\;\to\;\; y = f(s) = \frac{1}{1 + e^{-s}} \;\;\to\;\; E = \tfrac{1}{2}(d - y)^2 \]</p>
+            <p class="section-desc">We want to know how the error \(E\) changes when we nudge a weight \(w\). But \(w\) only touches \(E\) <em>through</em> the sum \(s\) and then the output \(y\). So we apply the <strong>chain rule</strong>, peeling the composition back one layer at a time &mdash; from the error, back through the activation, back to the weight:</p>
+            <p style="text-align:center">\[ \frac{\partial E}{\partial w_i} = \frac{\partial E}{\partial y} \cdot \frac{\partial y}{\partial s} \cdot \frac{\partial s}{\partial w_i} \]</p>
+            <p class="section-desc">Each factor is easy to compute on its own:</p>
+            <p style="text-align:center">\[ \frac{\partial E}{\partial y} = y - d, \qquad \frac{\partial y}{\partial s} = y(1 - y), \qquad \frac{\partial s}{\partial w_1} = x_1, \;\; \frac{\partial s}{\partial w_2} = x_2 \]</p>
+            <p class="section-desc">The error term gives \(\partial E / \partial y = y - d\) (the derivative of the squared error, where \(d\) is the desired/target output). The activation term, for a sigmoid, is the derivative you met in Module 4, \(\partial y / \partial s = y(1 - y)\). And the sum term gives \(\partial s / \partial w_i = x_i\), the input on that wire. Putting them together:</p>
+            <p style="text-align:center">\[ \frac{\partial E}{\partial w_i} = (y - d) \cdot y(1 - y) \cdot x_i \]</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-sitemap"></i> General form &mdash; the delta rule</h3>
+                <p class="section-desc">For a multi-output network the error measure is</p>
+                <p style="text-align:center">\[ E_d(w) = \tfrac{1}{2} \sum_{k \in \text{outputs}} (t_k - o_k)^2 \]</p>
+                <p class="section-desc">where \(t_k\) is the target and \(o_k\) the actual output of the \(k\)-th neuron (the factor \(\tfrac{1}{2}\) simplifies the derivative). Each weight is then changed by \(\Delta w_{ji} = \eta \cdot \delta_j \cdot o_i\), where the local gradient \(\delta_j\) depends on whether the neuron is an output unit or a hidden unit:</p>
+                <p style="text-align:center">\[ \delta_j = o_j(1 - o_j)(t_j - o_j) \quad \text{if } j \text{ is an output unit} \]</p>
+                <p style="text-align:center">\[ \delta_j = o_j(1 - o_j) \sum_{k} \delta_k w_{kj} \quad \text{if } j \text{ is a hidden unit} \]</p>
+                <p class="section-desc">A hidden unit collects the \(\delta\)s of the layer after it, weighted by the connections leading out of it. Here \(\eta\) is the learning rate, \(t_j\) is the correct (teacher) output for unit \(j\), and \(\delta_j\) is the error measure for unit \(j\).</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-list-ol"></i> The backpropagation algorithm</h3>
+                <p>Initialise all weights to small random numbers. While \(E(W)\) is unsatisfactory and the iteration count is below the maximum, for each training example do:</p>
+                <ul>
+                    <li>Input the training example and compute the network outputs (<strong>forward pass</strong>).</li>
+                    <li>For each output unit \(k\): \(\;\delta_k \leftarrow o_k(1 - o_k)(d_k - o_k)\).</li>
+                    <li>For each hidden unit \(h\): \(\;\delta_h \leftarrow o_h(1 - o_h) \sum_{k \in \text{outputs}} w_{h,k}\,\delta_k\).</li>
+                    <li>Update each weight: \(\;w_{i,j} \leftarrow w_{i,j} + \Delta w_{i,j}\), where \(\Delta w_{i,j} = \eta\,\delta_j\,x_{i,j}\).</li>
+                </ul>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-lightbulb"></i> Why the neat \(\delta\) terms appear</h3>
+                <p>Because \(\partial y / \partial s = y(1 - y)\) is so clean, the whole gradient collapses into a tidy product. We bundle the &ldquo;error &times; local slope&rdquo; part into a single quantity \(\delta\) for each neuron, and the gradient of any incoming weight becomes simply \(\delta \times \text{input}\). Those \(\delta\) terms &mdash; one per neuron, computed from output back to input &mdash; are the heart of the algorithm below.</p>
+            </div>
+        </div>
+
+        <!-- Forward pass -->
+        <div class="section fade-up" id="forward">
+            <h2 class="section-title"><i class="fa-solid fa-arrow-right-long"></i> Worked Example &mdash; Forward Pass</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/backprop_network.png" alt="A 2-2-1 feedforward network with two inputs, two hidden neurons H3 and H4, one output O5, and all weights labelled with their numeric values" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The 2&ndash;2&ndash;1 network for our worked example: inputs \(x_1, x_2\) feed hidden neurons \(H_3\) and \(H_4\), which feed the output \(O_5\). Every connection carries the weight we will trace through the forward and backward passes. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <p class="section-desc">Our network has two inputs, one hidden layer of two neurons (\(H_3\) and \(H_4\)), and a single output neuron (\(O_5\)). Every neuron uses a <strong>sigmoid</strong> activation. We feed it one training example, with a known target output of \(0.5\) and a learning rate of \(\eta = 1\).</p>
+            <table class="dark-table">
+                <thead><tr><th>Quantity</th><th>Symbol</th><th>Value</th></tr></thead>
+                <tbody>
+                    <tr><td>Input 1</td><td>\(x_1\)</td><td>0.35</td></tr>
+                    <tr><td>Input 2</td><td>\(x_2\)</td><td>0.90</td></tr>
+                    <tr><td>Weights into \(H_3\)</td><td>\(w_{13}, w_{23}\)</td><td>0.10, 0.80</td></tr>
+                    <tr><td>Weights into \(H_4\)</td><td>\(w_{14}, w_{24}\)</td><td>0.40, 0.60</td></tr>
+                    <tr><td>Weights into \(O_5\)</td><td>\(w_{35}, w_{45}\)</td><td>0.30, 0.90</td></tr>
+                    <tr><td>Target output</td><td>\(d\)</td><td>0.50</td></tr>
+                    <tr><td>Learning rate</td><td>\(\eta\)</td><td>1</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc">The forward pass computes the weighted sum \(a_j = \sum_i w_{i,j}\,x_i\) at each neuron, then its sigmoid activation \(y_j = f(a_j) = \tfrac{1}{1 + e^{-a_j}}\), layer by layer from input to output.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-1"></i> Hidden neuron \(H_3\)</h3>
+                <p style="text-align:center">\[ a_3 = x_1 w_{13} + x_2 w_{23} = (0.1)(0.35) + (0.8)(0.9) = 0.035 + 0.72 = 0.755 \]</p>
+                <p style="text-align:center">\[ y_3 = \sigma(0.755) = \frac{1}{1 + e^{-0.755}} = 0.68 \]</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-2"></i> Hidden neuron \(H_4\)</h3>
+                <p style="text-align:center">\[ a_4 = x_1 w_{14} + x_2 w_{24} = (0.4)(0.35) + (0.6)(0.9) = 0.14 + 0.54 = 0.68 \]</p>
+                <p style="text-align:center">\[ y_4 = \sigma(0.68) = \frac{1}{1 + e^{-0.68}} = 0.6637 \]</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-3"></i> Output neuron \(O_5\)</h3>
+                <p style="text-align:center">\[ a_5 = y_3 w_{35} + y_4 w_{45} = (0.68)(0.3) + (0.6637)(0.9) = 0.204 + 0.597 = 0.801 \]</p>
+                <p style="text-align:center">\[ y_5 = \sigma(0.801) = \frac{1}{1 + e^{-0.801}} = 0.69 \quad (\text{network output}) \]</p>
+            </div>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> There is an error to correct</h3>
+                <p>The network output is \(y_5 = 0.69\), but the target is \(d = 0.5\). The prediction overshoots by \(0.19\) &mdash; that gap is exactly what the backward pass exists to shrink.</p>
+            </div>
+        </div>
+
+        <!-- Backward pass -->
+        <div class="section fade-up" id="backward">
+            <h2 class="section-title"><i class="fa-solid fa-arrow-left-long"></i> Worked Example &mdash; Backward Pass &amp; Weight Update</h2>
+            <p class="section-desc">Now we push the error backward. For each neuron we compute its <strong>local gradient \(\delta\)</strong>, starting at the output (where the error is directly measured) and working back into the hidden layer.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-1"></i> Output unit \(\delta_5\)</h3>
+                <p class="section-desc">The output delta is the local slope \(y(1 - y)\) times the raw error \((t - y)\):</p>
+                <p style="text-align:center">\[ \delta_5 = y_5(1 - y_5)(t - y_5) = (0.69)(1 - 0.69)(0.5 - 0.69) = (0.69)(0.31)(-0.19) = -0.0406 \]</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-2"></i> Hidden units \(\delta_3\) and \(\delta_4\)</h3>
+                <p class="section-desc">Each hidden neuron gets the blame for the output error <em>in proportion to the weight connecting it to the output</em>. We propagate \(\delta_5\) back through those output weights, then multiply by the hidden neuron's own local slope:</p>
+                <p style="text-align:center">\[ \delta_3 = y_3(1 - y_3)\,w_{35}\,\delta_5 = (0.68)(1 - 0.68)\big((0.3)(-0.0406)\big) = (0.68)(0.32)(-0.01218) = -0.00265 \]</p>
+                <p style="text-align:center">\[ \delta_4 = y_4(1 - y_4)\,w_{45}\,\delta_5 = (0.6637)(1 - 0.6637)\big((0.9)(-0.0406)\big) = (0.6637)(0.3363)(-0.03654) = -0.00816 \]</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-3"></i> The weight-update rule</h3>
+                <p class="section-desc">Every weight is nudged by the learning rate times the \(\delta\) of the neuron it feeds into, times the activation coming up the wire:</p>
+                <p style="text-align:center">\[ w_{\text{new}} = w_{\text{old}} + \eta \cdot \delta_{\text{downstream}} \cdot \text{input}_{\text{upstream}} \]</p>
+                <p class="section-desc">Applying it to a couple of weights (with \(\eta = 1\)). The output weight \(w_{35}\), whose upstream input is \(y_3\):</p>
+                <p style="text-align:center">\[ w_{35}(\text{new}) = 0.3 + (1)(\delta_5)(y_3) = 0.3 + (-0.0406)(0.68) = 0.3 - 0.0276 = 0.2724 \]</p>
+                <p class="section-desc">And the input weight \(w_{13}\), whose upstream input is \(x_1\):</p>
+                <p style="text-align:center">\[ w_{13}(\text{new}) = 0.1 + (1)(\delta_3)(x_1) = 0.1 + (-0.00265)(0.35) \approx 0.09907 \]</p>
+                <p class="section-desc">Updating every weight the same way gives the full table below:</p>
+                <table class="dark-table">
+                    <thead><tr><th>\(i\)</th><th>\(j\)</th><th>\(w_{ij}\) (old)</th><th>\(\delta_j\)</th><th>\(x_i\)</th><th>\(\eta\)</th><th>\(w_{ij}\) (new)</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>3</td><td>0.1</td><td>\(-0.00265\)</td><td>0.35</td><td>1</td><td>0.0991</td></tr>
+                        <tr><td>2</td><td>3</td><td>0.8</td><td>\(-0.00265\)</td><td>0.9</td><td>1</td><td>0.7976</td></tr>
+                        <tr><td>1</td><td>4</td><td>0.4</td><td>\(-0.00816\)</td><td>0.35</td><td>1</td><td>0.3971</td></tr>
+                        <tr><td>2</td><td>4</td><td>0.6</td><td>\(-0.00816\)</td><td>0.9</td><td>1</td><td>0.5926</td></tr>
+                        <tr><td>3</td><td>5</td><td>0.3</td><td>\(-0.0406\)</td><td>0.68</td><td>1</td><td>0.2724</td></tr>
+                        <tr><td>4</td><td>5</td><td>0.9</td><td>\(-0.0406\)</td><td>0.6637</td><td>1</td><td>0.8731</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-4"></i> Another forward pass with the updated weights</h3>
+                <p class="section-desc">Run the inputs through the network again using the new weights:</p>
+                <p style="text-align:center">\[ a_3 = (0.0991)(0.35) + (0.7976)(0.9) = 0.7525 \;\to\; y_3 = 0.6797 \]</p>
+                <p style="text-align:center">\[ a_4 = (0.3971)(0.35) + (0.5926)(0.9) = 0.6723 \;\to\; y_4 = 0.6620 \]</p>
+                <p style="text-align:center">\[ a_5 = (0.2724)(0.6797) + (0.8731)(0.6620) = 0.7631 \;\to\; y_5 = 0.682 \]</p>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-arrow-trend-down"></i> The error shrinks on the next pass</h3>
+                <p>The output moved from \(0.69\) to \(0.682\) &mdash; <strong>closer to the target \(0.5\)</strong>. The error has shrunk. That is the whole game. Repeating this forward&ndash;backward loop over many examples, again and again, <em>is</em> training a neural network.</p>
+            </div>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise</h2>
+            <p class="section-desc">Work through both parts on paper before opening the solution &mdash; running one backward pass by hand is worth ten readings.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Why are the hidden deltas smaller?</h3>
+                    <p class="section-desc">Look at the numbers from the backward pass: \(\delta_5 = -0.0406\), but \(\delta_3 = -0.00265\) and \(\delta_4 = -0.00816\). State clearly <em>why</em> the hidden deltas are smaller in magnitude than the output delta, then compute the updated weight \(w_{45}(\text{new})\).</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>(1) Why smaller.</strong> Each hidden \(\delta\) is just \(\delta_5\) <em>scaled down twice</em>: once by the downstream weight (\(w_{35} = 0.3\) or \(w_{45} = 0.9\), both \(< 1\) here) and once by the hidden neuron's local slope \(y(1 - y)\), which for a sigmoid can never exceed \(0.25\):</p>
+                        <p style="text-align:center">\[ \max_y\, y(1 - y) = 0.25 \quad (\text{at } y = 0.5) \]</p>
+                        <p class="section-desc">Multiplying by these shrinking factors makes each hidden \(\delta\) smaller than the \(\delta\) it came from. Chain this over many layers and the gradient keeps shrinking as it travels backward &mdash; the seed of the <strong>vanishing-gradient problem</strong> in deep networks.</p>
+                        <p class="section-desc"><strong>(2) Updated weight \(w_{45}\).</strong> The upstream input to this output weight is \(y_4\):</p>
+                        <p style="text-align:center">\[ w_{45}(\text{new}) = 0.9 + (1)(\delta_5)(y_4) = 0.9 + (-0.0406)(0.6637) = 0.9 - 0.02695 = 0.87305 \]</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Exercise B7 &mdash; redo with target \(0.9\) and \(\eta = 0.5\)</h3>
+                    <p class="section-desc">Redo the worked example (14.2&ndash;14.3) with a new target \(d = 0.9\) and learning rate \(\eta = 0.5\). The forward pass is unchanged, so you may reuse \(y_3 = 0.68\), \(y_4 = 0.6637\), and \(y_5 = 0.69\). Compute \(\delta_5\), \(\delta_3\), \(\delta_4\), and the new weights \(w_{45}\) and \(w_{14}\). Does the output now need to move up or down?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>Output delta.</strong> Same local slope as before, but now the error \((t - y_5) = 0.9 - 0.69 = +0.21\) is positive:</p>
+                        <p style="text-align:center">\[ \delta_5 = y_5(1 - y_5)(t - y_5) = (0.69)(0.31)(0.9 - 0.69) = (0.69)(0.31)(0.21) = +0.0449 \]</p>
+                        <p class="section-desc"><strong>Hidden deltas.</strong> Propagate \(\delta_5\) back through the output weights and multiply by each hidden slope:</p>
+                        <p style="text-align:center">\[ \delta_3 = y_3(1 - y_3)\,w_{35}\,\delta_5 = (0.68)(0.32)\big((0.3)(0.0449)\big) = +0.00293 \]</p>
+                        <p style="text-align:center">\[ \delta_4 = y_4(1 - y_4)\,w_{45}\,\delta_5 = (0.6637)(0.3363)\big((0.9)(0.0449)\big) = +0.00902 \]</p>
+                        <p class="section-desc"><strong>New weights</strong> (with \(\eta = 0.5\)). The output weight \(w_{45}\), upstream input \(y_4\):</p>
+                        <p style="text-align:center">\[ \Delta w_{45} = \eta\,\delta_5\,y_4 = (0.5)(0.0449)(0.6637) = +0.0149 \;\Rightarrow\; w_{45}(\text{new}) = 0.9 + 0.0149 = 0.9149 \]</p>
+                        <p class="section-desc">The input weight \(w_{14}\), upstream input \(x_1\):</p>
+                        <p style="text-align:center">\[ \Delta w_{14} = \eta\,\delta_4\,x_1 = (0.5)(0.00902)(0.35) = +0.0016 \;\Rightarrow\; w_{14}(\text{new}) = 0.4 + 0.0016 = 0.4016 \]</p>
+                        <p class="section-desc"><strong>Direction.</strong> Every \(\delta\) is now <em>positive</em> because the target \((0.9)\) is above the output \((0.69)\), so all the weights <em>increase</em> &mdash; the exact opposite of the lecture example, where the target \((0.5)\) was below the output and every weight decreased. The output needs to move <strong>up</strong> toward \(0.9\).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice -->
+        <div class="section fade-up" id="practice">
+            <h2 class="section-title"><i class="fa-solid fa-code"></i> Practice in PyTorch</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-terminal"></i> Turn the math into tensors</h3>
+                <p>Everything in this course &mdash; the forward pass, the deltas, the weight updates, and the training loop &mdash; can be implemented and tested on the companion site, <a href="../torchcode/index.html">TorchCode</a>. It's &ldquo;like LeetCode, but for tensors&rdquo;: bite-sized PyTorch problems (Linear Regression with a manual gradient step, the Adam optimizer, Kaiming weight init, gradient clipping, and more) that let you build the ideas from these notes with your own hands, and check they actually train.</p>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; Where Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now know</h3>
+                <ul>
+                    <li><strong>The chain rule</strong> is backpropagation: \(\frac{\partial E}{\partial w_i} = \frac{\partial E}{\partial y}\,\frac{\partial y}{\partial s}\,\frac{\partial s}{\partial w_i}\), and for a sigmoid \(\frac{\partial y}{\partial s} = y(1 - y)\).</li>
+                    <li><strong>The forward pass</strong> computes each neuron's weighted sum and sigmoid, layer by layer, to produce the output (here \(y_5 = 0.69\) vs. target \(0.5\)).</li>
+                    <li><strong>The deltas</strong> carry the error backward: \(\delta_5 = y_5(1 - y_5)(d - y_5)\) at the output, and \(\delta_3, \delta_4 = y(1 - y)\,w\,\delta_5\) in the hidden layer.</li>
+                    <li><strong>The weight update</strong> \(w_{\text{new}} = w_{\text{old}} + \eta\,\delta\,\text{input}\) shrinks the error, and repeating the loop over many examples is training.</li>
+                </ul>
+            </div>
+            <p class="section-desc">This completes the <strong>foundations unit</strong> of the course &mdash; from the perceptron and activation functions to the algorithm that actually trains a network. Coming next: <strong>optimization &amp; regularization</strong> (momentum, Adam, dropout, weight decay), then <strong>convolutional networks</strong> for images, and <strong>sequence models</strong> for language and time series. You now have the one idea the whole field rests on. <a href="index.html">Back to the course home</a>.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="05_xor_mcculloch_pitts.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 5: XOR with McCulloch&ndash;Pitts</a>
+            <a href="07_optimization_regularization.html" class="nav-btn next">Module 7: Optimization &amp; Regularization <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Deep Learning &middot; Course notes by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Backpropagation</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#what">What Is Backprop?</a>
+        <a class="toc-item" href="#chain">The Chain Rule</a>
+        <a class="toc-item" href="#forward">Forward Pass</a>
+        <a class="toc-item" href="#backward">Backward Pass</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#practice">Practice in PyTorch</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam: Topic 5.1 - Data Visualization Techniques | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a><a href="../topics/topic5-1.html">Study Material</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../topics/topic5-1.html" onclick="this.parentElement.classList.remove('open')">Study Material</a>
+    </div>
+    <section class="hero"><div class="hero-content">
+        <h1>Exam: Data Visualization Techniques</h1>
+        <p class="hero-sub">Topic 5.1 &middot; Block 5: Data Communication and Visualization</p>
+        <p class="hero-sub" style="font-size:1.05rem;">20 Questions &middot; 20 Minutes</p>
+    </div></section>
+    <div class="container narrow">
+        <div class="section" id="exam-controls">
+            <div class="exam-header">
+                <div class="exam-timer" id="timer"><i class="fa-solid fa-clock"></i> <span id="time-display">20:00</span></div>
+                <div class="exam-progress">Question <strong id="answered-count">0</strong> of <strong>20</strong> answered</div>
+            </div>
+            <div class="exam-nav" id="question-nav"></div>
+        </div>
+        <div id="questions-container"></div>
+        <div class="exam-actions" id="submit-section">
+            <button class="exam-submit" id="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Exam</button>
+        </div>
+        <div class="exam-result" id="result-section" style="display:none;">
+            <h2><i class="fa-solid fa-chart-bar" style="color:var(--primary);"></i> Exam Results</h2>
+            <div class="score-big" id="score-display"></div>
+            <div class="exam-result-details">
+                <div class="exam-result-item"><div class="num green" id="correct-count">0</div><div class="label">Correct</div></div>
+                <div class="exam-result-item"><div class="num red" id="incorrect-count">0</div><div class="label">Incorrect</div></div>
+                <div class="exam-result-item"><div class="num orange" id="skipped-count">0</div><div class="label">Skipped</div></div>
+            </div>
+            <div>
+                <button class="review-btn" onclick="reviewExam()"><i class="fa-solid fa-magnifying-glass"></i> Review Answers</button>
+                <button class="retake-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Retake Exam</button>
+                <a href="../index.html" class="retake-btn" style="text-decoration:none;"><i class="fa-solid fa-house"></i> Back to Course</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+    <script>
+    function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+    (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+    window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>500);});
+
+    const questions = [
+        {
+            q: "Which Matplotlib function creates a histogram?",
+            options: [
+                "plt.bar()",
+                "plt.hist()",
+                "plt.scatter()",
+                "plt.barh()"
+            ],
+            correct: 1,
+            explanation: "<b>plt.hist()</b> is the Matplotlib function specifically designed to create histograms, which display the frequency distribution of a single numerical variable by dividing the data into bins."
+        },
+        {
+            q: "In Seaborn, which function is used to create a heatmap that visualizes the correlation between numeric columns in a DataFrame?",
+            options: [
+                "sns.pairplot()",
+                "sns.clustermap()",
+                "sns.heatmap()",
+                "sns.jointplot()"
+            ],
+            correct: 2,
+            explanation: "<b>sns.heatmap()</b> is used to render a color-coded matrix. Typically you pass <code>df.corr()</code> to it to visualize pairwise correlations between numeric columns."
+        },
+        {
+            q: "What does the <code>bins</code> parameter control in <code>plt.hist(data, bins=20)</code>?",
+            options: [
+                "The number of data points to include",
+                "The number of intervals the data range is divided into",
+                "The width of the bars in pixels",
+                "The color of each bar"
+            ],
+            correct: 1,
+            explanation: "The <b>bins</b> parameter determines how many equal-width intervals the data range is split into. More bins provide finer granularity; fewer bins give a broader overview of the distribution."
+        },
+        {
+            q: "Which chart type is most appropriate for showing the relationship between two continuous numerical variables?",
+            options: [
+                "Bar chart",
+                "Pie chart",
+                "Scatter plot",
+                "Box plot"
+            ],
+            correct: 2,
+            explanation: "A <b>scatter plot</b> places each observation as a point using one variable on the x-axis and another on the y-axis, making it ideal for revealing correlations, clusters, and outliers between two continuous variables."
+        },
+        {
+            q: "What is the correct way to create a 2-row, 1-column subplot layout in Matplotlib?",
+            options: [
+                "fig, axes = plt.subplots(1, 2)",
+                "fig, axes = plt.subplots(2, 1)",
+                "fig, axes = plt.subplot(2, 1)",
+                "fig, axes = plt.figures(2, 1)"
+            ],
+            correct: 1,
+            explanation: "<b>plt.subplots(2, 1)</b> creates a figure with 2 rows and 1 column of axes. It returns a figure object and an array of axes objects for plotting."
+        },
+        {
+            q: "In Seaborn, what does <code>sns.boxplot(x='category', y='value', data=df)</code> display?",
+            options: [
+                "A frequency distribution of 'category'",
+                "A box-and-whisker plot showing the distribution of 'value' for each 'category'",
+                "A line chart of 'value' over 'category'",
+                "A scatter plot of 'category' vs 'value'"
+            ],
+            correct: 1,
+            explanation: "<b>sns.boxplot()</b> creates box-and-whisker plots that show the median, quartiles, and potential outliers of a numerical variable, grouped by a categorical variable."
+        },
+        {
+            q: "Which Seaborn function overlays a smooth density curve (KDE) on a histogram by default?",
+            options: [
+                "sns.countplot()",
+                "sns.histplot() with kde=True",
+                "sns.barplot()",
+                "sns.kdeplot() only"
+            ],
+            correct: 1,
+            explanation: "<b>sns.histplot()</b> with the parameter <code>kde=True</code> draws both the histogram bars and a smooth Kernel Density Estimate curve on top, providing a continuous approximation of the distribution."
+        },
+        {
+            q: "What does KDE stand for in the context of data visualization?",
+            options: [
+                "Key Data Extraction",
+                "Kernel Density Estimation",
+                "K-Distribution Envelope",
+                "Kolmogorov Data Evaluation"
+            ],
+            correct: 1,
+            explanation: "<b>Kernel Density Estimation (KDE)</b> is a non-parametric method for estimating the probability density function of a continuous random variable, displayed as a smooth curve."
+        },
+        {
+            q: "Which Matplotlib method adds a title to a specific subplot (Axes object)?",
+            options: [
+                "ax.suptitle('Title')",
+                "ax.set_title('Title')",
+                "plt.title('Title')",
+                "ax.label('Title')"
+            ],
+            correct: 1,
+            explanation: "<b>ax.set_title()</b> sets the title for an individual Axes object (subplot). <code>plt.title()</code> works on the current axes, while <code>fig.suptitle()</code> sets an overall figure title."
+        },
+        {
+            q: "What is the purpose of <code>plt.legend()</code> in a Matplotlib plot?",
+            options: [
+                "It saves the figure to disk",
+                "It displays a key that labels each plotted data series",
+                "It adds gridlines to the plot",
+                "It sets the axis limits"
+            ],
+            correct: 1,
+            explanation: "<b>plt.legend()</b> adds a legend to the plot that maps labels to the visual elements (lines, markers, etc.), helping viewers identify which data series is which."
+        },
+        {
+            q: "Which chart type is best suited for comparing the sizes of parts to a whole when there are only 3-4 categories?",
+            options: [
+                "Scatter plot",
+                "Pie chart",
+                "Line chart",
+                "Box plot"
+            ],
+            correct: 1,
+            explanation: "A <b>pie chart</b> is effective for showing proportions of a whole when there are a small number of categories (typically 3-5). For more categories, a bar chart is usually clearer."
+        },
+        {
+            q: "In Matplotlib, what does <code>plt.scatter(x, y, c=colors, cmap='viridis')</code> do with the <code>cmap</code> parameter?",
+            options: [
+                "Sets the marker shape based on a categorical variable",
+                "Applies a named color palette to map numeric values to colors",
+                "Changes the background color of the plot",
+                "Sets all points to the color 'viridis'"
+            ],
+            correct: 1,
+            explanation: "The <b>cmap</b> (colormap) parameter specifies a color palette that maps the numeric values in <code>c</code> to a gradient of colors. 'viridis' is a perceptually uniform colormap."
+        },
+        {
+            q: "Which Seaborn function creates a line plot suitable for time-series or continuous data?",
+            options: [
+                "sns.barplot()",
+                "sns.lineplot()",
+                "sns.stripplot()",
+                "sns.boxenplot()"
+            ],
+            correct: 1,
+            explanation: "<b>sns.lineplot()</b> draws a line plot that connects data points in order, making it ideal for visualizing trends over time or across a continuous variable."
+        },
+        {
+            q: "What does <code>plt.grid(True)</code> add to a Matplotlib chart?",
+            options: [
+                "A table of data values below the chart",
+                "Horizontal and vertical reference lines across the plot area",
+                "A border around the entire figure",
+                "Axis tick marks only"
+            ],
+            correct: 1,
+            explanation: "<b>plt.grid(True)</b> adds gridlines to the plot, which are horizontal and vertical lines that help the viewer read precise values from the chart by aligning with the tick marks."
+        },
+        {
+            q: "In the code <code>fig, ax = plt.subplots()</code>, what do <code>fig</code> and <code>ax</code> represent?",
+            options: [
+                "fig is the data and ax is the axes labels",
+                "fig is the entire figure/canvas and ax is an individual plotting area (Axes)",
+                "fig is the title and ax is the legend",
+                "fig is the color scheme and ax is the grid"
+            ],
+            correct: 1,
+            explanation: "<b>fig</b> (Figure) is the top-level container for the entire visualization. <b>ax</b> (Axes) is the specific plotting area where data is drawn, including its ticks, labels, and title."
+        },
+        {
+            q: "Which Seaborn function would you use to visualize the distribution of a single categorical variable by counting occurrences?",
+            options: [
+                "sns.histplot()",
+                "sns.scatterplot()",
+                "sns.countplot()",
+                "sns.lineplot()"
+            ],
+            correct: 2,
+            explanation: "<b>sns.countplot()</b> is designed for categorical data. It creates a bar chart where each bar's height represents the count of observations in that category."
+        },
+        {
+            q: "What does the <code>annot=True</code> parameter do when passed to <code>sns.heatmap()</code>?",
+            options: [
+                "Adds a title annotation above the heatmap",
+                "Displays the numeric values inside each cell of the heatmap",
+                "Adds arrows pointing to the highest values",
+                "Enables interactive tooltips on hover"
+            ],
+            correct: 1,
+            explanation: "Setting <b>annot=True</b> in <code>sns.heatmap()</code> overlays the actual numeric values on top of each colored cell, making it easier to read exact correlation coefficients or data values."
+        },
+        {
+            q: "You have monthly sales data over 3 years. Which visualization is most appropriate to show the trend?",
+            options: [
+                "Pie chart",
+                "Box plot",
+                "Line chart",
+                "Scatter plot"
+            ],
+            correct: 2,
+            explanation: "A <b>line chart</b> is the best choice for showing how a value changes over a continuous time period. It clearly reveals trends, seasonality, and patterns across the 3 years of monthly data."
+        },
+        {
+            q: "Which Matplotlib function is used to add text labels to the x-axis and y-axis?",
+            options: [
+                "plt.title() and plt.legend()",
+                "plt.xlabel() and plt.ylabel()",
+                "plt.annotate() and plt.text()",
+                "plt.xticks() and plt.yticks()"
+            ],
+            correct: 1,
+            explanation: "<b>plt.xlabel()</b> and <b>plt.ylabel()</b> set descriptive labels on the x-axis and y-axis respectively. These are essential for making charts self-explanatory."
+        },
+        {
+            q: "What does setting <code>palette='coolwarm'</code> in a Seaborn plot function control?",
+            options: [
+                "The figure size of the plot",
+                "The font style of all text elements",
+                "The set of colors used to represent data categories or values",
+                "The line style (dashed, solid, dotted)"
+            ],
+            correct: 2,
+            explanation: "The <b>palette</b> parameter in Seaborn controls the color scheme used in the plot. <code>'coolwarm'</code> is a diverging palette that uses cool blues for low values and warm reds for high values."
+        }
+    ];
+
+    let userAnswers=new Array(questions.length).fill(-1),examSubmitted=false,timerInterval,timeLeft=20*60;
+    function init(){renderQuestions();renderNav();startTimer();}
+    function renderQuestions(){document.getElementById('questions-container').innerHTML=questions.map((q,i)=>`<div class="exam-question" id="q${i}"><div class="exam-q-header"><div class="exam-q-number">${i+1}</div><div class="exam-q-text">${q.q}</div></div>${q.options.map((opt,j)=>`<div class="exam-option" onclick="selectAnswer(${i},${j})" id="q${i}o${j}"><div class="exam-option-letter">${String.fromCharCode(65+j)}</div><div>${opt}</div></div>`).join('')}<div class="exam-explanation" id="exp${i}">${q.explanation}</div></div>`).join('');}
+    function renderNav(){document.getElementById('question-nav').innerHTML=questions.map((_,i)=>`<div class="exam-nav-btn" id="nav${i}" onclick="scrollToQ(${i})">${i+1}</div>`).join('');}
+    function selectAnswer(qi,oi){if(examSubmitted)return;userAnswers[qi]=oi;questions[qi].options.forEach((_,j)=>{document.getElementById(`q${qi}o${j}`).classList.toggle('selected',j===oi);});document.getElementById(`q${qi}`).classList.add('answered');document.getElementById(`nav${qi}`).classList.add('answered');updateProgress();}
+    function scrollToQ(i){document.getElementById(`q${i}`).scrollIntoView({behavior:'smooth',block:'center'});}
+    function updateProgress(){document.getElementById('answered-count').textContent=userAnswers.filter(a=>a!==-1).length;}
+    function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);submitExam();}},1000);}
+    function updateTimerDisplay(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('time-display').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;const t=document.getElementById('timer');t.classList.remove('warning','danger');if(timeLeft<=120)t.classList.add('danger');else if(timeLeft<=300)t.classList.add('warning');}
+    function submitExam(){if(examSubmitted)return;examSubmitted=true;clearInterval(timerInterval);let c=0,ic=0,sk=0;questions.forEach((q,i)=>{if(userAnswers[i]===-1)sk++;else if(userAnswers[i]===q.correct)c++;else ic++;});const pct=Math.round(c/questions.length*100);document.getElementById('score-display').textContent=pct+'%';document.getElementById('score-display').className='score-big '+(pct>=75?'pass':'fail');document.getElementById('correct-count').textContent=c;document.getElementById('incorrect-count').textContent=ic;document.getElementById('skipped-count').textContent=sk;document.getElementById('submit-section').style.display='none';document.getElementById('result-section').style.display='block';document.getElementById('result-section').scrollIntoView({behavior:'smooth'});document.querySelectorAll('.exam-option').forEach(el=>el.style.pointerEvents='none');}
+    function reviewExam(){questions.forEach((q,i)=>{const qEl=document.getElementById(`q${i}`),navEl=document.getElementById(`nav${i}`);if(userAnswers[i]===-1){qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-missed');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status skipped">Skipped</div>');}else if(userAnswers[i]===q.correct){qEl.classList.add('review-correct');navEl.classList.add('review-correct');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status correct"><i class="fa-solid fa-check"></i> Correct</div>');}else{qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${userAnswers[i]}`).classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status incorrect"><i class="fa-solid fa-xmark"></i> Incorrect</div>');}document.getElementById(`exp${i}`).classList.add('show');});document.getElementById('q0').scrollIntoView({behavior:'smooth'});}
+    init();
+    </script>
+</body>
+</html>

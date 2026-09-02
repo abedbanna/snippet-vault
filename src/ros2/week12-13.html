@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weeks 12-13: Gazebo Jazzy Simulation | University of Petra</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--uop-primary:#2c3e50;--uop-secondary:#3498db;--uop-accent:#e74c3c;--uop-success:#27ae60;--uop-warning:#f39c12;}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding-top:76px;}
+        .navbar{background:linear-gradient(135deg,var(--uop-primary) 0%,var(--uop-secondary) 100%);box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+        .navbar-brand{font-weight:700;font-size:1.3rem;}
+        .hero-section{background:linear-gradient(135deg,var(--uop-primary) 0%,var(--uop-secondary) 100%);color:white;padding:80px 0;margin-bottom:40px;}
+        .hero-section h1{font-size:2.8rem;font-weight:700;margin-bottom:20px;}
+        .hero-section .lead{font-size:1.2rem;opacity:0.9;}
+        .section-title{position:relative;padding-left:20px;margin-bottom:30px;margin-top:50px;}
+        .section-title::before{content:'';position:absolute;left:0;top:0;height:100%;width:4px;background:var(--uop-secondary);border-radius:2px;}
+        .card{border:none;box-shadow:0 4px 6px rgba(0,0,0,0.1);margin-bottom:30px;transition:transform 0.3s,box-shadow 0.3s;}
+        .card:hover{transform:translateY(-5px);box-shadow:0 8px 15px rgba(0,0,0,0.2);}
+        .card-header{background:linear-gradient(135deg,var(--uop-primary) 0%,var(--uop-secondary) 100%);color:white;font-weight:600;}
+        .code-block{position:relative;margin:20px 0;}
+        .code-block .copy-btn{position:absolute;top:10px;right:10px;padding:5px 15px;font-size:0.85rem;z-index:10;}
+        pre[class*="language-"]{border-radius:8px;margin:0;}
+        .alert-info-custom{background-color:#e3f2fd;border-left:4px solid #2196F3;border-radius:8px;}
+        .alert-warning-custom{background-color:#fff3cd;border-left:4px solid #ffc107;border-radius:8px;}
+        .alert-success-custom{background-color:#d4edda;border-left:4px solid #28a745;border-radius:8px;}
+        .alert-tip-custom{background-color:#f3e5f5;border-left:4px solid #9c27b0;border-radius:8px;}
+        .step-card{border-left:4px solid var(--uop-secondary);}
+        .step-number{width:40px;height:40px;background:var(--uop-secondary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;}
+        .toc{position:sticky;top:90px;max-height:calc(100vh - 100px);overflow-y:auto;}
+        .toc .nav-link{color:var(--uop-primary);padding:8px 15px;border-left:3px solid transparent;transition:all 0.3s;}
+        .toc .nav-link:hover,.toc .nav-link.active{background-color:#f8f9fa;border-left-color:var(--uop-secondary);color:var(--uop-secondary);}
+        .deliverable-card{background:linear-gradient(135deg,rgba(52,152,219,0.1) 0%,rgba(155,89,182,0.1) 100%);border-left:4px solid var(--uop-secondary);}
+        table{box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        .badge-custom{padding:8px 15px;font-size:0.9rem;}
+        footer{background:var(--uop-primary);color:white;padding:40px 0 20px;margin-top:80px;}
+        .scroll-to-top{position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:var(--uop-secondary);color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;z-index:1000;}
+        .scroll-to-top:hover{background:var(--uop-primary);transform:translateY(-5px);}
+        .scroll-to-top.show{display:flex;}
+        @media(max-width:768px){.hero-section h1{font-size:2rem;}.toc{position:static;margin-bottom:30px;}}
+        /* DARK THEME */
+        *{box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--code:#0d1117;}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--warning:#d97706;--danger:#dc2626;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b;}
+        body{font-family:'Inter',sans-serif !important;background:var(--bg) !important;color:var(--text) !important;line-height:1.7;}
+        a{color:var(--primary);transition:color .2s}a:hover{color:#60a5fa}
+        .navbar{background:rgba(11,15,25,.92) !important;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border) !important;padding:0 24px !important;box-shadow:none !important;}
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{font-weight:700 !important;font-size:1.15rem !important;color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;}
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;}
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        @media(max-width:991px){.navbar-collapse{background:rgba(11,15,25,.98) !important;border-radius:0 0 12px 12px;padding:12px 0;border:1px solid var(--border);border-top:none;}body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}}
+        .theme-toggle{background:none !important;border:1px solid var(--border2) !important;color:var(--text2) !important;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:8px;}
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+        .hero,.hero-section{background:var(--bg) !important;color:var(--text) !important;position:relative;overflow:hidden;padding:80px 0 60px !important;margin-bottom:0 !important;}
+        .hero::before,.hero-section::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;}
+        .hero::after,.hero-section::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;}
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        .hero h1,.hero-section h1{font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;-webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;color:transparent !important;}
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{color:var(--text2) !important;opacity:1 !important;}
+        .card{background:var(--surface) !important;border:1px solid var(--border2) !important;border-radius:12px !important;box-shadow:none !important;color:var(--text) !important;}
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{background:var(--surface2) !important;color:var(--text) !important;border-bottom:1px solid var(--border) !important;font-weight:600;}
+        .card-title{color:var(--text) !important}.card-text{color:var(--text2) !important}
+        .section-title,h2.section-title,h3.section-title{color:var(--text) !important;}
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}p{color:var(--text2)}
+        .info-box,.alert-info-custom,.alert-info{background:var(--surface2) !important;border:1px solid var(--border2) !important;border-left:3px solid var(--primary) !important;border-radius:8px !important;color:var(--text) !important;}
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        .warning-box,.alert-warning-custom,.alert-warning{background:var(--surface2) !important;border:1px solid var(--border2) !important;border-left:3px solid var(--warning) !important;border-radius:8px !important;color:var(--text) !important;}
+        .alert-success-custom,.alert-success{background:var(--surface2) !important;border:1px solid var(--border2) !important;border-left:3px solid var(--success) !important;border-radius:8px !important;color:var(--text) !important;}
+        .alert-tip-custom{background:var(--surface2) !important;border:1px solid var(--border2) !important;border-left:3px solid var(--secondary) !important;border-radius:8px !important;color:var(--text) !important;}
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        pre,pre[class*="language-"]{background:var(--code) !important;border:1px solid var(--border2) !important;border-radius:8px !important;color:#e6edf3 !important;font-family:'JetBrains Mono',monospace !important;font-size:.875rem !important;line-height:1.6 !important;padding:20px !important;}
+        code{font-family:'JetBrains Mono',monospace !important;background:var(--surface2) !important;color:var(--primary) !important;padding:2px 6px;border-radius:4px;font-size:.85em !important;}
+        pre code{background:transparent !important;color:#e6edf3 !important;padding:0 !important;}
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn,.copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2) !important;border:1px solid var(--border2) !important;color:var(--text2) !important;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;}
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+        .table,table{color:var(--text) !important;border-color:var(--border) !important;}
+        .table th,table th{background:var(--surface2) !important;color:var(--text) !important;border-color:var(--border2) !important;font-weight:600;}
+        .table td,table td{color:var(--text2) !important;border-color:var(--border) !important;background:transparent !important;}
+        .table-striped>tbody>tr:nth-of-type(odd)>*{background:rgba(255,255,255,.02) !important;color:var(--text2) !important;}
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        .toc{background:var(--surface) !important;border:1px solid var(--border2) !important;border-radius:10px !important;padding:16px !important;}
+        .toc a,.toc .nav-link{color:var(--text2) !important;border-left-color:transparent !important;}
+        .toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{color:var(--primary) !important;border-left-color:var(--primary) !important;background:rgba(59,130,246,.05) !important;}
+        .badge,.badge-custom{background:var(--surface2) !important;color:var(--primary) !important;border:1px solid var(--border2);}
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}.bg-light{background:var(--surface2) !important}
+        .lead{color:var(--text2) !important}strong,b{color:var(--text) !important}
+        footer,.footer{background:var(--surface) !important;border-top:1px solid var(--border) !important;color:var(--text2) !important;}
+        footer a{color:var(--primary) !important}footer p,footer span,footer div{color:var(--text2) !important}
+        .week-badge{display:inline-block;background:var(--surface2);color:var(--primary);padding:6px 20px;border-radius:20px;font-size:.9rem;font-weight:600;border:1px solid var(--border2);}
+        .week-divider{border-top:2px solid var(--primary);margin:40px 0;opacity:.3}
+    </style>
+    <script>
+        function copyCode(button){
+            const code=button.closest('.code-block').querySelector('code');
+            const text=code.textContent||code.innerText;
+            const ta=document.createElement('textarea');
+            ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+            document.body.appendChild(ta);ta.select();
+            try{document.execCommand('copy');const orig=button.innerHTML;button.innerHTML='<i class="fa-solid fa-check"></i> Copied!';setTimeout(()=>{button.innerHTML=orig;},2000);}
+            catch(e){alert('Copy failed');}finally{document.body.removeChild(ta);}
+        }
+    </script>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#toc-nav" data-bs-offset="100">
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#top"><i class="fa-solid fa-cube"></i> Gazebo Jazzy</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="#installation">Install</a></li>
+                <li class="nav-item"><a class="nav-link" href="#week12">Week 12</a></li>
+                <li class="nav-item"><a class="nav-link" href="#week13">Week 13</a></li>
+                <li class="nav-item"><a class="nav-link" href="#project">Projects</a></li>
+            </ul>
+        </div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme"
+        style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px">
+        <i class="fa-solid fa-sun" id="themeIcon"></i>
+    </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero-section" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1><i class="fa-solid fa-cube"></i> Weeks 12–13: Gazebo Jazzy Simulation</h1>
+                <p class="lead">World Building, Robot Modeling, Sensor Simulation &amp; Drone Integration</p>
+                <div class="mt-3 mb-4">
+                    <span class="badge bg-info text-dark badge-custom me-2"><i class="fa-solid fa-globe"></i> World Design</span>
+                    <span class="badge bg-success badge-custom me-2"><i class="fa-solid fa-robot"></i> Robot Modeling</span>
+                    <span class="badge bg-warning text-dark badge-custom me-2"><i class="fa-solid fa-helicopter"></i> Drone Sim</span>
+                </div>
+                <div class="mt-4">
+                    <span class="badge bg-light text-dark badge-custom me-2"><i class="fa-solid fa-graduation-cap"></i> University of Petra</span>
+                    <span class="badge bg-light text-dark badge-custom me-2"><i class="fa-solid fa-book"></i> Robotics Programming</span>
+                    <span class="badge bg-light text-dark badge-custom"><i class="fa-solid fa-person"></i> Dr. Abdulkarim Albanna</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- TOC -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="toc" id="toc-nav">
+                <h6 class="text-uppercase fw-bold mb-3" style="font-size:.75rem;letter-spacing:.08em;color:var(--text2)">Contents</h6>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="#overview">Overview</a>
+                    <a class="nav-link" href="#installation">Installation</a>
+                    <a class="nav-link fw-semibold" href="#week12">Week 12: World Building</a>
+                    <a class="nav-link" href="#gz-basics">&nbsp;&nbsp;Gazebo Architecture</a>
+                    <a class="nav-link" href="#sdf-worlds">&nbsp;&nbsp;SDF Worlds</a>
+                    <a class="nav-link" href="#physics">&nbsp;&nbsp;Physics &amp; Wind</a>
+                    <a class="nav-link" href="#ros-bridge">&nbsp;&nbsp;ROS2 Bridge</a>
+                    <a class="nav-link fw-semibold" href="#week13">Week 13: Robot Modeling</a>
+                    <a class="nav-link" href="#urdf-sdf">&nbsp;&nbsp;URDF &amp; SDF</a>
+                    <a class="nav-link" href="#sensors">&nbsp;&nbsp;Sensor Simulation</a>
+                    <a class="nav-link" href="#drone-model">&nbsp;&nbsp;Drone Modeling</a>
+                    <a class="nav-link" href="#project">Projects</a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+
+            <!-- Overview -->
+            <section id="overview">
+                <h2 class="section-title">Course Overview</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <p>Weeks 12 and 13 introduce <strong>Gazebo Jazzy</strong>, the next-generation robot simulator integrated with ROS2 Jazzy. Unlike legacy Gazebo Classic, Gazebo Jazzy (gz-sim) is built on a modular plugin-based architecture with physically accurate rendering and first-class ROS2 integration via <code>ros_gz_bridge</code>.</p>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fa-solid fa-globe fa-2x mb-3" style="color:var(--primary)"></i>
+                                        <h6 class="card-title">Week 12</h6>
+                                        <p class="card-text small">World design, SDF environments, physics and wind simulation</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fa-solid fa-robot fa-2x mb-3" style="color:var(--success)"></i>
+                                        <h6 class="card-title">Week 13</h6>
+                                        <p class="card-text small">URDF/SDF robot modeling, sensors, drone &amp; flight controller integration</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fa-solid fa-trophy fa-2x mb-3" style="color:var(--warning)"></i>
+                                        <h6 class="card-title">Projects</h6>
+                                        <p class="card-text small">Smart City Environment + Intelligent Quadcopter Drone with Vision</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info-custom p-3">
+                    <strong><i class="fa-solid fa-circle-info me-2"></i>What is Gazebo Jazzy?</strong>
+                    <p class="mb-0 mt-1">Gazebo Jazzy is the modern simulator release aligned with ROS2 Jazzy. It replaces legacy Gazebo Classic with a plugin-based architecture, offering improved performance, realistic sensors, and seamless ROS2 integration via <code>ros_gz_bridge</code> and <code>ros_gz_sim</code>.</p>
+                </div>
+            </section>
+
+            <!-- Installation -->
+            <section id="installation">
+                <h2 class="section-title">Installation</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-download me-2"></i>Installing Gazebo Jazzy with ROS2 Jazzy</div>
+                    <div class="card-body">
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-bash">sudo apt update
+sudo apt install -y \
+  ros-jazzy-ros-gz \
+  ros-jazzy-ros-gz-bridge \
+  ros-jazzy-ros-gz-sim \
+  ros-jazzy-ros-gz-interfaces \
+  ros-jazzy-gz-ros2-control
+
+# Verify
+gz sim --version</code></pre>
+                        </div>
+                        <div class="alert alert-warning-custom p-3 mt-3">
+                            <strong><i class="fa-solid fa-triangle-exclamation me-2"></i>Note:</strong>
+                            Ensure <code>~/.bashrc</code> contains: <code>source /opt/ros/jazzy/setup.bash</code>
+                        </div>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-bash"># Launch empty world to verify
+gz sim empty.sdf
+
+# Or via ROS2
+ros2 launch ros_gz_sim gz_sim.launch.py gz_args:="empty.sdf"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Week 12 -->
+            <hr class="week-divider">
+            <div class="text-center mb-4">
+                <span class="week-badge"><i class="fa-solid fa-globe me-2"></i>Week 12 — World Building</span>
+            </div>
+
+            <section id="gz-basics">
+                <h2 class="section-title">Gazebo Jazzy Architecture</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-layer-group me-2"></i>Key Components</div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead><tr><th>Component</th><th>Description</th><th>Command</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>gz sim</code></td><td>Main simulator</td><td><code>gz sim world.sdf</code></td></tr>
+                                <tr><td><code>gz topic</code></td><td>Inspect Gazebo topics</td><td><code>gz topic -l</code></td></tr>
+                                <tr><td><code>gz model</code></td><td>Spawn/inspect models</td><td><code>gz model -l</code></td></tr>
+                                <tr><td><code>ros_gz_bridge</code></td><td>Bridge ROS2 ↔ Gazebo</td><td><code>ros2 run ros_gz_bridge parameter_bridge</code></td></tr>
+                                <tr><td><code>ros_gz_sim</code></td><td>Launch Gazebo from ROS2</td><td><code>ros2 launch ros_gz_sim gz_sim.launch.py</code></td></tr>
+                                <tr><td><code>gz fuel</code></td><td>Online model library</td><td>app.gazebosim.org/fuel</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-bash"># List all Gazebo topics
+gz topic -l
+
+# Echo a topic
+gz topic -e -t /model/my_robot/pose
+
+# List models in simulation
+gz model -l
+
+# Get model info
+gz model -m my_robot -i</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sdf-worlds">
+                <h2 class="section-title">SDF World Design</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-file-code me-2"></i>Simulation Description Format (SDF)</div>
+                    <div class="card-body">
+                        <p>SDF is the primary world format for Gazebo Jazzy. Every world contains physics, plugins, models, and lights inside a <code>&lt;world&gt;</code> tag.</p>
+
+                        <h5 class="mt-3">Basic World Structure</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
+&lt;sdf version="1.9"&gt;
+  &lt;world name="smart_city"&gt;
+
+    &lt;!-- Physics --&gt;
+    &lt;physics name="1ms" type="ignored"&gt;
+      &lt;max_step_size&gt;0.001&lt;/max_step_size&gt;
+      &lt;real_time_factor&gt;1.0&lt;/real_time_factor&gt;
+    &lt;/physics&gt;
+
+    &lt;!-- Required plugins --&gt;
+    &lt;plugin filename="gz-sim-physics-system"
+            name="gz::sim::systems::Physics"/&gt;
+    &lt;plugin filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster"/&gt;
+    &lt;plugin filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands"/&gt;
+    &lt;plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors"&gt;
+      &lt;render_engine&gt;ogre2&lt;/render_engine&gt;
+    &lt;/plugin&gt;
+
+    &lt;!-- Sun --&gt;
+    &lt;light type="directional" name="sun"&gt;
+      &lt;cast_shadows&gt;true&lt;/cast_shadows&gt;
+      &lt;pose&gt;0 0 10 0 0 0&lt;/pose&gt;
+      &lt;diffuse&gt;0.8 0.8 0.8 1&lt;/diffuse&gt;
+      &lt;specular&gt;0.2 0.2 0.2 1&lt;/specular&gt;
+      &lt;direction&gt;-0.5 0.1 -0.9&lt;/direction&gt;
+    &lt;/light&gt;
+
+    &lt;!-- Ground plane --&gt;
+    &lt;model name="ground_plane"&gt;
+      &lt;static&gt;true&lt;/static&gt;
+      &lt;link name="link"&gt;
+        &lt;collision name="collision"&gt;
+          &lt;geometry&gt;&lt;plane&gt;&lt;normal&gt;0 0 1&lt;/normal&gt;&lt;size&gt;500 500&lt;/size&gt;&lt;/plane&gt;&lt;/geometry&gt;
+        &lt;/collision&gt;
+        &lt;visual name="visual"&gt;
+          &lt;geometry&gt;&lt;plane&gt;&lt;normal&gt;0 0 1&lt;/normal&gt;&lt;size&gt;500 500&lt;/size&gt;&lt;/plane&gt;&lt;/geometry&gt;
+          &lt;material&gt;&lt;ambient&gt;0.8 0.8 0.8 1&lt;/ambient&gt;&lt;/material&gt;
+        &lt;/visual&gt;
+      &lt;/link&gt;
+    &lt;/model&gt;
+
+  &lt;/world&gt;
+&lt;/sdf&gt;</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">Buildings &amp; No-Fly Zone Markers</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;!-- Building block --&gt;
+&lt;model name="building_1"&gt;
+  &lt;static&gt;true&lt;/static&gt;
+  &lt;pose&gt;10 5 0 0 0 0&lt;/pose&gt;
+  &lt;link name="link"&gt;
+    &lt;collision name="collision"&gt;
+      &lt;geometry&gt;&lt;box&gt;&lt;size&gt;8 6 12&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;
+    &lt;/collision&gt;
+    &lt;visual name="visual"&gt;
+      &lt;geometry&gt;&lt;box&gt;&lt;size&gt;8 6 12&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;
+      &lt;material&gt;&lt;ambient&gt;0.5 0.5 0.6 1&lt;/ambient&gt;&lt;diffuse&gt;0.6 0.6 0.7 1&lt;/diffuse&gt;&lt;/material&gt;
+    &lt;/visual&gt;
+  &lt;/link&gt;
+&lt;/model&gt;
+
+&lt;!-- No-fly zone (red transparent cylinder) --&gt;
+&lt;model name="no_fly_zone_1"&gt;
+  &lt;static&gt;true&lt;/static&gt;
+  &lt;pose&gt;20 20 0 0 0 0&lt;/pose&gt;
+  &lt;link name="link"&gt;
+    &lt;visual name="visual"&gt;
+      &lt;geometry&gt;&lt;cylinder&gt;&lt;radius&gt;10&lt;/radius&gt;&lt;length&gt;0.1&lt;/length&gt;&lt;/cylinder&gt;&lt;/geometry&gt;
+      &lt;material&gt;&lt;ambient&gt;1 0 0 0.4&lt;/ambient&gt;&lt;diffuse&gt;1 0 0 0.4&lt;/diffuse&gt;&lt;/material&gt;
+    &lt;/visual&gt;
+  &lt;/link&gt;
+&lt;/model&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="physics">
+                <h2 class="section-title">Physics &amp; Wind Simulation</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-wind me-2"></i>Wind Plugin &amp; Physics Tuning</div>
+                    <div class="card-body">
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;!-- Add inside &lt;world&gt; --&gt;
+&lt;plugin filename="gz-sim-wind-effects-system"
+        name="gz::sim::systems::WindEffects"&gt;
+  &lt;horizontal&gt;
+    &lt;magnitude&gt;
+      &lt;time_for_rise&gt;10&lt;/time_for_rise&gt;
+      &lt;sin&gt;
+        &lt;amplitude_percent&gt;0.05&lt;/amplitude_percent&gt;
+        &lt;period&gt;60&lt;/period&gt;
+      &lt;/sin&gt;
+      &lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.0002&lt;/stddev&gt;&lt;/noise&gt;
+    &lt;/magnitude&gt;
+    &lt;direction&gt;
+      &lt;time_for_rise&gt;30&lt;/time_for_rise&gt;
+      &lt;sin&gt;&lt;amplitude&gt;5&lt;/amplitude&gt;&lt;period&gt;20&lt;/period&gt;&lt;/sin&gt;
+      &lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.03&lt;/stddev&gt;&lt;/noise&gt;
+    &lt;/direction&gt;
+  &lt;/horizontal&gt;
+  &lt;vertical&gt;
+    &lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.03&lt;/stddev&gt;&lt;/noise&gt;
+  &lt;/vertical&gt;
+&lt;/plugin&gt;
+
+&lt;wind&gt;
+  &lt;linear_velocity&gt;3 1 0&lt;/linear_velocity&gt;
+&lt;/wind&gt;
+
+&lt;gravity&gt;0 0 -9.8&lt;/gravity&gt;
+&lt;magnetic_field&gt;6e-06 2.3e-05 -4.2e-05&lt;/magnetic_field&gt;
+
+&lt;physics name="1ms" type="ode"&gt;
+  &lt;max_step_size&gt;0.001&lt;/max_step_size&gt;
+  &lt;real_time_factor&gt;1&lt;/real_time_factor&gt;
+  &lt;real_time_update_rate&gt;1000&lt;/real_time_update_rate&gt;
+&lt;/physics&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ros-bridge">
+                <h2 class="section-title">ROS2 ↔ Gazebo Bridge</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-bridge me-2"></i>ros_gz_bridge</div>
+                    <div class="card-body">
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-bash"># Bridge multiple topics
+ros2 run ros_gz_bridge parameter_bridge \
+  /clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock \
+  /model/drone/pose@geometry_msgs/msg/PoseStamped[gz.msgs.Pose \
+  /lidar@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan \
+  /camera/image@sensor_msgs/msg/Image[gz.msgs.Image \
+  /imu@sensor_msgs/msg/Imu[gz.msgs.IMU \
+  /gps@sensor_msgs/msg/NavSatFix[gz.msgs.NavSat \
+  /cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">Bridge via Launch File</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-python"># ros2_gz_bridge.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/model/drone/pose@geometry_msgs/msg/PoseStamped[gz.msgs.Pose',
+            '/lidar@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            '/camera/image_raw@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+            '/imu/data@sensor_msgs/msg/Imu[gz.msgs.IMU',
+            '/navsat@sensor_msgs/msg/NavSatFix[gz.msgs.NavSat',
+            '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+        ],
+        output='screen',
+    )
+    return LaunchDescription([bridge])</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Week 13 -->
+            <hr class="week-divider">
+            <div class="text-center mb-4">
+                <span class="week-badge"><i class="fa-solid fa-robot me-2"></i>Week 13 — Robot &amp; Drone Modeling</span>
+            </div>
+
+            <section id="urdf-sdf">
+                <h2 class="section-title">URDF &amp; SDF Modeling</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-file-code me-2"></i>Robot Description Formats</div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title"><i class="fa-solid fa-code me-2" style="color:var(--primary)"></i>URDF</h6>
+                                        <ul class="small" style="padding-left:1.2rem;color:var(--text2)">
+                                            <li>ROS2 native format</li>
+                                            <li>Used by robot_state_publisher</li>
+                                            <li>Xacro macros supported</li>
+                                            <li>Must convert to SDF for Gazebo</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title"><i class="fa-solid fa-cube me-2" style="color:var(--success)"></i>SDF</h6>
+                                        <ul class="small" style="padding-left:1.2rem;color:var(--text2)">
+                                            <li>Gazebo Jazzy native format</li>
+                                            <li>Richer physics properties</li>
+                                            <li>Sensor plugins built-in</li>
+                                            <li>Preferred for simulation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5>Minimal URDF with Xacro</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
+&lt;robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro"&gt;
+  &lt;link name="base_link"&gt;
+    &lt;visual&gt;
+      &lt;geometry&gt;&lt;box size="0.5 0.3 0.1"/&gt;&lt;/geometry&gt;
+      &lt;material name="blue"&gt;&lt;color rgba="0.0 0.0 0.8 1.0"/&gt;&lt;/material&gt;
+    &lt;/visual&gt;
+    &lt;collision&gt;&lt;geometry&gt;&lt;box size="0.5 0.3 0.1"/&gt;&lt;/geometry&gt;&lt;/collision&gt;
+    &lt;inertial&gt;
+      &lt;mass value="5.0"/&gt;
+      &lt;inertia ixx="0.05" ixy="0" ixz="0" iyy="0.05" iyz="0" izz="0.05"/&gt;
+    &lt;/inertial&gt;
+  &lt;/link&gt;
+
+  &lt;link name="left_wheel"&gt;
+    &lt;visual&gt;
+      &lt;geometry&gt;&lt;cylinder length="0.05" radius="0.1"/&gt;&lt;/geometry&gt;
+      &lt;material name="black"&gt;&lt;color rgba="0.1 0.1 0.1 1.0"/&gt;&lt;/material&gt;
+    &lt;/visual&gt;
+    &lt;collision&gt;&lt;geometry&gt;&lt;cylinder length="0.05" radius="0.1"/&gt;&lt;/geometry&gt;&lt;/collision&gt;
+    &lt;inertial&gt;&lt;mass value="0.5"/&gt;&lt;inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/&gt;&lt;/inertial&gt;
+  &lt;/link&gt;
+
+  &lt;joint name="left_wheel_joint" type="continuous"&gt;
+    &lt;parent link="base_link"/&gt;
+    &lt;child link="left_wheel"/&gt;
+    &lt;origin xyz="0 0.175 -0.05" rpy="-1.5707 0 0"/&gt;
+    &lt;axis xyz="0 0 1"/&gt;
+  &lt;/joint&gt;
+&lt;/robot&gt;</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">Convert URDF → SDF</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-bash">sudo apt install -y gz-tools2
+gz sdf -p my_robot.urdf &gt; my_robot.sdf
+gz sdf --check my_robot.sdf</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sensors">
+                <h2 class="section-title">Sensor Simulation</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-satellite-dish me-2"></i>LIDAR, Camera, IMU &amp; GPS</div>
+                    <div class="card-body">
+                        <h5>2D LIDAR</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;sensor name="lidar" type="gpu_lidar"&gt;
+  &lt;pose&gt;0 0 0.2 0 0 0&lt;/pose&gt;
+  &lt;update_rate&gt;10&lt;/update_rate&gt;
+  &lt;lidar&gt;
+    &lt;scan&gt;
+      &lt;horizontal&gt;
+        &lt;samples&gt;640&lt;/samples&gt;
+        &lt;resolution&gt;1&lt;/resolution&gt;
+        &lt;min_angle&gt;-3.14159&lt;/min_angle&gt;
+        &lt;max_angle&gt;3.14159&lt;/max_angle&gt;
+      &lt;/horizontal&gt;
+    &lt;/scan&gt;
+    &lt;range&gt;&lt;min&gt;0.08&lt;/min&gt;&lt;max&gt;25&lt;/max&gt;&lt;resolution&gt;0.01&lt;/resolution&gt;&lt;/range&gt;
+    &lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.01&lt;/stddev&gt;&lt;/noise&gt;
+  &lt;/lidar&gt;
+&lt;/sensor&gt;</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">RGB Camera</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;sensor name="camera" type="camera"&gt;
+  &lt;pose&gt;0.25 0 0.1 0 0 0&lt;/pose&gt;
+  &lt;update_rate&gt;30&lt;/update_rate&gt;
+  &lt;camera&gt;
+    &lt;horizontal_fov&gt;1.3962634&lt;/horizontal_fov&gt;
+    &lt;image&gt;&lt;width&gt;640&lt;/width&gt;&lt;height&gt;480&lt;/height&gt;&lt;format&gt;R8G8B8&lt;/format&gt;&lt;/image&gt;
+    &lt;clip&gt;&lt;near&gt;0.02&lt;/near&gt;&lt;far&gt;300&lt;/far&gt;&lt;/clip&gt;
+    &lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.007&lt;/stddev&gt;&lt;/noise&gt;
+  &lt;/camera&gt;
+&lt;/sensor&gt;</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">IMU Sensor</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;sensor name="imu_sensor" type="imu"&gt;
+  &lt;always_on&gt;1&lt;/always_on&gt;
+  &lt;update_rate&gt;100&lt;/update_rate&gt;
+  &lt;imu&gt;
+    &lt;angular_velocity&gt;
+      &lt;x&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.0002&lt;/stddev&gt;&lt;/noise&gt;&lt;/x&gt;
+      &lt;y&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.0002&lt;/stddev&gt;&lt;/noise&gt;&lt;/y&gt;
+      &lt;z&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.0002&lt;/stddev&gt;&lt;/noise&gt;&lt;/z&gt;
+    &lt;/angular_velocity&gt;
+    &lt;linear_acceleration&gt;
+      &lt;x&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.017&lt;/stddev&gt;&lt;/noise&gt;&lt;/x&gt;
+      &lt;y&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.017&lt;/stddev&gt;&lt;/noise&gt;&lt;/y&gt;
+      &lt;z&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.017&lt;/stddev&gt;&lt;/noise&gt;&lt;/z&gt;
+    &lt;/linear_acceleration&gt;
+  &lt;/imu&gt;
+&lt;/sensor&gt;</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">GPS / NavSat</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;sensor name="navsat" type="navsat"&gt;
+  &lt;always_on&gt;1&lt;/always_on&gt;
+  &lt;update_rate&gt;10&lt;/update_rate&gt;
+  &lt;navsat&gt;
+    &lt;position_sensing&gt;
+      &lt;horizontal&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.001&lt;/stddev&gt;&lt;/noise&gt;&lt;/horizontal&gt;
+      &lt;vertical&gt;&lt;noise type="gaussian"&gt;&lt;mean&gt;0&lt;/mean&gt;&lt;stddev&gt;0.001&lt;/stddev&gt;&lt;/noise&gt;&lt;/vertical&gt;
+    &lt;/position_sensing&gt;
+  &lt;/navsat&gt;
+&lt;/sensor&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="drone-model">
+                <h2 class="section-title">Drone Modeling &amp; Flight Controllers</h2>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-helicopter me-2"></i>Quadcopter SDF Model &amp; Control</div>
+                    <div class="card-body">
+                        <h5>Quadcopter SDF with Motor Plugin</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
+&lt;sdf version="1.9"&gt;
+&lt;model name="quadcopter"&gt;
+  &lt;pose&gt;0 0 0.2 0 0 0&lt;/pose&gt;
+
+  &lt;link name="base_link"&gt;
+    &lt;inertial&gt;
+      &lt;mass&gt;1.5&lt;/mass&gt;
+      &lt;inertia&gt;
+        &lt;ixx&gt;0.029125&lt;/ixx&gt;&lt;ixy&gt;0&lt;/ixy&gt;&lt;ixz&gt;0&lt;/ixz&gt;
+        &lt;iyy&gt;0.029125&lt;/iyy&gt;&lt;iyz&gt;0&lt;/iyz&gt;
+        &lt;izz&gt;0.055225&lt;/izz&gt;
+      &lt;/inertia&gt;
+    &lt;/inertial&gt;
+    &lt;visual name="body_visual"&gt;
+      &lt;geometry&gt;&lt;box&gt;&lt;size&gt;0.47 0.47 0.11&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;
+      &lt;material&gt;&lt;ambient&gt;0.1 0.1 0.1 1&lt;/ambient&gt;&lt;/material&gt;
+    &lt;/visual&gt;
+    &lt;collision name="body_collision"&gt;
+      &lt;geometry&gt;&lt;box&gt;&lt;size&gt;0.47 0.47 0.11&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;
+    &lt;/collision&gt;
+    &lt;sensor name="imu_sensor" type="imu"&gt;
+      &lt;always_on&gt;1&lt;/always_on&gt;&lt;update_rate&gt;250&lt;/update_rate&gt;
+    &lt;/sensor&gt;
+    &lt;sensor name="navsat" type="navsat"&gt;
+      &lt;always_on&gt;1&lt;/always_on&gt;&lt;update_rate&gt;10&lt;/update_rate&gt;
+    &lt;/sensor&gt;
+    &lt;sensor name="downward_camera" type="camera"&gt;
+      &lt;pose&gt;0 0 -0.1 0 1.5707 0&lt;/pose&gt;
+      &lt;update_rate&gt;30&lt;/update_rate&gt;
+      &lt;camera&gt;
+        &lt;horizontal_fov&gt;1.5707&lt;/horizontal_fov&gt;
+        &lt;image&gt;&lt;width&gt;640&lt;/width&gt;&lt;height&gt;480&lt;/height&gt;&lt;/image&gt;
+        &lt;clip&gt;&lt;near&gt;0.1&lt;/near&gt;&lt;far&gt;100&lt;/far&gt;&lt;/clip&gt;
+      &lt;/camera&gt;
+    &lt;/sensor&gt;
+  &lt;/link&gt;
+
+  &lt;!-- Rotor 0 (front-right, CW) --&gt;
+  &lt;link name="rotor_0"&gt;
+    &lt;pose&gt;0.13 -0.22 0.023 0 0 0&lt;/pose&gt;
+    &lt;inertial&gt;&lt;mass&gt;0.005&lt;/mass&gt;
+      &lt;inertia&gt;&lt;ixx&gt;9.75e-7&lt;/ixx&gt;&lt;ixy&gt;0&lt;/ixy&gt;&lt;ixz&gt;0&lt;/ixz&gt;&lt;iyy&gt;0.000166704&lt;/iyy&gt;&lt;iyz&gt;0&lt;/iyz&gt;&lt;izz&gt;0.000167604&lt;/izz&gt;&lt;/inertia&gt;
+    &lt;/inertial&gt;
+    &lt;visual name="rotor_0_visual"&gt;
+      &lt;geometry&gt;&lt;cylinder&gt;&lt;length&gt;0.005&lt;/length&gt;&lt;radius&gt;0.1&lt;/radius&gt;&lt;/cylinder&gt;&lt;/geometry&gt;
+      &lt;material&gt;&lt;ambient&gt;0 0 1 0.8&lt;/ambient&gt;&lt;/material&gt;
+    &lt;/visual&gt;
+  &lt;/link&gt;
+  &lt;joint name="rotor_0_joint" type="revolute"&gt;
+    &lt;parent&gt;base_link&lt;/parent&gt;&lt;child&gt;rotor_0&lt;/child&gt;
+    &lt;axis&gt;&lt;xyz&gt;0 0 1&lt;/xyz&gt;&lt;dynamics&gt;&lt;damping&gt;0.004&lt;/damping&gt;&lt;/dynamics&gt;&lt;/axis&gt;
+  &lt;/joint&gt;
+
+  &lt;!-- Multicopter motor model --&gt;
+  &lt;plugin filename="gz-sim-multicopter-motor-model-system"
+          name="gz::sim::systems::MulticopterMotorModel"&gt;
+    &lt;robotNamespace&gt;quadcopter&lt;/robotNamespace&gt;
+    &lt;jointName&gt;rotor_0_joint&lt;/jointName&gt;
+    &lt;linkName&gt;rotor_0&lt;/linkName&gt;
+    &lt;turningDirection&gt;cw&lt;/turningDirection&gt;
+    &lt;maxRotVelocity&gt;1000&lt;/maxRotVelocity&gt;
+    &lt;motorConstant&gt;8.54858e-6&lt;/motorConstant&gt;
+    &lt;momentConstant&gt;0.016&lt;/momentConstant&gt;
+    &lt;commandSubTopic&gt;command/motor_speed&lt;/commandSubTopic&gt;
+    &lt;motorNumber&gt;0&lt;/motorNumber&gt;
+  &lt;/plugin&gt;
+
+  &lt;!-- Velocity control --&gt;
+  &lt;plugin filename="gz-sim-multicopter-control-system"
+          name="gz::sim::systems::MulticopterVelocityControl"&gt;
+    &lt;robotNamespace&gt;quadcopter&lt;/robotNamespace&gt;
+    &lt;commandSubTopic&gt;cmd_vel&lt;/commandSubTopic&gt;
+    &lt;enableSubTopic&gt;enable&lt;/enableSubTopic&gt;
+    &lt;comLinkName&gt;base_link&lt;/comLinkName&gt;
+    &lt;velocityGain&gt;2.7 2.7 2.7&lt;/velocityGain&gt;
+    &lt;attitudeGain&gt;2 3 0.15&lt;/attitudeGain&gt;
+    &lt;angularRateGain&gt;0.4 0.52 0.18&lt;/angularRateGain&gt;
+  &lt;/plugin&gt;
+
+&lt;/model&gt;
+&lt;/sdf&gt;</code></pre>
+                        </div>
+
+                        <h5 class="mt-4">ROS2 Drone Controller</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+from std_msgs.msg import Bool
+
+class DroneController(Node):
+    def __init__(self):
+        super().__init__('drone_controller')
+        self.enable_pub = self.create_publisher(Bool, '/quadcopter/enable', 10)
+        self.cmd_pub = self.create_publisher(Twist, '/quadcopter/cmd_vel', 10)
+        self.state = 'arming'
+        self.timer = self.create_timer(1.0, self.run)
+        self.get_logger().info('Drone controller ready')
+
+    def run(self):
+        if self.state == 'arming':
+            msg = Bool(); msg.data = True
+            self.enable_pub.publish(msg)
+            self.state = 'takeoff'
+        elif self.state == 'takeoff':
+            cmd = Twist(); cmd.linear.z = 2.0
+            self.cmd_pub.publish(cmd)
+            self.state = 'hover'
+        elif self.state == 'hover':
+            self.cmd_pub.publish(Twist())  # zero = hover
+
+def main(args=None):
+    rclpy.init(args=args)
+    rclpy.spin(DroneController())
+
+if __name__ == '__main__':
+    main()</code></pre>
+                        </div>
+
+                        <div class="alert alert-tip-custom p-3 mt-3">
+                            <strong><i class="fa-solid fa-lightbulb me-2"></i>PX4 / ArduPilot Integration:</strong>
+                            <p class="mb-0 mt-1">For full flight stack integration, use <strong>PX4 SITL</strong> with the <strong>uXRCE-DDS</strong> bridge (native ROS2), or <strong>ArduCopter SITL</strong> with <strong>MAVROS</strong>. Both connect to Gazebo Jazzy via the <code>ros_gz</code> packages.</p>
+                        </div>
+
+                        <h5 class="mt-4">ArduPilot SITL Setup</h5>
+                        <div class="code-block">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-bash"># Terminal 1 - ArduCopter SITL
+cd ~/ardupilot
+./Tools/autotest/sim_vehicle.py -v ArduCopter --console --map
+
+# Terminal 2 - Launch Gazebo world
+ros2 launch ros_gz_sim gz_sim.launch.py gz_args:="smart_city.sdf"
+
+# Terminal 3 - MAVROS bridge
+ros2 launch mavros apm.launch fcu_url:=udp://:14550@127.0.0.1:14555
+
+# Terminal 4 - Check topics
+ros2 topic list | grep mavros</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects -->
+            <section id="project">
+                <hr class="week-divider">
+                <h2 class="section-title">Week Projects</h2>
+
+                <div class="card deliverable-card mb-4">
+                    <div class="card-header"><i class="fa-solid fa-city me-2"></i>Week 12 Project: Smart City Environment with No-Fly Zones</div>
+                    <div class="card-body">
+                        <p>Build a realistic urban simulation world in Gazebo Jazzy featuring buildings, roads, wind, and clearly marked no-fly zones.</p>
+                        <h6 class="mt-3">Deliverables:</h6>
+                        <ul style="color:var(--text2)">
+                            <li>SDF world file with at least 5 buildings of varying heights</li>
+                            <li>Road network and open areas</li>
+                            <li>3 no-fly zones marked with red transparent cylinders</li>
+                            <li>Wind configured at 3–5 m/s with Gaussian noise</li>
+                            <li>Directional lighting</li>
+                            <li>ROS2 launch file that starts Gazebo + ros_gz_bridge</li>
+                        </ul>
+                        <div class="code-block mt-3">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-python"># smart_city.launch.py
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+import os
+
+def generate_launch_description():
+    pkg = get_package_share_directory('my_simulation')
+    world = os.path.join(pkg, 'worlds', 'smart_city.sdf')
+
+    gz = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            get_package_share_directory('ros_gz_sim'), '/launch/gz_sim.launch.py'
+        ]),
+        launch_arguments={'gz_args': world}.items()
+    )
+
+    bridge = Node(
+        package='ros_gz_bridge', executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+    return LaunchDescription([gz, bridge])</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card deliverable-card mb-4">
+                    <div class="card-header"><i class="fa-solid fa-helicopter me-2"></i>Week 13 Project: Intelligent Quadcopter Drone with Vision</div>
+                    <div class="card-body">
+                        <p>Model a complete quadcopter, spawn it in the Smart City world, and implement autonomous vision-based navigation.</p>
+                        <h6 class="mt-3">Deliverables:</h6>
+                        <ul style="color:var(--text2)">
+                            <li>Complete quadcopter SDF with IMU, GPS, camera, and LIDAR</li>
+                            <li>ROS2 controller: arm → takeoff → hover → waypoint navigation</li>
+                            <li>Downward camera feed bridged to ROS2 and shown in RViz2</li>
+                            <li>No-fly zone detector node (GPS-based)</li>
+                            <li>Telemetry node publishing altitude and GPS coordinates</li>
+                            <li>Emergency land service: <code>ros2 service call /emergency_land std_srvs/srv/Trigger "{}"</code></li>
+                        </ul>
+                        <div class="code-block mt-3">
+                            <button class="btn btn-primary btn-sm copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <pre><code class="language-python">#!/usr/bin/env python3
+# no_fly_zone_detector.py
+import rclpy, math
+from rclpy.node import Node
+from sensor_msgs.msg import NavSatFix
+from std_msgs.msg import String
+
+class NoFlyZoneDetector(Node):
+    ZONES = [
+        (31.9522, 35.9107, 50.0),
+        (31.9530, 35.9120, 30.0),
+        (31.9510, 35.9095, 40.0),
+    ]
+    def __init__(self):
+        super().__init__('no_fly_zone_detector')
+        self.sub = self.create_subscription(NavSatFix, '/navsat', self.cb, 10)
+        self.pub = self.create_publisher(String, '/no_fly_zone_alert', 10)
+
+    def haversine(self, la1, lo1, la2, lo2):
+        R = 6371000
+        p1, p2 = math.radians(la1), math.radians(la2)
+        dp, dl = math.radians(la2-la1), math.radians(lo2-lo1)
+        a = math.sin(dp/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2
+        return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+    def cb(self, msg):
+        for i, (clat, clon, r) in enumerate(self.ZONES):
+            d = self.haversine(msg.latitude, msg.longitude, clat, clon)
+            if d < r:
+                alert = String()
+                alert.data = f'WARNING: No-fly zone {i+1}! Dist={d:.1f}m'
+                self.pub.publish(alert)
+                self.get_logger().warn(alert.data)
+
+def main(args=None):
+    rclpy.init(args=args)
+    rclpy.spin(NoFlyZoneDetector())
+
+if __name__ == '__main__':
+    main()</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-2">
+                    <div class="card-header"><i class="fa-solid fa-list-check me-2"></i>Weeks 12–13 Summary</div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead><tr><th>Topic</th><th>Week 12</th><th>Week 13</th></tr></thead>
+                            <tbody>
+                                <tr><td>Focus</td><td>World building &amp; environments</td><td>Robot/drone modeling</td></tr>
+                                <tr><td>Format</td><td>SDF world files</td><td>URDF + SDF model files</td></tr>
+                                <tr><td>Key tools</td><td><code>gz sim</code>, SDF editor</td><td>Xacro, <code>gz sdf</code></td></tr>
+                                <tr><td>Sensors</td><td>Lighting, wind, physics</td><td>LIDAR, Camera, IMU, GPS</td></tr>
+                                <tr><td>ROS2 integration</td><td>ros_gz_bridge, clock</td><td>Sensor topics, cmd_vel</td></tr>
+                                <tr><td>Project</td><td>Smart City + no-fly zones</td><td>Quadcopter with vision</td></tr>
+                                <tr><td>Flight stack</td><td>—</td><td>Gazebo motor plugin / PX4 / ArduPilot</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<footer class="footer mt-5 py-4">
+    <div class="container text-center">
+        <p class="mb-1"><strong>Dr. Abdulkarim Albanna</strong> — University of Petra</p>
+        <p class="mb-1">Office Hours: Every Day, 10:00 AM – 12:00 PM | Innovation Center - Robotics Lab</p>
+        <p class="mb-0"><a href="index.html"><i class="fa-solid fa-arrow-left me-1"></i>Back to Course Index</a></p>
+    </div>
+</footer>
+
+<button class="scroll-to-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+    function toggleTheme(){
+        document.body.classList.toggle('light-mode');
+        const l=document.body.classList.contains('light-mode');
+        localStorage.setItem('theme',l?'light':'dark');
+        document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';
+    }
+    (function(){
+        if(localStorage.getItem('theme')==='light'){
+            document.body.classList.add('light-mode');
+            document.getElementById('themeIcon').className='fa-solid fa-moon';
+        }
+    })();
+    const scrollBtn=document.getElementById('scrollTop');
+    window.addEventListener('scroll',()=>{ scrollBtn.classList.toggle('show',window.scrollY>400); });
+    window.addEventListener('scroll',()=>{
+        const secs=document.querySelectorAll('section[id]');
+        const links=document.querySelectorAll('.toc .nav-link');
+        let cur='';
+        secs.forEach(s=>{ if(window.scrollY>=s.offsetTop-120) cur=s.id; });
+        links.forEach(l=>{ l.classList.toggle('active',l.getAttribute('href')==='#'+cur); });
+    });
+</script>
+</body>
+</html>

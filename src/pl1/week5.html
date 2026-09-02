@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5: Thinking in Objects - PL1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#1e3a5f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#2563eb}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .quiz-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .quiz-question{color:#0f172a}
+        body.light-mode .quiz-option{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .quiz-option:hover{border-color:#2563eb;color:#0f172a}
+        body.light-mode .quiz-option.correct{background:rgba(5,150,105,.12);border-color:#059669;color:#047857}
+        body.light-mode .quiz-option.incorrect{background:rgba(220,38,38,.1);border-color:#dc2626;color:#dc2626}
+        body.light-mode .trace-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .trace-box h4{color:#0f172a}
+        body.light-mode .trace-input{background:#fff;border-color:rgba(0,0,0,.12);color:#0f172a}
+        body.light-mode .bug-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#2563eb;border-left-color:#2563eb;background:rgba(37,99,235,.06)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .score-summary{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#60a5fa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.15rem;color:var(--text2);margin-bottom:6px}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:20px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .quiz-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .quiz-question{font-weight:600;color:var(--text);margin-bottom:14px;font-size:1rem}
+        .quiz-option{background:var(--surface);border:1px solid var(--border2);padding:12px 16px;margin:6px 0;border-radius:8px;cursor:pointer;transition:all .2s;color:var(--text2);font-size:.9rem}
+        .quiz-option:hover{border-color:var(--primary);color:var(--text)}
+        .quiz-option.correct{background:rgba(16,185,129,.12);border-color:var(--success);color:var(--success);cursor:default}
+        .quiz-option.incorrect{background:rgba(239,68,68,.1);border-color:#ef4444;color:#ef4444;cursor:default}
+        .quiz-explanation{display:none;margin-top:10px;padding:12px;background:rgba(59,130,246,.08);border-radius:8px;font-size:.88rem;color:var(--text2);border-left:3px solid var(--primary)}
+        .quiz-explanation.show{display:block}
+        .trace-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .trace-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .trace-box h4 i{color:var(--warning)}
+        .trace-input{background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;width:100%;margin:8px 0}
+        .trace-input:focus{outline:none;border-color:var(--primary)}
+        .check-btn{background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;margin-top:6px}
+        .check-btn:hover{background:#2563eb}
+        .trace-result{margin-top:8px;font-size:.88rem;padding:8px 12px;border-radius:6px;display:none}
+        .trace-result.correct{display:block;background:rgba(16,185,129,.12);color:var(--success)}
+        .trace-result.incorrect{display:block;background:rgba(239,68,68,.1);color:#ef4444}
+        .bug-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid #ef4444;border-radius:12px;padding:24px;margin:20px 0}
+        .bug-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .bug-box h4 i{color:#ef4444}
+        .score-summary{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin:24px 0;text-align:center}
+        .score-summary h4{font-size:1rem;font-weight:600;margin-bottom:8px}
+        .score-summary .score{font-size:2rem;font-weight:800;color:var(--primary)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(59,130,246,.05)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--success);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}
+        .uml-diagram{background:var(--surface);border:2px solid var(--border2);border-radius:8px;margin:16px auto;max-width:420px;font-family:'JetBrains Mono',monospace;font-size:.82rem;overflow:hidden}
+        .uml-class-name{background:var(--primary);color:#fff;padding:12px 16px;text-align:center;font-weight:700;font-size:.95rem}
+        .uml-section{padding:10px 16px;border-bottom:1px solid var(--border2)}
+        .uml-section:last-child{border-bottom:none}
+        .uml-section div{padding:2px 0;color:var(--text2)}
+        .uml-private{color:#ef4444 !important}
+        .uml-public{color:var(--success) !important}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#encapsulation">Encapsulation</a>
+                <a href="#immutable">Immutable</a>
+                <a href="#scope">Scope</a>
+                <a href="#static">Static</a>
+                <a href="#passing">Passing Objects</a>
+                <a href="#arrays">Array of Objects</a>
+                <a href="#aggregation">Aggregation</a>
+                <a href="#gc">GC</a>
+                <a href="#strings">Strings</a>
+                <a href="#wrappers">Wrappers</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="#encapsulation" onclick="this.parentElement.classList.remove('open')">Encapsulation</a>
+        <a href="#immutable" onclick="this.parentElement.classList.remove('open')">Immutable</a>
+        <a href="#scope" onclick="this.parentElement.classList.remove('open')">Scope</a>
+        <a href="#static" onclick="this.parentElement.classList.remove('open')">Static</a>
+        <a href="#passing" onclick="this.parentElement.classList.remove('open')">Passing Objects</a>
+        <a href="#arrays" onclick="this.parentElement.classList.remove('open')">Array of Objects</a>
+        <a href="#aggregation" onclick="this.parentElement.classList.remove('open')">Aggregation</a>
+        <a href="#gc" onclick="this.parentElement.classList.remove('open')">GC</a>
+        <a href="#strings" onclick="this.parentElement.classList.remove('open')">Strings</a>
+        <a href="#wrappers" onclick="this.parentElement.classList.remove('open')">Wrappers</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Week 5: Thinking in Objects</h1>
+            <p class="hero-sub">Liang Chapters 9 &amp; 10: Encapsulation, Immutable Objects, Scope, Static Members, Passing Objects, Arrays of Objects, Aggregation, Garbage Collection, Strings, Wrappers, and BigDecimal</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- ============ SECTION 1: DATA FIELD ENCAPSULATION ============ -->
+        <div class="section fade-up" id="encapsulation">
+            <h2 class="section-title"><i class="fa-solid fa-lock"></i> Data Field Encapsulation</h2>
+            <p class="section-desc">Encapsulation means making data fields <code>private</code> and providing <code>public</code> getter and setter methods to access and modify them. This protects data from invalid states and hides internal implementation. (Liang, Section 9.9)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Encapsulated Class</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;  <span class="cm">// private — cannot be accessed directly</span>
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;
+    }
+
+    <span class="cm">// Getter</span>
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getRadius</span>() {
+        <span class="kw">return</span> radius;
+    }
+
+    <span class="cm">// Setter with validation</span>
+    <span class="kw">public void</span> <span class="fn">setRadius</span>(<span class="type">double</span> radius) {
+        <span class="kw">if</span> (radius >= <span class="num">0</span>)
+            <span class="kw">this</span>.radius = radius;
+    }
+
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getArea</span>() {
+        <span class="kw">return</span> radius * radius * Math.PI;
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Without vs. With Encapsulation</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Without Encapsulation — dangerous!</span>
+c.radius = -<span class="num">5</span>;  <span class="cm">// Invalid but no error</span>
+
+<span class="cm">// With Encapsulation — safe!</span>
+c.<span class="fn">setRadius</span>(-<span class="num">5</span>);  <span class="cm">// Setter rejects it, radius stays unchanged</span></div>
+            </div>
+
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> Naming Convention</h3>
+                <p>For a field <code>xyz</code>: getter is <code>getXyz()</code>, setter is <code>setXyz(value)</code>. For <code>boolean</code> fields: getter is <code>isXyz()</code>. (Liang, Section 9.9)</p>
+            </div>
+
+            <div class="quiz-box" data-section="encapsulation">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: Why make data fields private?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">A) To make the program run faster</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'encapsulation')">B) To protect data and control access through methods</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">C) To prevent creating objects</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">D) To allow access from any class</div>
+                <div class="quiz-explanation">Private fields prevent direct access from outside. Access is controlled through getter/setter methods, enabling validation and data protection. (Liang, Section 9.9)</div>
+            </div>
+
+            <div class="quiz-box" data-section="encapsulation">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What is the correct getter name for a <code>boolean</code> field called <code>active</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">A) <code>getActive()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'encapsulation')">B) <code>isActive()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">C) <code>active()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">D) <code>hasActive()</code></div>
+                <div class="quiz-explanation">For boolean fields, the JavaBeans convention uses <code>is</code> instead of <code>get</code>. (Liang, Section 9.9)</div>
+            </div>
+
+            <div class="score-summary" id="score-encapsulation">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="encapsulation-correct">0</span> / <span id="encapsulation-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 2: IMMUTABLE OBJECTS ============ -->
+        <div class="section fade-up" id="immutable">
+            <h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> Immutable Objects and Classes</h2>
+            <p class="section-desc">An <strong>immutable object</strong> is an object whose state cannot be changed after it is created. An <strong>immutable class</strong> is a class whose objects are immutable. The <code>String</code> class is a well-known example. (Liang, Section 9.10)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list"></i> Requirements for an Immutable Class</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Rules</h3>
+                    <p>1. All data fields must be <strong>private</strong>.</p>
+                    <p>2. No <strong>setter</strong> (mutator) methods.</p>
+                    <p>3. No methods that can modify the object's state.</p>
+                    <p>4. The class itself can be declared <code>final</code> to prevent subclasses from adding mutability.</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Immutable Class Example</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public final class</span> <span class="fn">ImmutableCircle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;
+
+    <span class="kw">public</span> <span class="fn">ImmutableCircle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;
+    }
+
+    <span class="cm">// Only getter — NO setter</span>
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getRadius</span>() {
+        <span class="kw">return</span> radius;
+    }
+
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getArea</span>() {
+        <span class="kw">return</span> radius * radius * Math.PI;
+    }
+}</div>
+                <p style="color:var(--text2);font-size:.92rem;margin-top:8px;">Once an <code>ImmutableCircle</code> is created, its radius can never be changed. To get a circle with a different radius, you must create a new object.</p>
+            </div>
+
+            <div class="quiz-box" data-section="immutable">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: Which of these makes a class mutable (NOT immutable)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'immutable')">A) Having only private fields</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'immutable')">B) Having a public setter method</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'immutable')">C) Having only getter methods</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'immutable')">D) Declaring the class <code>final</code></div>
+                <div class="quiz-explanation">A setter method allows modification of the object's state after creation, which breaks immutability. (Liang, Section 9.10)</div>
+            </div>
+
+            <div class="score-summary" id="score-immutable">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="immutable-correct">0</span> / <span id="immutable-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 3: SCOPE OF VARIABLES ============ -->
+        <div class="section fade-up" id="scope">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> The Scope of Variables</h2>
+            <p class="section-desc">The <strong>scope</strong> of a variable determines where in the program it can be accessed. Java has three types of variable scope: local variables, instance variables, and class (static) variables. (Liang, Section 9.8)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-table"></i> Variable Scope Types</h3>
+                <table class="dark-table">
+                    <tr><th>Type</th><th>Declared In</th><th>Scope</th><th>Lifetime</th></tr>
+                    <tr><td><strong>Local</strong></td><td>Inside a method or block</td><td>From declaration to end of block</td><td>Method execution</td></tr>
+                    <tr><td><strong>Instance</strong></td><td>Inside a class (no <code>static</code>)</td><td>Entire class</td><td>Object's lifetime</td></tr>
+                    <tr><td><strong>Class (static)</strong></td><td>Inside a class with <code>static</code></td><td>Entire class</td><td>Program's lifetime</td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Scope Example</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">ScopeDemo</span> {
+    <span class="kw">private</span> <span class="type">int</span> x = <span class="num">10</span>;          <span class="cm">// Instance variable — accessible everywhere in the class</span>
+    <span class="kw">private static</span> <span class="type">int</span> count = <span class="num">0</span>; <span class="cm">// Class variable — shared by all objects</span>
+
+    <span class="kw">public void</span> <span class="fn">myMethod</span>() {
+        <span class="type">int</span> y = <span class="num">20</span>;                 <span class="cm">// Local variable — only visible in this method</span>
+        System.out.println(x);      <span class="cm">// OK: instance variable</span>
+        System.out.println(y);      <span class="cm">// OK: local variable</span>
+    }
+
+    <span class="kw">public void</span> <span class="fn">anotherMethod</span>() {
+        System.out.println(x);      <span class="cm">// OK: instance variable</span>
+        <span class="cm">// System.out.println(y);   // ERROR: y is not in scope here</span>
+    }
+}</div>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Shadowing</h3>
+                <p>If a local variable has the same name as an instance variable, the local variable <strong>shadows</strong> (hides) the instance variable within that scope. Use <code>this.variableName</code> to refer to the instance variable. (Liang, Section 9.8)</p>
+            </div>
+
+            <div class="quiz-box" data-section="scope">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the scope of a local variable?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'scope')">A) The entire class</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'scope')">B) From its declaration to the end of the block it is declared in</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'scope')">C) The entire program</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'scope')">D) Only the line it is declared on</div>
+                <div class="quiz-explanation">A local variable's scope starts at its declaration and ends at the closing brace of the block in which it is declared. (Liang, Section 9.8)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Test</span> {
+    <span class="type">int</span> x = <span class="num">1</span>;
+    <span class="kw">public void</span> <span class="fn">method</span>() {
+        <span class="type">int</span> x = <span class="num">10</span>;
+        System.out.println(<span class="str">"local: "</span> + x);
+        System.out.println(<span class="str">"instance: "</span> + <span class="kw">this</span>.x);
+    }
+}
+<span class="cm">// new Test().method();</span></div>
+                <p style="color:var(--text2);font-size:.88rem;">What are the two lines of output?</p>
+                <input class="trace-input" id="trace-scope1" placeholder="e.g., local: 10 instance: 1">
+                <button class="check-btn" onclick="checkTrace('trace-scope1','local: 10 instance: 1')">Check Answer</button>
+                <div class="trace-result" id="trace-scope1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-scope">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="scope-correct">0</span> / <span id="scope-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 4: STATIC VARIABLES, CONSTANTS, AND METHODS ============ -->
+        <div class="section fade-up" id="static">
+            <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Static Variables, Constants, and Methods</h2>
+            <p class="section-desc">A <code>static</code> member belongs to the <strong>class</strong>, not to any particular object. Static variables are shared by all instances. Static constants are declared with <code>static final</code>. (Liang, Section 9.7)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Static Variable &amp; Constant</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;
+    <span class="kw">private static</span> <span class="type">int</span> numberOfObjects = <span class="num">0</span>;    <span class="cm">// Shared by ALL objects</span>
+    <span class="kw">public static final</span> <span class="type">double</span> PI = <span class="num">3.14159</span>;  <span class="cm">// Static constant</span>
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;
+        numberOfObjects++;   <span class="cm">// Increment shared counter</span>
+    }
+
+    <span class="kw">public static</span> <span class="type">int</span> <span class="fn">getNumberOfObjects</span>() {
+        <span class="kw">return</span> numberOfObjects;
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Instance vs. Static</h3>
+                <table class="dark-table">
+                    <tr><th></th><th>Instance</th><th>Static</th></tr>
+                    <tr><td><strong>Belongs to</strong></td><td>Each object</td><td>The class</td></tr>
+                    <tr><td><strong>Access</strong></td><td><code>obj.member</code></td><td><code>ClassName.member</code></td></tr>
+                    <tr><td><strong>Memory</strong></td><td>One copy per object</td><td>One copy shared by all</td></tr>
+                </table>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Important Rules</h3>
+                <p>&bull; A static method <strong>cannot</strong> access instance variables or use <code>this</code>.</p>
+                <p>&bull; An instance method <strong>can</strong> access both static and instance members.</p>
+                <p>&bull; Static constants (<code>static final</code>) should use <strong>UPPER_CASE</strong> naming. (Liang, Section 9.7)</p>
+            </div>
+
+            <div class="quiz-box" data-section="static">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: Can a static method access an instance variable directly?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">A) Yes, always</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'static')">B) No — static methods belong to the class, not any specific object</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">C) Only if the variable is public</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">D) Only if using <code>this</code></div>
+                <div class="quiz-explanation">A static method has no <code>this</code> reference and cannot access instance members directly. It can only access static members. (Liang, Section 9.7)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> a = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">1</span>);
+<span class="type">Circle</span> b = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2</span>);
+<span class="type">Circle</span> c = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">3</span>);
+System.out.println(<span class="fn">Circle</span>.<span class="fn">getNumberOfObjects</span>());</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-static1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-static1','3')">Check Answer</button>
+                <div class="trace-result" id="trace-static1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-static">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="static-correct">0</span> / <span id="static-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 5: PASSING OBJECTS TO METHODS ============ -->
+        <div class="section fade-up" id="passing">
+            <h2 class="section-title"><i class="fa-solid fa-share"></i> Passing Objects to Methods</h2>
+            <p class="section-desc">When you pass an object to a method, you are passing the <strong>reference</strong> (memory address), not a copy of the object. This means the method can modify the original object's data fields. This is different from passing primitive types, which passes a copy of the value. (Liang, Section 9.6)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Passing Primitives vs. Objects</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">PassingDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">changePrimitive</span>(<span class="type">int</span> x) {
+        x = <span class="num">100</span>;  <span class="cm">// Changes the LOCAL copy only</span>
+    }
+
+    <span class="kw">public static void</span> <span class="fn">changeObject</span>(<span class="type">Circle</span> c) {
+        c.<span class="fn">setRadius</span>(<span class="num">100</span>);  <span class="cm">// Changes the ORIGINAL object!</span>
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">int</span> num = <span class="num">5</span>;
+        <span class="fn">changePrimitive</span>(num);
+        System.out.println(num);   <span class="cm">// Still 5 — primitive was copied</span>
+
+        <span class="type">Circle</span> c = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">5</span>);
+        <span class="fn">changeObject</span>(c);
+        System.out.println(c.<span class="fn">getRadius</span>());  <span class="cm">// 100.0 — object was modified!</span>
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Comparison</h3>
+                <table class="dark-table">
+                    <tr><th>Passing Primitives</th><th>Passing Objects</th></tr>
+                    <tr><td>A <strong>copy of the value</strong> is passed</td><td>A <strong>copy of the reference</strong> is passed</td></tr>
+                    <tr><td>Changes inside the method do NOT affect the original</td><td>Changes to the object's fields DO affect the original</td></tr>
+                    <tr><td><code>int x = 5; change(x);</code></td><td><code>Circle c = new Circle(5); change(c);</code></td></tr>
+                </table>
+            </div>
+
+            <div class="quiz-box" data-section="passing">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: When you pass an object to a method, what is actually passed?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">A) A copy of the entire object</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'passing')">B) A copy of the reference (memory address) to the object</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">C) The variable name</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'passing')">D) Nothing — objects cannot be passed</div>
+                <div class="quiz-explanation">Java passes a copy of the reference. Both the caller and the method have references pointing to the <strong>same</strong> object in memory. (Liang, Section 9.6)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static void</span> <span class="fn">swap</span>(<span class="type">Circle</span> a, <span class="type">Circle</span> b) {
+    <span class="type">Circle</span> temp = a;
+    a = b;
+    b = temp;
+}
+<span class="type">Circle</span> x = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">1</span>);
+<span class="type">Circle</span> y = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2</span>);
+<span class="fn">swap</span>(x, y);
+System.out.println(x.<span class="fn">getRadius</span>() + <span class="str">" "</span> + y.<span class="fn">getRadius</span>());</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output? (Hint: swapping references inside a method does NOT affect the caller)</p>
+                <input class="trace-input" id="trace-pass1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-pass1','1.0 2.0')">Check Answer</button>
+                <div class="trace-result" id="trace-pass1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-passing">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="passing-correct">0</span> / <span id="passing-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 6: ARRAY OF OBJECTS ============ -->
+        <div class="section fade-up" id="arrays">
+            <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> Array of Objects</h2>
+            <p class="section-desc">You can create an array that holds references to objects. Each element of the array is a reference variable that must be initialized with <code>new</code> before use. (Liang, Section 9.11)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Creating an Array of Objects</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// Step 1: Declare the array</span>
+<span class="type">Circle</span>[] circles = <span class="kw">new</span> <span class="type">Circle</span>[<span class="num">3</span>];  <span class="cm">// Array of 3 references (all null)</span>
+
+<span class="cm">// Step 2: Create each object</span>
+circles[<span class="num">0</span>] = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">1.0</span>);
+circles[<span class="num">1</span>] = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2.0</span>);
+circles[<span class="num">2</span>] = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">3.0</span>);
+
+<span class="cm">// Step 3: Use the objects</span>
+<span class="kw">for</span> (<span class="type">Circle</span> c : circles) {
+    System.out.println(<span class="str">"Radius: "</span> + c.<span class="fn">getRadius</span>() + <span class="str">", Area: "</span> + c.<span class="fn">getArea</span>());
+}</div>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Mistake</h3>
+                <p><code>Circle[] circles = new Circle[3];</code> creates the <strong>array</strong>, but each element is <code>null</code>. You must create each object individually with <code>new Circle()</code>. Accessing <code>circles[0].getArea()</code> before initialization causes <code>NullPointerException</code>!</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Shorthand Initialization</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span>[] circles = {
+    <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">1.0</span>),
+    <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2.0</span>),
+    <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">3.0</span>)
+};</div>
+            </div>
+
+            <div class="quiz-box" data-section="arrays">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: After <code>Circle[] c = new Circle[5];</code>, what is <code>c[0]</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'arrays')">A) A Circle with radius 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'arrays')">B) <code>null</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'arrays')">C) A Circle with radius 1</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'arrays')">D) Compilation error</div>
+                <div class="quiz-explanation">Creating the array only allocates space for references. Each element defaults to <code>null</code> until you assign an object with <code>new</code>. (Liang, Section 9.11)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span>[] arr = <span class="kw">new</span> <span class="type">Circle</span>[<span class="num">3</span>];
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; arr.length; i++) {
+    arr[i] = <span class="kw">new</span> <span class="type">Circle</span>(i + <span class="num">1</span>);
+}
+System.out.println(arr[<span class="num">2</span>].<span class="fn">getRadius</span>());</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-arr1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-arr1','3.0')">Check Answer</button>
+                <div class="trace-result" id="trace-arr1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-arrays">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="arrays-correct">0</span> / <span id="arrays-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 7: CLASS AGGREGATION AND COMPOSITION ============ -->
+        <div class="section fade-up" id="aggregation">
+            <h2 class="section-title"><i class="fa-solid fa-puzzle-piece"></i> Class Aggregation and Composition</h2>
+            <p class="section-desc">Aggregation and composition model "has-a" relationships between objects. A class can have a data field that references another object. The difference is about <strong>ownership</strong> and <strong>lifecycle</strong>. (Liang, Section 9.11)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Aggregation — Object Passed In</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">In aggregation, the contained object is created <strong>outside</strong> and passed to the container. It can exist independently.</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Professor</span> {
+    <span class="type">String</span> name;
+    <span class="kw">public</span> <span class="fn">Professor</span>(<span class="type">String</span> name) { <span class="kw">this</span>.name = name; }
+}
+
+<span class="kw">class</span> <span class="fn">Department</span> {
+    <span class="type">String</span> name;
+    <span class="type">Professor</span> head;  <span class="cm">// Aggregation</span>
+
+    <span class="kw">public</span> <span class="fn">Department</span>(<span class="type">String</span> name, <span class="type">Professor</span> head) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.head = head;  <span class="cm">// Professor is PASSED IN</span>
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="type">Professor</span> p = <span class="kw">new</span> <span class="type">Professor</span>(<span class="str">"Dr. Smith"</span>);   <span class="cm">// Created outside</span>
+<span class="type">Department</span> d = <span class="kw">new</span> <span class="type">Department</span>(<span class="str">"CS"</span>, p);     <span class="cm">// Passed in</span>
+<span class="cm">// If d is destroyed, p still exists</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Composition — Object Created Inside</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">In composition, the contained object is created <strong>inside</strong> the container. Its lifecycle depends on the container.</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Engine</span> {
+    <span class="type">String</span> type;
+    <span class="kw">public</span> <span class="fn">Engine</span>(<span class="type">String</span> type) { <span class="kw">this</span>.type = type; }
+}
+
+<span class="kw">class</span> <span class="fn">Car</span> {
+    <span class="type">String</span> make;
+    <span class="type">Engine</span> engine;  <span class="cm">// Composition</span>
+
+    <span class="kw">public</span> <span class="fn">Car</span>(<span class="type">String</span> make, <span class="type">String</span> engineType) {
+        <span class="kw">this</span>.make = make;
+        <span class="kw">this</span>.engine = <span class="kw">new</span> <span class="type">Engine</span>(engineType);  <span class="cm">// Engine created INSIDE</span>
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="type">Car</span> c = <span class="kw">new</span> <span class="type">Car</span>(<span class="str">"Toyota"</span>, <span class="str">"V6"</span>);
+<span class="cm">// If c is destroyed, the engine is also destroyed</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Comparison</h3>
+                <table class="dark-table">
+                    <tr><th></th><th>Aggregation</th><th>Composition</th></tr>
+                    <tr><td><strong>Relationship</strong></td><td>Weak "has-a"</td><td>Strong "has-a"</td></tr>
+                    <tr><td><strong>Object creation</strong></td><td>Created outside, <strong>passed in</strong></td><td>Created <strong>inside</strong> the container</td></tr>
+                    <tr><td><strong>Lifecycle</strong></td><td>Independent</td><td>Dependent on container</td></tr>
+                    <tr><td><strong>UML</strong></td><td>Hollow diamond &loz;</td><td>Filled diamond &diams;</td></tr>
+                </table>
+            </div>
+
+            <div class="quiz-box" data-section="aggregation">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the key difference between aggregation and composition?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'aggregation')">A) Aggregation uses inheritance; composition does not</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'aggregation')">B) In composition, the contained object is created inside and depends on the container; in aggregation, it is passed in and independent</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'aggregation')">C) There is no difference</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'aggregation')">D) Aggregation uses <code>new</code> inside; composition does not</div>
+                <div class="quiz-explanation">Composition: object created inside with <code>new</code> (strong ownership). Aggregation: object passed in from outside (weak ownership, independent lifecycle). (Liang, Section 9.11)</div>
+            </div>
+
+            <div class="score-summary" id="score-aggregation">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="aggregation-correct">0</span> / <span id="aggregation-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 8: GARBAGE COLLECTION ============ -->
+        <div class="section fade-up" id="gc">
+            <h2 class="section-title"><i class="fa-solid fa-recycle"></i> Garbage Collection</h2>
+            <p class="section-desc">Java automatically reclaims memory occupied by objects that are no longer referenced. This process is called <strong>garbage collection</strong>. You don't need to manually free memory like in C/C++. (Liang, Section 9.10)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> When Does an Object Become Garbage?</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">1</span>);
+<span class="type">Circle</span> c2 = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2</span>);
+
+c1 = c2;  <span class="cm">// The Circle(1) object is now unreachable — eligible for GC</span>
+
+c2 = <span class="kw">null</span>;  <span class="cm">// c2 no longer references Circle(2), but c1 still does</span>
+            <span class="cm">// Circle(2) is NOT garbage — c1 still points to it</span></div>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fa-solid fa-circle-info"></i> Key Facts</h3>
+                <p>&bull; An object becomes eligible for garbage collection when <strong>no references</strong> point to it.</p>
+                <p>&bull; The JVM runs the garbage collector <strong>automatically</strong> — you cannot force it.</p>
+                <p>&bull; <code>System.gc()</code> only <strong>suggests</strong> that the JVM run GC — it is not guaranteed.</p>
+                <p>&bull; Setting a reference to <code>null</code> does not immediately destroy the object.</p>
+            </div>
+
+            <div class="quiz-box" data-section="gc">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: When is an object eligible for garbage collection?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'gc')">A) When you call <code>delete</code> on it</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'gc')">B) When you set it to <code>null</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'gc')">C) When no references point to it anywhere in the program</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'gc')">D) When the method ends</div>
+                <div class="quiz-explanation">An object is eligible for GC only when there are <strong>no live references</strong> to it. Setting one reference to <code>null</code> doesn't make it garbage if another reference still points to it. (Liang, Section 9.10)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> a = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">1</span>);  <span class="cm">// Object A</span>
+<span class="type">Circle</span> b = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2</span>);  <span class="cm">// Object B</span>
+<span class="type">Circle</span> c = a;              <span class="cm">// c points to Object A</span>
+a = b;                     <span class="cm">// a now points to Object B</span>
+b = <span class="kw">null</span>;                  <span class="cm">// b points to nothing</span>
+<span class="cm">// How many objects are eligible for GC?</span></div>
+                <p style="color:var(--text2);font-size:.88rem;">How many objects are eligible for garbage collection? (Hint: Object A is still referenced by <code>c</code>, Object B is still referenced by <code>a</code>)</p>
+                <input class="trace-input" id="trace-gc1" placeholder="Type the number...">
+                <button class="check-btn" onclick="checkTrace('trace-gc1','0')">Check Answer</button>
+                <div class="trace-result" id="trace-gc1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-gc">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="gc-correct">0</span> / <span id="gc-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 9: THE STRING CLASS ============ -->
+        <div class="section fade-up" id="strings">
+            <h2 class="section-title"><i class="fa-solid fa-font"></i> The String Class</h2>
+            <p class="section-desc">Strings are <strong>immutable</strong> objects in Java. Any operation that appears to modify a String creates a new String object. (Liang, Section 10.10)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list"></i> Common String Methods</h3>
+                <table class="dark-table">
+                    <tr><th>Method</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>length()</code></td><td>Number of characters</td><td><code>"Hello".length()</code> &rarr; <code>5</code></td></tr>
+                    <tr><td><code>charAt(i)</code></td><td>Character at index <code>i</code></td><td><code>"Hello".charAt(1)</code> &rarr; <code>'e'</code></td></tr>
+                    <tr><td><code>substring(i, j)</code></td><td>Substring from <code>i</code> to <code>j-1</code></td><td><code>"Hello".substring(1, 4)</code> &rarr; <code>"ell"</code></td></tr>
+                    <tr><td><code>equals(s)</code></td><td>Compare content</td><td><code>"Hi".equals("hi")</code> &rarr; <code>false</code></td></tr>
+                    <tr><td><code>equalsIgnoreCase(s)</code></td><td>Compare ignoring case</td><td><code>"Hi".equalsIgnoreCase("hi")</code> &rarr; <code>true</code></td></tr>
+                    <tr><td><code>indexOf(s)</code></td><td>First index of <code>s</code></td><td><code>"Hello".indexOf("ll")</code> &rarr; <code>2</code></td></tr>
+                    <tr><td><code>toUpperCase()</code></td><td>To uppercase</td><td><code>"hello".toUpperCase()</code> &rarr; <code>"HELLO"</code></td></tr>
+                    <tr><td><code>trim()</code></td><td>Remove whitespace</td><td><code>" Hi ".trim()</code> &rarr; <code>"Hi"</code></td></tr>
+                </table>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> == vs. equals()</h3>
+                <p><code>==</code> compares <strong>references</strong>. <code>.equals()</code> compares <strong>content</strong>. Always use <code>.equals()</code> to compare string values!</p>
+            </div>
+
+            <div class="quiz-box" data-section="strings">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What does "immutable" mean for Strings?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'strings')">A) Strings can be changed after creation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'strings')">B) Once created, a String's content cannot be modified</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'strings')">C) Strings cannot be compared</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'strings')">D) Strings are stored on the stack</div>
+                <div class="quiz-explanation">Strings are immutable. Methods like <code>toUpperCase()</code> return a <strong>new</strong> String — the original is unchanged. (Liang, Section 10.10)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">String</span> s1 = <span class="str">"Java"</span>;
+<span class="type">String</span> s2 = <span class="str">"Java"</span>;
+<span class="type">String</span> s3 = <span class="kw">new</span> <span class="type">String</span>(<span class="str">"Java"</span>);
+System.out.println(s1 == s2);
+System.out.println(s1 == s3);
+System.out.println(s1.<span class="fn">equals</span>(s3));</div>
+                <p style="color:var(--text2);font-size:.88rem;">What are the three lines of output?</p>
+                <input class="trace-input" id="trace-str1" placeholder="e.g., true false true">
+                <button class="check-btn" onclick="checkTrace('trace-str1','true false true')">Check Answer</button>
+                <div class="trace-result" id="trace-str1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-strings">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="strings-correct">0</span> / <span id="strings-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 10: WRAPPER CLASSES ============ -->
+        <div class="section fade-up" id="wrappers">
+            <h2 class="section-title"><i class="fa-solid fa-box"></i> Wrapper Classes</h2>
+            <p class="section-desc">Wrapper classes let you use primitives as objects. Java automatically converts between them: <strong>autoboxing</strong> (primitive &rarr; wrapper) and <strong>unboxing</strong> (wrapper &rarr; primitive). (Liang, Section 10.7)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-table"></i> Mapping</h3>
+                <table class="dark-table">
+                    <tr><th>Primitive</th><th>Wrapper</th><th>Primitive</th><th>Wrapper</th></tr>
+                    <tr><td><code>int</code></td><td><code>Integer</code></td><td><code>float</code></td><td><code>Float</code></td></tr>
+                    <tr><td><code>double</code></td><td><code>Double</code></td><td><code>char</code></td><td><code>Character</code></td></tr>
+                    <tr><td><code>long</code></td><td><code>Long</code></td><td><code>boolean</code></td><td><code>Boolean</code></td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Autoboxing &amp; Unboxing</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Integer</span> obj = <span class="num">100</span>;          <span class="cm">// Autoboxing: int → Integer</span>
+<span class="type">int</span> prim = obj;              <span class="cm">// Unboxing: Integer → int</span>
+
+<span class="type">int</span> x = <span class="fn">Integer</span>.<span class="fn">parseInt</span>(<span class="str">"42"</span>);   <span class="cm">// String → int</span>
+<span class="type">double</span> d = <span class="fn">Double</span>.<span class="fn">parseDouble</span>(<span class="str">"3.14"</span>); <span class="cm">// String → double</span></div>
+            </div>
+
+            <div class="quiz-box" data-section="wrappers">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is autoboxing?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'wrappers')">A) Automatic conversion from a primitive to its wrapper object</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'wrappers')">B) Automatic conversion from a wrapper to a primitive</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'wrappers')">C) Converting a String to a number</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'wrappers')">D) Creating an array of objects</div>
+                <div class="quiz-explanation">Autoboxing: primitive &rarr; wrapper. Unboxing: wrapper &rarr; primitive. Both happen automatically. (Liang, Section 10.7)</div>
+            </div>
+
+            <div class="score-summary" id="score-wrappers">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="wrappers-correct">0</span> / <span id="wrappers-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 11: BIGINTEGER AND BIGDECIMAL ============ -->
+        <div class="section fade-up" id="bignum">
+            <h2 class="section-title"><i class="fa-solid fa-infinity"></i> BigInteger and BigDecimal</h2>
+            <p class="section-desc"><code>BigInteger</code> handles arbitrarily large integers. <code>BigDecimal</code> provides exact decimal arithmetic, avoiding floating-point errors. Use methods (<code>add</code>, <code>subtract</code>, <code>multiply</code>, <code>divide</code>) instead of operators. (Liang, Section 10.9)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> BigDecimal Example</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> java.math.BigDecimal;
+
+System.out.println(<span class="num">0.1</span> + <span class="num">0.2</span>);  <span class="cm">// 0.30000000000000004 (imprecise!)</span>
+
+<span class="type">BigDecimal</span> d1 = <span class="kw">new</span> <span class="type">BigDecimal</span>(<span class="str">"0.1"</span>);
+<span class="type">BigDecimal</span> d2 = <span class="kw">new</span> <span class="type">BigDecimal</span>(<span class="str">"0.2"</span>);
+System.out.println(d1.<span class="fn">add</span>(d2));   <span class="cm">// 0.3 (exact!)</span></div>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Important</h3>
+                <p>Always create <code>BigDecimal</code> from a <strong>String</strong>, not a <code>double</code>. <code>new BigDecimal(0.1)</code> captures the imprecise double value. Use <code>new BigDecimal("0.1")</code> instead. (Liang, Section 10.9)</p>
+            </div>
+
+            <div class="quiz-box" data-section="bignum">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: How do you add two BigInteger values <code>a</code> and <code>b</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'bignum')">A) <code>a + b</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'bignum')">B) <code>a.add(b)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'bignum')">C) <code>BigInteger.add(a, b)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'bignum')">D) <code>add(a, b)</code></div>
+                <div class="quiz-explanation">BigInteger/BigDecimal are objects — you must use their instance methods. Operators like <code>+</code> don't work. (Liang, Section 10.9)</div>
+            </div>
+
+            <div class="score-summary" id="score-bignum">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="bignum-correct">0</span> / <span id="bignum-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="week4.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Week 4: OOP - Classes &amp; Objects</a>
+            <a href="week6.html" class="nav-btn next">Week 6: Inheritance <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">601112 - Programming Language 1 (Java) - University of Petra - Dr. Abdulkarim Albanna</div></footer>
+
+    <div class="toc" id="toc"><h4>Week 5</h4>
+        <a class="toc-item" href="#encapsulation">Encapsulation</a>
+        <a class="toc-item" href="#immutable">Immutable Objects</a>
+        <a class="toc-item" href="#scope">Scope of Variables</a>
+        <a class="toc-item" href="#static">Static Members</a>
+        <a class="toc-item" href="#passing">Passing Objects</a>
+        <a class="toc-item" href="#arrays">Array of Objects</a>
+        <a class="toc-item" href="#aggregation">Aggregation</a>
+        <a class="toc-item" href="#gc">Garbage Collection</a>
+        <a class="toc-item" href="#strings">String Class</a>
+        <a class="toc-item" href="#wrappers">Wrappers</a>
+        <a class="toc-item" href="#bignum">BigInteger</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pl1-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('pl1-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        const scores={'encapsulation':{c:0,t:0},'immutable':{c:0,t:0},'scope':{c:0,t:0},'static':{c:0,t:0},'passing':{c:0,t:0},'arrays':{c:0,t:0},'aggregation':{c:0,t:0},'gc':{c:0,t:0},'strings':{c:0,t:0},'wrappers':{c:0,t:0},'bignum':{c:0,t:0}};
+        function updateScore(s){const ce=document.getElementById(s+'-correct'),te=document.getElementById(s+'-total');if(ce)ce.textContent=scores[s].c;if(te)te.textContent=scores[s].t;}
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';const opts=box.querySelectorAll('.quiz-option');opts.forEach(o=>o.style.pointerEvents='none');scores[section].t++;if(correct){el.classList.add('correct');el.innerHTML+=' <i class="fa-solid fa-circle-check"></i>';scores[section].c++;}else{el.classList.add('incorrect');el.innerHTML+=' <i class="fa-solid fa-circle-xmark"></i>';opts.forEach(o=>{if(!o.classList.contains('incorrect')&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');});}const exp=box.querySelector('.quiz-explanation');if(exp)exp.classList.add('show');updateScore(section);}
+        function checkTrace(id,answer){const input=document.getElementById(id),result=document.getElementById(id+'-result'),val=input.value.trim();if(val===answer){result.className='trace-result correct';result.innerHTML='<i class="fa-solid fa-circle-check"></i> Correct! Output: '+answer;}else{result.className='trace-result incorrect';result.innerHTML='<i class="fa-solid fa-circle-xmark"></i> Incorrect. Correct output: '+answer;}}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const secs=['encapsulation','immutable','scope','static','passing','arrays','aggregation','gc','strings','wrappers','bignum'],tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;secs.forEach((s,i)=>{const el=document.getElementById(s);if(!el||!tocItems[i])return;tocItems[i].classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 8: Lab — Polymorphism | PL1 - Java (601112)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        [data-theme="light"] .navbar{background:var(--bg)}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero::before{display:none}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px}
+
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+
+        .usecase-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.9rem;line-height:1.7;color:var(--text2)}
+        .usecase-box i{color:var(--secondary);margin-right:.4rem}
+        .usecase-box strong{color:var(--secondary)}
+
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}
+            .nav-links.open{display:flex}
+            .mobile-toggle{display:block}
+            .hero h1{font-size:1.8rem}
+            .exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week8.html">&larr; Week 8</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week8.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 8</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 8: Lab — <span class="gradient">Polymorphism</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 11</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 5 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1: Polymorphism — Shape Area Calculator -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Polymorphism — Shape Area Calculator</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A graphics program needs to calculate the total area of all shapes on a canvas — circles, rectangles, and triangles. Instead of writing separate loops for each shape type, <strong>polymorphism</strong> lets you store all shapes in one array and call <code>getArea()</code> on each. The correct formula runs automatically based on the actual shape type.</div>
+                <div class="info-box">Create a class <code>GeometricObject</code> with a field <code>color</code> (String), a constructor, and a method <code>getArea()</code> that returns <code>0.0</code>. Create subclasses <code>Circle</code> (field: <code>radius</code>), <code>Rectangle</code> (fields: <code>width</code>, <code>height</code>), and <code>Triangle</code> (fields: <code>base</code>, <code>height</code>) that each <strong>override</strong> <code>getArea()</code> with the correct formula. In <code>main</code>, create a <code>GeometricObject[]</code> array holding one of each, loop through it to print each shape's color and area, then print the total area.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Circle (red): area = 78.53981633974483
+Rectangle (blue): area = 24.0
+Triangle (green): area = 10.0
+Total area: 112.53981633974483</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" rows="52" spellcheck="false">class GeometricObject {
+    // Field: color (String)
+
+
+    // Constructor: GeometricObject(String color)
+
+
+    // Getter for color
+
+
+    // Method: getArea() — returns 0.0 (to be overridden)
+
+}
+
+class Circle extends GeometricObject {
+    // Field: radius (double)
+
+
+    // Constructor: Circle(double radius, String color)
+    // Call super(color) first
+
+
+    // Override getArea() — returns Math.PI * radius * radius
+
+}
+
+class Rectangle extends GeometricObject {
+    // Fields: width (double), height (double)
+
+
+    // Constructor: Rectangle(double width, double height, String color)
+    // Call super(color) first
+
+
+    // Override getArea() — returns width * height
+
+}
+
+class Triangle extends GeometricObject {
+    // Fields: base (double), height (double)
+
+
+    // Constructor: Triangle(double base, double height, String color)
+    // Call super(color) first
+
+
+    // Override getArea() — returns 0.5 * base * height
+
+}
+
+public class TestPolymorphism {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">Base class: <code>class GeometricObject { String color; GeometricObject(String color){ this.color = color; } public double getArea(){ return 0.0; } }</code>. Each subclass calls <code>super(color)</code> and overrides <code>getArea()</code>. In main: <code>GeometricObject[] shapes = { new Circle(5.0,"red"), new Rectangle(4.0,6.0,"blue"), new Triangle(4.0,5.0,"green") };</code> then loop: <code>for(GeometricObject s : shapes){ System.out.println(s.getColor() + ": area = " + s.getArea()); }</code>. Sum areas in the same loop with <code>total += s.getArea()</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Dynamic Binding — Greeting System -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>Dynamic Binding — Greeting System</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A university system stores all people (students, professors, admins) in one list. When it calls <code>greet()</code> on each, it doesn't know at compile time which version to call — that's decided at <strong>runtime</strong> based on the actual type. This is <strong>dynamic binding</strong>: the JVM looks up the correct method version for the actual object, not the declared type.</div>
+                <div class="info-box">Create a class <code>Person</code> with field <code>name</code> (String), a constructor, and a method <code>greet()</code> that prints <code>"Hello, I'm [name]"</code>. Create subclass <code>Student</code> that <strong>overrides</strong> <code>greet()</code> to print <code>"Hi! I'm student [name]"</code>. Create subclass <code>Teacher</code> that overrides <code>greet()</code> to print <code>"Good day. I'm Professor [name]"</code>. In <code>main</code>, create a <code>Person[]</code> array with one of each type and call <code>greet()</code> on all — observe dynamic binding in action.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Hello, I'm Ahmad
+Hi! I'm student Sara
+Good day. I'm Professor Khaled</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" rows="40" spellcheck="false">class Person {
+    // Field: name (String)
+
+
+    // Constructor: Person(String name)
+
+
+    // Method: greet() — prints "Hello, I'm [name]"
+
+}
+
+class Student extends Person {
+    // Constructor: Student(String name)
+    // Call super(name)
+
+
+    // Override greet() — prints "Hi! I'm student [name]"
+
+}
+
+class Teacher extends Person {
+    // Constructor: Teacher(String name)
+    // Call super(name)
+
+
+    // Override greet() — prints "Good day. I'm Professor [name]"
+
+}
+
+public class TestDynamicBinding {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Person: <code>class Person { String name; Person(String name){ this.name = name; } public void greet(){ System.out.println("Hello, I'm " + name); } }</code>. Student: <code>class Student extends Person { Student(String name){ super(name); } @Override public void greet(){ System.out.println("Hi! I'm student " + name); } }</code>. Teacher follows the same pattern. In main: <code>Person[] people = { new Person("Ahmad"), new Student("Sara"), new Teacher("Khaled") }; for(Person p : people) p.greet();</code> — the correct <code>greet()</code> is chosen at runtime based on actual type.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Casting — Upcasting & Downcasting -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Casting — Upcasting &amp; Downcasting</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> You can always treat a <code>Dog</code> as an <code>Animal</code> — that's safe upcasting. But to call a <code>Dog</code>-specific method like <code>fetch()</code>, you need to cast back down explicitly. If the object is actually a <code>Cat</code>, the cast throws a <code>ClassCastException</code>. This exercise makes you practice both directions of casting and the role of <code>instanceof</code> in safe downcasting.</div>
+                <div class="info-box">Create a class <code>Animal</code> with field <code>name</code> (String), a constructor, and a method <code>eat()</code> that prints <code>"[name] is eating"</code>. Create subclass <code>Dog</code> with a method <code>fetch()</code> that prints <code>"[name] is fetching the ball"</code>. Create subclass <code>Cat</code> with a method <code>purr()</code> that prints <code>"[name] is purring"</code>. In <code>main</code>: (1) upcast a Dog to Animal and call <code>eat()</code>, (2) safely downcast back to Dog using <code>instanceof</code> and call <code>fetch()</code>, (3) try to downcast a Cat to Dog — guard with <code>instanceof</code> to avoid the exception.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Rex is eating
+Rex is fetching the ball
+Whiskers is eating
+Whiskers is not a Dog — cannot fetch!</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" rows="44" spellcheck="false">class Animal {
+    // Field: name (String)
+
+
+    // Constructor: Animal(String name)
+
+
+    // Method: eat() — prints "[name] is eating"
+
+}
+
+class Dog extends Animal {
+    // Constructor: Dog(String name)
+    // Call super(name)
+
+
+    // Method: fetch() — prints "[name] is fetching the ball"
+
+}
+
+class Cat extends Animal {
+    // Constructor: Cat(String name)
+    // Call super(name)
+
+
+    // Method: purr() — prints "[name] is purring"
+
+}
+
+public class TestCasting {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Upcasting: <code>Animal a = new Dog("Rex");</code> — implicit, no cast needed. Call <code>a.eat()</code>. Downcasting: <code>if (a instanceof Dog) { Dog d = (Dog) a; d.fetch(); }</code>. For the Cat: <code>Animal c = new Cat("Whiskers"); c.eat(); if (c instanceof Dog) { ((Dog) c).fetch(); } else { System.out.println(c.name + " is not a Dog \u2014 cannot fetch!"); }</code>. Always use <code>instanceof</code> before downcasting to avoid <code>ClassCastException</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4: instanceof — Animal Type Classifier -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>instanceof — Animal Type Classifier</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A veterinary clinic stores all patients in one <code>Animal[]</code> array. When processing each patient, the system needs to know the actual type to call the right treatment. The <code>instanceof</code> operator lets you safely identify the type at runtime and call type-specific methods — without risking a <code>ClassCastException</code>.</div>
+                <div class="info-box">Reuse (or redefine) <code>Animal</code>, <code>Dog</code>, and <code>Cat</code> from the previous exercise, and add a new subclass <code>Bird</code> with a method <code>chirp()</code> that prints <code>"[name] is chirping"</code>. In <code>main</code>, create an <code>Animal[]</code> array with mixed types. Loop through it: use <code>instanceof</code> to check the type, downcast, and call the type-specific method for each. Also print a count of each type at the end.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Rex is fetching the ball
+Whiskers is purring
+Tweety is chirping
+Max is fetching the ball
+Luna is purring
+Dogs: 2, Cats: 2, Birds: 1</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" rows="52" spellcheck="false">class Animal {
+    // Field: name (String)
+
+
+    // Constructor: Animal(String name)
+
+}
+
+class Dog extends Animal {
+    // Constructor: Dog(String name)
+    // Call super(name)
+
+
+    // Method: fetch() — prints "[name] is fetching the ball"
+
+}
+
+class Cat extends Animal {
+    // Constructor: Cat(String name)
+    // Call super(name)
+
+
+    // Method: purr() — prints "[name] is purring"
+
+}
+
+class Bird extends Animal {
+    // Constructor: Bird(String name)
+    // Call super(name)
+
+
+    // Method: chirp() — prints "[name] is chirping"
+
+}
+
+public class TestInstanceof {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4">Create array: <code>Animal[] animals = { new Dog("Rex"), new Cat("Whiskers"), new Bird("Tweety"), new Dog("Max"), new Cat("Luna") };</code>. Loop with counters: <code>int dogs=0, cats=0, birds=0; for(Animal a : animals){ if(a instanceof Dog){ ((Dog)a).fetch(); dogs++; } else if(a instanceof Cat){ ((Cat)a).purr(); cats++; } else if(a instanceof Bird){ ((Bird)a).chirp(); birds++; } }</code>. Then print counts.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5: final Keyword — Bank Account -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>final Keyword — Bank Account</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A bank's core deposit/withdraw logic must never be tampered with by a subclass — making it <code>final</code> prevents any subclass from overriding it. Similarly, the penalty rate for overdraft should be a <code>static final</code> constant that nobody can change. This exercise practices using <code>final</code> to protect critical behavior and values.</div>
+                <div class="info-box">Create a class <code>BankAccount</code> with a <strong>private</strong> field <code>balance</code> (double), a <code>static final</code> constant <code>PENALTY_RATE = 0.05</code>, and a constructor. Add a <strong>final</strong> method <code>deposit(double amount)</code> that adds to balance. Add a <strong>final</strong> method <code>withdraw(double amount)</code> that deducts from balance but applies a penalty (<code>balance -= amount * PENALTY_RATE</code>) if the result would go negative. Add <code>getBalance()</code>. Create a subclass <code>SavingsAccount</code> that adds a method <code>addInterest(double rate)</code> that increases balance by <code>balance * rate</code> — but <strong>cannot</strong> override <code>deposit</code> or <code>withdraw</code>. In <code>main</code>, demonstrate all operations.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Balance after deposit: 1000.0
+Balance after withdraw 200: 800.0
+Balance after overdraft attempt: 750.0
+Balance after interest: 787.5</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" rows="48" spellcheck="false">class BankAccount {
+    // Private field: balance (double)
+
+
+    // Static final constant: PENALTY_RATE = 0.05
+
+
+    // Constructor: BankAccount(double initialBalance)
+
+
+    // final method: deposit(double amount) — adds amount to balance
+
+
+    // final method: withdraw(double amount)
+    // If balance - amount >= 0: deduct normally
+    // Else: apply penalty — balance -= amount * PENALTY_RATE
+
+
+    // Getter: getBalance()
+
+}
+
+class SavingsAccount extends BankAccount {
+    // Constructor: SavingsAccount(double initialBalance)
+    // Call super(initialBalance)
+
+
+    // Method: addInterest(double rate) — balance += balance * rate
+    // (cannot override deposit or withdraw — they are final!)
+
+}
+
+public class TestBankAccount {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Constant: <code>public static final double PENALTY_RATE = 0.05;</code>. Final method: <code>public final void deposit(double amount){ balance += amount; }</code>. Withdraw with penalty: <code>public final void withdraw(double amount){ if(balance - amount >= 0) balance -= amount; else balance -= amount * PENALTY_RATE; }</code>. SavingsAccount: <code>class SavingsAccount extends BankAccount { SavingsAccount(double b){ super(b); } public void addInterest(double rate){ // need a protected setter or use deposit } }</code>. Tip: make <code>balance</code> <code>protected</code> so SavingsAccount can access it for interest calculation.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  { skeleton: "class GeometricObject {\n    // Field: color (String)\n\n\n    // Constructor: GeometricObject(String color)\n\n\n    // Getter for color\n\n\n    // Method: getArea() \u2014 returns 0.0 (to be overridden)\n\n}\n\nclass Circle extends GeometricObject {\n    // Field: radius (double)\n\n\n    // Constructor: Circle(double radius, String color)\n    // Call super(color) first\n\n\n    // Override getArea() \u2014 returns Math.PI * radius * radius\n\n}\n\nclass Rectangle extends GeometricObject {\n    // Fields: width (double), height (double)\n\n\n    // Constructor: Rectangle(double width, double height, String color)\n    // Call super(color) first\n\n\n    // Override getArea() \u2014 returns width * height\n\n}\n\nclass Triangle extends GeometricObject {\n    // Fields: base (double), height (double)\n\n\n    // Constructor: Triangle(double base, double height, String color)\n    // Call super(color) first\n\n\n    // Override getArea() \u2014 returns 0.5 * base * height\n\n}\n\npublic class TestPolymorphism {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["extends GeometricObject", "super(", "@Override", "getArea", "GeometricObject[]", "Math.PI", "getColor"] },
+  { skeleton: "class Person {\n    // Field: name (String)\n\n\n    // Constructor: Person(String name)\n\n\n    // Method: greet() \u2014 prints \"Hello, I'm [name]\"\n\n}\n\nclass Student extends Person {\n    // Constructor: Student(String name)\n    // Call super(name)\n\n\n    // Override greet() \u2014 prints \"Hi! I'm student [name]\"\n\n}\n\nclass Teacher extends Person {\n    // Constructor: Teacher(String name)\n    // Call super(name)\n\n\n    // Override greet() \u2014 prints \"Good day. I'm Professor [name]\"\n\n}\n\npublic class TestDynamicBinding {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["extends Person", "super(", "@Override", "greet", "Person[]", "new Student", "new Teacher"] },
+  { skeleton: "class Animal {\n    // Field: name (String)\n\n\n    // Constructor: Animal(String name)\n\n\n    // Method: eat() \u2014 prints \"[name] is eating\"\n\n}\n\nclass Dog extends Animal {\n    // Constructor: Dog(String name)\n    // Call super(name)\n\n\n    // Method: fetch() \u2014 prints \"[name] is fetching the ball\"\n\n}\n\nclass Cat extends Animal {\n    // Constructor: Cat(String name)\n    // Call super(name)\n\n\n    // Method: purr() \u2014 prints \"[name] is purring\"\n\n}\n\npublic class TestCasting {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["extends Animal", "super(", "instanceof", "(Dog)", "fetch", "eat", "cannot fetch"] },
+  { skeleton: "class Animal {\n    // Field: name (String)\n\n\n    // Constructor: Animal(String name)\n\n}\n\nclass Dog extends Animal {\n    // Constructor: Dog(String name)\n    // Call super(name)\n\n\n    // Method: fetch() \u2014 prints \"[name] is fetching the ball\"\n\n}\n\nclass Cat extends Animal {\n    // Constructor: Cat(String name)\n    // Call super(name)\n\n\n    // Method: purr() \u2014 prints \"[name] is purring\"\n\n}\n\nclass Bird extends Animal {\n    // Constructor: Bird(String name)\n    // Call super(name)\n\n\n    // Method: chirp() \u2014 prints \"[name] is chirping\"\n\n}\n\npublic class TestInstanceof {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["Animal[]", "instanceof Dog", "instanceof Cat", "instanceof Bird", "fetch", "purr", "chirp"] },
+  { skeleton: "class BankAccount {\n    // Private field: balance (double)\n\n\n    // Static final constant: PENALTY_RATE = 0.05\n\n\n    // Constructor: BankAccount(double initialBalance)\n\n\n    // final method: deposit(double amount) \u2014 adds amount to balance\n\n\n    // final method: withdraw(double amount)\n    // If balance - amount >= 0: deduct normally\n    // Else: apply penalty \u2014 balance -= amount * PENALTY_RATE\n\n\n    // Getter: getBalance()\n\n}\n\nclass SavingsAccount extends BankAccount {\n    // Constructor: SavingsAccount(double initialBalance)\n    // Call super(initialBalance)\n\n\n    // Method: addInterest(double rate) \u2014 balance += balance * rate\n    // (cannot override deposit or withdraw \u2014 they are final!)\n\n}\n\npublic class TestBankAccount {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["static final", "PENALTY_RATE", "final void deposit", "final void withdraw", "extends BankAccount", "super(", "addInterest", "getBalance"] }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied to clipboard! Paste it in the compiler tab that just opened (Ctrl+V / \u2318+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use the required constructs: ' + missing.map(k=>'<code>'+k+'</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+// Tab key inserts spaces
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){const t=localStorage.getItem('theme')||'dark';if(t==='light')document.getElementById('themeIcon').className='fas fa-sun';})();
+
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+
+</body>
+</html>

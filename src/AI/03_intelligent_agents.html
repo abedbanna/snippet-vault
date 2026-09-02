@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Agents - AI Course</title>
+    <meta name="description" content="Agents, environments, PEAS descriptions, the six task-environment dimensions, and the five agent types — the vocabulary of AI, based on Russell &amp; Norvig AIMA Chapter 2.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#8b5cf6;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#7c3aed;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#5b21b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#7c3aed}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(139,92,246,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#7c3aed}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#a78bfa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#7c3aed;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(139,92,246,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> AI Course</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#agent">Agents</a>
+                <a href="#peas">PEAS</a>
+                <a href="#environments">Environments</a>
+                <a href="#types">Agent Types</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#agent" onclick="this.parentElement.classList.remove('open')">Agents</a>
+        <a href="#peas" onclick="this.parentElement.classList.remove('open')">PEAS</a>
+        <a href="#environments" onclick="this.parentElement.classList.remove('open')">Environments</a>
+        <a href="#types" onclick="this.parentElement.classList.remove('open')">Agent Types</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Intelligent Agents</h1>
+            <p class="hero-sub">Agents, environments, and the vocabulary we'll use for the rest of the course.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 3 &middot; Based on Russell &amp; Norvig, AIMA Chapter 2</p>
+            <span class="diff-badge" style="background:#10b981">Beginner</span>
+            <span class="cat-badge"><i class="fa-solid fa-robot" style="margin-right:6px"></i>Agents</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~30 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Define <em>agent</em>, <em>percept</em>, <em>sensors</em> and <em>effectors</em> &mdash; and what makes an agent <em>rational</em></li>
+                    <li>Write a <strong>PEAS</strong> description for any task an agent might face</li>
+                    <li>Classify task environments along the <strong>six dimensions</strong> (observable, deterministic, episodic, static, discrete, single-agent)</li>
+                    <li>Name the <strong>five agent types</strong> &mdash; from simple reflex to learning agents &mdash; and know when each one suffices</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Modules 1&ndash;2 (What is AI? and History &amp; Foundations).</p>
+        </div>
+
+        <!-- What is an agent -->
+        <div class="section fade-up" id="agent">
+            <h2 class="section-title"><i class="fa-solid fa-robot"></i> What is an Agent?</h2>
+            <p class="section-desc">An <strong>agent</strong> is anything that <strong>perceives</strong> its environment through <strong>sensors</strong> and <strong>acts</strong> upon that environment through <strong>effectors</strong> (also called <em>actuators</em>). That's it &mdash; the definition is deliberately broad: it covers you, a thermostat, a Mars rover, and a chess program equally well.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps1_vacuum_percepts.png" alt="The two-square vacuum world and a percept-to-action table" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The two-square vacuum world. An agent maps each <em>percept</em> (which square it is in, and whether that square is dirty) to an <em>action</em> (Left, Right, or Suck) &mdash; the essence of the agent function. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">A useful way to remember the split: <strong>agent = architecture + program</strong>. The <em>architecture</em> is the physical machinery (the body, the robot, the computer with its sensors and actuators); the <em>agent program</em> is the software that maps what comes in to what goes out.</p>
+            <div class="code-block"><span class="diag">              ┌─────────────────────────┐
+   percepts   │          AGENT          │   actions
+ ───────────▶ │  Sensors → ? → Effectors│ ───────────▶
+              └─────────────────────────┘
+                      ENVIRONMENT</span></div>
+            <table class="dark-table">
+                <thead><tr><th>Agent</th><th>Sensors (perceives with&hellip;)</th><th>Effectors (acts with&hellip;)</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Human agent</strong></td><td>Eyes, ears, and other organs</td><td>Hands, legs, mouth/voice</td></tr>
+                    <tr><td><strong>Robotic agent</strong></td><td>Cameras, infrared range finders</td><td>Motors, grippers, wheels</td></tr>
+                    <tr><td><strong>Software agent</strong></td><td>Keystrokes, file contents, network packets</td><td>Screen output, writing files, sending packets</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-circle-question"></i> The "?" is the whole course</h3>
+                <p>Look at the diagram again: the interesting part is the <strong>?</strong> between the sensors and the effectors. That box is the <strong>agent program</strong> &mdash; the thing that decides <em>which action to take, given what has been perceived</em>. The rest of this course is essentially about filling in that box with progressively smarter machinery: search, logic, probability, and learning.</p>
+            </div>
+            <p class="section-desc">Two more terms you'll see constantly. The <strong>percept sequence</strong> is the complete history of everything the agent has ever perceived &mdash; in principle, an agent's choice of action can depend on all of it. And a <strong>rational agent</strong> is one that does the right thing with that history: <em>for each possible percept sequence, a rational agent selects an action that is expected to maximize its performance measure</em>, given the evidence provided by the percept sequence and whatever built-in knowledge the agent has. Note the word <em>expected</em> &mdash; rationality is not omniscience. A rational agent can still get unlucky; it just can't be careless.</p>
+        </div>
+
+        <!-- PEAS -->
+        <div class="section fade-up" id="peas">
+            <h2 class="section-title"><i class="fa-solid fa-list-check"></i> Specifying the Task: PEAS</h2>
+            <p class="section-desc">Before you design an agent, you must pin down the task environment it will operate in. The standard checklist is <strong>PEAS</strong>:</p>
+            <ul style="list-style:disc;padding-left:22px;color:var(--text2);font-size:1.05rem;line-height:1.9;margin-bottom:12px">
+                <li><strong>P</strong>erformance measure &mdash; what counts as success?</li>
+                <li><strong>E</strong>nvironment &mdash; where does the agent operate?</li>
+                <li><strong>A</strong>ctuators &mdash; what can it do?</li>
+                <li><strong>S</strong>ensors &mdash; what can it perceive?</li>
+            </ul>
+            <p class="section-desc">Writing the PEAS description first forces you to be honest about what the agent actually needs. Here are four classic examples:</p>
+            <table class="dark-table">
+                <thead><tr><th>Agent</th><th>Performance measure</th><th>Environment</th><th>Actuators</th><th>Sensors</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Automated taxi driver</strong></td><td>Safe, fast, legal, comfortable trip; maximize profit</td><td>Roads, other traffic, pedestrians, customers, weather</td><td>Steering, accelerator, brake, signals, horn, display</td><td>Cameras, sonar, speedometer, GPS, odometer, engine sensors, keyboard</td></tr>
+                    <tr><td><strong>Medical diagnosis system</strong></td><td>Healthy patient, minimized costs, no lawsuits</td><td>Patient, hospital, staff</td><td>Screen display of questions, tests, diagnoses, treatments, referrals</td><td>Keyboard entry of symptoms, findings, patient's answers</td></tr>
+                    <tr><td><strong>Chess program</strong></td><td>Win the game (within the time limit)</td><td>Chessboard, opponent, chess clock</td><td>Moves shown on screen (or a robotic arm moving pieces)</td><td>Board state / opponent's moves as input</td></tr>
+                    <tr><td><strong>Vacuum-cleaner robot</strong></td><td>Amount of dirt cleaned, time taken, electricity used, noise made</td><td>Rooms, floors, carpets, furniture, dirt</td><td>Wheels/motors, suction, brushes</td><td>Bump sensors, dirt sensors, cliff sensors, camera</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Design the performance measure carefully</h3>
+                <p>The performance measure should reward <em>what you actually want in the environment</em>, not how you think the agent should behave. Reward a vacuum robot per unit of dirt sucked up, and a rational agent will learn to dump the dirt back out and suck it up again. Reward a <em>clean floor</em> instead.</p>
+            </div>
+        </div>
+
+        <!-- Environments -->
+        <div class="section fade-up" id="environments">
+            <h2 class="section-title"><i class="fa-solid fa-earth-americas"></i> Properties of Task Environments</h2>
+            <p class="section-desc">Task environments vary enormously, but they can be classified along <strong>six dimensions</strong>. These dimensions largely determine how hard the problem is &mdash; and which agent design is appropriate.</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-eye"></i> Fully observable vs. partially observable</h3>
+                <p class="section-desc">In a <strong>fully observable</strong> environment, the agent's sensors give it access to the complete state of the environment at each point in time &mdash; nothing relevant is hidden. <strong>Chess</strong> is fully observable: the whole board is right there. <strong>Poker</strong> is partially observable (you can't see your opponents' cards), and so is <strong>taxi driving</strong> (you can't see what's around the corner or inside other drivers' heads). At the extreme, an environment with no sensors at all is <em>non-observable</em>; planning in a sensorless world leads to so-called <strong>conformant problems</strong>, where the agent must find a plan that works no matter what the actual state is.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-dice"></i> Deterministic vs. stochastic</h3>
+                <p class="section-desc">An environment is <strong>deterministic</strong> if the next state is <em>completely determined</em> by the current state and the agent's action &mdash; no uncertainty, no surprises. Classic deterministic tasks: <strong>checking whether a string is a palindrome</strong>, <strong>computing a square root</strong>, <strong>converting Celsius to Fahrenheit</strong>, or <strong>finding the shortest path between two points</strong> &mdash; the same input always yields the same result. An environment is <strong>stochastic</strong> when outcomes involve chance or unmodeled factors: in <strong>taxi driving</strong>, the same steering action can lead to different outcomes depending on tires, weather, and other drivers.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-film"></i> Episodic vs. sequential</h3>
+                <p class="section-desc">In an <strong>episodic</strong> environment, experience is divided into independent episodes: the agent perceives, acts, and the episode is over &mdash; the next episode does not depend on the actions taken before. Think of a <strong>support bot answering unrelated questions one at a time</strong>: each answer stands alone. In a <strong>sequential</strong> environment, the current action changes future states &mdash; <strong>playing tennis</strong> or <strong>chess</strong>, where every shot or move shapes everything that follows. Sequential environments force the agent to think ahead; episodic ones don't.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-hourglass-half"></i> Static vs. dynamic</h3>
+                <p class="section-desc">A <strong>static</strong> environment does not change while the agent is deliberating &mdash; a <strong>vacuum robot cleaning a room that stays put</strong> can pause and "think" as long as it likes. A <strong>dynamic</strong> environment keeps changing while the agent thinks: in <strong>taxi driving</strong>, the world moves on whether or not you've decided what to do, so doing nothing is itself a decision.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-border-all"></i> Discrete vs. continuous</h3>
+                <p class="section-desc">This applies to states, time, percepts, and actions. <strong>Chess</strong> is discrete: a finite number of board states and legal moves. <strong>Taxi driving</strong> is continuous: speeds, positions, and steering angles vary smoothly over continuous time.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-users"></i> Single-agent vs. multi-agent</h3>
+                <p class="section-desc">Is the agent alone, or are there others whose behavior matters? Solving a <strong>crossword</strong> is single-agent. <strong>Chess</strong> is competitive multi-agent; <strong>taxi driving</strong> is partly cooperative (avoiding collisions) and partly competitive (grabbing that parking spot) multi-agent.</p>
+            </div>
+
+            <p class="section-desc">Putting it all together for four familiar tasks:</p>
+            <table class="dark-table">
+                <thead><tr><th>Task</th><th>Observable</th><th>Deterministic</th><th>Episodic</th><th>Static</th><th>Discrete</th><th>Agents</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Crossword puzzle</strong></td><td>Fully</td><td>Deterministic</td><td>Sequential</td><td>Static</td><td>Discrete</td><td>Single</td></tr>
+                    <tr><td><strong>Chess with a clock</strong></td><td>Fully</td><td>Deterministic</td><td>Sequential</td><td>Semi-static (the clock runs)</td><td>Discrete</td><td>Multi</td></tr>
+                    <tr><td><strong>Taxi driving</strong></td><td>Partially</td><td>Stochastic</td><td>Sequential</td><td>Dynamic</td><td>Continuous</td><td>Multi</td></tr>
+                    <tr><td><strong>8-puzzle</strong></td><td>Fully</td><td>Deterministic</td><td>Sequential</td><td>Static</td><td>Discrete</td><td>Single</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> The hardest case</h3>
+                <p>The hardest combination is <strong>partially observable, stochastic, sequential, dynamic, continuous, and multi-agent</strong>. That combination has a name: <em>the real world</em>. Taxi driving hits every one of those boxes &mdash; which is why it took decades longer than chess.</p>
+            </div>
+        </div>
+
+        <!-- Agent types -->
+        <div class="section fade-up" id="types">
+            <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> The Five Agent Types</h2>
+            <p class="section-desc">Agent programs come in five basic flavors, ordered from simplest to most capable. Each one adds machinery to cope with a harder class of environment.</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-bolt"></i> 1. Simple reflex agents</h3>
+                <p class="section-desc">The agent picks its action based <em>only on the current percept</em>, using <strong>condition&ndash;action rules</strong>: <code>if car-in-front-is-braking then start-braking</code>. Fast and simple &mdash; but blind. Simple reflex agents work only when the correct decision can be made from the current percept alone, which effectively means they <strong>fail outside fully observable environments</strong>. With no memory, they also loop forever in worlds that look the same from different states.</p>
+                <figure style="margin:18px 0;text-align:center">
+                    <img src="images/agent_simple_reflex.jpg" alt="Schematic of a simple reflex agent" loading="lazy" style="max-width:520px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Simple reflex agent: the current percept ("what the world is like now") is matched against condition&ndash;action rules to pick "what action I should do now." No memory of the past. <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-map"></i> 2. Model-based reflex agents</h3>
+                <p class="section-desc">The fix for partial observability: keep an <strong>internal state</strong> that tracks the parts of the world you can't currently see. Maintaining it requires two kinds of knowledge encoded in the agent's <em>model</em>: <strong>how the world evolves</strong> independently of the agent, and <strong>what my own actions do</strong> to the world. Even something as human as glancing in the mirror and deciding <em>"shall I say hello?"</em> is a reflex agent with internal state at work &mdash; the current percept (a familiar face) is combined with remembered state (do I know this person? did I already greet them?) before a rule fires.</p>
+                <figure style="margin:18px 0;text-align:center">
+                    <img src="images/agent_model_based.jpg" alt="Schematic of a model-based reflex agent with internal state" loading="lazy" style="max-width:560px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Model-based reflex agent: an internal <em>state</em> is updated from "how the world evolves" and "what my actions do," so the agent can act even when the world is only partially observable. <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-flag-checkered"></i> 3. Goal-based agents</h3>
+                <p class="section-desc">Knowing the current state isn't always enough &mdash; at a road junction, the right turn depends on <em>where you're trying to go</em>. Goal-based agents combine the world model with an explicit <strong>goal</strong>, and choose actions by asking "what will happen if I do this, and will it get me closer to the goal?" This is where <strong>search</strong> and <strong>planning</strong> enter the picture &mdash; the subject of the next several modules. Goals also make behavior flexible: change the destination and the same agent computes a new route, whereas a reflex agent would need all its rules rewritten.</p>
+                <figure style="margin:18px 0;text-align:center">
+                    <img src="images/agent_goal_based.jpg" alt="Schematic of a goal-based agent" loading="lazy" style="max-width:560px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Goal-based agent: it predicts "what it will be like if I do action A" and picks actions that move toward an explicit <em>goal</em> &mdash; the point where search and planning enter. <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-chart-line"></i> 4. Utility-based agents</h3>
+                <p class="section-desc">Goals are binary &mdash; achieved or not &mdash; but many routes reach the destination, and some are quicker, safer, or cheaper than others. A <strong>utility function</strong> maps states onto a real number expressing <em>how desirable</em> they are, letting the agent trade off conflicting goals (speed vs. safety) and weigh likelihood of success against importance under uncertainty. Utility-based agents choose the action that maximizes <em>expected utility</em>.</p>
+                <figure style="margin:18px 0;text-align:center">
+                    <img src="images/agent_utility_based.jpg" alt="Schematic of a utility-based agent" loading="lazy" style="max-width:560px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Utility-based agent: a <em>utility</em> function scores "how happy I will be in such a state," letting the agent choose among many goal-reaching routes the one with the highest expected utility. <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-graduation-cap"></i> 5. Learning agents</h3>
+                <p class="section-desc">All the previous types have to be told (or programmed with) everything they know. A <strong>learning agent</strong> improves itself: a <strong>learning element</strong> observes and <em>rates the performance element's behavior</em> (the performance element is the "whole agent" from before &mdash; the part that picks actions) and <strong>proposes improvements</strong>, guided by feedback from a <em>critic</em> and pushed to explore by a <em>problem generator</em>. Learning agents are the only type that can come to <strong>function well in initially unknown environments</strong>, becoming more competent than their initial knowledge alone would allow.</p>
+            </div>
+
+            <table class="dark-table">
+                <thead><tr><th>Agent type</th><th>Decides using</th><th>Limitation</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Simple reflex</strong></td><td>Current percept + condition&ndash;action rules</td><td>Fails when the world isn't fully observable; no memory, no foresight</td></tr>
+                    <tr><td><strong>Model-based reflex</strong></td><td>Current percept + internal state + world model</td><td>Still purely reactive &mdash; can track the world but has no notion of where it wants to go</td></tr>
+                    <tr><td><strong>Goal-based</strong></td><td>World model + explicit goals + search/planning</td><td>Goals are all-or-nothing; can't compare "good" routes with "better" ones</td></tr>
+                    <tr><td><strong>Utility-based</strong></td><td>World model + utility function (expected utility)</td><td>Needs an accurate model and utility function supplied up front</td></tr>
+                    <tr><td><strong>Learning</strong></td><td>Any of the above + a learning element that critiques and improves it</td><td>Needs feedback, exploration, and time to learn</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-trophy"></i> The final goal of AI</h3>
+                <p>Put the pieces together and you get the field's north star: an <strong>intelligent agent</strong> that combines <em>seeing, hearing, speaking, and robotics</em> (perception and action) with <em>deduction, planning, learning, and explanation</em> (reasoning). Every module from here on builds one of those pieces.</p>
+            </div>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise</h2>
+            <p class="section-desc">Three short problems to make the vocabulary stick. Attempt each one on paper before opening the solution.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>PEAS for a pizza-delivery drone</h3>
+                    <p class="section-desc">Write a full PEAS description for an autonomous drone that delivers pizzas across a city. Be specific &mdash; vague answers like "environment: outside" don't count.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <table class="dark-table">
+                            <thead><tr><th>Component</th><th>Sample answer</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Performance measure</strong></td><td>Pizza delivered hot and undamaged, delivery time, battery/energy used, no collisions or airspace violations, customer satisfaction, deliveries per hour</td></tr>
+                                <tr><td><strong>Environment</strong></td><td>City airspace, buildings, weather (wind, rain), birds, other drones, no-fly zones, landing spots, customers</td></tr>
+                                <tr><td><strong>Actuators</strong></td><td>Rotors (thrust, pitch, roll, yaw), package release mechanism, status lights, speaker/notification signal</td></tr>
+                                <tr><td><strong>Sensors</strong></td><td>GPS, altimeter, cameras, accelerometer/gyroscope, wind sensor, battery gauge, obstacle-detection lidar/sonar, package-weight sensor</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="section-desc">Any reasonable variation is fine &mdash; the key is that each entry is concrete and each sensor/actuator actually supports the performance measure.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Classify two environments</h3>
+                    <p class="section-desc">Classify (a) a game on an <strong>online chess site</strong> and (b) a <strong>Mars rover mission</strong> along all six dimensions: observable, deterministic, episodic, static, discrete, single/multi-agent. Justify each call in a few words.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <table class="dark-table">
+                            <thead><tr><th>Dimension</th><th>Online chess game</th><th>Mars rover</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Observable</strong></td><td>Fully &mdash; the whole board is visible</td><td>Partially &mdash; cameras see only part of the terrain; subsurface unknown</td></tr>
+                                <tr><td><strong>Deterministic</strong></td><td>Deterministic &mdash; moves have certain outcomes (barring disconnects)</td><td>Stochastic &mdash; wheel slip, dust, terrain surprises</td></tr>
+                                <tr><td><strong>Episodic</strong></td><td>Sequential &mdash; every move shapes the rest of the game</td><td>Sequential &mdash; today's route and power use constrain tomorrow</td></tr>
+                                <tr><td><strong>Static</strong></td><td>Semi-static &mdash; board changes only on moves, but the clock keeps running</td><td>Dynamic &mdash; lighting, temperature, and dust change while the rover deliberates</td></tr>
+                                <tr><td><strong>Discrete</strong></td><td>Discrete &mdash; finite board states and moves</td><td>Continuous &mdash; position, wheel angles, power levels</td></tr>
+                                <tr><td><strong>Agents</strong></td><td>Multi &mdash; a competing opponent</td><td>Essentially single &mdash; no other agents whose behavior it must model</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Minimal agent type</h3>
+                    <p class="section-desc">Which agent type is <em>minimally</em> required (i.e. the simplest that suffices) for: (a) a thermostat, (b) a GPS navigator, (c) a self-improving spam filter?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <div class="info-box">
+                            <ul>
+                                <li><strong>(a) Thermostat &rarr; simple reflex agent.</strong> One condition&ndash;action rule on the current percept: if temperature &lt; setpoint, heat on; otherwise off. The relevant world is fully observable through one sensor.</li>
+                                <li><strong>(b) GPS navigator &rarr; goal-based agent.</strong> It has an explicit goal (the destination) and must search/plan a route; the current position alone doesn't determine the right action. (A commercial navigator that trades off time vs. tolls vs. fuel is edging into utility-based territory, but goal-based is the minimum.)</li>
+                                <li><strong>(c) Self-improving spam filter &rarr; learning agent.</strong> "Self-improving" is the giveaway: it must rate its own classification performance against feedback (user marks a message as spam/not-spam) and update itself &mdash; exactly the learning element critiquing the performance element.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now understand</h3>
+                <p>An <strong>agent</strong> perceives through sensors and acts through effectors; a <strong>rational agent</strong> picks the action expected to maximize its performance measure for each percept sequence. You can specify any task with <strong>PEAS</strong>, classify its environment along the <strong>six dimensions</strong>, and match it to the right member of the <strong>five agent types</strong> &mdash; from simple reflex rules to full learning agents. This vocabulary is the backbone of everything that follows.</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 4 &mdash; Problem Solving by Search</strong>: goal-based agents that plan ahead.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="02_history_foundations.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 2: History &amp; Foundations</a>
+            <a href="04_problem_solving.html" class="nav-btn next">Module 4: Problem Solving by Search <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Introduction to Artificial Intelligence &middot; Based on Russell &amp; Norvig, AIMA 4th ed. &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Intelligent Agents</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#agent">What is an Agent?</a>
+        <a class="toc-item" href="#peas">PEAS</a>
+        <a class="toc-item" href="#environments">Environments</a>
+        <a class="toc-item" href="#types">Agent Types</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ai-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('ai-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

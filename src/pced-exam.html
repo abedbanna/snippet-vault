@@ -1,0 +1,3159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analyst Essentials with Python Practice Exam | Entry-Level Data Analyst with Python</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #4caf50;
+            --accent: #ff9800;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --correct: #4caf50;
+            --wrong: #f44336;
+            --info: #2196f3;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .start-screen .exam-info {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .start-screen .exam-info table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .start-screen .exam-info table th,
+        .start-screen .exam-info table td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .start-screen .exam-info table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: white;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .mode-btn:hover, .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .mode-btn small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .start-btn {
+            padding: 15px 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        /* Topic filter */
+        .topic-filter {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: left;
+        }
+
+        .topic-filter h3 {
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+
+        .topic-checkboxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .topic-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .topic-checkboxes label:hover {
+            background: #f0f7f0;
+        }
+
+        /* Quiz area */
+        .quiz-area { display: none; }
+
+        .progress-bar {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .progress-track {
+            flex: 1;
+            min-width: 200px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .timer {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: #e8f5e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .timer.warning { color: var(--accent); background: #fff3e0; }
+        .timer.danger { color: var(--wrong); background: #ffebee; }
+
+        .question-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .question-topic {
+            font-size: 0.75rem;
+            color: white;
+            background: var(--primary);
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .question-type {
+            font-size: 0.75rem;
+            color: var(--info);
+            background: #e3f2fd;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 18px;
+            line-height: 1.7;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin: 12px 0;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+            background: #f0f7f0;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: #e8f5e9;
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background: #e8f5e9;
+        }
+
+        .option.wrong {
+            border-color: var(--wrong);
+            background: #ffebee;
+        }
+
+        .option input {
+            margin-top: 3px;
+            accent-color: var(--primary);
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 20px;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .option-text code {
+            background: #f0f0f0;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.88rem;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .explanation.show { display: block; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.prev { background: #e0e0e0; color: var(--text); }
+        .nav-btn.check { background: var(--accent); color: white; }
+        .nav-btn.next { background: var(--primary); color: white; }
+        .nav-btn.finish { background: var(--primary-dark); color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Question Navigator */
+        .q-navigator {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .q-navigator h4 {
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .q-navigator h4::after {
+            content: '\25B2';
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+
+        .q-navigator.collapsed h4 {
+            margin-bottom: 0;
+        }
+
+        .q-navigator.collapsed h4::after {
+            transform: rotate(180deg);
+        }
+
+        .q-navigator.collapsed .q-nav-grid {
+            display: none;
+        }
+
+        .q-nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .q-nav-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .q-nav-btn.current { border-color: var(--primary); background: #e8f5e9; font-weight: 700; }
+        .q-nav-btn.answered { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-nav-btn.correct-nav { background: var(--correct); color: white; border-color: var(--correct); }
+        .q-nav-btn.wrong-nav { background: var(--wrong); color: white; border-color: var(--wrong); }
+
+        /* Results */
+        .results { display: none; }
+
+        .results-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            border: 8px solid;
+        }
+
+        .score-circle.pass { border-color: var(--correct); color: var(--correct); }
+        .score-circle.fail { border-color: var(--wrong); color: var(--wrong); }
+
+        .score-circle small {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .results-breakdown {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .breakdown-bar {
+            width: 100px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .btn-retry {
+            padding: 12px 35px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-retry:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-review {
+            padding: 12px 35px;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-review:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .exam-nav {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .exam-nav h3 {
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+            font-size: 1rem;
+        }
+
+        .exam-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .exam-nav-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .exam-nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .exam-nav-links a.current {
+            background: var(--accent);
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .exam-nav-links a small {
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .question-card { padding: 18px; }
+            .header h1 { font-size: 1.3rem; }
+            .topic-checkboxes { grid-template-columns: 1fr; }
+            .mode-selector { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Data Analyst Essentials with Python Practice Exam</h1>
+    <p>Entry-Level Data Analyst with Python</p>
+</div>
+
+<div class="container">
+    <!-- Exam Navigation -->
+    <div class="exam-nav">
+        <h3>All Practice Exams</h3>
+        <div class="exam-nav-links">
+            <a href="pced-exam.html" class="current">Practice Exam <small>(160 Q)</small></a>
+            <a href="pced-test1.html">Test 1 <small>(40 Q)</small></a>
+            <a href="pced-test2.html">Test 2 <small>(40 Q)</small></a>
+            <a href="pced-exam3.html">Exam 3 <small>(40 Q)</small></a>
+            <a href="pced-exam4.html">Exam 4 <small>(40 Q)</small></a>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <div class="exam-info">
+            <p style="margin-top:10px;font-size:0.9rem;color:var(--text-light);">This practice exam contains <strong id="totalQCount">0</strong> questions covering all syllabus topics.</p>
+        </div>
+
+        <h3 style="margin:20px 0 10px;">Select Mode</h3>
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('practice')" id="modeP">
+                Practice Mode
+                <small>Instant feedback after each question</small>
+            </button>
+            <button class="mode-btn" onclick="setMode('exam')" id="modeE">
+                Exam Mode
+                <small>65 min timer, results at the end</small>
+            </button>
+            <button class="mode-btn" onclick="setMode('topic')" id="modeT">
+                Topic Mode
+                <small>Filter by specific topics</small>
+            </button>
+        </div>
+
+        <div class="topic-filter" id="topicFilter" style="display:none;">
+            <h3>Select Topics</h3>
+            <div class="topic-checkboxes" id="topicCheckboxes"></div>
+            <div style="margin-top:10px;text-align:center;">
+                <button class="nav-btn check" onclick="toggleAllTopics(true)" style="font-size:0.8rem;padding:6px 14px;">Select All</button>
+                <button class="nav-btn prev" onclick="toggleAllTopics(false)" style="font-size:0.8rem;padding:6px 14px;">Deselect All</button>
+            </div>
+        </div>
+
+        <button class="start-btn" onclick="startExam()">Start Exam</button>
+    </div>
+
+    <!-- Quiz Area -->
+    <div class="quiz-area" id="quizArea">
+        <div class="progress-bar">
+            <span class="progress-text" id="progressText">Question 1 / 40</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
+            <span class="timer" id="timer" style="display:none">65:00</span>
+        </div>
+
+        <div class="q-navigator" id="qNavigator">
+            <h4 onclick="toggleNavigator()">Question Navigator</h4>
+            <div class="q-nav-grid" id="qNavGrid"></div>
+        </div>
+
+        <div id="questionContainer"></div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()">Previous</button>
+            <button class="nav-btn check" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+            <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">Next</button>
+            <button class="nav-btn finish" id="finishBtn" onclick="finishExam()" style="display:none">Finish Exam</button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+        <div class="results-card">
+            <h2>Exam Results</h2>
+            <div class="score-circle" id="scoreCircle">
+                <span id="scorePercent">0%</span>
+                <small id="scoreLabel">Score</small>
+            </div>
+            <p id="passFailMsg" style="font-size:1.2rem;font-weight:600;margin:10px 0;"></p>
+            <p id="scoreSummary" style="color:var(--text-light);"></p>
+
+            <div class="results-breakdown" id="resultsBreakdown"></div>
+
+            <button class="btn-retry" onclick="location.reload()">Retry Exam</button>
+            <button class="btn-review" onclick="reviewExam()">Review Answers</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>Data Analyst Essentials with Python Practice Exam &mdash; Entry-Level Data Analytics</p>
+    <p>For educational purposes only. &copy; 2025 Albanna Tutorials</p>
+</div>
+
+<script>
+const questions = [
+// ==================== MODULE 1: Introduction to Data and Data Analysis Concepts ====================
+
+// --- 1.1.1 Define data and explain how it becomes meaningful ---
+{
+    id: 1, topic: "1.1.1", module: 1,
+    text: "What is the primary difference between data and information?",
+    options: [
+        "Data is always numerical, while information is always textual",
+        "Data consists of raw, unprocessed facts, while information is data that has been processed and given context",
+        "Data is stored in databases, while information is stored in spreadsheets",
+        "There is no difference; the terms are interchangeable"
+    ],
+    correct: [1],
+    explanation: "Data refers to raw, unprocessed facts and figures. Information is data that has been processed, organized, and given context to become meaningful and useful for decision-making."
+},
+{
+    id: 2, topic: "1.1.1", module: 1,
+    text: "Which of the following best describes how raw data gains meaning?",
+    options: [
+        "By storing it in a larger database",
+        "By collecting more of it",
+        "Through processing and interpretation in a specific context",
+        "By converting it to a digital format"
+    ],
+    correct: [2],
+    explanation: "Raw data becomes meaningful through processing and interpretation. When data is organized, analyzed, and placed in context, it transforms into information and eventually knowledge that supports decision-making."
+},
+{
+    id: 3, topic: "1.1.1", module: 1,
+    text: "A hospital records patient temperatures every hour. At this stage, the recorded numbers are best described as:",
+    options: [
+        "Knowledge",
+        "Information",
+        "Data",
+        "Insights"
+    ],
+    correct: [2],
+    explanation: "The raw temperature readings are data — unprocessed facts collected without interpretation. They become information when analyzed (e.g., 'the patient's fever is rising') and knowledge when combined with medical expertise for decision-making."
+},
+
+// --- 1.1.2 Classify data by type and format ---
+{
+    id: 4, topic: "1.1.2", module: 1,
+    text: "Which of the following is an example of qualitative data?",
+    options: [
+        "A customer's annual income: $52,000",
+        "The number of products sold: 150",
+        "A customer satisfaction rating described as 'Very Satisfied'",
+        "The temperature reading: 36.6\u00b0C"
+    ],
+    correct: [2],
+    explanation: "Qualitative data describes qualities or characteristics and is non-numerical. 'Very Satisfied' is a categorical description. The other options are quantitative data because they involve measurable numerical values."
+},
+{
+    id: 5, topic: "1.1.2", module: 1,
+    text: "Which of the following correctly matches data types with their examples?",
+    options: [
+        "Structured: JSON files; Semi-structured: SQL tables; Unstructured: images",
+        "Structured: SQL tables; Semi-structured: JSON/XML files; Unstructured: social media posts",
+        "Structured: emails; Semi-structured: CSV files; Unstructured: relational databases",
+        "Structured: video files; Semi-structured: spreadsheets; Unstructured: XML documents"
+    ],
+    correct: [1],
+    explanation: "Structured data has a fixed schema (SQL tables, spreadsheets). Semi-structured data has some organization but no rigid schema (JSON, XML). Unstructured data has no predefined format (images, social media posts, videos)."
+},
+{
+    id: 6, topic: "1.1.2", module: 1,
+    text: "A dataset contains columns for 'Customer Name', 'Age', and 'Purchase Amount'. Which classification best describes this data?",
+    options: [
+        "Unstructured data",
+        "Semi-structured data",
+        "Structured data",
+        "Qualitative data only"
+    ],
+    correct: [2],
+    explanation: "Data organized in rows and columns with a defined schema (like a table with named columns and consistent data types) is structured data. It fits neatly into relational databases or spreadsheets."
+},
+
+// --- 1.2.1 Identify data sources and collection methods ---
+{
+    id: 7, topic: "1.2.1", module: 1,
+    text: "Which of the following is NOT a common data source?",
+    options: [
+        "APIs from web services",
+        "IoT sensor devices",
+        "Python's print() function",
+        "Web server logs"
+    ],
+    correct: [2],
+    explanation: "print() is a Python output function, not a data source. Common data sources include APIs, web pages, databases, IoT devices, surveys, and logs."
+},
+{
+    id: 8, topic: "1.2.1", module: 1,
+    text: "A company wants to understand customer preferences. Which data collection method would provide the most direct qualitative feedback?",
+    options: [
+        "Analyzing web server logs",
+        "Conducting structured surveys and interviews",
+        "Scraping product prices from competitor websites",
+        "Reading IoT sensor data from store traffic counters"
+    ],
+    correct: [1],
+    explanation: "Surveys and interviews are primary data collection methods that directly gather qualitative feedback from participants. Web logs, scraping, and IoT sensors provide quantitative or behavioral data rather than direct customer opinions."
+},
+{
+    id: 9, topic: "1.2.1", module: 1,
+    text: "What is representative sampling, and why is it important?",
+    options: [
+        "It means collecting all available data to ensure no information is missed",
+        "It involves selecting a subset of data that accurately reflects the larger population to avoid bias",
+        "It refers to collecting data only from the largest demographic group",
+        "It means sampling data at regular time intervals"
+    ],
+    correct: [1],
+    explanation: "Representative sampling selects a subset that accurately reflects the characteristics of the larger population. This is critical because biased or incomplete samples can lead to inaccurate conclusions and poor decision-making."
+},
+{
+    id: 10, topic: "1.2.1", module: 1,
+    text: "Which data collection technique is most suitable for gathering real-time, automated data from physical environments?",
+    options: [
+        "Surveys",
+        "Interviews",
+        "IoT devices and sensors",
+        "Manual observation"
+    ],
+    correct: [2],
+    explanation: "IoT devices and sensors are designed for automated, real-time data collection from physical environments (temperature, motion, humidity, etc.). Surveys and interviews require human participation and are not automated or real-time."
+},
+
+// --- 1.2.2 Explain how data is stored and organized ---
+{
+    id: 11, topic: "1.2.2", module: 1,
+    text: "Which data format uses key-value pairs and supports nested structures, making it popular for web APIs?",
+    options: [
+        "CSV",
+        "JSON",
+        "Excel (XLSX)",
+        "Plain text (TXT)"
+    ],
+    correct: [1],
+    explanation: "JSON (JavaScript Object Notation) uses key-value pairs and supports nested structures. It is lightweight, human-readable, and is the most common format for data exchange in web APIs."
+},
+{
+    id: 12, topic: "1.2.2", module: 1,
+    text: "What is the role of metadata in data storage?",
+    options: [
+        "It stores the actual data values in compressed form",
+        "It provides information about the data, such as its type, structure, and purpose",
+        "It encrypts data for security purposes",
+        "It converts unstructured data into structured format"
+    ],
+    correct: [1],
+    explanation: "Metadata is 'data about data.' It describes the structure, type, origin, format, and purpose of the actual data. For example, a file's creation date, author, and column definitions are all metadata."
+},
+{
+    id: 13, topic: "1.2.2", module: 1,
+    text: "A company needs to store massive amounts of diverse data (text, images, videos) from multiple sources for future analysis. Which storage solution is most appropriate?",
+    options: [
+        "A single CSV file",
+        "A relational database (SQL)",
+        "A data lake",
+        "An Excel workbook"
+    ],
+    correct: [2],
+    explanation: "A data lake is designed to store large volumes of raw data in various formats (structured, semi-structured, unstructured). It is ideal for storing diverse data types at scale for future processing and analysis."
+},
+
+// --- 1.3.1 Describe the data lifecycle ---
+{
+    id: 14, topic: "1.3.1", module: 1,
+    text: "What is the correct order of stages in the data lifecycle?",
+    options: [
+        "Analysis, Collection, Processing, Storage, Reporting, Archiving, Deletion",
+        "Collection, Storage, Processing, Analysis, Visualization/Reporting, Archiving, Deletion",
+        "Storage, Collection, Analysis, Processing, Deletion, Archiving, Reporting",
+        "Collection, Analysis, Storage, Reporting, Processing, Archiving, Deletion"
+    ],
+    correct: [1],
+    explanation: "The data lifecycle follows a logical order: Collection (gathering data), Storage (saving it), Processing (cleaning/transforming), Analysis (extracting insights), Visualization/Reporting (communicating findings), Archiving (long-term storage), and Deletion (removing when no longer needed)."
+},
+{
+    id: 15, topic: "1.3.1", module: 1,
+    text: "During which stage of the data lifecycle would you clean and transform raw data into a usable format?",
+    options: [
+        "Collection",
+        "Storage",
+        "Processing",
+        "Reporting"
+    ],
+    correct: [2],
+    explanation: "The processing stage involves cleaning, transforming, and preparing raw data for analysis. This includes handling missing values, removing duplicates, standardizing formats, and converting data types."
+},
+{
+    id: 16, topic: "1.3.1", module: 1,
+    text: "How can errors during the collection stage affect the rest of the data lifecycle?",
+    options: [
+        "They have no effect since errors can always be corrected later",
+        "They can lead to inaccurate analysis, misleading reports, and poor decisions throughout all subsequent stages",
+        "They only affect the storage stage",
+        "They only matter if the data is quantitative"
+    ],
+    correct: [1],
+    explanation: "Errors at the collection stage (missing data, inaccurate recordings, biased sampling) propagate through every subsequent stage. This is often called 'garbage in, garbage out' \u2014 flawed input data leads to flawed outputs at every level."
+},
+
+// --- 1.3.2 Discuss value and challenges of lifecycle management ---
+{
+    id: 17, topic: "1.3.2", module: 1,
+    text: "Why is managing data throughout its lifecycle important for organizations?",
+    options: [
+        "It only matters for companies that sell data",
+        "It ensures data quality, security, and compliance with regulations at every stage",
+        "It is only necessary for unstructured data",
+        "It reduces the need for data analysis"
+    ],
+    correct: [1],
+    explanation: "Lifecycle management ensures data remains high-quality, secure, and compliant with legal regulations (like GDPR) throughout its entire lifespan. Without proper management, organizations risk data breaches, regulatory penalties, and poor decision-making."
+},
+{
+    id: 18, topic: "1.3.2", module: 1,
+    text: "Which of the following is a common challenge when managing large-scale data?",
+    options: [
+        "Data is always perfectly clean and requires no processing",
+        "Scaling storage infrastructure, maintaining data pipelines, and ensuring consistency across distributed systems",
+        "Large-scale data never requires archiving or deletion",
+        "Cloud storage eliminates all data management challenges"
+    ],
+    correct: [1],
+    explanation: "Managing large-scale data involves challenges like scaling storage, building reliable data pipelines, ensuring consistency, handling distributed systems, and managing costs. Cloud storage helps but introduces its own challenges (vendor lock-in, security, latency)."
+},
+
+// --- 1.4.1 Differentiate between Data Analysis, Analytics, and Data Science ---
+{
+    id: 19, topic: "1.4.1", module: 1,
+    text: "Which statement best distinguishes data analysis from data science?",
+    options: [
+        "Data analysis uses Python while data science uses R",
+        "Data analysis focuses on examining existing data to find patterns, while data science encompasses a broader scope including machine learning and predictive modeling",
+        "Data analysis is automated while data science is manual",
+        "They are exactly the same discipline with different names"
+    ],
+    correct: [1],
+    explanation: "Data analysis focuses on examining, cleaning, and interpreting existing datasets to find patterns and answer specific questions. Data science is broader, incorporating machine learning, advanced statistics, predictive modeling, and algorithm development."
+},
+{
+    id: 20, topic: "1.4.1", module: 1,
+    text: "A professional creates statistical summaries and visualizations to explain last quarter's sales performance. This role is best described as a:",
+    options: [
+        "Data Scientist",
+        "Machine Learning Engineer",
+        "Data Analyst",
+        "Software Developer"
+    ],
+    correct: [2],
+    explanation: "A Data Analyst typically examines existing data to create summaries, identify trends, and visualize findings. Creating statistical summaries and visualizations of past performance is a core data analysis task."
+},
+{
+    id: 21, topic: "1.4.1", module: 1,
+    text: "What is the primary goal of data analytics compared to data analysis?",
+    options: [
+        "Data analytics is only about creating dashboards",
+        "Data analytics focuses on applying analytical techniques systematically across an organization to guide decisions, while data analysis is a more specific process of examining a dataset",
+        "Data analytics never uses statistics",
+        "Data analysis is always more complex than data analytics"
+    ],
+    correct: [1],
+    explanation: "Data analytics is the broader, systematic application of analytical methods across an organization to drive decision-making. Data analysis is a specific process within analytics that involves examining particular datasets to extract insights."
+},
+{
+    id: 22, topic: "1.4.1", module: 1,
+    text: "Which task would most likely be performed by a Data Scientist rather than a Data Analyst?",
+    options: [
+        "Creating a monthly sales report with charts",
+        "Summarizing customer survey responses",
+        "Building a machine learning model to predict customer churn",
+        "Cleaning and formatting a CSV dataset"
+    ],
+    correct: [2],
+    explanation: "Building machine learning models for prediction is a core data science task. Data analysts typically focus on descriptive analysis (reports, summaries, visualizations) rather than predictive modeling."
+},
+
+// --- 1.4.2 Explain the data analytics workflow ---
+{
+    id: 23, topic: "1.4.2", module: 1,
+    text: "Which type of analytics answers the question 'What happened?'",
+    options: [
+        "Predictive analytics",
+        "Prescriptive analytics",
+        "Diagnostic analytics",
+        "Descriptive analytics"
+    ],
+    correct: [3],
+    explanation: "Descriptive analytics summarizes historical data to answer 'What happened?' Examples include sales reports, dashboards, and summary statistics. Diagnostic ('Why?'), Predictive ('What will happen?'), and Prescriptive ('What should we do?') address different questions."
+},
+{
+    id: 24, topic: "1.4.2", module: 1,
+    text: "A retail company uses historical sales data and machine learning to forecast next month's demand. This is an example of:",
+    options: [
+        "Descriptive analytics",
+        "Diagnostic analytics",
+        "Predictive analytics",
+        "Prescriptive analytics"
+    ],
+    correct: [2],
+    explanation: "Predictive analytics uses historical data, statistical models, and machine learning to forecast future outcomes. Forecasting next month's demand based on past sales is a classic predictive analytics scenario."
+},
+{
+    id: 25, topic: "1.4.2", module: 1,
+    text: "Which type of analytics recommends specific actions to optimize outcomes?",
+    options: [
+        "Descriptive analytics",
+        "Diagnostic analytics",
+        "Predictive analytics",
+        "Prescriptive analytics"
+    ],
+    correct: [3],
+    explanation: "Prescriptive analytics goes beyond predicting what will happen to recommend specific actions that should be taken. It uses optimization and simulation to suggest the best course of action."
+},
+{
+    id: 26, topic: "1.4.2", module: 1,
+    text: "What are the key steps in the data analytics process, in order?",
+    options: [
+        "Reporting, Collection, Analysis, Preprocessing",
+        "Data collection, Preprocessing, Analysis, Reporting",
+        "Analysis, Data collection, Reporting, Preprocessing",
+        "Preprocessing, Data collection, Reporting, Analysis"
+    ],
+    correct: [1],
+    explanation: "The data analytics process follows: Data Collection (gathering data), Preprocessing (cleaning and preparing), Analysis (applying analytical methods), and Reporting (communicating results)."
+},
+
+// --- 1.5.1 Describe key ethical principles and legal frameworks ---
+{
+    id: 27, topic: "1.5.1", module: 1,
+    text: "Which of the following is NOT one of the core ethical principles in data handling?",
+    options: [
+        "Transparency",
+        "Consent",
+        "Profit maximization",
+        "Accountability"
+    ],
+    correct: [2],
+    explanation: "Core ethical principles in data handling include transparency, consent, privacy, fairness, and accountability. Profit maximization is a business goal, not an ethical principle for data handling."
+},
+{
+    id: 28, topic: "1.5.1", module: 1,
+    text: "Which regulation specifically protects the data privacy rights of European Union citizens?",
+    options: [
+        "HIPAA",
+        "CCPA",
+        "GDPR",
+        "SOX"
+    ],
+    correct: [2],
+    explanation: "GDPR (General Data Protection Regulation) is the EU regulation that protects EU citizens' data privacy rights. HIPAA covers US health data, CCPA covers California consumer privacy, and SOX covers financial reporting."
+},
+{
+    id: 29, topic: "1.5.1", module: 1,
+    text: "Which technique replaces personally identifiable information with artificial identifiers to protect privacy while allowing data analysis?",
+    options: [
+        "Data duplication",
+        "Data compression",
+        "Anonymization",
+        "Data aggregation"
+    ],
+    correct: [2],
+    explanation: "Anonymization removes or replaces personally identifiable information (PII) so individuals cannot be identified. Along with encryption, it is a key method for supporting ethical and legal compliance in data handling."
+},
+
+// ==================== MODULE 2: Python Basics for Data Analysis ====================
+
+// --- 2.1.1 Use variables and data types ---
+{
+    id: 30, topic: "2.1.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>x = 10\ny = 3\nprint(type(x / y))</div>",
+    options: [
+        "<code>&lt;class 'int'&gt;</code>",
+        "<code>&lt;class 'float'&gt;</code>",
+        "<code>&lt;class 'str'&gt;</code>",
+        "<code>&lt;class 'bool'&gt;</code>"
+    ],
+    correct: [1],
+    explanation: "In Python, the / operator always returns a float, even when dividing two integers. So 10 / 3 = 3.3333... which is a float. Use // for integer division."
+},
+{
+    id: 31, topic: "2.1.1", module: 2,
+    text: "Which of the following correctly assigns a value to a variable in Python?",
+    options: [
+        "<code>int x = 5</code>",
+        "<code>x := 5</code>",
+        "<code>x = 5</code>",
+        "<code>var x = 5</code>"
+    ],
+    correct: [2],
+    explanation: "Python uses the simple assignment operator = to assign values to variables. Python does not require type declarations (unlike Java/C++) and does not use var or := for standard assignment."
+},
+{
+    id: 32, topic: "2.1.1", module: 2,
+    text: "What is the result of the expression <code>'Hello' * 3</code> in Python?",
+    options: [
+        "<code>'Hello 3'</code>",
+        "<code>'HelloHelloHello'</code>",
+        "<code>TypeError</code>",
+        "<code>'Hello+Hello+Hello'</code>"
+    ],
+    correct: [1],
+    explanation: "The * operator with a string and integer performs string repetition. 'Hello' * 3 repeats the string three times, producing 'HelloHelloHello'."
+},
+{
+    id: 33, topic: "2.1.1", module: 2,
+    text: "What will <code>isinstance(True, int)</code> return?",
+    options: [
+        "<code>True</code>",
+        "<code>False</code>",
+        "<code>TypeError</code>",
+        "<code>None</code>"
+    ],
+    correct: [0],
+    explanation: "In Python, bool is a subclass of int. True is equivalent to 1 and False to 0. Therefore, isinstance(True, int) returns True because booleans are a special case of integers."
+},
+
+// --- 2.2.1 Create and manipulate lists ---
+{
+    id: 34, topic: "2.2.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>nums = [10, 20, 30, 40, 50]\nprint(nums[1:4])</div>",
+    options: [
+        "<code>[10, 20, 30]</code>",
+        "<code>[20, 30, 40]</code>",
+        "<code>[20, 30, 40, 50]</code>",
+        "<code>[10, 20, 30, 40]</code>"
+    ],
+    correct: [1],
+    explanation: "List slicing with nums[1:4] starts at index 1 (inclusive) and ends at index 4 (exclusive), returning elements at indices 1, 2, and 3: [20, 30, 40]."
+},
+{
+    id: 35, topic: "2.2.1", module: 2,
+    text: "What does the following code produce?\n<div class='code-block'>fruits = ['apple', 'banana', 'cherry']\nfruits.insert(1, 'orange')\nprint(fruits)</div>",
+    options: [
+        "<code>['orange', 'apple', 'banana', 'cherry']</code>",
+        "<code>['apple', 'orange', 'banana', 'cherry']</code>",
+        "<code>['apple', 'banana', 'orange', 'cherry']</code>",
+        "<code>['apple', 'banana', 'cherry', 'orange']</code>"
+    ],
+    correct: [1],
+    explanation: "list.insert(index, element) inserts the element at the specified index, shifting existing elements to the right. insert(1, 'orange') places 'orange' at index 1."
+},
+{
+    id: 36, topic: "2.2.1", module: 2,
+    text: "What is the output of this list comprehension?\n<div class='code-block'>data = [1, 2, 3, 4, 5, 6]\nresult = [x ** 2 for x in data if x % 2 == 0]\nprint(result)</div>",
+    options: [
+        "<code>[1, 4, 9, 16, 25, 36]</code>",
+        "<code>[4, 16, 36]</code>",
+        "<code>[2, 4, 6]</code>",
+        "<code>[1, 9, 25]</code>"
+    ],
+    correct: [1],
+    explanation: "This list comprehension filters even numbers (x % 2 == 0, which gives 2, 4, 6) and then squares them (x ** 2), resulting in [4, 16, 36]."
+},
+
+// --- 2.2.2 Work with tuples and sets ---
+{
+    id: 37, topic: "2.2.2", module: 2,
+    text: "What happens when you try to execute the following code?\n<div class='code-block'>t = (1, 2, 3)\nt[0] = 10</div>",
+    options: [
+        "The tuple is updated to (10, 2, 3)",
+        "A TypeError is raised because tuples are immutable",
+        "A ValueError is raised",
+        "The code runs without error but the tuple is unchanged"
+    ],
+    correct: [1],
+    explanation: "Tuples are immutable in Python, meaning their elements cannot be modified after creation. Attempting to assign a new value to a tuple element raises a TypeError."
+},
+{
+    id: 38, topic: "2.2.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>a = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\nprint(a.intersection(b))</div>",
+    options: [
+        "<code>{1, 2, 3, 4, 5, 6}</code>",
+        "<code>{3, 4}</code>",
+        "<code>{1, 2}</code>",
+        "<code>{5, 6}</code>"
+    ],
+    correct: [1],
+    explanation: "The intersection() method returns elements that are common to both sets. The elements 3 and 4 appear in both sets a and b, so the result is {3, 4}."
+},
+{
+    id: 39, topic: "2.2.2", module: 2,
+    text: "Which of the following is a valid reason to use a tuple instead of a list?",
+    options: [
+        "When you need to frequently add and remove elements",
+        "When you want to ensure the data cannot be accidentally modified",
+        "When you need to store only strings",
+        "When you want faster element insertion"
+    ],
+    correct: [1],
+    explanation: "Tuples are immutable, making them ideal for data that should not be changed (e.g., coordinates, database records, configuration values). Their immutability provides data integrity and allows them to be used as dictionary keys."
+},
+{
+    id: 40, topic: "2.2.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>data = [1, 2, 2, 3, 3, 3, 4]\nunique = set(data)\nprint(len(unique))</div>",
+    options: [
+        "<code>7</code>",
+        "<code>4</code>",
+        "<code>3</code>",
+        "<code>6</code>"
+    ],
+    correct: [1],
+    explanation: "Converting a list to a set removes all duplicates. The unique elements are {1, 2, 3, 4}, which contains 4 elements."
+},
+
+// --- 2.2.3 Use dictionaries ---
+{
+    id: 41, topic: "2.2.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>student = {'name': 'Alice', 'age': 22}\nprint(student.get('grade', 'N/A'))</div>",
+    options: [
+        "<code>None</code>",
+        "<code>KeyError</code>",
+        "<code>'N/A'</code>",
+        "<code>'grade'</code>"
+    ],
+    correct: [2],
+    explanation: "dict.get(key, default) returns the value for the key if it exists, otherwise returns the default value. Since 'grade' is not in the dictionary, it returns 'N/A'."
+},
+{
+    id: 42, topic: "2.2.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>d = {'a': 1, 'b': 2, 'c': 3}\nfor key, value in d.items():\n    print(key, value, end=' ')</div>",
+    options: [
+        "<code>a b c</code>",
+        "<code>1 2 3</code>",
+        "<code>a 1 b 2 c 3 </code>",
+        "<code>('a', 1) ('b', 2) ('c', 3)</code>"
+    ],
+    correct: [2],
+    explanation: "d.items() returns key-value pairs. The loop unpacks each pair into key and value, printing them together. With end=' ', output stays on one line: a 1 b 2 c 3."
+},
+{
+    id: 43, topic: "2.2.3", module: 2,
+    text: "Which code correctly counts the frequency of each word in a list?\n<div class='code-block'>words = ['apple', 'banana', 'apple', 'cherry', 'banana', 'apple']</div>",
+    options: [
+        "<code>counts = {}\nfor w in words:\n    counts[w] = counts.get(w, 0) + 1</code>",
+        "<code>counts = {}\nfor w in words:\n    counts[w] += 1</code>",
+        "<code>counts = []\nfor w in words:\n    counts.append(w, 1)</code>",
+        "<code>counts = words.count()</code>"
+    ],
+    correct: [0],
+    explanation: "Using dict.get(key, 0) safely retrieves the current count (defaulting to 0 for new keys) and increments it. Option B would raise a KeyError for the first occurrence of each word."
+},
+{
+    id: 44, topic: "2.2.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>data = {'x': 10, 'y': 20}\ndata['z'] = 30\ndel data['x']\nprint(data)</div>",
+    options: [
+        "<code>{'x': 10, 'y': 20, 'z': 30}</code>",
+        "<code>{'y': 20, 'z': 30}</code>",
+        "<code>{'x': 10, 'z': 30}</code>",
+        "<code>{'y': 20}</code>"
+    ],
+    correct: [1],
+    explanation: "data['z'] = 30 adds a new key-value pair. del data['x'] removes the 'x' key. The resulting dictionary contains only 'y' and 'z'."
+},
+{
+    id: 45, topic: "2.2.3", module: 2,
+    text: "Which of the following correctly represents tabular data as a list of dictionaries?",
+    options: [
+        "<code>[['Laptop', 999], ['Phone', 699]]</code>",
+        "<code>{'Laptop': 999, 'Phone': 699}</code>",
+        "<code>[{'product': 'Laptop', 'price': 999}, {'product': 'Phone', 'price': 699}]</code>",
+        "<code>('Laptop', 999, 'Phone', 699)</code>"
+    ],
+    correct: [2],
+    explanation: "A list of dictionaries is a common way to represent tabular data in Python. Each dictionary represents a row, with keys as column names and values as the data. This mirrors how data looks in CSV files or database tables."
+},
+
+// --- 2.2.4 Work with strings ---
+{
+    id: 46, topic: "2.2.4", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>text = 'Data Analysis'\nprint(text[5:13])</div>",
+    options: [
+        "<code>'Analysis'</code>",
+        "<code>'Analysi'</code>",
+        "<code>'Analysis'</code>",
+        "<code>'a Analys'</code>"
+    ],
+    correct: [0],
+    explanation: "String slicing text[5:13] extracts characters from index 5 to 12 (inclusive). 'Data Analysis' has 'Analysis' starting at index 5, and the slice captures all 8 characters."
+},
+{
+    id: 47, topic: "2.2.4", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>filename = 'report_2024.csv'\nprint(filename.endswith('.csv'))\nprint(filename.startswith('data'))</div>",
+    options: [
+        "<code>True</code> and <code>True</code>",
+        "<code>True</code> and <code>False</code>",
+        "<code>False</code> and <code>True</code>",
+        "<code>False</code> and <code>False</code>"
+    ],
+    correct: [1],
+    explanation: "endswith('.csv') returns True because the string ends with '.csv'. startswith('data') returns False because the string starts with 'report', not 'data'."
+},
+
+// --- 2.3.1 Define and call functions ---
+{
+    id: 48, topic: "2.3.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>def greet(name, greeting='Hello'):\n    return f'{greeting}, {name}!'\n\nprint(greet('Alice'))\nprint(greet('Bob', 'Hi'))</div>",
+    options: [
+        "<code>Hello, Alice!</code> and <code>Hello, Bob!</code>",
+        "<code>Hello, Alice!</code> and <code>Hi, Bob!</code>",
+        "<code>Alice, Hello!</code> and <code>Bob, Hi!</code>",
+        "A TypeError is raised"
+    ],
+    correct: [1],
+    explanation: "The function has a default parameter greeting='Hello'. When called with one argument, it uses the default. When called with two arguments, the second overrides the default."
+},
+{
+    id: 49, topic: "2.3.1", module: 2,
+    text: "What does the following function return?\n<div class='code-block'>def process(data):\n    pass\n\nresult = process([1, 2, 3])\nprint(result)</div>",
+    options: [
+        "<code>[1, 2, 3]</code>",
+        "<code>0</code>",
+        "<code>None</code>",
+        "A SyntaxError is raised"
+    ],
+    correct: [2],
+    explanation: "The pass statement is a placeholder that does nothing. Since the function has no return statement, it implicitly returns None. The pass keyword is used during development when a function body is not yet implemented."
+},
+{
+    id: 50, topic: "2.3.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>def add(a, b):\n    return a + b\n\nprint(add(b=5, a=3))</div>",
+    options: [
+        "<code>8</code>",
+        "<code>53</code>",
+        "<code>35</code>",
+        "A TypeError is raised"
+    ],
+    correct: [0],
+    explanation: "Python supports keyword arguments, which allow you to specify arguments by parameter name regardless of position. add(b=5, a=3) passes 3 to a and 5 to b, returning 3 + 5 = 8."
+},
+
+// --- 2.3.2 Understand scope and variable behavior in functions ---
+{
+    id: 51, topic: "2.3.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>x = 10\n\ndef modify():\n    x = 20\n    print(x)\n\nmodify()\nprint(x)</div>",
+    options: [
+        "<code>20</code> and <code>20</code>",
+        "<code>20</code> and <code>10</code>",
+        "<code>10</code> and <code>10</code>",
+        "An error is raised"
+    ],
+    correct: [1],
+    explanation: "Inside modify(), x = 20 creates a new local variable x that shadows the global x. The function prints 20 (local x). After the function call, the global x remains 10."
+},
+{
+    id: 52, topic: "2.3.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>count = 0\n\ndef increment():\n    global count\n    count += 1\n\nincrement()\nincrement()\nprint(count)</div>",
+    options: [
+        "<code>0</code>",
+        "<code>1</code>",
+        "<code>2</code>",
+        "An UnboundLocalError is raised"
+    ],
+    correct: [2],
+    explanation: "The global keyword allows the function to modify the global variable count. Each call to increment() increases count by 1. After two calls, count is 2."
+},
+{
+    id: 53, topic: "2.3.2", module: 2,
+    text: "What happens if you try to modify a global variable inside a function without using the <code>global</code> keyword?\n<div class='code-block'>total = 100\n\ndef update():\n    total += 10\n\nupdate()</div>",
+    options: [
+        "total becomes 110",
+        "total remains 100",
+        "An UnboundLocalError is raised",
+        "A SyntaxError is raised"
+    ],
+    correct: [2],
+    explanation: "When Python sees total += 10 (which is total = total + 10), it treats total as a local variable. But since it hasn't been assigned yet in the local scope, reading it raises an UnboundLocalError."
+},
+
+// --- 2.3.3 Handle errors with try-except ---
+{
+    id: 54, topic: "2.3.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>try:\n    value = int('hello')\nexcept ValueError:\n    print('Invalid input')\nexcept TypeError:\n    print('Type error')</div>",
+    options: [
+        "<code>hello</code>",
+        "<code>Invalid input</code>",
+        "<code>Type error</code>",
+        "The program crashes"
+    ],
+    correct: [1],
+    explanation: "int('hello') raises a ValueError because 'hello' cannot be converted to an integer. The except ValueError block catches this specific exception and prints 'Invalid input'."
+},
+{
+    id: 55, topic: "2.3.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>data = [10, 20, 30]\ntry:\n    print(data[5])\nexcept IndexError:\n    print('Index out of range')</div>",
+    options: [
+        "<code>30</code>",
+        "<code>None</code>",
+        "<code>Index out of range</code>",
+        "The program crashes with an unhandled exception"
+    ],
+    correct: [2],
+    explanation: "Accessing data[5] on a list with only 3 elements (indices 0-2) raises an IndexError. The try-except block catches this and prints the error message instead of crashing."
+},
+{
+    id: 56, topic: "2.3.3", module: 2,
+    text: "Which exception would be raised by the following code?\n<div class='code-block'>open('nonexistent_file.csv', 'r')</div>",
+    options: [
+        "<code>ValueError</code>",
+        "<code>TypeError</code>",
+        "<code>FileNotFoundError</code>",
+        "<code>IOError</code>"
+    ],
+    correct: [2],
+    explanation: "When trying to open a file that doesn't exist in read mode, Python raises a FileNotFoundError. This is a common exception to handle with try-except when reading files in data analysis scripts."
+},
+{
+    id: 57, topic: "2.3.3", module: 2,
+    text: "What is the purpose of wrapping function calls in try-except blocks in data analysis scripts?",
+    options: [
+        "To make the code run faster",
+        "To prevent the entire script from crashing due to runtime errors like bad data or missing files",
+        "To skip all functions that raise errors",
+        "To automatically fix errors in the data"
+    ],
+    correct: [1],
+    explanation: "Try-except blocks make analysis scripts more robust by handling runtime errors gracefully. Instead of crashing, the script can log the error, skip bad records, or use fallback values, ensuring the analysis continues."
+},
+
+// --- 2.4.1 Apply Boolean logic and comparisons ---
+{
+    id: 58, topic: "2.4.1", module: 2,
+    text: "What is the output of the following expression?\n<div class='code-block'>x = 15\nprint(x > 10 and x < 20)</div>",
+    options: [
+        "<code>True</code>",
+        "<code>False</code>",
+        "<code>15</code>",
+        "<code>None</code>"
+    ],
+    correct: [0],
+    explanation: "The 'and' operator returns True only if both conditions are True. x > 10 is True (15 > 10) and x < 20 is True (15 < 20), so the overall result is True."
+},
+{
+    id: 59, topic: "2.4.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>age = 25\nhas_ticket = False\nprint(age >= 18 and has_ticket)</div>",
+    options: [
+        "<code>True</code>",
+        "<code>False</code>",
+        "<code>25</code>",
+        "<code>None</code>"
+    ],
+    correct: [1],
+    explanation: "The 'and' operator requires both conditions to be True. age >= 18 is True, but has_ticket is False. True and False evaluates to False."
+},
+{
+    id: 60, topic: "2.4.1", module: 2,
+    text: "Which comparison operator checks if two values are NOT equal in Python?",
+    options: [
+        "<code><></code>",
+        "<code>!=</code>",
+        "<code>=!</code>",
+        "<code>not ==</code>"
+    ],
+    correct: [1],
+    explanation: "The != operator checks if two values are not equal. While 'not ==' also works logically, != is the standard and preferred comparison operator for inequality in Python."
+},
+
+// --- 2.4.2 Use conditional statements ---
+{
+    id: 61, topic: "2.4.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>score = 85\nif score >= 90:\n    grade = 'A'\nelif score >= 80:\n    grade = 'B'\nelif score >= 70:\n    grade = 'C'\nelse:\n    grade = 'F'\nprint(grade)</div>",
+    options: [
+        "<code>'A'</code>",
+        "<code>'B'</code>",
+        "<code>'C'</code>",
+        "<code>'F'</code>"
+    ],
+    correct: [1],
+    explanation: "The first condition (score >= 90) is False (85 < 90). The second condition (score >= 80) is True (85 >= 80), so grade is set to 'B'. Subsequent elif/else blocks are skipped."
+},
+{
+    id: 62, topic: "2.4.2", module: 2,
+    text: "What is the output of the following code that validates data?\n<div class='code-block'>value = -5\nif value is None:\n    print('Missing')\nelif value < 0:\n    print('Invalid')\nelse:\n    print('Valid')</div>",
+    options: [
+        "<code>Missing</code>",
+        "<code>Invalid</code>",
+        "<code>Valid</code>",
+        "An error is raised"
+    ],
+    correct: [1],
+    explanation: "value is not None, so the first condition is False. value < 0 is True (-5 < 0), so 'Invalid' is printed. This pattern is commonly used for data validation."
+},
+{
+    id: 63, topic: "2.4.2", module: 2,
+    text: "What is the output of the following nested conditional?\n<div class='code-block'>x = 15\nif x > 10:\n    if x > 20:\n        print('High')\n    else:\n        print('Medium')\nelse:\n    print('Low')</div>",
+    options: [
+        "<code>High</code>",
+        "<code>Medium</code>",
+        "<code>Low</code>",
+        "No output"
+    ],
+    correct: [1],
+    explanation: "x > 10 is True (15 > 10), so we enter the outer if. Then x > 20 is False (15 < 20), so we enter the inner else and print 'Medium'. Nested conditionals allow more complex decision-making."
+},
+
+// --- 2.4.3 Write loops for repeated tasks ---
+{
+    id: 64, topic: "2.4.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>for i in range(5):\n    if i == 3:\n        break\n    print(i, end=' ')</div>",
+    options: [
+        "<code>0 1 2 3 4 </code>",
+        "<code>0 1 2 </code>",
+        "<code>0 1 2 3 </code>",
+        "<code>1 2 </code>"
+    ],
+    correct: [1],
+    explanation: "The loop iterates with i = 0, 1, 2, 3, 4. When i == 3, the break statement exits the loop immediately (before printing 3). So only 0, 1, 2 are printed."
+},
+{
+    id: 65, topic: "2.4.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>for i in range(5):\n    if i == 3:\n        continue\n    print(i, end=' ')</div>",
+    options: [
+        "<code>0 1 2 </code>",
+        "<code>0 1 2 4 </code>",
+        "<code>0 1 2 3 4 </code>",
+        "<code>3 </code>"
+    ],
+    correct: [1],
+    explanation: "The continue statement skips the rest of the current iteration and moves to the next one. When i == 3, it skips printing and continues with i = 4. Output: 0 1 2 4."
+},
+{
+    id: 66, topic: "2.4.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>count = 0\nwhile count < 3:\n    print(count, end=' ')\n    count += 1</div>",
+    options: [
+        "<code>0 1 2 3 </code>",
+        "<code>1 2 3 </code>",
+        "<code>0 1 2 </code>",
+        "<code>0 1 </code>"
+    ],
+    correct: [2],
+    explanation: "The while loop runs as long as count < 3. It prints 0, 1, 2 (incrementing count each time). When count becomes 3, the condition is False and the loop stops."
+},
+{
+    id: 67, topic: "2.4.3", module: 2,
+    text: "What does the following code produce?\n<div class='code-block'>data = {'a': 1, 'b': 2, 'c': 3}\ntotal = 0\nfor key in data:\n    total += data[key]\nprint(total)</div>",
+    options: [
+        "<code>'abc'</code>",
+        "<code>3</code>",
+        "<code>6</code>",
+        "<code>0</code>"
+    ],
+    correct: [2],
+    explanation: "Iterating over a dictionary with 'for key in data' gives the keys. data[key] accesses each value: 1 + 2 + 3 = 6."
+},
+
+// --- 2.5.1 Import and use Python modules ---
+{
+    id: 68, topic: "2.5.1", module: 2,
+    text: "Which of the following correctly imports only the sqrt function from the math module?",
+    options: [
+        "<code>import math.sqrt</code>",
+        "<code>from math import sqrt</code>",
+        "<code>import sqrt from math</code>",
+        "<code>using math.sqrt</code>"
+    ],
+    correct: [1],
+    explanation: "The syntax 'from module import function' imports a specific function from a module. This allows you to use sqrt() directly without the math. prefix."
+},
+{
+    id: 69, topic: "2.5.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>import statistics\ndata = [10, 20, 30, 40, 50]\nprint(statistics.mean(data))</div>",
+    options: [
+        "<code>30.0</code>",
+        "<code>30</code>",
+        "<code>25</code>",
+        "<code>150</code>"
+    ],
+    correct: [0],
+    explanation: "statistics.mean() calculates the arithmetic mean (average) of the data. (10+20+30+40+50) / 5 = 150 / 5 = 30.0. The statistics module returns a float."
+},
+{
+    id: 70, topic: "2.5.1", module: 2,
+    text: "Which import statement creates an alias for a module?",
+    options: [
+        "<code>import numpy = np</code>",
+        "<code>import numpy as np</code>",
+        "<code>from numpy alias np</code>",
+        "<code>alias numpy as np</code>"
+    ],
+    correct: [1],
+    explanation: "The 'import module as alias' syntax creates a shorter alias for the module. 'import numpy as np' is the standard convention, allowing you to use np.array() instead of numpy.array()."
+},
+{
+    id: 71, topic: "2.5.1", module: 2,
+    text: "Which module would you use to read and write CSV files in Python's standard library?",
+    options: [
+        "<code>os</code>",
+        "<code>csv</code>",
+        "<code>json</code>",
+        "<code>math</code>"
+    ],
+    correct: [1],
+    explanation: "The csv module is Python's built-in module for reading from and writing to CSV (Comma-Separated Values) files. It provides csv.reader() and csv.writer() for handling CSV data."
+},
+{
+    id: 72, topic: "2.5.1", module: 2,
+    text: "What is the difference between built-in and third-party Python packages?",
+    options: [
+        "Built-in packages are faster than third-party packages",
+        "Built-in packages come pre-installed with Python, while third-party packages must be installed separately (e.g., with pip)",
+        "Third-party packages are always open source, but built-in packages are not",
+        "There is no difference"
+    ],
+    correct: [1],
+    explanation: "Built-in packages (like math, os, csv, statistics) are included with Python. Third-party packages (like numpy, pandas) must be installed separately using pip and are maintained by the community."
+},
+
+// --- 2.5.2 Use external libraries ---
+{
+    id: 73, topic: "2.5.2", module: 2,
+    text: "Which command correctly installs the numpy package?",
+    options: [
+        "<code>python install numpy</code>",
+        "<code>pip install numpy</code>",
+        "<code>import install numpy</code>",
+        "<code>npm install numpy</code>"
+    ],
+    correct: [1],
+    explanation: "pip is Python's package installer. 'pip install numpy' downloads and installs the numpy package from the Python Package Index (PyPI). npm is for JavaScript, not Python."
+},
+{
+    id: 74, topic: "2.5.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\narr = np.array([1, 2, 3, 4, 5])\nprint(arr * 2)</div>",
+    options: [
+        "<code>[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]</code>",
+        "<code>[2, 4, 6, 8, 10]</code>",
+        "<code>[ 2  4  6  8 10]</code>",
+        "<code>TypeError</code>"
+    ],
+    correct: [2],
+    explanation: "NumPy arrays support element-wise operations. Multiplying an array by 2 multiplies each element by 2. The output format uses spaces (not commas) for numpy arrays: [ 2  4  6  8 10]."
+},
+{
+    id: 75, topic: "2.5.2", module: 2,
+    text: "Where should you look first when encountering an unfamiliar numpy function or error?",
+    options: [
+        "Stack Overflow only",
+        "The official numpy documentation at numpy.org",
+        "Python's built-in help() is always sufficient",
+        "Random blog posts"
+    ],
+    correct: [1],
+    explanation: "Official documentation (numpy.org for numpy, docs.python.org for Python) is the authoritative source for understanding functions, parameters, return values, and troubleshooting errors."
+},
+
+// ==================== MODULE 3: Working with Data and Performing Simple Analyses ====================
+
+// --- 3.1.1 Read and write plain text files ---
+{
+    id: 76, topic: "3.1.1", module: 3,
+    text: "Which of the following correctly reads all lines from a text file?",
+    options: [
+        "<code>f = open('data.txt')\nlines = f.readlines()\nf.close()</code>",
+        "<code>f = read('data.txt')\nlines = f.all()</code>",
+        "<code>lines = file.readlines('data.txt')</code>",
+        "<code>lines = import('data.txt').readlines()</code>"
+    ],
+    correct: [0],
+    explanation: "open() opens a file, readlines() reads all lines into a list, and close() releases the file handle. Each line in the list includes the newline character."
+},
+{
+    id: 77, topic: "3.1.1", module: 3,
+    text: "What is the advantage of using the <code>with</code> statement when working with files?",
+    options: [
+        "It makes file operations faster",
+        "It automatically closes the file when the block exits, even if an error occurs",
+        "It allows reading multiple files at once",
+        "It encrypts the file content"
+    ],
+    correct: [1],
+    explanation: "The 'with' statement (context manager) ensures the file is automatically closed when the block exits, even if an exception occurs. This prevents resource leaks and is the recommended way to handle files."
+},
+{
+    id: 78, topic: "3.1.1", module: 3,
+    text: "What does the following code do?\n<div class='code-block'>import os\nif os.path.exists('data.txt'):\n    with open('data.txt', 'r') as f:\n        content = f.read()\nelse:\n    print('File not found')</div>",
+    options: [
+        "Creates a new file called 'data.txt'",
+        "Checks if the file exists before attempting to read it",
+        "Deletes the file 'data.txt'",
+        "Writes content to 'data.txt'"
+    ],
+    correct: [1],
+    explanation: "os.path.exists() checks whether the file exists before attempting to open it. This prevents FileNotFoundError. The file is opened in read mode ('r') using a with statement for safe handling."
+},
+{
+    id: 79, topic: "3.1.1", module: 3,
+    text: "Which code correctly writes a list of strings to a text file?",
+    options: [
+        "<code>with open('out.txt', 'w') as f:\n    f.write(['line1', 'line2'])</code>",
+        "<code>with open('out.txt', 'w') as f:\n    for line in ['line1', 'line2']:\n        f.write(line + '\\n')</code>",
+        "<code>with open('out.txt', 'r') as f:\n    f.write('line1\\nline2')</code>",
+        "<code>save('out.txt', ['line1', 'line2'])</code>"
+    ],
+    correct: [1],
+    explanation: "To write multiple lines, iterate over the list and write each line followed by a newline character. The file must be opened in write mode ('w'). write() accepts strings, not lists."
+},
+
+// --- 3.1.2 Read and write CSV files using csv module ---
+{
+    id: 80, topic: "3.1.2", module: 3,
+    text: "Which code correctly reads a CSV file and prints each row?\n<div class='code-block'>import csv</div>",
+    options: [
+        "<code>with open('data.csv') as f:\n    reader = csv.reader(f)\n    for row in reader:\n        print(row)</code>",
+        "<code>data = csv.open('data.csv')\nfor row in data:\n    print(row)</code>",
+        "<code>reader = csv.read('data.csv')\nprint(reader)</code>",
+        "<code>with csv.reader('data.csv') as reader:\n    print(reader)</code>"
+    ],
+    correct: [0],
+    explanation: "csv.reader() takes a file object (not a filename). You must first open the file with open(), then pass the file object to csv.reader(). Iterating over the reader yields each row as a list of strings."
+},
+{
+    id: 81, topic: "3.1.2", module: 3,
+    text: "What does <code>csv.writer()</code> do?",
+    options: [
+        "It reads data from a CSV file",
+        "It converts a dictionary to CSV format",
+        "It creates an object that can write rows of data into a CSV file",
+        "It validates that a file is in proper CSV format"
+    ],
+    correct: [2],
+    explanation: "csv.writer() creates a writer object that can write lists (rows) of data into a file in CSV format. You use writer.writerow() for a single row or writer.writerows() for multiple rows."
+},
+{
+    id: 82, topic: "3.1.2", module: 3,
+    text: "Given the string <code>line = '  Alice, 25, New York  '</code>, which code correctly parses it into cleaned fields?",
+    options: [
+        "<code>fields = line.split()</code>",
+        "<code>fields = line.strip().split(',')</code>",
+        "<code>fields = line.replace(' ', '').split(',')</code>",
+        "<code>fields = csv.parse(line)</code>"
+    ],
+    correct: [1],
+    explanation: "line.strip() removes leading and trailing whitespace, then split(',') splits the string by commas into a list: ['Alice', ' 25', ' New York']. Each field may still need individual stripping."
+},
+{
+    id: 83, topic: "3.1.2", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>name = 'Alice'\nscore = 95.5\nprint(f'{name} scored {score:.1f}%')</div>",
+    options: [
+        "<code>Alice scored 95.5%</code>",
+        "<code>Alice scored 95.50%</code>",
+        "<code>{name} scored {score:.1f}%</code>",
+        "<code>Alice scored 96%</code>"
+    ],
+    correct: [0],
+    explanation: "f-strings allow embedding expressions inside string literals. {score:.1f} formats the number to 1 decimal place: 95.5. The output is 'Alice scored 95.5%'."
+},
+
+// --- 3.2.1 Identify and handle missing or invalid data ---
+{
+    id: 84, topic: "3.2.1", module: 3,
+    text: "Which code correctly identifies and counts missing values (None or empty strings) in a list?",
+    options: [
+        "<code>data = ['Alice', None, 'Bob', '', 'Charlie']\nmissing = len([x for x in data if x is None or x == ''])\nprint(missing)</code>",
+        "<code>data = ['Alice', None, 'Bob', '', 'Charlie']\nmissing = data.count(None)\nprint(missing)</code>",
+        "<code>data = ['Alice', None, 'Bob', '', 'Charlie']\nmissing = sum(data)\nprint(missing)</code>",
+        "<code>data = ['Alice', None, 'Bob', '', 'Charlie']\nmissing = data.find(None)\nprint(missing)</code>"
+    ],
+    correct: [0],
+    explanation: "The list comprehension checks for both None and empty strings (''), which are common representations of missing data. Option B only counts None values, missing the empty strings."
+},
+{
+    id: 85, topic: "3.2.1", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>data = [10, None, 30, None, 50]\ncleaned = [x for x in data if x is not None]\nprint(cleaned)</div>",
+    options: [
+        "<code>[10, 0, 30, 0, 50]</code>",
+        "<code>[10, 30, 50]</code>",
+        "<code>[None, None]</code>",
+        "<code>[10, None, 30, None, 50]</code>"
+    ],
+    correct: [1],
+    explanation: "The list comprehension filters out None values by keeping only elements where x is not None. The result is [10, 30, 50], with missing values removed."
+},
+{
+    id: 86, topic: "3.2.1", module: 3,
+    text: "Which code correctly validates data before processing?\n<div class='code-block'>records = [{'name': 'Alice', 'age': 25}, {'name': '', 'age': -3}, {'name': 'Bob', 'age': 30}]</div>",
+    options: [
+        "<code>valid = [r for r in records if r['name'] and r['age'] > 0]</code>",
+        "<code>valid = [r for r in records if r['name'] != '']</code>",
+        "<code>valid = [r for r in records]</code>",
+        "<code>valid = records.validate()</code>"
+    ],
+    correct: [0],
+    explanation: "This checks both conditions: the name must be non-empty (truthy) AND the age must be positive. This filters out records with empty names or invalid (negative) ages."
+},
+
+// --- 3.2.2 Remove duplicates and normalize values ---
+{
+    id: 87, topic: "3.2.2", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>data = ['apple', 'banana', 'apple', 'cherry', 'banana']\nunique = list(dict.fromkeys(data))\nprint(unique)</div>",
+    options: [
+        "<code>['apple', 'banana', 'cherry']</code>",
+        "<code>['cherry', 'banana', 'apple']</code>",
+        "<code>{'apple', 'banana', 'cherry'}</code>",
+        "<code>['apple', 'cherry']</code>"
+    ],
+    correct: [0],
+    explanation: "dict.fromkeys(data) creates a dictionary with the list elements as keys (preserving insertion order and removing duplicates). Converting back to a list gives the unique elements in original order."
+},
+{
+    id: 88, topic: "3.2.2", module: 3,
+    text: "What does the following min-max normalization code produce?\n<div class='code-block'>data = [10, 20, 30, 40, 50]\nmin_val = min(data)\nmax_val = max(data)\nnormalized = [(x - min_val) / (max_val - min_val) for x in data]\nprint(normalized)</div>",
+    options: [
+        "<code>[0.0, 0.2, 0.4, 0.6, 0.8]</code>",
+        "<code>[0.0, 0.25, 0.5, 0.75, 1.0]</code>",
+        "<code>[10, 20, 30, 40, 50]</code>",
+        "<code>[0.1, 0.2, 0.3, 0.4, 0.5]</code>"
+    ],
+    correct: [1],
+    explanation: "Min-max normalization scales values to the [0, 1] range. Formula: (x - min) / (max - min). For this data: (10-10)/40=0.0, (20-10)/40=0.25, (30-10)/40=0.5, (40-10)/40=0.75, (50-10)/40=1.0."
+},
+{
+    id: 89, topic: "3.2.2", module: 3,
+    text: "What is the output of the following code that uses enumeration?\n<div class='code-block'>data = ['a', 'b', 'c']\nfor i, val in enumerate(data, start=1):\n    print(f'{i}: {val}', end=' ')</div>",
+    options: [
+        "<code>0: a 1: b 2: c </code>",
+        "<code>1: a 2: b 3: c </code>",
+        "<code>a: 1 b: 2 c: 3 </code>",
+        "<code>1: 0 2: 1 3: 2 </code>"
+    ],
+    correct: [1],
+    explanation: "enumerate(data, start=1) returns pairs of (index, value) starting from 1 instead of the default 0. This is useful when you need both the index and value during transformation."
+},
+
+// --- 3.2.3 Clean and format strings ---
+{
+    id: 90, topic: "3.2.3", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>text = '  Hello, World!  '\nresult = text.strip().lower().replace('!', '')\nprint(result)</div>",
+    options: [
+        "<code>'  hello, world  '</code>",
+        "<code>'hello, world'</code>",
+        "<code>'Hello, World'</code>",
+        "<code>'HELLO, WORLD'</code>"
+    ],
+    correct: [1],
+    explanation: "Method chaining: strip() removes whitespace -> 'Hello, World!', lower() converts to lowercase -> 'hello, world!', replace('!', '') removes exclamation marks -> 'hello, world'."
+},
+{
+    id: 91, topic: "3.2.3", module: 3,
+    text: "Which string method would you use to normalize a city name like 'new york' to 'New York'?",
+    options: [
+        "<code>.upper()</code>",
+        "<code>.lower()</code>",
+        "<code>.title()</code>",
+        "<code>.capitalize()</code>"
+    ],
+    correct: [2],
+    explanation: ".title() capitalizes the first letter of each word: 'new york' becomes 'New York'. .capitalize() only capitalizes the first letter of the entire string: 'New york'. .upper() would give 'NEW YORK'."
+},
+
+// --- 3.2.4 Convert and format data ---
+{
+    id: 92, topic: "3.2.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>values = ['10', '20.5', '30']\nnums = [float(v) for v in values]\nprint(sum(nums))</div>",
+    options: [
+        "<code>'102030'</code>",
+        "<code>60.5</code>",
+        "<code>60</code>",
+        "<code>TypeError</code>"
+    ],
+    correct: [1],
+    explanation: "float(v) converts each string to a float: [10.0, 20.5, 30.0]. sum() adds them: 10.0 + 20.5 + 30.0 = 60.5."
+},
+{
+    id: 93, topic: "3.2.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>price = 49.99\nprint(f'Price: ${price:.2f}')</div>",
+    options: [
+        "<code>Price: $49.99</code>",
+        "<code>Price: $50.0</code>",
+        "<code>Price: $49.990</code>",
+        "<code>Price: ${price:.2f}</code>"
+    ],
+    correct: [0],
+    explanation: "The f-string format specifier :.2f formats the number to exactly 2 decimal places. 49.99 already has 2 decimal places, so it displays as Price: $49.99."
+},
+{
+    id: 94, topic: "3.2.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>fields = ['Alice', '25', 'NYC']\nresult = ','.join(fields)\nprint(result)</div>",
+    options: [
+        "<code>['Alice', '25', 'NYC']</code>",
+        "<code>Alice,25,NYC</code>",
+        "<code>Alice 25 NYC</code>",
+        "<code>Alice-25-NYC</code>"
+    ],
+    correct: [1],
+    explanation: "The join() method concatenates all elements in the iterable, using the string as a separator. ','.join(['Alice', '25', 'NYC']) produces 'Alice,25,NYC'."
+},
+{
+    id: 95, topic: "3.2.4", module: 3,
+    text: "Which code correctly parses a date string into a datetime object?\n<div class='code-block'>from datetime import datetime</div>",
+    options: [
+        "<code>dt = datetime.strptime('2024-03-15', '%Y-%m-%d')</code>",
+        "<code>dt = datetime.strftime('2024-03-15', '%Y-%m-%d')</code>",
+        "<code>dt = datetime.parse('2024-03-15')</code>",
+        "<code>dt = datetime('2024-03-15')</code>"
+    ],
+    correct: [0],
+    explanation: "strptime() (string parse time) converts a string to a datetime object using a format string. strftime() does the opposite (datetime to string). The format '%Y-%m-%d' matches 'YYYY-MM-DD'."
+},
+
+// --- 3.3.1 Perform aggregations ---
+{
+    id: 96, topic: "3.3.1", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>sales = [150, 200, 175, 300, 250]\nprint(f'Total: {sum(sales)}, Avg: {sum(sales)/len(sales)}, Max: {max(sales)}')</div>",
+    options: [
+        "<code>Total: 1075, Avg: 215.0, Max: 300</code>",
+        "<code>Total: 1075, Avg: 215, Max: 300</code>",
+        "<code>Total: 1075, Avg: 200, Max: 300</code>",
+        "<code>Total: 5, Avg: 215.0, Max: 300</code>"
+    ],
+    correct: [0],
+    explanation: "sum(sales) = 1075, len(sales) = 5, sum/len = 215.0 (float division), max(sales) = 300. These built-in functions are essential for basic data aggregation."
+},
+{
+    id: 97, topic: "3.3.1", module: 3,
+    text: "What is the output of the following dictionary accumulation pattern?\n<div class='code-block'>data = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']\ncounts = {}\nfor item in data:\n    counts[item] = counts.get(item, 0) + 1\nprint(counts)</div>",
+    options: [
+        "<code>{'cat': 3, 'dog': 2, 'bird': 1}</code>",
+        "<code>{'cat': 1, 'dog': 1, 'bird': 1}</code>",
+        "<code>[3, 2, 1]</code>",
+        "<code>6</code>"
+    ],
+    correct: [0],
+    explanation: "The dictionary accumulation pattern uses get(key, 0) to safely initialize counts. It counts occurrences: cat appears 3 times, dog 2 times, bird 1 time."
+},
+
+// --- 3.3.2 Calculate descriptive statistics ---
+{
+    id: 98, topic: "3.3.2", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import statistics\ndata = [4, 8, 6, 5, 3, 8, 9]\nprint(statistics.median(data))</div>",
+    options: [
+        "<code>5</code>",
+        "<code>6</code>",
+        "<code>6.14</code>",
+        "<code>8</code>"
+    ],
+    correct: [1],
+    explanation: "statistics.median() sorts the data [3, 4, 5, 6, 8, 8, 9] and returns the middle value. With 7 elements, the middle (4th) element is 6."
+},
+{
+    id: 99, topic: "3.3.2", module: 3,
+    text: "Which code correctly calculates the ceiling of 4.3 using the math module?",
+    options: [
+        "<code>import math; print(math.floor(4.3))</code>",
+        "<code>import math; print(math.ceil(4.3))</code>",
+        "<code>import math; print(math.round(4.3))</code>",
+        "<code>import math; print(math.sqrt(4.3))</code>"
+    ],
+    correct: [1],
+    explanation: "math.ceil() returns the smallest integer greater than or equal to the number. ceil(4.3) = 5. math.floor() returns the largest integer less than or equal (floor(4.3) = 4)."
+},
+{
+    id: 100, topic: "3.3.2", module: 3,
+    text: "What does <code>collections.Counter()</code> do?\n<div class='code-block'>from collections import Counter\ncolors = ['red', 'blue', 'red', 'green', 'blue', 'red']\nprint(Counter(colors))</div>",
+    options: [
+        "Returns the total count of all elements",
+        "Returns a dictionary-like object with elements as keys and their counts as values",
+        "Returns a sorted list of unique elements",
+        "Returns the most frequent element only"
+    ],
+    correct: [1],
+    explanation: "Counter() creates a dictionary-like object where keys are the elements and values are their counts. Counter(colors) returns Counter({'red': 3, 'blue': 2, 'green': 1})."
+},
+
+// --- 3.3.3 Perform numerical operations with NumPy ---
+{
+    id: 101, topic: "3.3.3", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\narr = np.array([10, 20, 30, 40, 50])\nprint(np.mean(arr), np.std(arr))</div>",
+    options: [
+        "<code>30.0 10.0</code>",
+        "<code>30.0 14.142135623730951</code>",
+        "<code>150 10.0</code>",
+        "<code>30 14.14</code>"
+    ],
+    correct: [1],
+    explanation: "np.mean() calculates the average: (10+20+30+40+50)/5 = 30.0. np.std() calculates the standard deviation: sqrt(((10-30)^2 + (20-30)^2 + ... + (50-30)^2) / 5) = sqrt(200) ≈ 14.14."
+},
+{
+    id: 102, topic: "3.3.3", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\narr = np.arange(0, 10, 2)\nprint(arr)</div>",
+    options: [
+        "<code>[0 1 2 3 4 5 6 7 8 9]</code>",
+        "<code>[0 2 4 6 8]</code>",
+        "<code>[2 4 6 8 10]</code>",
+        "<code>[0 2 4 6 8 10]</code>"
+    ],
+    correct: [1],
+    explanation: "np.arange(start, stop, step) generates numbers from 0 to 10 (exclusive) with step 2: [0, 2, 4, 6, 8]. It works like Python's range() but returns a numpy array."
+},
+{
+    id: 103, topic: "3.3.3", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\narr = np.array([5, 10, 15, 20])\nprint(np.sum(arr), np.median(arr))</div>",
+    options: [
+        "<code>50 12.5</code>",
+        "<code>50 15.0</code>",
+        "<code>50 10</code>",
+        "<code>4 12.5</code>"
+    ],
+    correct: [0],
+    explanation: "np.sum() = 5+10+15+20 = 50. np.median() sorts [5, 10, 15, 20] and averages the two middle values: (10+15)/2 = 12.5."
+},
+
+// --- 3.3.4 Calculate conditional metrics ---
+{
+    id: 104, topic: "3.3.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>scores = [85, 92, 78, 95, 60, 88]\npassing = [s for s in scores if s >= 80]\nprint(f'Pass rate: {len(passing)/len(scores)*100:.0f}%')</div>",
+    options: [
+        "<code>Pass rate: 50%</code>",
+        "<code>Pass rate: 67%</code>",
+        "<code>Pass rate: 83%</code>",
+        "<code>Pass rate: 100%</code>"
+    ],
+    correct: [1],
+    explanation: "Scores >= 80: [85, 92, 95, 88] = 4 out of 6 scores. 4/6 * 100 = 66.67%, formatted as 67% with :.0f (rounded to 0 decimal places)."
+},
+{
+    id: 105, topic: "3.3.4", module: 3,
+    text: "What does the following code calculate?\n<div class='code-block'>students = [\n    {'name': 'Alice', 'region': 'East', 'score': 90},\n    {'name': 'Bob', 'region': 'West', 'score': 85},\n    {'name': 'Charlie', 'region': 'East', 'score': 95},\n    {'name': 'Diana', 'region': 'West', 'score': 80}\n]\n\nregion_scores = {}\nfor s in students:\n    r = s['region']\n    if r not in region_scores:\n        region_scores[r] = []\n    region_scores[r].append(s['score'])\n\nfor r, scores in region_scores.items():\n    print(f'{r}: {sum(scores)/len(scores)}')</div>",
+    options: [
+        "The total score per region",
+        "The average score per region",
+        "The highest score per region",
+        "The number of students per region"
+    ],
+    correct: [1],
+    explanation: "The code groups scores by region using a dictionary of lists, then calculates sum(scores)/len(scores) for each region, which is the average. East: (90+95)/2=92.5, West: (85+80)/2=82.5."
+},
+{
+    id: 106, topic: "3.3.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>data = [22, 45, 18, 30, 55, 12, 40]\nresult = [x for x in data if x > 20 and x < 50]\nprint(len(result))</div>",
+    options: [
+        "<code>3</code>",
+        "<code>4</code>",
+        "<code>5</code>",
+        "<code>7</code>"
+    ],
+    correct: [1],
+    explanation: "Filtering for values > 20 AND < 50: 22, 45, 30, 40 meet both conditions. That's 4 elements. 18 and 12 are <= 20, and 55 is >= 50."
+},
+
+// --- 3.4.1 Identify patterns and trends ---
+{
+    id: 107, topic: "3.4.1", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>data = [('Alice', 90), ('Bob', 75), ('Charlie', 95), ('Diana', 80)]\nsorted_data = sorted(data, key=lambda x: x[1], reverse=True)\nprint([name for name, score in sorted_data])</div>",
+    options: [
+        "<code>['Alice', 'Bob', 'Charlie', 'Diana']</code>",
+        "<code>['Charlie', 'Alice', 'Diana', 'Bob']</code>",
+        "<code>['Bob', 'Diana', 'Alice', 'Charlie']</code>",
+        "<code>[95, 90, 80, 75]</code>"
+    ],
+    correct: [1],
+    explanation: "sorted() with key=lambda x: x[1] sorts by the second element (score), and reverse=True sorts in descending order: 95(Charlie), 90(Alice), 80(Diana), 75(Bob)."
+},
+{
+    id: 108, topic: "3.4.1", module: 3,
+    text: "Which code correctly filters a list to include only even numbers greater than 10?",
+    options: [
+        "<code>result = filter(lambda x: x % 2 == 0 and x > 10, data)</code>",
+        "<code>result = filter(lambda x: x % 2 == 0 or x > 10, data)</code>",
+        "<code>result = data.filter(even and >10)</code>",
+        "<code>result = [x for x in data if x % 2 and x > 10]</code>"
+    ],
+    correct: [0],
+    explanation: "filter() with a lambda that checks both conditions (x % 2 == 0 for even AND x > 10 for greater than 10) correctly filters the data. The and operator ensures both conditions must be true."
+},
+
+// --- 3.4.2 Identify unique values and frequencies ---
+{
+    id: 109, topic: "3.4.2", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\narr = np.array([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])\nprint(np.unique(arr))</div>",
+    options: [
+        "<code>[1 2 3 4]</code>",
+        "<code>[1, 2, 2, 3, 3, 3, 4, 4, 4, 4]</code>",
+        "<code>4</code>",
+        "<code>[4 3 2 1]</code>"
+    ],
+    correct: [0],
+    explanation: "np.unique() returns the sorted unique elements of an array. The unique values in the array are 1, 2, 3, 4."
+},
+{
+    id: 110, topic: "3.4.2", module: 3,
+    text: "Which code correctly counts the frequency of items in a list using Counter?\n<div class='code-block'>from collections import Counter\ncolors = ['red', 'blue', 'red', 'green', 'blue', 'red']</div>",
+    options: [
+        "<code>print(Counter(colors).most_common(1))</code> to get the most frequent item",
+        "<code>print(colors.count('red'))</code> to count all items at once",
+        "<code>print(len(set(colors)))</code> to get frequencies",
+        "<code>print(colors.frequency())</code>"
+    ],
+    correct: [0],
+    explanation: "Counter(colors).most_common(1) returns the single most frequent item as a list of tuples: [('red', 3)]. Counter provides powerful frequency counting with methods like most_common()."
+},
+
+// --- 3.4.3 Perform simple correlation checks and detect outliers ---
+{
+    id: 111, topic: "3.4.3", module: 3,
+    text: "What does <code>numpy.corrcoef()</code> compute?",
+    options: [
+        "The covariance between two arrays",
+        "The Pearson correlation coefficient matrix between arrays",
+        "The standard deviation of each array",
+        "The difference between two arrays"
+    ],
+    correct: [1],
+    explanation: "numpy.corrcoef() computes the Pearson correlation coefficient matrix. Values range from -1 (perfect negative correlation) to 1 (perfect positive correlation), with 0 indicating no linear correlation."
+},
+{
+    id: 112, topic: "3.4.3", module: 3,
+    text: "Which of the following correctly detects outliers using the standard deviation method?\n<div class='code-block'>import numpy as np\ndata = np.array([10, 12, 11, 13, 100, 12, 11])</div>",
+    options: [
+        "<code>mean = np.mean(data)\nstd = np.std(data)\noutliers = data[data > mean + 2 * std]</code>",
+        "<code>outliers = data[data > 50]</code>",
+        "<code>outliers = np.sort(data)[-1]</code>",
+        "<code>outliers = data.max()</code>"
+    ],
+    correct: [0],
+    explanation: "The standard deviation method identifies outliers as values beyond a certain number of standard deviations from the mean (typically 2 or 3). This is a statistical approach that adapts to the data's distribution."
+},
+{
+    id: 113, topic: "3.4.3", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\ndata = np.array([10, 20, 30, 40, 50])\nmask = data > 25\nfiltered = data[mask]\nprint(filtered)</div>",
+    options: [
+        "<code>[10 20]</code>",
+        "<code>[30 40 50]</code>",
+        "<code>[True True True]</code>",
+        "<code>[25 30 40 50]</code>"
+    ],
+    correct: [1],
+    explanation: "NumPy boolean indexing: data > 25 creates a boolean mask [False, False, True, True, True]. Using this mask to index the array returns only elements where the mask is True: [30, 40, 50]."
+},
+{
+    id: 114, topic: "3.4.3", module: 3,
+    text: "A correlation coefficient of -0.95 between two variables indicates:",
+    options: [
+        "Almost no relationship between the variables",
+        "A strong positive relationship",
+        "A strong negative (inverse) relationship",
+        "That the data contains errors"
+    ],
+    correct: [2],
+    explanation: "A correlation coefficient of -0.95 indicates a strong negative (inverse) relationship: as one variable increases, the other tends to decrease proportionally. Values close to -1 or 1 indicate strong correlations."
+},
+
+// ==================== MODULE 4: Communicating Insights and Reporting ====================
+
+// --- 4.1.1 Recognize common types of visualizations ---
+{
+    id: 115, topic: "4.1.1", module: 4,
+    text: "Which type of chart is most appropriate for showing the distribution of market share among competitors?",
+    options: [
+        "Line chart",
+        "Bar chart",
+        "Pie chart",
+        "Scatter plot"
+    ],
+    correct: [2],
+    explanation: "Pie charts are ideal for showing proportions of a whole (like market share distribution). They visually represent how parts contribute to a total, making them perfect for comparing relative sizes of categories."
+},
+{
+    id: 116, topic: "4.1.1", module: 4,
+    text: "Which chart type is best suited for showing trends over time (e.g., monthly revenue)?",
+    options: [
+        "Pie chart",
+        "Line chart",
+        "Bar chart",
+        "Histogram"
+    ],
+    correct: [1],
+    explanation: "Line charts are best for showing trends over time. They connect data points chronologically, making it easy to see patterns, trends, and changes over a continuous time period."
+},
+{
+    id: 117, topic: "4.1.1", module: 4,
+    text: "What is a limitation of pie charts?",
+    options: [
+        "They cannot show proportions",
+        "They are difficult to read when there are many small categories",
+        "They can only display two categories",
+        "They require numerical data on both axes"
+    ],
+    correct: [1],
+    explanation: "Pie charts become difficult to read with many categories, especially when slices are similar in size. For more than 5-6 categories, bar charts are usually more effective for comparison."
+},
+
+// --- 4.1.2 Interpret simple data visualizations ---
+{
+    id: 118, topic: "4.1.2", module: 4,
+    text: "A bar chart shows Q1 revenue at $2M, Q2 at $2.5M, Q3 at $3M, and Q4 at $3.5M. What trend does this represent?",
+    options: [
+        "Declining revenue throughout the year",
+        "Consistent, steady growth in revenue across all quarters",
+        "Revenue peaked in Q3 then declined",
+        "No clear trend in the data"
+    ],
+    correct: [1],
+    explanation: "Each quarter shows an increase of $0.5M over the previous quarter, indicating a clear and consistent upward trend in revenue throughout the year."
+},
+{
+    id: 119, topic: "4.1.2", module: 4,
+    text: "A visualization uses a y-axis that starts at 95 instead of 0 for values ranging from 96 to 100. This chart is potentially:",
+    options: [
+        "More accurate because it shows the actual range",
+        "Misleading because it exaggerates the differences between values",
+        "Better because it saves space",
+        "Standard practice for all charts"
+    ],
+    correct: [1],
+    explanation: "Truncating the y-axis (not starting at 0) can be misleading because it visually exaggerates small differences. A 4-point difference might appear dramatic when the scale only shows 95-100 instead of 0-100."
+},
+{
+    id: 120, topic: "4.1.2", module: 4,
+    text: "When interpreting a data visualization, what should you check first?",
+    options: [
+        "The colors used in the chart",
+        "The axis labels, scale, and title to understand what the data represents",
+        "Whether the chart is 3D or 2D",
+        "The size of the chart"
+    ],
+    correct: [1],
+    explanation: "Understanding the axes (what's being measured), the scale (range and intervals), and the title (context) is essential for correctly interpreting any visualization. Without this context, you might draw incorrect conclusions."
+},
+
+// --- 4.2.1 Structure and communicate data insights as a narrative ---
+{
+    id: 121, topic: "4.2.1", module: 4,
+    text: "What is the recommended structure for a data story?",
+    options: [
+        "Data, Charts, Conclusion",
+        "Introduction, Insights, Conclusion",
+        "Abstract, Methods, Results",
+        "Question, Hypothesis, Experiment"
+    ],
+    correct: [1],
+    explanation: "A data story follows the structure: Introduction (set context and state the question), Insights (present findings with supporting evidence), and Conclusion (summarize key takeaways and recommendations)."
+},
+{
+    id: 122, topic: "4.2.1", module: 4,
+    text: "When presenting data insights, which approach is most effective?",
+    options: [
+        "Present all raw data and let the audience draw their own conclusions",
+        "Lead with the key message and support it with evidence from the data",
+        "Start with the methodology and tools used",
+        "Focus only on surprising or unusual findings"
+    ],
+    correct: [1],
+    explanation: "Leading with the key message (conclusion or insight) and then supporting it with data evidence is most effective. This approach ensures the audience grasps the main point immediately, with data serving as backing."
+},
+{
+    id: 123, topic: "4.2.1", module: 4,
+    text: "Why is it important to adjust tone and depth when communicating data insights?",
+    options: [
+        "It is not important; all audiences need the same level of detail",
+        "Different audiences have different levels of technical knowledge and different needs",
+        "Only executive audiences need simplified communication",
+        "Technical depth should always be maximized"
+    ],
+    correct: [1],
+    explanation: "Different audiences (executives, analysts, general public) have different technical backgrounds and information needs. A technical team needs methodology details, while executives need high-level insights and business implications."
+},
+{
+    id: 124, topic: "4.2.1", module: 4,
+    text: "What role do transitions and signposting play in data storytelling?",
+    options: [
+        "They are unnecessary in data presentations",
+        "They create flow between sections, guiding the audience through the narrative logically",
+        "They are only needed in written reports, not presentations",
+        "They replace the need for data visualizations"
+    ],
+    correct: [1],
+    explanation: "Transitions ('as a result,' 'in contrast,' 'building on this') and signposting ('first,' 'next,' 'finally') create a logical flow that guides the audience through the story, making insights easier to follow and more persuasive."
+},
+
+// --- 4.3.1 Summarize and organize analytical results ---
+{
+    id: 125, topic: "4.3.1", module: 4,
+    text: "Which of the following is the best structure for an analytical report?",
+    options: [
+        "Data dump followed by a vague conclusion",
+        "Problem, Analysis, Insight, Recommendation",
+        "Title page with no body content",
+        "A single long paragraph with all findings"
+    ],
+    correct: [1],
+    explanation: "A well-structured analytical report follows: Problem (what question or issue), Analysis (what was examined and how), Insight (what was found), Recommendation (what action to take). This logical flow makes reports clear and actionable."
+},
+{
+    id: 126, topic: "4.3.1", module: 4,
+    text: "When writing a summary of analytical results, which approach is most effective?",
+    options: [
+        "Include every data point and calculation in the summary",
+        "Write short summaries of key patterns with supporting data (averages, proportions)",
+        "Only include visualizations without any text explanation",
+        "Write the summary before performing the analysis"
+    ],
+    correct: [1],
+    explanation: "Effective summaries highlight key patterns and findings, supported by specific data points (averages, percentages, proportions). They are concise but evidence-based, not exhaustive data dumps."
+},
+{
+    id: 127, topic: "4.3.1", module: 4,
+    text: "How do headings, bullet points, and visuals improve an analytical report?",
+    options: [
+        "They make the report longer and more impressive",
+        "They improve clarity, readability, and help readers quickly find key information",
+        "They are only needed for informal reports",
+        "They replace the need for written analysis"
+    ],
+    correct: [1],
+    explanation: "Formatting elements like headings (organize sections), bullet points (highlight key items), and visuals (illustrate data) dramatically improve readability. They allow readers to scan, understand structure, and quickly locate relevant information."
+},
+
+// --- 4.4.1 Present data insights clearly using visual and verbal techniques ---
+{
+    id: 128, topic: "4.4.1", module: 4,
+    text: "Which of the following is a best practice for accessible chart design?",
+    options: [
+        "Use as many colors as possible to make it visually appealing",
+        "Use small font sizes to fit more data on one chart",
+        "Use clear labels, appropriate titles, readable fonts, and sufficient color contrast",
+        "Avoid titles to keep the chart clean"
+    ],
+    correct: [2],
+    explanation: "Accessible chart design requires clear labels, descriptive titles, readable font sizes, and sufficient color contrast. These elements ensure the chart is understandable by all audiences, including those with visual impairments."
+},
+{
+    id: 129, topic: "4.4.1", module: 4,
+    text: "When explaining a chart during a presentation, which approach is most effective?",
+    options: [
+        "Read every data point on the chart aloud",
+        "Show the chart without any verbal explanation",
+        "Explain what the chart shows, highlight key findings, and connect them to the main message",
+        "Focus only on the methodology used to create the chart"
+    ],
+    correct: [2],
+    explanation: "Effective chart explanation involves describing what the chart shows (context), pointing out key patterns or findings (insight), and connecting them to the broader message or recommendation (relevance)."
+},
+{
+    id: 130, topic: "4.4.1", module: 4,
+    text: "During a Q&A session after presenting data findings, what is the best way to respond to questions about unexpected results?",
+    options: [
+        "Dismiss the question and move on",
+        "Make up an explanation on the spot",
+        "Respond using evidence from the data and visuals, acknowledging limitations honestly",
+        "Refuse to answer until you have more data"
+    ],
+    correct: [2],
+    explanation: "The best approach is to use evidence from the data and visuals to support your response, while honestly acknowledging any limitations or areas where further analysis is needed. This builds credibility and trust."
+},
+
+// Additional questions to ensure thorough coverage
+
+// --- Additional 1.1.1 ---
+{
+    id: 131, topic: "1.1.1", module: 1,
+    text: "Which of the following is the best example of how data is processed into usable insights?",
+    options: [
+        "Storing raw sensor readings in a database",
+        "Analyzing monthly sales figures to identify the best-performing product and recommend increasing its stock",
+        "Collecting survey responses without reviewing them",
+        "Downloading a dataset from the internet"
+    ],
+    correct: [1],
+    explanation: "Processing data into insights involves analysis and interpretation. Analyzing sales figures to identify top performers and making recommendations transforms raw data into actionable business intelligence."
+},
+
+// --- Additional 1.2.1 ---
+{
+    id: 132, topic: "1.2.1", module: 1,
+    text: "What is web scraping?",
+    options: [
+        "A method of manually copying data from websites",
+        "An automated technique for extracting data from web pages using code",
+        "A way to upload data to websites",
+        "A technique for creating web pages"
+    ],
+    correct: [1],
+    explanation: "Web scraping is an automated data collection method that uses code to extract data from web pages. It's useful for gathering large amounts of publicly available web data for analysis."
+},
+
+// --- Additional 2.2.1 ---
+{
+    id: 133, topic: "2.2.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>nums = [3, 1, 4, 1, 5, 9]\nnums.sort()\nprint(nums)\nprint(nums.count(1))</div>",
+    options: [
+        "<code>[3, 1, 4, 1, 5, 9]</code> and <code>2</code>",
+        "<code>[1, 1, 3, 4, 5, 9]</code> and <code>2</code>",
+        "<code>[9, 5, 4, 3, 1, 1]</code> and <code>2</code>",
+        "<code>[1, 1, 3, 4, 5, 9]</code> and <code>1</code>"
+    ],
+    correct: [1],
+    explanation: "sort() sorts the list in-place in ascending order: [1, 1, 3, 4, 5, 9]. count(1) returns the number of occurrences of 1 in the list, which is 2."
+},
+
+// --- Additional 2.2.3 ---
+{
+    id: 134, topic: "2.2.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>d = {'a': 1, 'b': 2}\nprint('c' in d)\nprint('a' in d)</div>",
+    options: [
+        "<code>True</code> and <code>True</code>",
+        "<code>False</code> and <code>True</code>",
+        "<code>True</code> and <code>False</code>",
+        "<code>False</code> and <code>False</code>"
+    ],
+    correct: [1],
+    explanation: "The 'in' operator checks if a key exists in the dictionary. 'c' is not a key (False), but 'a' is a key (True). Note: 'in' checks keys, not values."
+},
+
+// --- Additional 2.3.1 ---
+{
+    id: 135, topic: "2.3.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>def multiply(a, b=2):\n    return a * b\n\nprint(multiply(5))\nprint(multiply(5, 3))</div>",
+    options: [
+        "<code>10</code> and <code>15</code>",
+        "<code>10</code> and <code>10</code>",
+        "<code>5</code> and <code>15</code>",
+        "<code>TypeError</code>"
+    ],
+    correct: [0],
+    explanation: "multiply(5) uses the default b=2, so 5*2=10. multiply(5, 3) overrides the default with b=3, so 5*3=15. Default parameters allow functions to be called with fewer arguments."
+},
+
+// --- Additional 2.4.3 ---
+{
+    id: 136, topic: "2.4.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>data = [10, -5, 20, -3, 15, 0]\ncleaned = []\nfor val in data:\n    if val < 0:\n        continue\n    cleaned.append(val)\nprint(cleaned)</div>",
+    options: [
+        "<code>[10, 20, 15, 0]</code>",
+        "<code>[10, 20, 15]</code>",
+        "<code>[-5, -3]</code>",
+        "<code>[10, -5, 20, -3, 15, 0]</code>"
+    ],
+    correct: [0],
+    explanation: "The loop uses continue to skip negative values (val < 0). Non-negative values (including 0) are appended to cleaned. Result: [10, 20, 15, 0]. This pattern is common for data cleaning."
+},
+
+// --- Additional 3.1.2 ---
+{
+    id: 137, topic: "3.1.2", module: 3,
+    text: "What is the correct way to write data to a CSV file?\n<div class='code-block'>import csv</div>",
+    options: [
+        "<code>with open('out.csv', 'w', newline='') as f:\n    writer = csv.writer(f)\n    writer.writerow(['Name', 'Age'])\n    writer.writerow(['Alice', 25])</code>",
+        "<code>csv.write('out.csv', [['Name', 'Age'], ['Alice', 25]])</code>",
+        "<code>with open('out.csv', 'r') as f:\n    writer = csv.writer(f)\n    writer.write(['Name', 'Age'])</code>",
+        "<code>f = csv.open('out.csv', 'w')\nf.writerow(['Name', 'Age'])</code>"
+    ],
+    correct: [0],
+    explanation: "Open the file in write mode ('w') with newline='' to prevent extra blank lines. Create a csv.writer object, then use writerow() for individual rows. newline='' is important on Windows to avoid double-spaced output."
+},
+
+// --- Additional 3.2.2 ---
+{
+    id: 138, topic: "3.2.2", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>emails = ['a@test.com', 'b@test.com', 'a@test.com', 'c@test.com']\nunique_emails = list(set(emails))\nprint(len(unique_emails))</div>",
+    options: [
+        "<code>4</code>",
+        "<code>3</code>",
+        "<code>2</code>",
+        "<code>1</code>"
+    ],
+    correct: [1],
+    explanation: "set() removes duplicates. The unique emails are {'a@test.com', 'b@test.com', 'c@test.com'} = 3 unique elements. Note: the order of set elements is not guaranteed."
+},
+
+// --- Additional 3.3.2 ---
+{
+    id: 139, topic: "3.3.2", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import statistics\ndata = [10, 20, 30, 40, 50]\nprint(statistics.stdev(data))</div>",
+    options: [
+        "<code>14.142135623730951</code>",
+        "<code>15.811388300841896</code>",
+        "<code>200</code>",
+        "<code>10.0</code>"
+    ],
+    correct: [1],
+    explanation: "statistics.stdev() calculates the sample standard deviation (using n-1 as denominator). For [10,20,30,40,50], the sample stdev is approximately 15.81. Note: numpy.std() uses population stdev (n) by default."
+},
+
+// --- Additional 2.5.1 ---
+{
+    id: 140, topic: "2.5.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>from datetime import datetime\nnow = datetime.now()\nprint(type(now))</div>",
+    options: [
+        "<code>&lt;class 'str'&gt;</code>",
+        "<code>&lt;class 'datetime.datetime'&gt;</code>",
+        "<code>&lt;class 'time'&gt;</code>",
+        "<code>&lt;class 'date'&gt;</code>"
+    ],
+    correct: [1],
+    explanation: "datetime.now() returns a datetime object of type datetime.datetime. The datetime module is part of Python's standard library and is essential for time-based data processing."
+},
+
+// --- Additional 2.2.2 ---
+{
+    id: 141, topic: "2.2.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>a = {1, 2, 3}\nb = {4, 5, 6}\nprint(a.isdisjoint(b))</div>",
+    options: [
+        "<code>True</code>",
+        "<code>False</code>",
+        "<code>{1, 2, 3, 4, 5, 6}</code>",
+        "<code>set()</code>"
+    ],
+    correct: [0],
+    explanation: "isdisjoint() returns True if the two sets have no elements in common. Sets {1,2,3} and {4,5,6} share no elements, so isdisjoint() returns True."
+},
+
+// --- Additional 2.2.2 ---
+{
+    id: 142, topic: "2.2.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>a = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\nprint(a.difference(b))</div>",
+    options: [
+        "<code>{1, 2}</code>",
+        "<code>{5, 6}</code>",
+        "<code>{3, 4}</code>",
+        "<code>{1, 2, 5, 6}</code>"
+    ],
+    correct: [0],
+    explanation: "a.difference(b) returns elements that are in set a but NOT in set b. Elements 1 and 2 are in a but not in b, so the result is {1, 2}."
+},
+
+// --- Additional 3.2.4 ---
+{
+    id: 143, topic: "3.2.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>text = 'hello world python'\nwords = text.split()\nprint(words)</div>",
+    options: [
+        "<code>['h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd']</code>",
+        "<code>['hello world python']</code>",
+        "<code>['hello', 'world', 'python']</code>",
+        "<code>'hello world python'</code>"
+    ],
+    correct: [2],
+    explanation: "str.split() without arguments splits the string by whitespace and returns a list of words: ['hello', 'world', 'python']."
+},
+
+// --- Additional 1.4.2 ---
+{
+    id: 144, topic: "1.4.2", module: 1,
+    text: "A hospital analyzes patient readmission data to understand WHY readmissions increased last quarter. This is an example of:",
+    options: [
+        "Descriptive analytics",
+        "Diagnostic analytics",
+        "Predictive analytics",
+        "Prescriptive analytics"
+    ],
+    correct: [1],
+    explanation: "Diagnostic analytics investigates the causes behind observed outcomes. Asking 'Why did readmissions increase?' and analyzing data to find root causes (e.g., inadequate discharge planning) is diagnostic analysis."
+},
+
+// --- Additional 1.5.1 ---
+{
+    id: 145, topic: "1.5.1", module: 1,
+    text: "HIPAA is a law that primarily governs:",
+    options: [
+        "Consumer data in California",
+        "Financial data in the European Union",
+        "Protected health information in the United States",
+        "Social media data worldwide"
+    ],
+    correct: [2],
+    explanation: "HIPAA (Health Insurance Portability and Accountability Act) is a US federal law that protects sensitive patient health information from being disclosed without the patient's consent or knowledge."
+},
+
+// --- Additional 3.3.3 ---
+{
+    id: 146, topic: "3.3.3", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\narr = np.linspace(0, 1, 5)\nprint(arr)</div>",
+    options: [
+        "<code>[0 1 2 3 4]</code>",
+        "<code>[0.   0.25 0.5  0.75 1.  ]</code>",
+        "<code>[0.  0.2 0.4 0.6 0.8]</code>",
+        "<code>[0 0.5 1]</code>"
+    ],
+    correct: [1],
+    explanation: "np.linspace(0, 1, 5) generates 5 evenly spaced numbers from 0 to 1 (inclusive): [0.0, 0.25, 0.5, 0.75, 1.0]. Unlike arange, linspace includes the endpoint."
+},
+
+// --- Additional 2.1.1 ---
+{
+    id: 147, topic: "2.1.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>x = '5'\ny = 3\nprint(type(x), type(y))</div>",
+    options: [
+        "<code>&lt;class 'int'&gt; &lt;class 'int'&gt;</code>",
+        "<code>&lt;class 'str'&gt; &lt;class 'int'&gt;</code>",
+        "<code>&lt;class 'str'&gt; &lt;class 'str'&gt;</code>",
+        "<code>&lt;class 'int'&gt; &lt;class 'str'&gt;</code>"
+    ],
+    correct: [1],
+    explanation: "'5' (with quotes) is a string, while 3 (without quotes) is an integer. type() reveals the data type of each variable. This distinction is crucial when performing operations \u2014 '5' + 3 would raise a TypeError."
+},
+
+// --- Additional 2.2.4 ---
+{
+    id: 148, topic: "2.2.4", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>code = 'ABC123'\nprint(code.isdigit())\nprint(code.isalpha())\nprint(code[3:].isdigit())</div>",
+    options: [
+        "<code>True</code>, <code>True</code>, <code>True</code>",
+        "<code>False</code>, <code>False</code>, <code>True</code>",
+        "<code>False</code>, <code>True</code>, <code>True</code>",
+        "<code>True</code>, <code>False</code>, <code>False</code>"
+    ],
+    correct: [1],
+    explanation: "'ABC123'.isdigit() is False (contains letters). 'ABC123'.isalpha() is False (contains digits). code[3:] is '123', and '123'.isdigit() is True (all digits)."
+},
+
+// --- Additional 1.3.1 ---
+{
+    id: 149, topic: "1.3.1", module: 1,
+    text: "Which of the following tools/techniques is most closely associated with the 'Analysis' stage of the data lifecycle?",
+    options: [
+        "Web scraping and APIs",
+        "Cloud storage and data lakes",
+        "Statistical modeling and pattern recognition",
+        "Data encryption and access controls"
+    ],
+    correct: [2],
+    explanation: "The Analysis stage involves applying statistical methods, modeling, and pattern recognition to extract insights from processed data. Web scraping is for collection, storage solutions for storage, and encryption for security."
+},
+
+// --- Additional 2.5.2 ---
+{
+    id: 150, topic: "2.5.2", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>import numpy as np\na = np.array([1, 2, 3])\nb = np.array([4, 5, 6])\nprint(a + b)</div>",
+    options: [
+        "<code>[1, 2, 3, 4, 5, 6]</code>",
+        "<code>[5 7 9]</code>",
+        "<code>21</code>",
+        "<code>TypeError</code>"
+    ],
+    correct: [1],
+    explanation: "NumPy arrays perform element-wise operations. a + b adds corresponding elements: [1+4, 2+5, 3+6] = [5, 7, 9]. This is different from Python lists, where + concatenates."
+},
+
+// --- Additional 3.4.3 ---
+{
+    id: 151, topic: "3.4.3", module: 3,
+    text: "What is the purpose of interpreting patterns found through code-based exploration?",
+    options: [
+        "To make the code run faster",
+        "To understand the meaning and significance of data patterns, anomalies, and relationships",
+        "To remove all outliers from the dataset",
+        "To convert data to a different format"
+    ],
+    correct: [1],
+    explanation: "Interpreting patterns goes beyond finding them \u2014 it involves understanding what patterns mean in context, whether anomalies are errors or genuine outliers, and what relationships between variables imply for decision-making."
+},
+
+// --- Additional 1.2.2 ---
+{
+    id: 152, topic: "1.2.2", module: 1,
+    text: "Which storage solution is most appropriate for structured data with complex relationships between tables?",
+    options: [
+        "A plain text file",
+        "A data lake",
+        "A relational database (SQL)",
+        "A JSON file"
+    ],
+    correct: [2],
+    explanation: "Relational databases (SQL) are designed for structured data with defined relationships between tables (using foreign keys, joins). They enforce data integrity through schemas and are ideal for complex, interrelated data."
+},
+
+// --- Additional 2.4.1 ---
+{
+    id: 153, topic: "2.4.1", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>x = 0\ny = ''\nz = None\nprint(bool(x), bool(y), bool(z))</div>",
+    options: [
+        "<code>True True True</code>",
+        "<code>False False False</code>",
+        "<code>True False False</code>",
+        "<code>False True False</code>"
+    ],
+    correct: [1],
+    explanation: "In Python, 0, empty strings (''), and None are all 'falsy' values that evaluate to False when converted to bool. This is important for Boolean expressions used in data filtering and validation."
+},
+
+// --- Additional 3.1.1 ---
+{
+    id: 154, topic: "3.1.1", module: 3,
+    text: "What is the correct way to handle a FileNotFoundError when reading a file?",
+    options: [
+        "<code>try:\n    with open('data.txt') as f:\n        data = f.read()\nexcept FileNotFoundError:\n    print('File does not exist')</code>",
+        "<code>if file.exists('data.txt'):\n    data = read('data.txt')</code>",
+        "<code>data = open('data.txt').read() or 'default'</code>",
+        "<code>data = safe_read('data.txt')</code>"
+    ],
+    correct: [0],
+    explanation: "Using try-except to catch FileNotFoundError is the standard way to handle missing files in Python. This prevents the script from crashing and allows graceful error handling."
+},
+
+// --- Additional 3.3.4 ---
+{
+    id: 155, topic: "3.3.4", module: 3,
+    text: "What is the output of the following code?\n<div class='code-block'>products = [\n    {'name': 'A', 'category': 'Electronics', 'price': 500},\n    {'name': 'B', 'category': 'Clothing', 'price': 50},\n    {'name': 'C', 'category': 'Electronics', 'price': 300},\n    {'name': 'D', 'category': 'Clothing', 'price': 80}\n]\n\nelec = [p['price'] for p in products if p['category'] == 'Electronics']\nprint(sum(elec) / len(elec))</div>",
+    options: [
+        "<code>232.5</code>",
+        "<code>400.0</code>",
+        "<code>65.0</code>",
+        "<code>800</code>"
+    ],
+    correct: [1],
+    explanation: "Filter Electronics prices: [500, 300]. Average: (500 + 300) / 2 = 400.0. This demonstrates conditional filtering combined with aggregation to calculate category-specific metrics."
+},
+
+// --- Additional 4.1.1 ---
+{
+    id: 156, topic: "4.1.1", module: 4,
+    text: "When should you choose a bar chart over a pie chart?",
+    options: [
+        "When comparing exact values across categories, especially with many categories",
+        "When showing proportions of a whole with only 2-3 categories",
+        "When displaying time-series data",
+        "When showing correlations between variables"
+    ],
+    correct: [0],
+    explanation: "Bar charts are better than pie charts when comparing exact values across categories, especially with many categories. Bar lengths are easier to compare accurately than pie slice angles, and bar charts scale better with more categories."
+},
+
+// --- Additional 2.3.3 ---
+{
+    id: 157, topic: "2.3.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    result = 0\n    print('Division by zero handled')\nprint(result)</div>",
+    options: [
+        "The program crashes with ZeroDivisionError",
+        "<code>Division by zero handled</code> then <code>0</code>",
+        "<code>None</code>",
+        "<code>inf</code>"
+    ],
+    correct: [1],
+    explanation: "10 / 0 raises ZeroDivisionError, which is caught by the except block. The block sets result = 0 and prints the message. Then the final print(result) outputs 0."
+},
+
+// --- Additional 1.3.2 ---
+{
+    id: 158, topic: "1.3.2", module: 1,
+    text: "What is a data pipeline?",
+    options: [
+        "A physical pipe used to transfer data between servers",
+        "An automated sequence of processes that moves and transforms data from sources to destinations",
+        "A type of database that stores data in pipe-delimited format",
+        "A visualization tool for displaying data flow"
+    ],
+    correct: [1],
+    explanation: "A data pipeline is an automated set of processes for extracting data from sources, transforming it, and loading it into a destination system (ETL). Pipelines help manage large-scale data by automating repetitive data processing tasks."
+},
+
+// --- Additional 2.2.3 ---
+{
+    id: 159, topic: "2.2.3", module: 2,
+    text: "What is the output of the following code?\n<div class='code-block'>inventory = {'apples': 5, 'bananas': 3}\ninventory['oranges'] = 7\ninventory['apples'] = 10\nprint(inventory)</div>",
+    options: [
+        "<code>{'apples': 5, 'bananas': 3, 'oranges': 7}</code>",
+        "<code>{'apples': 10, 'bananas': 3, 'oranges': 7}</code>",
+        "<code>{'apples': 15, 'bananas': 3, 'oranges': 7}</code>",
+        "<code>KeyError</code>"
+    ],
+    correct: [1],
+    explanation: "inventory['oranges'] = 7 adds a new key-value pair. inventory['apples'] = 10 updates the existing 'apples' value from 5 to 10 (not adding). Dictionaries allow both adding new keys and updating existing ones."
+},
+
+// --- Additional 4.2.1 ---
+{
+    id: 160, topic: "4.2.1", module: 4,
+    text: "Which of the following is the most effective way to start a data presentation?",
+    options: [
+        "Show a complex data table with all raw numbers",
+        "List all the tools and methods you used",
+        "State the key finding or business question upfront to hook the audience",
+        "Apologize for any data limitations"
+    ],
+    correct: [2],
+    explanation: "Starting with the key finding or question creates immediate relevance and captures the audience's attention. This 'lead with the insight' approach makes the rest of the presentation a supporting narrative."
+}
+];
+
+// ==================== APPLICATION LOGIC ====================
+let currentMode = 'practice';
+let currentQuestionIndex = 0;
+let activeQuestions = [];
+let userAnswers = {};
+let answeredStatus = {};
+let timerInterval = null;
+let timeLeft = 65 * 60; // 65 minutes in seconds
+let examFinished = false;
+
+document.getElementById('totalQCount').textContent = questions.length;
+
+// Build topic filter checkboxes
+const topicSet = [...new Set(questions.map(q => q.topic))].sort();
+const topicModuleMap = {
+    '1': 'Module 1: Data & Analysis Concepts',
+    '2': 'Module 2: Python Basics',
+    '3': 'Module 3: Working with Data',
+    '4': 'Module 4: Communicating Insights'
+};
+
+const topicNames = {
+    '1.1.1': '1.1.1 Define data', '1.1.2': '1.1.2 Classify data',
+    '1.2.1': '1.2.1 Data sources & collection', '1.2.2': '1.2.2 Data storage',
+    '1.3.1': '1.3.1 Data lifecycle', '1.3.2': '1.3.2 Lifecycle management',
+    '1.4.1': '1.4.1 Analysis vs Analytics vs Science', '1.4.2': '1.4.2 Analytics workflow',
+    '1.5.1': '1.5.1 Ethics & legal',
+    '2.1.1': '2.1.1 Variables & data types',
+    '2.2.1': '2.2.1 Lists', '2.2.2': '2.2.2 Tuples & sets', '2.2.3': '2.2.3 Dictionaries', '2.2.4': '2.2.4 Strings',
+    '2.3.1': '2.3.1 Functions', '2.3.2': '2.3.2 Scope & variables', '2.3.3': '2.3.3 Error handling',
+    '2.4.1': '2.4.1 Boolean logic', '2.4.2': '2.4.2 Conditionals', '2.4.3': '2.4.3 Loops',
+    '2.5.1': '2.5.1 Modules & packages', '2.5.2': '2.5.2 External libraries',
+    '3.1.1': '3.1.1 Text files', '3.1.2': '3.1.2 CSV files',
+    '3.2.1': '3.2.1 Missing/invalid data', '3.2.2': '3.2.2 Duplicates & normalization',
+    '3.2.3': '3.2.3 String cleaning', '3.2.4': '3.2.4 Data conversion',
+    '3.3.1': '3.3.1 Aggregations', '3.3.2': '3.3.2 Descriptive statistics',
+    '3.3.3': '3.3.3 NumPy operations', '3.3.4': '3.3.4 Conditional metrics',
+    '3.4.1': '3.4.1 Sorting & filtering', '3.4.2': '3.4.2 Unique values & frequencies',
+    '3.4.3': '3.4.3 Correlation & outliers',
+    '4.1.1': '4.1.1 Chart types', '4.1.2': '4.1.2 Interpret visualizations',
+    '4.2.1': '4.2.1 Data storytelling', '4.3.1': '4.3.1 Analytical reports',
+    '4.4.1': '4.4.1 Presentations'
+};
+
+const checkboxContainer = document.getElementById('topicCheckboxes');
+topicSet.forEach(topic => {
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" value="${topic}" checked> ${topicNames[topic] || topic}`;
+    checkboxContainer.appendChild(label);
+});
+
+function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(mode === 'practice' ? 'modeP' : mode === 'exam' ? 'modeE' : 'modeT').classList.add('active');
+    document.getElementById('topicFilter').style.display = mode === 'topic' ? 'block' : 'none';
+}
+
+function toggleAllTopics(state) {
+    document.querySelectorAll('#topicCheckboxes input').forEach(cb => cb.checked = state);
+}
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function startExam() {
+    let selectedQuestions = [...questions];
+
+    if (currentMode === 'topic') {
+        const selectedTopics = [...document.querySelectorAll('#topicCheckboxes input:checked')].map(cb => cb.value);
+        if (selectedTopics.length === 0) { alert('Please select at least one topic.'); return; }
+        selectedQuestions = questions.filter(q => selectedTopics.includes(q.topic));
+    }
+
+    if (currentMode === 'exam') {
+        // Exam mode: 40 questions proportional to exam weights
+        const m1 = shuffleArray(selectedQuestions.filter(q => q.module === 1)).slice(0, 9);
+        const m2 = shuffleArray(selectedQuestions.filter(q => q.module === 2)).slice(0, 13);
+        const m3 = shuffleArray(selectedQuestions.filter(q => q.module === 3)).slice(0, 13);
+        const m4 = shuffleArray(selectedQuestions.filter(q => q.module === 4)).slice(0, 5);
+        selectedQuestions = shuffleArray([...m1, ...m2, ...m3, ...m4]);
+    } else {
+        selectedQuestions = shuffleArray(selectedQuestions);
+    }
+
+    activeQuestions = selectedQuestions;
+    currentQuestionIndex = 0;
+    userAnswers = {};
+    answeredStatus = {};
+    examFinished = false;
+
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+
+    // Timer for exam mode
+    if (currentMode === 'exam') {
+        timeLeft = 65 * 60;
+        document.getElementById('timer').style.display = 'inline-block';
+        document.getElementById('checkBtn').style.display = 'none';
+        startTimer();
+    } else {
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('checkBtn').style.display = 'inline-block';
+    }
+
+    buildNavigator();
+    renderQuestion();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        timerEl.className = 'timer' + (mins < 5 ? ' danger' : mins < 15 ? ' warning' : '');
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            finishExam();
+        }
+    }, 1000);
+}
+
+function toggleNavigator() {
+    document.getElementById('qNavigator').classList.toggle('collapsed');
+}
+
+function buildNavigator() {
+    const grid = document.getElementById('qNavGrid');
+    grid.innerHTML = '';
+    activeQuestions.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'q-nav-btn' + (i === currentQuestionIndex ? ' current' : '');
+        btn.textContent = i + 1;
+        btn.onclick = () => { currentQuestionIndex = i; renderQuestion(); };
+        grid.appendChild(btn);
+    });
+}
+
+function updateNavigator() {
+    const btns = document.querySelectorAll('.q-nav-btn');
+    btns.forEach((btn, i) => {
+        btn.className = 'q-nav-btn';
+        if (i === currentQuestionIndex) btn.classList.add('current');
+        const qId = activeQuestions[i].id;
+        if (answeredStatus[qId] === 'correct') btn.classList.add('correct-nav');
+        else if (answeredStatus[qId] === 'wrong') btn.classList.add('wrong-nav');
+        else if (userAnswers[qId] !== undefined) btn.classList.add('answered');
+    });
+}
+
+function renderQuestion() {
+    const q = activeQuestions[currentQuestionIndex];
+    const container = document.getElementById('questionContainer');
+    const isMulti = q.correct.length > 1;
+    const inputType = isMulti ? 'checkbox' : 'radio';
+
+    let html = `<div class="question-card">
+        <div class="question-meta">
+            <span class="question-topic">Topic ${q.topic}</span>
+            <span class="question-type">${isMulti ? 'Multiple Select' : 'Single Select'}</span>
+        </div>
+        <div class="question-text">${q.text}</div>
+        <div class="options">`;
+
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    q.options.forEach((opt, i) => {
+        const selected = userAnswers[q.id] && userAnswers[q.id].includes(i);
+        let optClass = 'option' + (selected ? ' selected' : '');
+
+        if (answeredStatus[q.id]) {
+            if (q.correct.includes(i)) optClass += ' correct';
+            else if (selected) optClass += ' wrong';
+        }
+
+        html += `<div class="${optClass}" onclick="selectOption(${q.id}, ${i}, '${inputType}')">
+            <input type="${inputType}" name="q${q.id}" ${selected ? 'checked' : ''} ${answeredStatus[q.id] ? 'disabled' : ''}>
+            <span class="option-label">${letters[i]}.</span>
+            <span class="option-text">${opt.replace(/<code>([\s\S]*?)<\/code>/g, (m, c) => c.includes('\\n') || c.includes('\n') ? "<div class='code-block'>" + c + "</div>" : m)}</span>
+        </div>`;
+    });
+
+    html += `</div>
+        <div class="explanation ${answeredStatus[q.id] ? 'show' : ''}" id="explanation">
+            <strong>${answeredStatus[q.id] === 'correct' ? 'Correct!' : answeredStatus[q.id] === 'wrong' ? 'Incorrect.' : ''}</strong> ${q.explanation}
+        </div>
+    </div>`;
+
+    container.innerHTML = html;
+
+    // Update progress
+    const total = activeQuestions.length;
+    document.getElementById('progressText').textContent = `Question ${currentQuestionIndex + 1} / ${total}`;
+    document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / total) * 100}%`;
+
+    // Update buttons
+    document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+    const isLast = currentQuestionIndex === total - 1;
+    document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-block';
+    document.getElementById('finishBtn').style.display = isLast ? 'inline-block' : 'none';
+
+    if (currentMode === 'practice' || currentMode === 'topic') {
+        document.getElementById('checkBtn').style.display = answeredStatus[q.id] ? 'none' : 'inline-block';
+    }
+
+    updateNavigator();
+}
+
+function selectOption(qId, optIndex, inputType) {
+    if (answeredStatus[qId]) return;
+
+    if (inputType === 'radio') {
+        userAnswers[qId] = [optIndex];
+    } else {
+        if (!userAnswers[qId]) userAnswers[qId] = [];
+        const idx = userAnswers[qId].indexOf(optIndex);
+        if (idx > -1) userAnswers[qId].splice(idx, 1);
+        else userAnswers[qId].push(optIndex);
+    }
+    renderQuestion();
+}
+
+function checkAnswer() {
+    const q = activeQuestions[currentQuestionIndex];
+    if (!userAnswers[q.id] || userAnswers[q.id].length === 0) {
+        alert('Please select an answer before checking.');
+        return;
+    }
+
+    const selected = [...userAnswers[q.id]].sort();
+    const correct = [...q.correct].sort();
+    const isCorrect = JSON.stringify(selected) === JSON.stringify(correct);
+    answeredStatus[q.id] = isCorrect ? 'correct' : 'wrong';
+    renderQuestion();
+}
+
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+}
+
+function nextQuestion() {
+    const q = activeQuestions[currentQuestionIndex];
+    // In practice/topic mode, auto-check the answer before moving on
+    if (currentMode !== 'exam' && !answeredStatus[q.id]) {
+        if (userAnswers[q.id] && userAnswers[q.id].length > 0) {
+            const selected = [...userAnswers[q.id]].sort();
+            const correct = [...q.correct].sort();
+            answeredStatus[q.id] = JSON.stringify(selected) === JSON.stringify(correct) ? 'correct' : 'wrong';
+            renderQuestion();
+            return; // Show the result first, user clicks Next again to proceed
+        }
+    }
+    if (currentMode === 'exam' && !userAnswers[q.id]) {
+        userAnswers[q.id] = [];
+    }
+    if (currentQuestionIndex < activeQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    }
+}
+
+function finishExam() {
+    clearInterval(timerInterval);
+    examFinished = true;
+
+    // Auto-check all unanswered in exam mode
+    activeQuestions.forEach(q => {
+        if (!answeredStatus[q.id]) {
+            const selected = userAnswers[q.id] ? [...userAnswers[q.id]].sort() : [];
+            const correct = [...q.correct].sort();
+            answeredStatus[q.id] = JSON.stringify(selected) === JSON.stringify(correct) ? 'correct' : 'wrong';
+        }
+    });
+
+    showResults();
+}
+
+function showResults() {
+    document.getElementById('quizArea').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+
+    let correct = 0;
+    let total = activeQuestions.length;
+    const moduleScores = {};
+
+    activeQuestions.forEach(q => {
+        if (!moduleScores[q.module]) moduleScores[q.module] = { correct: 0, total: 0 };
+        moduleScores[q.module].total++;
+        if (answeredStatus[q.id] === 'correct') {
+            correct++;
+            moduleScores[q.module].correct++;
+        }
+    });
+
+    const percent = Math.round((correct / total) * 100);
+    const passed = percent >= 75;
+
+    document.getElementById('scorePercent').textContent = percent + '%';
+    document.getElementById('scoreCircle').className = 'score-circle ' + (passed ? 'pass' : 'fail');
+    document.getElementById('passFailMsg').textContent = passed ? 'PASSED' : 'FAILED';
+    document.getElementById('passFailMsg').style.color = passed ? 'var(--correct)' : 'var(--wrong)';
+    document.getElementById('scoreSummary').textContent = `You answered ${correct} out of ${total} questions correctly.`;
+
+    const moduleNames = {
+        1: 'Block 1: Data & Analysis Concepts',
+        2: 'Block 2: Python Basics',
+        3: 'Block 3: Working with Data',
+        4: 'Block 4: Communicating Insights'
+    };
+
+    let breakdownHTML = '';
+    Object.keys(moduleScores).sort().forEach(m => {
+        const ms = moduleScores[m];
+        const mp = Math.round((ms.correct / ms.total) * 100);
+        const color = mp >= 75 ? 'var(--correct)' : 'var(--wrong)';
+        breakdownHTML += `<div class="breakdown-row">
+            <span>${moduleNames[m] || 'Module ' + m}</span>
+            <span>${ms.correct}/${ms.total} (${mp}%)</span>
+            <div class="breakdown-bar"><div class="breakdown-fill" style="width:${mp}%;background:${color}"></div></div>
+        </div>`;
+    });
+
+    document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+}
+
+function reviewExam() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('checkBtn').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    currentQuestionIndex = 0;
+
+    // Show all explanations
+    activeQuestions.forEach(q => {
+        if (!answeredStatus[q.id]) {
+            answeredStatus[q.id] = 'wrong';
+        }
+    });
+
+    renderQuestion();
+}
+</script>
+
+</body>
+</html>

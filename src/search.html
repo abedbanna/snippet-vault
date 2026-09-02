@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search | Al-banna Tutorials</title>
+    <meta name="description" content="Search all courses, modules and tutorials on Al-banna Tutorials.">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root{--primary-color:#3949ab;--accent-color:#283593;--dark-color:#1a237e;--light-color:#e8eaf6}
+body{font-family:'Roboto',sans-serif;color:#333;background:#f8f9fa;line-height:1.7}
+h1,h2,h3,h4,h5{font-family:'Poppins',sans-serif;font-weight:600}
+.hero{background:linear-gradient(135deg,var(--dark-color),var(--primary-color));color:#fff;padding:56px 0 44px}
+.hero h1{font-weight:700} .hero p{opacity:.9;max-width:760px}
+.card-x{background:#fff;border-radius:12px;padding:28px 32px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-x h2{font-size:1.3rem;color:var(--primary-color);padding-bottom:10px;border-bottom:3px solid var(--light-color);margin-bottom:18px}
+.btn-primary{background:var(--primary-color);border-color:var(--primary-color)} .btn-primary:hover{background:var(--accent-color);border-color:var(--accent-color)}
+a{color:var(--primary-color)}
+.course-card{background:#fff;border:0;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;height:100%;overflow:hidden}
+.course-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.1)}
+.course-card .top{height:6px} .course-card .icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+.tag{display:inline-block;background:var(--light-color);color:var(--accent-color);font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:12px;margin:2px}
+.filters .btn{border-radius:20px;font-size:.85rem} .filters .btn.active{background:var(--primary-color);color:#fff;border-color:var(--primary-color)}
+.result{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.05)} .result mark{background:#fff3b0;padding:0 2px}
+.stat{font-size:2rem;font-weight:700;color:var(--primary-color);font-family:'Poppins',sans-serif}
+</style>
+    
+</head>
+<body>
+<section class="hero"><div class="container"><h1>Search</h1><p class="lead mb-0">Search every course, module and tutorial on the site.</p></div></section>
+<div class="container py-4">
+ <form class="d-flex gap-2 mb-4" action="/search.html" method="get" role="search"><input class="form-control form-control-lg" type="search" name="q" id="q" placeholder="e.g. LSTM, docker compose, double slit, ReAct…" aria-label="Search" autofocus><button class="btn btn-primary btn-lg" type="submit"><i class="fas fa-search"></i></button></form>
+ <p class="text-muted" id="status">Type a query to search.</p>
+ <div id="results"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js"></script>
+<script>
+(function(){var q=document.getElementById('q'),st=document.getElementById('status'),out=document.getElementById('results'),fuse=null,data=[];
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});}
+function hl(s,terms){s=esc(s);terms.forEach(function(t){if(t.length<2)return;s=s.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');});return s;}
+function run(){var v=(q.value||'').trim();if(!v){st.textContent='Type a query to search.';out.innerHTML='';return;}
+ if(!fuse){st.textContent='Loading index…';return;}
+ var r=fuse.search(v,{limit:40});var terms=v.split(/\s+/);st.textContent=r.length?r.length+' result'+(r.length>1?'s':'')+' for “'+v+'”':'No results for “'+v+'”. Try a broader term.';
+ out.innerHTML=r.map(function(x){var d=x.item;var ctx=d.c?'<span class="badge bg-light text-secondary border me-2">'+esc(d.c)+'</span>':'';var lang=d.l==='ar'?'<span class="badge bg-light text-secondary border">عربي</span>':'';
+  return '<div class="result"><div class="mb-1">'+ctx+lang+'</div><h5 class="mb-1"><a href="'+d.u+'">'+hl(d.t,terms)+'</a></h5><p class="small text-muted mb-1">'+hl(d.d,terms)+'</p><small class="text-secondary">'+esc(d.u)+'</small></div>';}).join('');
+ if(window.gtag)gtag('event','search',{search_term:v});}
+fetch('/search-index.json').then(function(r){return r.json()}).then(function(j){data=j;fuse=new Fuse(data,{keys:[{name:'t',weight:.5},{name:'tags',weight:.2},{name:'d',weight:.2},{name:'x',weight:.1},{name:'c',weight:.1}],threshold:.38,ignoreLocation:true,minMatchCharLength:2});run();});
+var m=location.search.match(/[?&]q=([^&]*)/);if(m)q.value=decodeURIComponent(m[1].replace(/\+/g,' '));
+var t;q.addEventListener('input',function(){clearTimeout(t);t=setTimeout(run,150);});document.querySelector('form').addEventListener('submit',function(e){e.preventDefault();run();history.replaceState(null,'','/search.html?q='+encodeURIComponent(q.value));});
+})();</script>
+</body>
+</html>

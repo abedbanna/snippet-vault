@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4: Artifacts &amp; Your First Jira Project - Scrum Methodology Tutorial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 56px;
+        }
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success-color);
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .key-concept {
+            background: #f0f7ff;
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        pre {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+        .section-title {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin: 30px 0 20px 0;
+        }
+        .table-responsive {
+            margin: 20px 0;
+        }
+        .badge-custom {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+        }
+        .sidebar {
+            position: sticky;
+            top: 70px;
+            max-height: calc(100vh - 90px);
+            overflow-y: auto;
+        }
+        .sidebar a {
+            color: #495057;
+            text-decoration: none;
+            display: block;
+            padding: 8px 15px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .sidebar a:hover {
+            background: #f8f9fa;
+            border-left-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        .sidebar a.active {
+            background: #e9ecef;
+            border-left-color: var(--accent-color);
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+    
+        /* DARK THEME OVERRIDE */
+        *{box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --warning:#f59e0b;--danger:#ef4444;
+            --text:#f1f5f9;--text2:#94a3b8;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --warning:#d97706;--danger:#dc2626;
+            --text:#0f172a;--text2:#334155;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --code:#1e293b;
+        }
+        body{
+            font-family:'Inter',sans-serif !important;
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            line-height:1.7;
+        }
+        a{color:var(--primary);transition:color .2s}
+        a:hover{color:#60a5fa}
+
+        /* Bootstrap overrides */
+        .navbar{
+            background:rgba(11,15,25,.92) !important;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border) !important;
+            padding:0 24px !important;
+            box-shadow:none !important;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{
+            font-weight:700 !important;font-size:1.15rem !important;
+            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
+        }
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{
+            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
+            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
+        }
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        .navbar-collapse{background:transparent !important}
+        @media(max-width:991px){
+            .navbar-collapse{
+                background:rgba(11,15,25,.98) !important;
+                border-radius:0 0 12px 12px;padding:12px 0;
+                border:1px solid var(--border);border-top:none;
+            }
+            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
+        }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            background:none !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
+            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+            transition:all .2s;margin-left:8px;
+        }
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Hero */
+        .hero, .hero-section{
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            position:relative;overflow:hidden;
+            padding:80px 0 60px !important;
+            margin-bottom:0 !important;
+        }
+        .hero::before,.hero-section::before{
+            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
+        }
+        .hero::after,.hero-section::after{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:32px 32px;pointer-events:none;
+        }
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
+        .hero h1,.hero-section h1{
+            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
+            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
+            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+            color:transparent !important;
+        }
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
+            color:var(--text2) !important;opacity:1 !important;
+        }
+        .hero .display-4{font-size:2.8rem !important}
+
+        /* Cards */
+        .card{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:12px !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-bottom:1px solid var(--border) !important;
+            font-weight:600;
+        }
+        .card-title{color:var(--text) !important}
+        .card-text{color:var(--text2) !important}
+
+        /* Section titles */
+        .section-title, h2.section-title, h3.section-title{
+            color:var(--text) !important;
+            border-bottom-color:var(--primary) !important;
+        }
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
+        p{color:var(--text2)}
+
+        /* Info/Warning/Success boxes */
+        .info-box,.alert-info-custom,.alert-info,.key-concept{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--primary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        
+        .warning-box,.alert-warning-custom,.alert-warning{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--warning) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
+        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
+        
+        .success-box,.alert-success-custom,.alert-success{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--success) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .success-box strong{color:var(--success) !important}
+        .success-box p{color:var(--text2) !important}
+
+        .alert-tip-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--secondary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert-danger,.alert-danger-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--danger) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+
+        /* Code blocks */
+        pre, pre[class*="language-"]{
+            background:var(--code) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:8px !important;
+            color:#e6edf3 !important;
+            font-family:'JetBrains Mono',monospace !important;
+            font-size:.875rem !important;
+            line-height:1.6 !important;
+            padding:20px !important;
+        }
+        code{
+            font-family:'JetBrains Mono',monospace !important;
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            padding:2px 6px;border-radius:4px;
+            font-size:.85em !important;
+        }
+        pre code{
+            background:transparent !important;
+            color:#e6edf3 !important;
+            padding:0 !important;
+        }
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn, .copy-btn{
+            position:absolute;top:10px;right:10px;
+            background:var(--surface2) !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
+            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
+        }
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Tables */
+        .table,.dark-table,table{
+            color:var(--text) !important;
+            border-color:var(--border) !important;
+        }
+        .table th,table th{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-color:var(--border2) !important;
+            font-weight:600;
+        }
+        .table td,table td{
+            color:var(--text2) !important;
+            border-color:var(--border) !important;
+            background:transparent !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>*{
+            background:rgba(255,255,255,.02) !important;
+            color:var(--text2) !important;
+        }
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        .table-bordered{border-color:var(--border2) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
+        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
+
+        /* Sidebar / TOC */
+        .sidebar,.toc{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:10px !important;
+            padding:16px !important;
+        }
+        .sidebar a,.toc a,.toc .nav-link{
+            color:var(--text2) !important;
+            border-left-color:transparent !important;
+        }
+        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
+            color:var(--primary) !important;
+            border-left-color:var(--primary) !important;
+            background:rgba(59,130,246,.05) !important;
+        }
+        .list-group-item{
+            background:var(--surface) !important;
+            border-color:var(--border) !important;
+            color:var(--text2) !important;
+        }
+        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
+
+        /* Badges */
+        .badge,.badge-custom{
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            border:1px solid var(--border2);
+        }
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+
+        /* Buttons */
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
+        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
+
+        /* Misc Bootstrap */
+        .breadcrumb{background:var(--surface) !important}
+        .breadcrumb-item a{color:var(--primary) !important}
+        .breadcrumb-item.active{color:var(--text2) !important}
+        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
+        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
+        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
+        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
+        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .modal-header{border-bottom-color:var(--border) !important}
+        .modal-footer{border-top-color:var(--border) !important}
+        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
+        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
+        .nav-tabs{border-bottom-color:var(--border2) !important}
+        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
+        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
+        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
+        .nav-pills .nav-link{color:var(--text2) !important}
+        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
+        .progress{background:var(--surface2) !important}
+        .progress-bar{background:var(--primary) !important}
+        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}
+        .text-dark{color:var(--text) !important}
+        .bg-light{background:var(--surface2) !important}
+        .bg-white{background:var(--surface) !important}
+        .border{border-color:var(--border2) !important}
+        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
+        .lead{color:var(--text2) !important}
+        strong,b{color:var(--text) !important}
+        ::selection{background:rgba(59,130,246,.3);color:#fff}
+
+        /* Step cards / numbered steps */
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+
+        /* Scroll to top */
+        .scroll-top{
+            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
+            color:var(--text2);display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
+        }
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* Footer override */
+        footer,.footer{
+            background:var(--surface) !important;
+            border-top:1px solid var(--border) !important;
+            color:var(--text2) !important;
+        }
+        footer a{color:var(--primary) !important}
+        footer p,footer span,footer div{color:var(--text2) !important}
+
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#navbar-content">
+
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html"><i class="fa-solid fa-arrows-rotate"></i> Scrum Methodology</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="#artifacts-intro">Artifacts</a></li>
+                <li class="nav-item"><a class="nav-link" href="#backlog">Backlog</a></li>
+                <li class="nav-item"><a class="nav-link" href="#increment">Increment</a></li>
+                <li class="nav-item"><a class="nav-link" href="#jira-setup">Jira Setup</a></li>
+                <li class="nav-item"><a class="nav-link" href="#backlog-build">Build Backlog</a></li>
+                <li class="nav-item"><a class="nav-link" href="#project">Project</a></li>
+            </ul>
+        </div>
+    </div>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
+
+<div class="hero">
+    <div class="container">
+        <h1 class="display-4">Module 4: Artifacts &amp; Your First Jira Project</h1>
+        <p class="lead">Scrum Methodology — From Agile Foundations to Running Real Sprints</p>
+        <div class="mt-4">
+            <span class="badge bg-light text-dark me-2">Module 4 of 8</span>
+            <span class="badge bg-light text-dark me-2">Hands-on with Jira</span>
+            <span class="badge bg-light text-dark me-2">Requires Module 3</span>
+            <span class="badge bg-light text-dark">~3 hours</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <nav id="navbar-content" class="nav flex-column">
+                    <a class="nav-link" href="#overview">Module Overview</a>
+                    <a class="nav-link" href="#artifacts-intro">Why Artifacts Exist</a>
+                    <a class="nav-link" href="#backlog">The Product Backlog</a>
+                    <a class="nav-link ms-3" href="#backlog-ordering">Ordering Factors</a>
+                    <a class="nav-link ms-3" href="#backlog-deep">DEEP Qualities</a>
+                    <a class="nav-link ms-3" href="#product-goal">The Product Goal</a>
+                    <a class="nav-link" href="#sprint-backlog">The Sprint Backlog</a>
+                    <a class="nav-link" href="#increment">Increment &amp; DoD</a>
+                    <a class="nav-link ms-3" href="#dod-example">Example DoD</a>
+                    <a class="nav-link ms-3" href="#not-done">When It Isn't Done</a>
+                    <a class="nav-link" href="#jira-setup">Hands-on: Jira Setup</a>
+                    <a class="nav-link" href="#backlog-build">Hands-on: TaskFlow Backlog</a>
+                    <a class="nav-link" href="#practical">Exercise 4.1</a>
+                    <a class="nav-link" href="#project">Module 4 Project</a>
+                    <a class="nav-link" href="#resources">Resources</a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <!-- Module Overview -->
+            <section id="overview">
+                <h2 class="section-title">Module Overview</h2>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Learning Objectives</h5>
+                        <p>By the end of this module, you will be able to:</p>
+                        <ol>
+                            <li>Explain why Scrum defines exactly three artifacts and what each one makes transparent</li>
+                            <li>Pair each artifact with its commitment (Product Goal, Sprint Goal, Definition of Done) and explain what the commitment adds</li>
+                            <li>Describe the Product Backlog as a single, ordered, emergent list and justify an ordering using value, risk, dependency, and size</li>
+                            <li>Assess a backlog against the DEEP qualities and explain refinement as an ongoing activity</li>
+                            <li>Write a concrete Definition of Done for a web application and defend each criterion</li>
+                            <li>Create a real, team-managed Scrum project in Jira, configure sprints and story points, and build the full TaskFlow Product Backlog with epics and ordered user stories</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Course Information</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Module:</strong> 4 of 8</li>
+                            <li><strong>Format:</strong> Theory (the three artifacts) followed by two guided hands-on labs in Jira</li>
+                            <li><strong>Prerequisites:</strong> Module 3 (Scrum accountabilities) — you should know what a Product Owner, Scrum Master, and Developers are responsible for</li>
+                            <li><strong>Running example:</strong> <em>TaskFlow</em> — this module is where its backlog finally becomes real, in a real tool</li>
+                            <li><strong>Tools needed:</strong> A web browser and an email address for a free Atlassian account</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4><i class="fa-solid fa-flask"></i> This is the first hands-on module</h4>
+                    <p>Everything up to now has been on paper. From this module onward you work inside <strong>Jira</strong>, the most widely used agile project tool in the industry. Before you start, make sure you can create a <strong>free Jira account</strong> (the free tier supports up to 10 users — more than enough for this course). Every later module builds on the Jira project you create today, so do not skip the hands-on sections.</p>
+                </div>
+            </section>
+
+            <!-- Why artifacts exist -->
+            <section id="artifacts-intro">
+                <h2 class="section-title">Why Artifacts Exist</h2>
+
+                <p>Scrum is built on empiricism: decisions are made from what is <em>observed</em>, not what is assumed. But you can only inspect what you can see. Scrum's three artifacts exist for exactly one reason — to make the <strong>work and the value transparent</strong> so that everyone inspecting them sees the same reality:</p>
+
+                <ul>
+                    <li>The <strong>Product Backlog</strong> makes transparent <em>what might be built</em> — everything the product may need, in one ordered list.</li>
+                    <li>The <strong>Sprint Backlog</strong> makes transparent <em>what is being built right now</em> — the current Sprint's plan, visible to the whole team every day.</li>
+                    <li>The <strong>Increment</strong> makes transparent <em>what has actually been built</em> — working, usable product, not promises.</li>
+                </ul>
+
+                <p>An artifact that hides reality is worse than no artifact at all. A backlog nobody has updated in months, or an "increment" that only runs on one developer's laptop, gives the team false confidence and leads to bad decisions. Low-transparency artifacts are one of the most common ways Scrum quietly fails.</p>
+
+                <h3 class="mt-4">Each Artifact Carries a Commitment</h3>
+                <p>The 2020 Scrum Guide strengthened the artifacts by pairing each one with a <strong>commitment</strong>. The commitment answers the question: <em>"against what do we measure progress on this artifact?"</em> Without the commitment, the artifact is just a container; with it, the artifact has a direction.</p>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>Artifact</th><th>Commitment</th><th>What the commitment provides</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Product Backlog</strong></td><td>Product Goal</td><td>A long-term objective for the product — the "destination" the backlog items step toward</td></tr>
+                            <tr><td><strong>Sprint Backlog</strong></td><td>Sprint Goal</td><td>The single objective of the current Sprint — the reason the Sprint is worth running</td></tr>
+                            <tr><td><strong>Increment</strong></td><td>Definition of Done</td><td>A shared quality standard — the formal description of the state work must reach to count as part of the Increment</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box">
+                    <h4><i class="fa-solid fa-bullseye"></i> A useful mental model</h4>
+                    <p>Think of each pair as <strong>map + destination</strong>. The Product Backlog is the map of everything we might do; the Product Goal is where we are heading. The Sprint Backlog is this leg of the journey; the Sprint Goal is why this leg matters. The Increment is the ground actually covered; the Definition of Done is the proof we really covered it and did not just draw a line on the map.</p>
+                </div>
+            </section>
+
+            <!-- Product Backlog -->
+            <section id="backlog">
+                <h2 class="section-title">The Product Backlog</h2>
+
+                <p>The Product Backlog is a <strong>single, ordered, emergent list</strong> of everything that might improve the product. Every word in that definition is load-bearing:</p>
+
+                <ul>
+                    <li><strong>Single.</strong> There is exactly <em>one</em> Product Backlog per product. Not one per team, one per stakeholder, or a "shadow backlog" in someone's spreadsheet. If work does not appear on the backlog, it does not exist — this is what makes the backlog the single source of truth.</li>
+                    <li><strong>Ordered.</strong> Not merely "prioritised" into vague buckets of high/medium/low, but <em>ordered</em>: item 1 is above item 2, which is above item 3. When the team pulls work, there is never any doubt about what comes next. Ordering is the Product Owner's accountability.</li>
+                    <li><strong>Emergent.</strong> The backlog is never finished and never complete. Items are added, split, re-ordered, rewritten, and deleted as the product and the market teach us new things. A backlog frozen at the start of the project is just a waterfall requirements document wearing an agile costume.</li>
+                </ul>
+
+                <h3 id="backlog-ordering" class="mt-4">Ordering Factors: Value, Risk, Dependency, Size</h3>
+                <p>"Order by value" is the headline, but experienced Product Owners weigh at least four factors together:</p>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-gem text-primary"></i> Value</h5>
+                                <p class="mb-0">How much does this item move users, revenue, or the Product Goal? The item a user cannot live without outranks the item that is merely nice. For TaskFlow, <em>creating a task</em> is worth more than <em>dark mode</em> — without the first, the second is pointless.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-triangle-exclamation text-primary"></i> Risk</h5>
+                                <p class="mb-0">Items with big unknowns (a new technology, an unproven integration) may deserve to move <em>up</em>, so the team learns whether they are feasible while there is still time to change course. Deferring all risk to the end is the waterfall mistake all over again.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-link text-primary"></i> Dependency</h5>
+                                <p class="mb-0">Some items technically require others. In TaskFlow, <em>assigning a task to a teammate</em> depends on <em>sharing a project</em>, which depends on <em>having user accounts</em>. Dependencies can force a lower-value item above a higher-value one.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-maximize text-primary"></i> Size</h5>
+                                <p class="mb-0">Between two items of similar value, the smaller one often wins — it delivers feedback sooner and costs less if it turns out to be wrong. Size also signals when an item needs splitting before it can enter a Sprint.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="mt-4">Refinement: An Ongoing Activity, Not a Meeting</h3>
+                <p><strong>Product Backlog refinement</strong> is the act of breaking down large items, adding detail, estimating, and re-ordering. Two things students often get wrong:</p>
+                <ul>
+                    <li>Refinement is <strong>not one of the five Scrum events</strong>. It is a continuous activity that happens whenever it is needed — many teams hold a weekly refinement session as a habit, but the Scrum Guide deliberately does not prescribe one.</li>
+                    <li>Refinement follows a <strong>gradient of detail</strong>: items near the top of the backlog (about to enter a Sprint) are small and precise; items near the bottom stay large and fuzzy. Detailing the whole backlog up front is wasted work, because most of it will change before it is built.</li>
+                </ul>
+
+                <h3 id="backlog-deep" class="mt-4">A Healthy Backlog is DEEP</h3>
+                <p>Roman Pichler and Mike Cohn's <strong>DEEP</strong> checklist is the standard health test for a Product Backlog:</p>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>Quality</th><th>Meaning</th><th>Smell when it's missing</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>D</strong>etailed appropriately</td><td>Top items are Sprint-ready; lower items are intentionally coarse</td><td>Every item has 3 pages of spec — or the top item is a one-line mystery</td></tr>
+                            <tr><td><strong>E</strong>mergent</td><td>The backlog changes as learning arrives; items appear, split, and die</td><td>The backlog looks identical to three months ago</td></tr>
+                            <tr><td><strong>E</strong>stimated</td><td>Items carry a size (story points in this course, from Module 6) so ordering and forecasting are informed</td><td>Nobody can say whether the next release is two Sprints or ten away</td></tr>
+                            <tr><td><strong>P</strong>rioritised</td><td>Strictly ordered top to bottom, most valuable next work first</td><td>Forty items all marked "high priority"</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 id="product-goal" class="mt-4">The Product Goal</h3>
+                <p>The <strong>Product Goal</strong> is the backlog's commitment: a single long-term objective that describes a future state of the product. The Product Backlog exists to serve it — every item should be a plausible step toward the goal, and items that serve no goal are candidates for deletion. The Scrum Team must fulfil (or abandon) one Product Goal before taking on the next; a team chasing three goals at once is really chasing none.</p>
+
+                <div class="key-concept">
+                    <h5><i class="fa-solid fa-flag-checkered"></i> TaskFlow's first Product Goal</h5>
+                    <p class="mb-1">"<strong>Individuals can fully manage their daily tasks in TaskFlow.</strong>"</p>
+                    <p class="mb-0">Notice what it does <em>not</em> say: nothing about teams, sharing, dashboards, or dark mode. That is deliberate. A good Product Goal is narrow enough to be reached and to make ordering decisions for you: any story that helps a single user manage tasks outranks any story that does not — yet. When the goal is met, the team commits to the next one (perhaps: "Small teams can plan a week of work together in TaskFlow").</p>
+                </div>
+            </section>
+
+            <!-- Sprint Backlog -->
+            <section id="sprint-backlog">
+                <h2 class="section-title">The Sprint Backlog</h2>
+
+                <p>The Sprint Backlog is created at Sprint Planning (you will run one in Module 5) and is the Developers' plan for the Sprint. It is composed of three layers, often summarised as <strong>why, what, how</strong>:</p>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column gap-2">
+                            <div class="p-3 rounded" style="background:rgba(59,130,246,.12);border-left:4px solid #3b82f6;"><strong>Why — the Sprint Goal.</strong> The single objective of the Sprint, e.g. "A user can manage a basic task list."</div>
+                            <div class="p-3 rounded ms-3" style="background:rgba(59,130,246,.12);border-left:4px solid #3b82f6;"><strong>What — the selected Product Backlog items.</strong> The stories the team pulled from the top of the Product Backlog for this Sprint.</div>
+                            <div class="p-3 rounded ms-4" style="background:rgba(59,130,246,.12);border-left:4px solid #3b82f6;"><strong>How — the plan.</strong> The tasks, subtasks, and technical steps for delivering the items — usually visible as cards moving across the board.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mt-3">Three rules govern the Sprint Backlog:</p>
+                <ul>
+                    <li><strong>It is owned by the Developers.</strong> Only they may change it, because only they are accountable for the plan. The Product Owner cannot push extra items in mid-Sprint, and a manager cannot re-assign its tasks. (Anyone may <em>propose</em>; the Developers decide.)</li>
+                    <li><strong>It changes throughout the Sprint.</strong> This surprises people: the Sprint Backlog is <em>not frozen</em>. As the Developers learn more, they add newly discovered tasks, drop unnecessary ones, and renegotiate scope with the Product Owner. The plan is updated at least daily — that is much of what the Daily Scrum is for.</li>
+                    <li><strong>The Sprint Goal does not change.</strong> Scope flexes; the goal holds. If the goal itself becomes obsolete, the answer is not to quietly rewrite it, but for the Product Owner to cancel the Sprint — a rare and expensive event you will study in Module 5.</li>
+                </ul>
+
+                <div class="warning-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> "Flexible scope" is not "anything goes"</strong>
+                    <p>Changes during the Sprint must never <em>endanger the Sprint Goal</em>. Dropping a nice-to-have story to protect the goal is healthy adaptation; sneaking in an unrelated feature request from a loud stakeholder is a broken Sprint. The Sprint Goal is the test every mid-Sprint change must pass.</p>
+                </div>
+            </section>
+
+            <!-- Increment and DoD -->
+            <section id="increment">
+                <h2 class="section-title">The Increment &amp; the Definition of Done</h2>
+
+                <p>The <strong>Increment</strong> is the concrete output of a Sprint: a body of working product. Three properties define it:</p>
+                <ul>
+                    <li><strong>Usable.</strong> The Increment must be in a state where it <em>could</em> be released. Whether the Product Owner actually releases it is a business decision — but the option must genuinely exist. "It works if you know which buttons not to press" is not usable.</li>
+                    <li><strong>Additive.</strong> Each Increment adds to all prior Increments and is verified together with them. Sprint 3's Increment includes Sprints 1 and 2 — still working. New features that break old ones produce no Increment at all.</li>
+                    <li><strong>Verified.</strong> Work only becomes part of the Increment the moment it meets the <strong>Definition of Done</strong>. Multiple Increments may be created (and even released) within a single Sprint; the Sprint Review is not a release gate.</li>
+                </ul>
+
+                <p>The <strong>Definition of Done (DoD)</strong> is a formal, written description of the state work must reach to be considered part of the Increment. It is the team's shared quality bar. Its power is in what it removes: ambiguity. When a Developer says "the task story is done", everyone — PO, stakeholders, other Developers — knows <em>exactly</em> what that claim includes, because the DoD is written down and applies to every item equally.</p>
+
+                <h3 id="dod-example" class="mt-4">Example: A Definition of Done for a Web App</h3>
+
+                <div class="card">
+                    <div class="card-header bg-primary text-white"><i class="fa-solid fa-clipboard-check"></i> Definition of Done — example for a web application</div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><i class="fa-solid fa-square-check text-success"></i> <strong>Code reviewed</strong> — at least one other Developer has reviewed and approved the change</li>
+                            <li class="mb-2"><i class="fa-solid fa-square-check text-success"></i> <strong>Tests pass</strong> — automated unit and integration tests are written for the new behaviour and the full suite is green</li>
+                            <li class="mb-2"><i class="fa-solid fa-square-check text-success"></i> <strong>Deployed to staging</strong> — the change runs in a production-like environment, not just on a laptop</li>
+                            <li class="mb-2"><i class="fa-solid fa-square-check text-success"></i> <strong>Responsive</strong> — verified on a mobile-sized viewport as well as desktop</li>
+                            <li class="mb-0"><i class="fa-solid fa-square-check text-success"></i> <strong>Accessible</strong> — keyboard navigable, labels on form fields, sufficient colour contrast</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p class="mt-3">Notice that every criterion is <strong>checkable</strong> — a yes/no question anyone can answer. "Code is clean" is an aspiration; "code is reviewed by another Developer" is a criterion. Also notice the DoD applies to <em>every</em> backlog item; per-item conditions ("the calendar shows overdue tasks in red") belong in that item's <em>acceptance criteria</em>, which you will meet properly in Module 6.</p>
+
+                <h3 id="not-done" class="mt-4">What Happens When an Item Isn't Done?</h3>
+                <p>The Sprint ends on schedule regardless of the state of the work — the timebox is never extended. If an item does not meet the Definition of Done by the end of the Sprint:</p>
+                <ul>
+                    <li>It is <strong>not shown as finished</strong> at the Sprint Review and earns no credit toward velocity.</li>
+                    <li>It <strong>returns to the Product Backlog</strong>, where the Product Owner re-orders it against everything else. It does <em>not</em> automatically roll into the next Sprint — perhaps something more valuable has appeared in the meantime.</li>
+                    <li>The team may re-estimate the remaining work, since part of it may already be complete.</li>
+                </ul>
+
+                <div class="warning-box">
+                    <strong><i class="fa-solid fa-ban"></i> There is no "90% done"</strong>
+                    <p>An item is Done or it is not — Scrum recognises no partial credit. "90% done" software has a habit of staying 90% done for months, because the last 10% (integration, edge cases, testing) is where the risk lives. Counting almost-done work as progress destroys the transparency the Increment exists to provide. If a team consistently ends Sprints with half-done items, the fix is smaller stories and honest Sprint Planning — not a softer Definition of Done.</p>
+                </div>
+            </section>
+
+            <!-- Jira setup -->
+            <section id="jira-setup">
+                <h2 class="section-title">Hands-on: Create Your Jira Project</h2>
+
+                <p>Time to leave the slides behind. In this lab you create a free Jira site and a Scrum project for TaskFlow. Work through the steps in order — the next lab and Modules 5–8 all build on this project.</p>
+
+                <div class="card">
+                    <div class="card-body">
+                        <ol>
+                            <li class="mb-3">
+                                <strong>Create a free Atlassian account.</strong>
+                                <ul>
+                                    <li>Go to <a href="https://www.atlassian.com/software/jira" target="_blank">atlassian.com/software/jira</a> and choose <em>Get it free</em>.</li>
+                                    <li>Sign up with your university email (or a personal one). The <strong>Free plan supports up to 10 users</strong> — plenty for this course, and it never expires.</li>
+                                    <li>When asked, create a new <em>site</em> — pick any site name, e.g. <code>yourname-scrum.atlassian.net</code>. This is your team's home address in Jira.</li>
+                                </ul>
+                            </li>
+                            <li class="mb-3">
+                                <strong>Create the TaskFlow project.</strong>
+                                <ul>
+                                    <li>From the top navigation choose <em>Projects → Create project</em>.</li>
+                                    <li>Select the <strong>Scrum</strong> template (under "Software development"). Do <em>not</em> pick Kanban — we need sprints.</li>
+                                    <li>Choose the project type <strong>Team-managed</strong>. Team-managed projects are self-contained and configured by the team itself — perfect for learning (company-managed projects need admin schemes we do not want yet).</li>
+                                    <li>Name the project <strong>TaskFlow</strong> and set the key to <strong>TF</strong>. The key becomes the prefix of every issue: your first story will be <code>TF-1</code>.</li>
+                                </ul>
+                            </li>
+                            <li class="mb-3">
+                                <strong>Tour the interface.</strong> Spend five minutes clicking through the left-hand sidebar of the project:
+                                <ul>
+                                    <li><strong>Backlog view</strong> — a vertical list of all issues, with a sprint panel at the top. This is where the Product Owner lives: ordering is literally drag-and-drop.</li>
+                                    <li><strong>Board view</strong> — the columns (To Do / In Progress / Done) that visualise the <em>current sprint's</em> Sprint Backlog. Empty for now — no sprint is running yet.</li>
+                                    <li><strong>Timeline</strong> — a Gantt-style view of epics across time. Useful for stakeholder conversations; we will use it lightly.</li>
+                                </ul>
+                            </li>
+                            <li class="mb-3">
+                                <strong>Configure the project.</strong>
+                                <ul>
+                                    <li>Open <em>Project settings → Features</em> and make sure the <strong>Sprints</strong> feature is enabled (it usually is with the Scrum template).</li>
+                                    <li>Still under Features, set the <strong>Estimation</strong> field to <strong>Story points</strong>. We will not estimate until Module 6, but configuring it now means the field is ready.</li>
+                                </ul>
+                            </li>
+                            <li class="mb-0">
+                                <strong>Create your first epic.</strong>
+                                <ul>
+                                    <li>In the Backlog view, open the <em>Epic</em> panel (or use <em>Create → Issue type: Epic</em>).</li>
+                                    <li>Create an epic named <strong>Task Management</strong>. Congratulations — <code>TF-1</code> exists. You will create the remaining epics in the next lab.</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4><i class="fa-solid fa-language"></i> Jira speaks its own dialect</h4>
+                    <p>Jira predates the 2020 Scrum Guide and serves many methodologies, so its vocabulary does not match Scrum's word for word. Keep this mapping in mind:</p>
+                    <ul class="mb-0">
+                        <li>A Jira <strong>"issue"</strong> = a Product Backlog item (a story, task, or bug — "issue" is the umbrella term).</li>
+                        <li>A Jira <strong>"epic"</strong> = a large feature grouping — a container for related stories, too big to build in one Sprint. Epics are a popular convention, not an official Scrum artifact.</li>
+                        <li>A Jira <strong>"sprint"</strong> = a Scrum Sprint. Same concept, and Jira's sprint has fields for a goal, a start date, and an end date.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Backlog build -->
+            <section id="backlog-build">
+                <h2 class="section-title">Hands-on: Build the TaskFlow Product Backlog</h2>
+
+                <p>You now have an empty project and a stakeholder wish list from Module 1. In this lab you convert that wish list into a real, ordered Product Backlog: four epics, at least twelve user stories, a deliberate order, and a written Product Goal.</p>
+
+                <h3 class="mt-4">Step 1 — Create the Four Epics</h3>
+                <p>Epics group related stories so the backlog stays navigable. Create these four (you already have the first):</p>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-list-check text-primary"></i> Task Management</h5>
+                                <p class="card-text mb-0">The core loop: create, edit, complete, delete tasks; projects and lists; due dates, reminders, calendar.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-people-group text-primary"></i> Collaboration</h5>
+                                <p class="card-text mb-0">Sharing projects, assigning tasks, comments, and attachments.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-user-lock text-primary"></i> Accounts &amp; Sign-in</h5>
+                                <p class="card-text mb-0">Google sign-in and user profiles — the foundation collaboration depends on.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fa-solid fa-chart-line text-primary"></i> Insights &amp; Polish</h5>
+                                <p class="card-text mb-0">Statistics dashboard, dark mode, mobile-friendly refinements.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="mt-4">Step 2 — Create the User Stories</h3>
+                <p>Create each story below as an issue of type <em>Story</em> and assign it to its epic (drag it onto the epic, or set the epic in the issue's details panel). Type the titles exactly — we reuse them in Modules 5 and 6. The "As a … I can …" pattern is the <em>user story</em> format, which Module 6 dissects in depth; for now, treat it as a title convention that keeps the user in view.</p>
+
+                <pre><code class="language-bash"># Epic: Task Management
+As a user, I can create a task with a title and description
+As a user, I can mark a task as complete
+As a user, I can edit a task's title and description
+As a user, I can delete a task
+As a user, I can organise tasks into projects and lists
+As a user, I can set a due date on a task
+As a user, I can receive a reminder before a task is due
+As a user, I can see my tasks in a calendar view
+
+# Epic: Collaboration
+As a project owner, I can share a project with a teammate
+As a team member, I can assign a task to a teammate
+As a team member, I can comment on a task
+As a team member, I can attach a file to a task
+
+# Epic: Accounts &amp; Sign-in
+As a visitor, I can sign in with my Google account
+As a user, I can view and edit my profile
+
+# Epic: Insights &amp; Polish
+As a user, I can switch to dark mode
+As a user, I can view a statistics dashboard of my week
+As a user, I can use TaskFlow comfortably on my phone</code></pre>
+
+                <p>That is 17 stories — comfortably past the 12 minimum. Feel free to add your own from Exercise 1.1, but keep these 17 intact.</p>
+
+                <h3 class="mt-4">Step 3 — Order the Backlog</h3>
+                <p>In the Backlog view, drag the stories into a single top-to-bottom order. Here is a suggested top 10 with the reasoning — <em>the reasoning matters more than the order itself</em>, and your Module 4 Project asks you to defend your own:</p>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>#</th><th>Story</th><th>Why here?</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>Create a task with a title and description</td><td>Highest value: without it there is no product at all</td></tr>
+                            <tr><td>2</td><td>Mark a task as complete</td><td>Completes the smallest useful loop — add work, finish work</td></tr>
+                            <tr><td>3</td><td>Edit a task's title and description</td><td>Users make typos immediately; core loop feels broken without it</td></tr>
+                            <tr><td>4</td><td>Delete a task</td><td>Rounds out full task control — the Product Goal's word "fully"</td></tr>
+                            <tr><td>5</td><td>Organise tasks into projects and lists</td><td>First big step beyond a flat list; high value for daily management</td></tr>
+                            <tr><td>6</td><td>Set a due date on a task</td><td>"Daily tasks" implies time; unlocks reminders and calendar later</td></tr>
+                            <tr><td>7</td><td>Sign in with my Google account</td><td>Moderate direct value but a <em>dependency</em> for all collaboration, and a <em>risk</em> item (external OAuth integration) worth de-risking early</td></tr>
+                            <tr><td>8</td><td>Receive a reminder before a task is due</td><td>Builds directly on due dates; strong retention value</td></tr>
+                            <tr><td>9</td><td>See my tasks in a calendar view</td><td>Valuable but larger; pure presentation on top of existing data</td></tr>
+                            <tr><td>10</td><td>Share a project with a teammate</td><td>Opens the Collaboration epic once accounts exist — but note it serves the <em>next</em> Product Goal more than the current one</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Everything else — assignment, comments, attachments, dark mode, dashboard — sits below, deliberately coarse and unrefined. That is DEEP's "detailed appropriately" in action: we will refine those items only when they approach the top.</p>
+
+                <h3 class="mt-4">Step 4 — Record the Product Goal</h3>
+                <p>Write the Product Goal where the whole team will see it:</p>
+
+                <pre><code class="language-bash">Product Goal: Individuals can fully manage their daily tasks in TaskFlow.</code></pre>
+
+                <p>Jira's team-managed projects have no dedicated "Product Goal" field, so use both of these conventions:</p>
+                <ul>
+                    <li>Put the goal in <em>Project settings → Details → Description</em>, so it appears on the project card.</li>
+                    <li>Optionally pin it at the very top of the backlog as a story-type issue named <code>[PRODUCT GOAL] Individuals can fully manage their daily tasks in TaskFlow</code> — some teams like the goal physically looking down at the list it governs. If you do this, never pull it into a sprint.</li>
+                </ul>
+
+                <div class="success-box">
+                    <strong><i class="fa-solid fa-circle-check"></i> Checkpoint</strong>
+                    <p>Before moving on you should have: a Jira site, a team-managed Scrum project <strong>TaskFlow (TF)</strong>, story points enabled, 4 epics, 17 ordered stories, and a recorded Product Goal. This exact project is the starting point of Module 5's Sprint Planning.</p>
+                </div>
+            </section>
+
+            <!-- Practical -->
+            <section id="practical">
+                <h2 class="section-title">Exercise 4.1 — Write TaskFlow's Definition of Done</h2>
+
+                <div class="alert-tip-custom info-box">
+                    <h4><i class="fa-solid fa-pen-ruler"></i> Exercise 4.1 (45 min)</h4>
+                    <p>The example DoD earlier in this module is a starting point, not an answer key. Produce TaskFlow's own Definition of Done:</p>
+                    <ol>
+                        <li><strong>Write at least 6 criteria.</strong> Each must be a checkable yes/no statement. Consider: code review, automated tests, staging deployment, responsiveness, accessibility, performance, security basics, documentation. Remember TaskFlow's brief promises "mobile-friendly" — should that live in the DoD or in individual stories? Decide and be ready to say why.</li>
+                        <li><strong>Add it to the Jira project.</strong> Either paste it into <em>Project settings → Details → Description</em> beneath the Product Goal, or create a pinned card/issue named <code>[DEFINITION OF DONE]</code> at the top of the backlog — the same techniques you used for the Product Goal.</li>
+                        <li><strong>Defend every criterion in one sentence.</strong> For each line, write one sentence starting with "Without this, …". If you cannot finish that sentence convincingly, the criterion probably does not belong in the DoD.</li>
+                    </ol>
+                </div>
+
+                <div class="warning-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Keep the DoD honest</strong>
+                    <p>A tempting student mistake is to write an aspirational DoD ("100% test coverage, zero known bugs, penetration tested") that no Sprint could ever satisfy. A Definition of Done the team cannot actually meet every Sprint produces permanent "not Done" work — which is worse than a modest DoD that is genuinely enforced and strengthened over time. Start realistic; ratchet up in Retrospectives.</p>
+                </div>
+            </section>
+
+            <!-- Project -->
+            <section id="project">
+                <h2 class="section-title">Module 4 Project: Backlog Inspection</h2>
+
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Project Requirements</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>1. The Jira Project</h6>
+                        <ul>
+                            <li>A team-managed Scrum project named TaskFlow (key TF) with story-point estimation enabled</li>
+                            <li>All 4 epics and at least 12 user stories (the guided build gives you 17), each story assigned to its epic</li>
+                            <li>The backlog fully ordered top to bottom — no ties, no "everything is priority 1"</li>
+                            <li>Evidence: an export (Backlog view → <em>Export</em>, or a CSV from issue search) <em>or</em> a screenshot of the full ordered backlog list</li>
+                        </ul>
+
+                        <h6>2. Product Goal &amp; Definition of Done</h6>
+                        <ul>
+                            <li>The written Product Goal, recorded in the Jira project (description or pinned card)</li>
+                            <li>Your Exercise 4.1 Definition of Done — minimum 6 checkable criteria, each defended in one sentence</li>
+                        </ul>
+
+                        <h6>3. Ordering Justification</h6>
+                        <ul>
+                            <li>A half-page justifying your <strong>top 5</strong> stories: for each, name which factor (value, risk, dependency, size) drove its position</li>
+                            <li>Identify at least one place where you deviated from the suggested order — or, if you kept it, one place where a reasonable Product Owner might deviate — and explain the trade-off</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="mt-4">Grading Rubric</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Jira project correctly set up (template, type, key, story points, sprints enabled)</td><td>20</td></tr>
+                            <tr><td>Epics &amp; stories complete, correctly grouped, and strictly ordered</td><td>25</td></tr>
+                            <tr><td>Product Goal recorded and consistent with the backlog's top items</td><td>10</td></tr>
+                            <tr><td>Definition of Done — 6+ checkable criteria, each defended</td><td>25</td></tr>
+                            <tr><td>Top-5 ordering justification (correct use of value/risk/dependency/size)</td><td>15</td></tr>
+                            <tr><td>Clarity and structure of the written submission</td><td>5</td></tr>
+                            <tr class="table-dark"><td><strong>Total</strong></td><td><strong>100</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Resources -->
+            <section id="resources">
+                <h2 class="section-title">Resources &amp; References</h2>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Primary Sources</div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li><i class="fa-solid fa-book"></i> <a href="https://scrumguides.org/scrum-guide.html#scrum-artifacts" target="_blank">Scrum Guide (2020) — Artifacts</a></li>
+                                    <li><i class="fa-solid fa-book"></i> <a href="https://www.atlassian.com/agile/scrum" target="_blank">Atlassian: Jira Scrum Guide</a></li>
+                                    <li><i class="fa-solid fa-book"></i> <a href="https://support.atlassian.com/jira-software-cloud/" target="_blank">Jira Software Cloud Documentation</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Further Reading</div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li><i class="fa-solid fa-comment"></i> <a href="https://www.romanpichler.com/blog/make-the-product-backlog-deep/" target="_blank">Roman Pichler: Make the Product Backlog DEEP</a></li>
+                                    <li><i class="fa-solid fa-comment"></i> <a href="https://www.scrum.org/resources/blog/product-backlog-refinement-explained-13" target="_blank">Scrum.org: Backlog Refinement Explained</a></li>
+                                    <li><i class="fa-solid fa-comment"></i> <a href="https://www.scrum.org/resources/what-definition-done" target="_blank">Scrum.org: What is a Definition of Done?</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">Next Module Preview</div>
+                    <div class="card-body">
+                        <h6>Module 5: The Scrum Events</h6>
+                        <ul>
+                            <li>The Sprint as the container event, and choosing a sprint length</li>
+                            <li>Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective — purpose, timeboxes, anti-patterns</li>
+                            <li>Hands-on: plan and start TaskFlow's Sprint 1 in your Jira project</li>
+                        </ul>
+                        <a href="module5.html" class="btn btn-primary btn-sm mt-2">Continue to Module 5 <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="mt-5 mb-4 text-center text-muted">
+                <hr>
+                <p><strong>Instructor:</strong> Dr. Abedal-Kareem Al-Banna</p>
+                <p>University of Petra | Department of Data Science &amp; Artificial Intelligence</p>
+                <p><a href="module3.html"><i class="fa-solid fa-arrow-left"></i> Previous Module</a> · <a href="index.html">Course Home</a> · <a href="module5.html">Next Module <i class="fa-solid fa-arrow-right"></i></a></p>
+            </footer>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script>
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // Active sidebar link
+    window.addEventListener('scroll', () => {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollY = window.pageYOffset;
+
+        sections.forEach(section => {
+            const sectionHeight = section.offsetHeight;
+            const sectionTop = section.offsetTop - 100;
+            const sectionId = section.getAttribute('id');
+            const link = document.querySelector(`.sidebar a[href="#${sectionId}"]`);
+
+            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                if (link) link.classList.add('active');
+            }
+        });
+    });
+</script>
+
+<script>
+// Theme toggle
+function toggleTheme(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+}
+(function(){
+    const saved=localStorage.getItem('theme');
+    if(saved==='light'){
+        document.body.classList.add('light-mode');
+        const icon=document.getElementById('themeIcon');
+        if(icon) icon.className='fa-solid fa-moon';
+    }
+})();
+
+// Copy code
+function copyCode(btn){
+    const code=btn.closest('pre,.code-block,.code-container').querySelector('code,pre');
+    const text=code?code.textContent:btn.parentElement.textContent;
+    navigator.clipboard.writeText(text.replace(/^Copy\s*/,''));
+    btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+    setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
+}
+
+// Add copy buttons to all code blocks
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
+        if(pre.querySelector('.copy-btn')) return;
+        pre.classList.add('has-copy');
+        pre.style.position='relative';
+        var btn=document.createElement('button');
+        btn.className='copy-btn';
+        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
+        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5;transition:all .2s';
+        btn.onmouseover=function(){this.style.borderColor='#3b82f6';this.style.color='#3b82f6'};
+        btn.onmouseout=function(){this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'};
+        btn.onclick=function(e){
+            e.stopPropagation();
+            var code=pre.querySelector('code')||pre;
+            navigator.clipboard.writeText(code.textContent.replace(/^Copy\s*/,''));
+            this.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+            var b=this;
+            setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);
+        };
+        pre.appendChild(btn);
+    });
+
+    // Scroll to top button
+    var st=document.createElement('button');
+    st.id='scrollTopBtn';
+    st.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
+    st.style.cssText='position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface,#111827);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;opacity:0;pointer-events:none;z-index:900;transition:all .2s';
+    st.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+    document.body.appendChild(st);
+    window.addEventListener('scroll',function(){
+        st.style.opacity=window.scrollY>500?'1':'0';
+        st.style.pointerEvents=window.scrollY>500?'auto':'none';
+    });
+});
+</script>
+</body>
+</html>

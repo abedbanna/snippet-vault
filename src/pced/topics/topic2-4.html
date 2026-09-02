@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 2.4: SQL for Data Analysts | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>SQL for Data Analysts</h1>
+        <p class="hero-sub">Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">Topic 2.4 &middot; 6 Objectives</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.4.1: SQL Queries for Data Retrieval -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="sql-queries">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-magnifying-glass-chart"></i> 2.4.1 SQL Queries for Data Retrieval</h2>
+
+                <h3><i class="fa-solid fa-filter"></i> SELECT, FROM, WHERE Clauses</h3>
+                <p>The <code>SELECT</code> statement is the foundation of SQL data retrieval. It specifies <strong>which columns</strong> to return. <code>FROM</code> identifies the table, and <code>WHERE</code> filters rows based on conditions.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Select all columns from the employees table</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees;
+
+<span class="cm">-- Select specific columns with a condition</span>
+<span class="kw">SELECT</span> name, department, salary
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary &gt; <span class="num">50000</span>;
+
+<span class="cm">-- Multiple conditions using AND / OR</span>
+<span class="kw">SELECT</span> name, department
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> department = <span class="str">'Engineering'</span>
+  <span class="kw">AND</span> salary &gt;= <span class="num">60000</span>;
+
+<span class="cm">-- Pattern matching with LIKE</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> name <span class="kw">LIKE</span> <span class="str">'A%'</span>;  <span class="cm">-- names starting with 'A'</span>
+
+<span class="cm">-- IN operator for matching multiple values</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> department <span class="kw">IN</span> (<span class="str">'Sales'</span>, <span class="str">'Marketing'</span>);
+
+<span class="cm">-- BETWEEN for range filtering</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary <span class="kw">BETWEEN</span> <span class="num">40000</span> <span class="kw">AND</span> <span class="num">80000</span>;</div>
+
+                <h3><i class="fa-solid fa-link"></i> JOINs: INNER, LEFT, RIGHT, FULL</h3>
+                <p>JOINs combine rows from two or more tables based on a related column. Understanding the different types is critical for data analysis.</p>
+
+                <table class="dark-table">
+                    <tr><th>JOIN Type</th><th>Returns</th></tr>
+                    <tr><td><code>INNER JOIN</code></td><td>Only rows with matching values in <strong>both</strong> tables</td></tr>
+                    <tr><td><code>LEFT JOIN</code></td><td>All rows from the <strong>left</strong> table, plus matches from the right (NULL if no match)</td></tr>
+                    <tr><td><code>RIGHT JOIN</code></td><td>All rows from the <strong>right</strong> table, plus matches from the left (NULL if no match)</td></tr>
+                    <tr><td><code>FULL OUTER JOIN</code></td><td>All rows from <strong>both</strong> tables (NULL where there is no match on either side)</td></tr>
+                </table>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Sample tables for JOIN examples:</span>
+<span class="cm">-- employees(id, name, dept_id)   departments(id, dept_name)</span>
+
+<span class="cm">-- INNER JOIN: only employees who belong to a department</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">INNER JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.id;
+
+<span class="cm">-- LEFT JOIN: all employees, even those without a department</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">LEFT JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.id;
+
+<span class="cm">-- RIGHT JOIN: all departments, even those with no employees</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">RIGHT JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.id;
+
+<span class="cm">-- FULL OUTER JOIN: all rows from both tables</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">FULL OUTER JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.id;</div>
+
+                <div class="info-box">
+                    <strong>Exam Note:</strong>
+                    SQLite does not support RIGHT JOIN or FULL OUTER JOIN natively. In SQLite, you can simulate a FULL OUTER JOIN using a UNION of a LEFT JOIN and a subquery. The course exam may test your conceptual understanding of all four types.
+                </div>
+
+                <h3><i class="fa-solid fa-layer-group"></i> GROUP BY, HAVING, ORDER BY, LIMIT</h3>
+                <p><code>GROUP BY</code> aggregates rows that share a value. <code>HAVING</code> filters groups (like WHERE but for aggregated data). <code>ORDER BY</code> sorts results, and <code>LIMIT</code> restricts the number of rows returned.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Count employees per department</span>
+<span class="kw">SELECT</span> department, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> emp_count
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> department;
+
+<span class="cm">-- Average salary per department, only those with avg > 50000</span>
+<span class="kw">SELECT</span> department,
+       <span class="fn">AVG</span>(salary) <span class="kw">AS</span> avg_salary,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> emp_count
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> department
+<span class="kw">HAVING</span> <span class="fn">AVG</span>(salary) &gt; <span class="num">50000</span>
+<span class="kw">ORDER BY</span> avg_salary <span class="kw">DESC</span>;
+
+<span class="cm">-- Get the top 5 highest-paid employees</span>
+<span class="kw">SELECT</span> name, salary
+<span class="kw">FROM</span> employees
+<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">5</span>;</div>
+
+                <div class="info-box">
+                    <strong>Key Difference:</strong>
+                    <code>WHERE</code> filters individual rows <em>before</em> grouping. <code>HAVING</code> filters groups <em>after</em> aggregation. You cannot use aggregate functions in a WHERE clause.
+                </div>
+
+                <h3><i class="fa-solid fa-calculator"></i> SQL Aggregate Functions</h3>
+                <p>Aggregate functions perform calculations across a set of rows and return a single value.</p>
+
+                <table class="dark-table">
+                    <tr><th>Function</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>COUNT()</code></td><td>Number of rows</td><td><code>COUNT(*)</code> or <code>COUNT(column)</code></td></tr>
+                    <tr><td><code>SUM()</code></td><td>Total of numeric values</td><td><code>SUM(salary)</code></td></tr>
+                    <tr><td><code>AVG()</code></td><td>Mean of numeric values</td><td><code>AVG(salary)</code></td></tr>
+                    <tr><td><code>MIN()</code></td><td>Smallest value</td><td><code>MIN(salary)</code></td></tr>
+                    <tr><td><code>MAX()</code></td><td>Largest value</td><td><code>MAX(salary)</code></td></tr>
+                </table>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Using multiple aggregate functions</span>
+<span class="kw">SELECT</span>
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_employees,
+    <span class="fn">SUM</span>(salary) <span class="kw">AS</span> total_payroll,
+    <span class="fn">AVG</span>(salary) <span class="kw">AS</span> avg_salary,
+    <span class="fn">MIN</span>(salary) <span class="kw">AS</span> lowest_salary,
+    <span class="fn">MAX</span>(salary) <span class="kw">AS</span> highest_salary
+<span class="kw">FROM</span> employees;</div>
+
+                <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Filtering and Manipulating Data</h3>
+                <p>SQL provides operators and functions for advanced data filtering and manipulation:</p>
+                <ul>
+                    <li><code>DISTINCT</code> &mdash; removes duplicate rows from results</li>
+                    <li><code>IS NULL</code> / <code>IS NOT NULL</code> &mdash; checks for missing values</li>
+                    <li><code>UPPER()</code>, <code>LOWER()</code>, <code>LENGTH()</code> &mdash; string functions</li>
+                    <li><code>ROUND()</code>, <code>ABS()</code> &mdash; numeric functions</li>
+                    <li><code>CASE WHEN</code> &mdash; conditional logic within queries</li>
+                    <li>Subqueries &mdash; nested queries for complex filtering</li>
+                </ul>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- DISTINCT to remove duplicates</span>
+<span class="kw">SELECT DISTINCT</span> department <span class="kw">FROM</span> employees;
+
+<span class="cm">-- Filter for NULL values</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> department <span class="kw">IS NULL</span>;
+
+<span class="cm">-- CASE WHEN for conditional columns</span>
+<span class="kw">SELECT</span> name, salary,
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> salary &gt;= <span class="num">80000</span> <span class="kw">THEN</span> <span class="str">'Senior'</span>
+        <span class="kw">WHEN</span> salary &gt;= <span class="num">50000</span> <span class="kw">THEN</span> <span class="str">'Mid'</span>
+        <span class="kw">ELSE</span> <span class="str">'Junior'</span>
+    <span class="kw">END</span> <span class="kw">AS</span> level
+<span class="kw">FROM</span> employees;
+
+<span class="cm">-- Subquery: employees earning above average</span>
+<span class="kw">SELECT</span> name, salary
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary &gt; (<span class="kw">SELECT</span> <span class="fn">AVG</span>(salary) <span class="kw">FROM</span> employees);</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.4.2: CRUD Operations -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="crud-operations">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-database"></i> 2.4.2 CRUD Operations</h2>
+                <p>CRUD stands for <strong>Create, Read, Update, Delete</strong> &mdash; the four fundamental operations for persistent data storage.</p>
+
+                <h3><i class="fa-solid fa-table"></i> CREATE TABLE</h3>
+                <p>Defines a new table structure with columns and their data types.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">CREATE TABLE</span> employees (
+    id <span class="kw">INTEGER PRIMARY KEY AUTOINCREMENT</span>,
+    name <span class="kw">TEXT NOT NULL</span>,
+    department <span class="kw">TEXT</span>,
+    salary <span class="kw">REAL</span>,
+    hire_date <span class="kw">TEXT</span>
+);</div>
+
+                <h3><i class="fa-solid fa-plus"></i> INSERT INTO (Create)</h3>
+                <p>Adds new rows to an existing table.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Insert a single row</span>
+<span class="kw">INSERT INTO</span> employees (name, department, salary, hire_date)
+<span class="kw">VALUES</span> (<span class="str">'Alice Smith'</span>, <span class="str">'Engineering'</span>, <span class="num">75000</span>, <span class="str">'2023-01-15'</span>);
+
+<span class="cm">-- Insert multiple rows</span>
+<span class="kw">INSERT INTO</span> employees (name, department, salary, hire_date) <span class="kw">VALUES</span>
+    (<span class="str">'Bob Jones'</span>, <span class="str">'Marketing'</span>, <span class="num">55000</span>, <span class="str">'2023-03-20'</span>),
+    (<span class="str">'Carol Lee'</span>, <span class="str">'Engineering'</span>, <span class="num">82000</span>, <span class="str">'2022-06-10'</span>),
+    (<span class="str">'David Kim'</span>, <span class="str">'Sales'</span>, <span class="num">60000</span>, <span class="str">'2023-09-01'</span>);</div>
+
+                <h3><i class="fa-solid fa-book-open"></i> SELECT (Read)</h3>
+                <p>Retrieves data from one or more tables. This is the most commonly used SQL statement.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Read all data</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees;
+
+<span class="cm">-- Read with conditions and sorting</span>
+<span class="kw">SELECT</span> name, salary
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> department = <span class="str">'Engineering'</span>
+<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>;</div>
+
+                <h3><i class="fa-solid fa-pen-to-square"></i> UPDATE</h3>
+                <p>Modifies existing rows in a table. Always use a <code>WHERE</code> clause to target specific rows &mdash; omitting it updates <strong>every row</strong>.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Update salary for a specific employee</span>
+<span class="kw">UPDATE</span> employees
+<span class="kw">SET</span> salary = <span class="num">80000</span>
+<span class="kw">WHERE</span> name = <span class="str">'Alice Smith'</span>;
+
+<span class="cm">-- Update multiple columns</span>
+<span class="kw">UPDATE</span> employees
+<span class="kw">SET</span> department = <span class="str">'Data Science'</span>, salary = <span class="num">90000</span>
+<span class="kw">WHERE</span> id = <span class="num">3</span>;</div>
+
+                <div class="info-box" style="border-left-color:#ef4444;">
+                    <strong>Warning:</strong>
+                    Running <code>UPDATE</code> or <code>DELETE</code> without a <code>WHERE</code> clause will affect <strong>every row</strong> in the table. This is one of the most common and dangerous SQL mistakes.
+                </div>
+
+                <h3><i class="fa-solid fa-trash-can"></i> DELETE</h3>
+                <p>Removes rows from a table.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">-- Delete a specific row</span>
+<span class="kw">DELETE FROM</span> employees
+<span class="kw">WHERE</span> id = <span class="num">4</span>;
+
+<span class="cm">-- Delete all rows matching a condition</span>
+<span class="kw">DELETE FROM</span> employees
+<span class="kw">WHERE</span> department = <span class="str">'Sales'</span>;
+
+<span class="cm">-- Delete ALL rows (use with extreme caution!)</span>
+<span class="kw">DELETE FROM</span> employees;</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.4.3: Python-Database Connections -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="python-db-connections">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-plug"></i> 2.4.3 Python-Database Connections</h2>
+
+                <h3><i class="fa-brands fa-python"></i> sqlite3 Module Usage</h3>
+                <p>Python's built-in <code>sqlite3</code> module provides a lightweight way to interact with SQLite databases without any additional installation. This is the most commonly tested database module on the exam.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> sqlite3
+
+<span class="cm"># Full sqlite3 workflow: create DB, table, insert, select, update, delete</span>
+
+<span class="cm"># 1. Connect to database (creates file if it doesn't exist)</span>
+conn = sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>)
+
+<span class="cm"># 2. Create a cursor object</span>
+cursor = conn.<span class="fn">cursor</span>()
+
+<span class="cm"># 3. Create a table</span>
+cursor.<span class="fn">execute</span>(<span class="str">'''
+    CREATE TABLE IF NOT EXISTS employees (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        department TEXT,
+        salary REAL
+    )
+'''</span>)
+
+<span class="cm"># 4. Insert data</span>
+cursor.<span class="fn">execute</span>(<span class="str">"""
+    INSERT INTO employees (name, department, salary)
+    VALUES ('Alice', 'Engineering', 75000)
+"""</span>)
+
+<span class="cm"># Insert multiple rows at once</span>
+employees_data = [
+    (<span class="str">'Bob'</span>, <span class="str">'Marketing'</span>, <span class="num">55000</span>),
+    (<span class="str">'Carol'</span>, <span class="str">'Engineering'</span>, <span class="num">82000</span>),
+    (<span class="str">'David'</span>, <span class="str">'Sales'</span>, <span class="num">60000</span>),
+]
+cursor.<span class="fn">executemany</span>(
+    <span class="str">"INSERT INTO employees (name, department, salary) VALUES (?, ?, ?)"</span>,
+    employees_data
+)
+
+<span class="cm"># 5. Commit changes (IMPORTANT: changes aren't saved until commit)</span>
+conn.<span class="fn">commit</span>()
+
+<span class="cm"># 6. Query (SELECT) data</span>
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM employees"</span>)
+rows = cursor.<span class="fn">fetchall</span>()
+<span class="kw">for</span> row <span class="kw">in</span> rows:
+    print(row)
+<span class="cm"># (1, 'Alice', 'Engineering', 75000.0)</span>
+<span class="cm"># (2, 'Bob', 'Marketing', 55000.0)</span>
+<span class="cm"># ...</span>
+
+<span class="cm"># 7. Update data</span>
+cursor.<span class="fn">execute</span>(<span class="str">"UPDATE employees SET salary = ? WHERE name = ?"</span>, (<span class="num">80000</span>, <span class="str">'Alice'</span>))
+conn.<span class="fn">commit</span>()
+
+<span class="cm"># 8. Delete data</span>
+cursor.<span class="fn">execute</span>(<span class="str">"DELETE FROM employees WHERE name = ?"</span>, (<span class="str">'David'</span>,))
+conn.<span class="fn">commit</span>()
+
+<span class="cm"># 9. Close the connection</span>
+conn.<span class="fn">close</span>()</div>
+
+                <div class="info-box">
+                    <strong>Best Practice:</strong>
+                    Use a <code>with</code> statement (context manager) to ensure the connection is properly closed, even if an error occurs:
+                </div>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> sqlite3
+
+<span class="kw">with</span> sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>) <span class="kw">as</span> conn:
+    cursor = conn.<span class="fn">cursor</span>()
+    cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM employees"</span>)
+    rows = cursor.<span class="fn">fetchall</span>()
+    <span class="kw">for</span> row <span class="kw">in</span> rows:
+        print(row)
+<span class="cm"># Connection is automatically closed when the block exits</span></div>
+
+                <h3><i class="fa-solid fa-arrow-pointer"></i> Fetch Methods</h3>
+                <table class="dark-table">
+                    <tr><th>Method</th><th>Returns</th><th>Use Case</th></tr>
+                    <tr><td><code>fetchone()</code></td><td>A single row as a tuple, or <code>None</code></td><td>When you expect one result</td></tr>
+                    <tr><td><code>fetchall()</code></td><td>A list of all remaining rows as tuples</td><td>When the result set is small</td></tr>
+                    <tr><td><code>fetchmany(n)</code></td><td>A list of the next <em>n</em> rows</td><td>When processing in batches</td></tr>
+                </table>
+
+                <h3><i class="fa-solid fa-server"></i> pymysql Basics</h3>
+                <p><code>pymysql</code> is a third-party library for connecting to MySQL databases. It follows a similar pattern to <code>sqlite3</code> but requires connection parameters.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pymysql
+
+<span class="cm"># Connect to a MySQL database</span>
+conn = pymysql.<span class="fn">connect</span>(
+    host=<span class="str">'localhost'</span>,
+    user=<span class="str">'root'</span>,
+    password=<span class="str">'mypassword'</span>,
+    database=<span class="str">'company_db'</span>
+)
+
+cursor = conn.<span class="fn">cursor</span>()
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM employees WHERE salary > %s"</span>, (<span class="num">50000</span>,))
+rows = cursor.<span class="fn">fetchall</span>()
+
+conn.<span class="fn">close</span>()</div>
+
+                <h3><i class="fa-solid fa-list-ol"></i> Creating Connections, Cursors</h3>
+                <p>The general workflow for any Python database interaction follows the DB-API 2.0 pattern:</p>
+                <ol>
+                    <li><strong>Connect</strong> &mdash; Establish a connection to the database using <code>connect()</code></li>
+                    <li><strong>Cursor</strong> &mdash; Create a cursor object with <code>conn.cursor()</code></li>
+                    <li><strong>Execute</strong> &mdash; Run SQL with <code>cursor.execute()</code> or <code>cursor.executemany()</code></li>
+                    <li><strong>Fetch</strong> &mdash; Retrieve results with <code>fetchone()</code>, <code>fetchall()</code>, or <code>fetchmany()</code></li>
+                    <li><strong>Commit</strong> &mdash; Save changes with <code>conn.commit()</code> (for INSERT/UPDATE/DELETE)</li>
+                    <li><strong>Close</strong> &mdash; Close the connection with <code>conn.close()</code></li>
+                </ol>
+
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Connection Issues</h3>
+                <table class="dark-table">
+                    <tr><th>Issue</th><th>Cause</th><th>Solution</th></tr>
+                    <tr><td><code>OperationalError</code></td><td>Database file not found or permissions error</td><td>Check file path and permissions</td></tr>
+                    <tr><td>Data not persisted</td><td>Forgot to call <code>conn.commit()</code></td><td>Always commit after INSERT/UPDATE/DELETE</td></tr>
+                    <tr><td><code>ProgrammingError</code></td><td>SQL syntax error or table doesn't exist</td><td>Verify SQL syntax and table names</td></tr>
+                    <tr><td>Resource leak</td><td>Connection not closed</td><td>Use <code>with</code> statement or <code>finally</code> block</td></tr>
+                    <tr><td><code>InterfaceError</code></td><td>Operating on a closed cursor/connection</td><td>Ensure connection is still open before querying</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.4.4: Parameterized Queries -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="parameterized-queries">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-shield-halved"></i> 2.4.4 Parameterized Queries</h2>
+
+                <h3><i class="fa-solid fa-question"></i> Why Parameterized Queries Matter</h3>
+                <p>Parameterized queries (also called <strong>prepared statements</strong>) separate SQL logic from user-supplied data. Instead of inserting values directly into a query string, you use <strong>placeholders</strong> and pass values separately. This is the single most important defense against SQL injection attacks.</p>
+
+                <div class="info-box" style="border-left-color:#f59e0b;">
+                    <strong>Never do this:</strong>
+                    Building SQL queries by concatenating user input with string formatting is dangerous and should always be avoided.
+                </div>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># DANGEROUS - Never do this!</span>
+user_input = <span class="str">"Alice"</span>
+query = <span class="str">f"SELECT * FROM employees WHERE name = '{user_input}'"</span>
+cursor.<span class="fn">execute</span>(query)  <span class="cm"># Vulnerable to SQL injection!</span>
+
+<span class="cm"># SAFE - Always use parameterized queries</span>
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM employees WHERE name = ?"</span>, (user_input,))</div>
+
+                <h3><i class="fa-solid fa-code"></i> Using ? Placeholders with sqlite3</h3>
+                <p>The <code>sqlite3</code> module uses the <code>?</code> character as its placeholder. Parameters are passed as a <strong>tuple</strong>.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> sqlite3
+
+conn = sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>)
+cursor = conn.<span class="fn">cursor</span>()
+
+<span class="cm"># Single parameter (note the trailing comma to make it a tuple)</span>
+name = <span class="str">"Alice"</span>
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM employees WHERE name = ?"</span>, (name,))
+
+<span class="cm"># Multiple parameters</span>
+dept = <span class="str">"Engineering"</span>
+min_salary = <span class="num">60000</span>
+cursor.<span class="fn">execute</span>(
+    <span class="str">"SELECT * FROM employees WHERE department = ? AND salary > ?"</span>,
+    (dept, min_salary)
+)
+
+<span class="cm"># Using executemany with parameterized queries</span>
+new_employees = [
+    (<span class="str">'Eve'</span>, <span class="str">'HR'</span>, <span class="num">52000</span>),
+    (<span class="str">'Frank'</span>, <span class="str">'Engineering'</span>, <span class="num">78000</span>),
+]
+cursor.<span class="fn">executemany</span>(
+    <span class="str">"INSERT INTO employees (name, department, salary) VALUES (?, ?, ?)"</span>,
+    new_employees
+)
+conn.<span class="fn">commit</span>()
+
+<span class="cm"># Named placeholders (sqlite3 also supports dict-based params)</span>
+cursor.<span class="fn">execute</span>(
+    <span class="str">"SELECT * FROM employees WHERE name = :name AND department = :dept"</span>,
+    {<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"dept"</span>: <span class="str">"Engineering"</span>}
+)</div>
+
+                <h3><i class="fa-solid fa-percent"></i> Using %s with pymysql</h3>
+                <p>The <code>pymysql</code> module uses <code>%s</code> as its placeholder (regardless of data type). Do not confuse this with Python's <code>%</code> string formatting operator &mdash; they are handled differently by the database driver.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pymysql
+
+conn = pymysql.<span class="fn">connect</span>(host=<span class="str">'localhost'</span>, user=<span class="str">'root'</span>,
+                        password=<span class="str">'pass'</span>, database=<span class="str">'company_db'</span>)
+cursor = conn.<span class="fn">cursor</span>()
+
+<span class="cm"># %s placeholder for ALL types (string, int, float, etc.)</span>
+cursor.<span class="fn">execute</span>(
+    <span class="str">"SELECT * FROM employees WHERE department = %s AND salary > %s"</span>,
+    (<span class="str">'Engineering'</span>, <span class="num">60000</span>)
+)
+
+results = cursor.<span class="fn">fetchall</span>()
+conn.<span class="fn">close</span>()</div>
+
+                <div class="info-box">
+                    <strong>Placeholder Summary:</strong>
+                    <code>sqlite3</code> uses <code>?</code> (or <code>:name</code> for named params). <code>pymysql</code> uses <code>%s</code>. Both prevent SQL injection when used correctly.
+                </div>
+
+                <h3><i class="fa-solid fa-user-shield"></i> Preventing SQL Injection</h3>
+                <p>SQL injection occurs when an attacker manipulates a query by inserting malicious SQL through user input. Parameterized queries prevent this because the database engine treats parameter values as <strong>data</strong>, never as executable SQL.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># SQL INJECTION ATTACK EXAMPLE</span>
+<span class="cm"># Imagine a login form where the user enters their username:</span>
+
+<span class="cm"># Attacker enters: ' OR '1'='1' --</span>
+user_input = <span class="str">"' OR '1'='1' --"</span>
+
+<span class="cm"># VULNERABLE CODE (string concatenation)</span>
+query = <span class="str">f"SELECT * FROM users WHERE username = '{user_input}'"</span>
+<span class="cm"># This becomes:</span>
+<span class="cm"># SELECT * FROM users WHERE username = '' OR '1'='1' --'</span>
+<span class="cm"># The condition '1'='1' is always true, so ALL rows are returned!</span>
+<span class="cm"># The -- comments out the rest of the query</span>
+
+<span class="cm"># SAFE CODE (parameterized query)</span>
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM users WHERE username = ?"</span>, (user_input,))
+<span class="cm"># The database treats the entire input as a literal string value</span>
+<span class="cm"># It searches for a username that literally equals: ' OR '1'='1' --</span>
+<span class="cm"># No rows match, and the attack fails</span></div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.4.5: SQL Data Types in Python -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="sql-data-types">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-arrows-turn-to-dots"></i> 2.4.5 SQL Data Types in Python</h2>
+
+                <h3><i class="fa-solid fa-right-left"></i> SQL Types and Python Equivalents</h3>
+                <p>When working with SQLite through Python, values are automatically converted between SQL types and Python types. Understanding this mapping is essential for the exam.</p>
+
+                <table class="dark-table">
+                    <tr><th>SQLite Type</th><th>Python Type</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>INTEGER</code></td><td><code>int</code></td><td>Whole numbers</td><td><code>42</code></td></tr>
+                    <tr><td><code>REAL</code></td><td><code>float</code></td><td>Floating-point numbers</td><td><code>3.14</code></td></tr>
+                    <tr><td><code>TEXT</code></td><td><code>str</code></td><td>Text strings</td><td><code>"hello"</code></td></tr>
+                    <tr><td><code>BLOB</code></td><td><code>bytes</code></td><td>Binary data</td><td><code>b"\x00\x01"</code></td></tr>
+                    <tr><td><code>NULL</code></td><td><code>None</code></td><td>Missing/absent value</td><td><code>None</code></td></tr>
+                </table>
+
+                <h3><i class="fa-solid fa-arrows-rotate"></i> Type Conversion Examples</h3>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> sqlite3
+
+conn = sqlite3.<span class="fn">connect</span>(<span class="str">':memory:'</span>)  <span class="cm"># In-memory database</span>
+cursor = conn.<span class="fn">cursor</span>()
+
+<span class="cm"># Create a table with various types</span>
+cursor.<span class="fn">execute</span>(<span class="str">'''
+    CREATE TABLE type_demo (
+        int_col INTEGER,
+        real_col REAL,
+        text_col TEXT,
+        blob_col BLOB,
+        null_col TEXT
+    )
+'''</span>)
+
+<span class="cm"># Insert Python values - automatic type conversion</span>
+cursor.<span class="fn">execute</span>(
+    <span class="str">"INSERT INTO type_demo VALUES (?, ?, ?, ?, ?)"</span>,
+    (<span class="num">42</span>, <span class="num">3.14</span>, <span class="str">"hello"</span>, <span class="kw">b</span><span class="str">"\x00\x01\x02"</span>, <span class="kw">None</span>)
+)
+conn.<span class="fn">commit</span>()
+
+<span class="cm"># Fetch and check Python types</span>
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT * FROM type_demo"</span>)
+row = cursor.<span class="fn">fetchone</span>()
+
+print(<span class="fn">type</span>(row[<span class="num">0</span>]))  <span class="cm"># &lt;class 'int'&gt;</span>
+print(<span class="fn">type</span>(row[<span class="num">1</span>]))  <span class="cm"># &lt;class 'float'&gt;</span>
+print(<span class="fn">type</span>(row[<span class="num">2</span>]))  <span class="cm"># &lt;class 'str'&gt;</span>
+print(<span class="fn">type</span>(row[<span class="num">3</span>]))  <span class="cm"># &lt;class 'bytes'&gt;</span>
+print(row[<span class="num">4</span>])        <span class="cm"># None</span>
+print(row[<span class="num">4</span>] <span class="kw">is</span> <span class="kw">None</span>)  <span class="cm"># True</span>
+
+conn.<span class="fn">close</span>()</div>
+
+                <div class="info-box">
+                    <strong>Key Insight:</strong>
+                    SQLite uses <strong>dynamic typing</strong> (type affinity), meaning it is flexible about what you store. A column declared as <code>INTEGER</code> can technically store a string. However, Python's <code>sqlite3</code> module returns values in their natural Python types based on what SQLite actually stored.
+                </div>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Handling date/time (stored as TEXT in SQLite)</span>
+<span class="kw">import</span> sqlite3
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+conn = sqlite3.<span class="fn">connect</span>(<span class="str">':memory:'</span>)
+cursor = conn.<span class="fn">cursor</span>()
+
+cursor.<span class="fn">execute</span>(<span class="str">"CREATE TABLE events (name TEXT, event_date TEXT)"</span>)
+
+<span class="cm"># Store datetime as ISO format string</span>
+now = datetime.<span class="fn">now</span>().<span class="fn">isoformat</span>()
+cursor.<span class="fn">execute</span>(<span class="str">"INSERT INTO events VALUES (?, ?)"</span>, (<span class="str">"meeting"</span>, now))
+conn.<span class="fn">commit</span>()
+
+<span class="cm"># Retrieve and convert back to datetime</span>
+cursor.<span class="fn">execute</span>(<span class="str">"SELECT event_date FROM events"</span>)
+date_str = cursor.<span class="fn">fetchone</span>()[<span class="num">0</span>]
+event_dt = datetime.<span class="fn">fromisoformat</span>(date_str)
+print(<span class="fn">type</span>(event_dt))  <span class="cm"># &lt;class 'datetime.datetime'&gt;</span>
+
+conn.<span class="fn">close</span>()</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.4.6: Database Security -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="database-security">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-lock"></i> 2.4.6 Database Security</h2>
+
+                <h3><i class="fa-solid fa-bug"></i> SQL Injection Attacks Explained</h3>
+                <p>SQL injection is a code injection technique that exploits security vulnerabilities in an application's database layer. It occurs when user input is incorporated into SQL queries without proper sanitization or parameterization.</p>
+
+                <h4>How SQL Injection Works</h4>
+                <p>An attacker crafts input that changes the intended SQL query's logic:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Vulnerable application code</span>
+<span class="kw">def</span> <span class="fn">login</span>(username, password):
+    query = <span class="str">f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"</span>
+    cursor.<span class="fn">execute</span>(query)
+    <span class="kw">return</span> cursor.<span class="fn">fetchone</span>()
+
+<span class="cm"># Normal usage:</span>
+<span class="fn">login</span>(<span class="str">"alice"</span>, <span class="str">"secret123"</span>)
+<span class="cm"># Query: SELECT * FROM users WHERE username = 'alice' AND password = 'secret123'</span>
+
+<span class="cm"># ATTACK 1: Bypass authentication</span>
+<span class="fn">login</span>(<span class="str">"admin' --"</span>, <span class="str">"anything"</span>)
+<span class="cm"># Query: SELECT * FROM users WHERE username = 'admin' --' AND password = 'anything'</span>
+<span class="cm"># The -- comments out the password check!</span>
+
+<span class="cm"># ATTACK 2: Return all users</span>
+<span class="fn">login</span>(<span class="str">"' OR 1=1 --"</span>, <span class="str">"anything"</span>)
+<span class="cm"># Query: SELECT * FROM users WHERE username = '' OR 1=1 --' AND password = 'anything'</span>
+<span class="cm"># 1=1 is always true, so ALL users are returned</span>
+
+<span class="cm"># ATTACK 3: Drop a table</span>
+<span class="fn">login</span>(<span class="str">"'; DROP TABLE users; --"</span>, <span class="str">"anything"</span>)
+<span class="cm"># Query: SELECT * FROM users WHERE username = ''; DROP TABLE users; --'</span>
+<span class="cm"># This could destroy the entire users table!</span></div>
+
+                <div class="info-box" style="border-left-color:#ef4444;">
+                    <strong>Real-World Impact:</strong>
+                    SQL injection has been responsible for major data breaches, including leaked passwords, stolen credit card numbers, and complete database destruction. It remains one of the OWASP Top 10 security risks.
+                </div>
+
+                <h3><i class="fa-solid fa-shield-halved"></i> Prevention Strategies</h3>
+                <ol>
+                    <li><strong>Always use parameterized queries</strong> &mdash; This is the primary defense. Never build SQL strings with user input.</li>
+                    <li><strong>Input validation</strong> &mdash; Validate and sanitize all user inputs (check length, type, allowed characters).</li>
+                    <li><strong>Principle of least privilege</strong> &mdash; Database accounts used by applications should have minimal permissions (e.g., no DROP TABLE access).</li>
+                    <li><strong>Use ORM libraries</strong> &mdash; Object-Relational Mappers like SQLAlchemy add an additional layer of protection by abstracting raw SQL.</li>
+                    <li><strong>Error handling</strong> &mdash; Never expose raw database error messages to users, as they can reveal table structures.</li>
+                </ol>
+
+                <h3><i class="fa-solid fa-file-code"></i> Secure Query Writing in Python</h3>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> sqlite3
+
+<span class="cm"># SECURE: Complete example of safe database interaction</span>
+
+<span class="kw">def</span> <span class="fn">get_employee_by_name</span>(name):
+    <span class="str">"""Safely query an employee by name using parameterized query."""</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>) <span class="kw">as</span> conn:
+            cursor = conn.<span class="fn">cursor</span>()
+            cursor.<span class="fn">execute</span>(
+                <span class="str">"SELECT * FROM employees WHERE name = ?"</span>,
+                (name,)  <span class="cm"># Always a tuple!</span>
+            )
+            <span class="kw">return</span> cursor.<span class="fn">fetchone</span>()
+    <span class="kw">except</span> sqlite3.Error <span class="kw">as</span> e:
+        print(<span class="str">f"Database error: {e}"</span>)  <span class="cm"># Log internally</span>
+        <span class="kw">return</span> <span class="kw">None</span>  <span class="cm"># Don't expose error details to the user</span>
+
+
+<span class="kw">def</span> <span class="fn">add_employee</span>(name, department, salary):
+    <span class="str">"""Safely insert a new employee."""</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>) <span class="kw">as</span> conn:
+            cursor = conn.<span class="fn">cursor</span>()
+            cursor.<span class="fn">execute</span>(
+                <span class="str">"INSERT INTO employees (name, department, salary) VALUES (?, ?, ?)"</span>,
+                (name, department, salary)
+            )
+            conn.<span class="fn">commit</span>()
+            <span class="kw">return</span> cursor.lastrowid  <span class="cm"># Return the ID of the new row</span>
+    <span class="kw">except</span> sqlite3.IntegrityError:
+        print(<span class="str">"Constraint violation."</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">except</span> sqlite3.Error <span class="kw">as</span> e:
+        print(<span class="str">f"Database error: {e}"</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+
+
+<span class="kw">def</span> <span class="fn">search_employees</span>(department=<span class="kw">None</span>, min_salary=<span class="kw">None</span>):
+    <span class="str">"""Safely build a dynamic query with optional filters."""</span>
+    query = <span class="str">"SELECT * FROM employees WHERE 1=1"</span>
+    params = []
+
+    <span class="kw">if</span> department:
+        query += <span class="str">" AND department = ?"</span>
+        params.append(department)
+
+    <span class="kw">if</span> min_salary <span class="kw">is not</span> <span class="kw">None</span>:
+        query += <span class="str">" AND salary >= ?"</span>
+        params.append(min_salary)
+
+    <span class="kw">with</span> sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>) <span class="kw">as</span> conn:
+        cursor = conn.<span class="fn">cursor</span>()
+        cursor.<span class="fn">execute</span>(query, params)
+        <span class="kw">return</span> cursor.<span class="fn">fetchall</span>()</div>
+
+                <div class="info-box">
+                    <strong>Exam Tip:</strong>
+                    This course will test your ability to identify vulnerable code and select the secure alternative. Remember: parameterized queries are <em>always</em> the correct answer for preventing SQL injection.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUIZ SECTION -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-circle-question"></i> Practice Quiz: SQL for Data Analysts</h2>
+
+                <!-- Q1 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q1. Which SQL clause is used to filter groups created by GROUP BY?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) WHERE</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) HAVING</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) FILTER</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) GROUP FILTER</div>
+                    <div class="quiz-explanation"><strong>Correct: B) HAVING</strong> &mdash; The HAVING clause filters groups after aggregation. WHERE filters individual rows before grouping. There is no FILTER or GROUP FILTER clause in standard SQL.</div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q2. What does a LEFT JOIN return?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) Only rows with matching values in both tables</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) All rows from the left table, with matching rows from the right (NULL if no match)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) All rows from the right table, with matching rows from the left</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) All rows from both tables, regardless of matches</div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> &mdash; A LEFT JOIN returns all rows from the left table. For each left row, if a matching row exists in the right table, it is included; otherwise, NULL values fill the right table's columns. Option A describes INNER JOIN, C describes RIGHT JOIN, and D describes FULL OUTER JOIN.</div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q3. Which placeholder does the sqlite3 module use for parameterized queries?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) %s</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) ?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) ${}</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) @param</div>
+                    <div class="quiz-explanation"><strong>Correct: B) ?</strong> &mdash; The sqlite3 module uses <code>?</code> as its placeholder (also supporting <code>:name</code> for named parameters). <code>%s</code> is used by pymysql. The other options are not used by standard Python database modules.</div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q4. What is the correct order of operations in a Python database workflow?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) Cursor &rarr; Connect &rarr; Execute &rarr; Commit &rarr; Close</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) Connect &rarr; Cursor &rarr; Execute &rarr; Commit &rarr; Close</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) Connect &rarr; Execute &rarr; Cursor &rarr; Commit &rarr; Close</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) Cursor &rarr; Execute &rarr; Connect &rarr; Close &rarr; Commit</div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> &mdash; You must first establish a connection, then create a cursor from that connection, execute queries through the cursor, commit changes via the connection, and finally close the connection.</div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q5. What Python type does a SQLite <code>REAL</code> column map to?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) int</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) float</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) str</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) Decimal</div>
+                    <div class="quiz-explanation"><strong>Correct: B) float</strong> &mdash; SQLite REAL maps to Python's <code>float</code>. INTEGER maps to <code>int</code>, TEXT maps to <code>str</code>, BLOB maps to <code>bytes</code>, and NULL maps to <code>None</code>. Python's <code>Decimal</code> type is not natively used by sqlite3.</div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q6. Which of the following is vulnerable to SQL injection?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">A) <code>cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">B) <code>cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) <code>cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) <code>cursor.execute("SELECT * FROM users WHERE id = :id", {"id": user_id})</code></div>
+                    <div class="quiz-explanation"><strong>Correct: A)</strong> &mdash; Using an f-string to embed user input directly into SQL is vulnerable to injection because the input becomes part of the SQL command itself. Options B, C, and D all use parameterized queries (with different placeholder styles), which safely separate data from SQL logic.</div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q7. What does <code>cursor.fetchone()</code> return when no rows match the query?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) An empty list <code>[]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">B) An empty tuple <code>()</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">C) <code>None</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) It raises a <code>StopIteration</code> exception</div>
+                    <div class="quiz-explanation"><strong>Correct: C) None</strong> &mdash; When there are no more rows to return, <code>fetchone()</code> returns <code>None</code>. <code>fetchall()</code> returns an empty list <code>[]</code> in the same scenario. No exception is raised.</div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q8. What happens if you run an UPDATE statement without a WHERE clause?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) A syntax error is raised</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">B) Only the first row is updated</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">C) Every row in the table is updated</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) No rows are updated</div>
+                    <div class="quiz-explanation"><strong>Correct: C) Every row in the table is updated</strong> &mdash; Without a WHERE clause, the UPDATE applies to all rows. This is syntactically valid SQL, so no error is raised. It is one of the most common and dangerous mistakes in SQL.</div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q9. Which SQL function returns the number of rows in a result set?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) SUM()</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) COUNT()</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) LEN()</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) TOTAL()</div>
+                    <div class="quiz-explanation"><strong>Correct: B) COUNT()</strong> &mdash; <code>COUNT(*)</code> counts all rows; <code>COUNT(column)</code> counts non-NULL values. <code>SUM()</code> adds numeric values. <code>LEN()</code> is not a standard SQL function (LENGTH() is). <code>TOTAL()</code> exists in SQLite but returns the sum as a float, not a row count.</div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="quiz-box" data-section="sql">
+                    <h4>Q10. Why is <code>conn.commit()</code> necessary after INSERT, UPDATE, or DELETE?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">A) It closes the database connection</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'sql')">B) It saves the changes to the database permanently</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">C) It creates a backup of the database</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'sql')">D) It validates the SQL syntax</div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> &mdash; Database changes happen in a transaction. Until <code>conn.commit()</code> is called, changes exist only in memory and will be lost if the connection is closed or the program crashes. Committing writes the changes permanently to disk.</div>
+                </div>
+
+                <div id="score-sql"></div>
+            </div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic2-3.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 2.3 Object-Oriented Programming</a>
+            <a href="topic3-1.html" class="nav-btn next">Next: 3.1 Descriptive Statistics <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#sql-queries">2.4.1 SQL Queries for Data Retrieval</a>
+        <a class="toc-item" href="#crud-operations">2.4.2 CRUD Operations</a>
+        <a class="toc-item" href="#python-db-connections">2.4.3 Python-Database Connections</a>
+        <a class="toc-item" href="#parameterized-queries">2.4.4 Parameterized Queries</a>
+        <a class="toc-item" href="#sql-data-types">2.4.5 SQL Data Types in Python</a>
+        <a class="toc-item" href="#database-security">2.4.6 Database Security</a>
+        <a class="toc-item" href="#quiz">Practice Quiz (10 Questions)</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

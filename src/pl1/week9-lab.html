@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 9: Lab — Abstract Classes &amp; Interfaces | PL1 - Java (601112)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        [data-theme="light"] .navbar{background:var(--bg)}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero::before{display:none}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px}
+
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+        .section-title i{color:var(--primary);font-size:1.2rem}
+
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+
+        .usecase-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.9rem;line-height:1.7;color:var(--text2)}
+        .usecase-box i{color:var(--secondary);margin-right:.4rem}
+        .usecase-box strong{color:var(--secondary)}
+
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}
+            .nav-links.open{display:flex}
+            .mobile-toggle{display:block}
+            .hero h1{font-size:1.8rem}
+            .exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week9.html">&larr; Week 9</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week9.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 9</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 9: Lab — <span class="gradient">Abstract Classes &amp; Interfaces</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 13</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 6 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1: Abstract Class — GeometricObject -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Abstract Class — GeometricObject</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> Every shape has an area and a perimeter, but the formula differs between a circle and a rectangle. An <strong>abstract class</strong> lets you define this contract — "every GeometricObject must have getArea() and getPerimeter()" — without providing the formula. Each concrete subclass then fills in the calculation for its own shape.</div>
+                <div class="info-box">Create an <strong>abstract</strong> class <code>GeometricObject</code> with fields <code>color</code> (String) and <code>filled</code> (boolean), a constructor, getters/setters, and two <strong>abstract</strong> methods: <code>getArea()</code> and <code>getPerimeter()</code>. Create concrete class <code>Circle</code> (field: <code>radius</code>) and <code>Rectangle</code> (fields: <code>width</code>, <code>height</code>) that extend it and implement both abstract methods. In <code>main</code>, create one of each and print their properties.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Circle — color: red, filled: true
+Area: 78.53981633974483
+Perimeter: 31.41592653589793
+Rectangle — color: blue, filled: false
+Area: 24.0
+Perimeter: 20.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" rows="52" spellcheck="false">abstract class GeometricObject {
+    // Fields: color (String), filled (boolean)
+
+
+    // Constructor: GeometricObject(String color, boolean filled)
+
+
+    // Getters and setters for color and filled
+
+
+    // Abstract method: getArea() — returns double
+
+
+    // Abstract method: getPerimeter() — returns double
+
+}
+
+class Circle extends GeometricObject {
+    // Field: radius (double)
+
+
+    // Constructor: Circle(double radius, String color, boolean filled)
+    // Call super(color, filled) first
+
+
+    // Implement getArea() — returns Math.PI * radius * radius
+
+
+    // Implement getPerimeter() — returns 2 * Math.PI * radius
+
+}
+
+class Rectangle extends GeometricObject {
+    // Fields: width (double), height (double)
+
+
+    // Constructor: Rectangle(double width, double height, String color, boolean filled)
+    // Call super(color, filled) first
+
+
+    // Implement getArea() — returns width * height
+
+
+    // Implement getPerimeter() — returns 2 * (width + height)
+
+}
+
+public class TestGeometry {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">Abstract class: <code>abstract class GeometricObject { String color; boolean filled; GeometricObject(String color, boolean filled){...} public abstract double getArea(); public abstract double getPerimeter(); }</code>. Circle: <code>class Circle extends GeometricObject { double radius; Circle(double radius, String color, boolean filled){ super(color, filled); this.radius = radius; } public double getArea(){ return Math.PI * radius * radius; } public double getPerimeter(){ return 2 * Math.PI * radius; } }</code>. Rectangle follows the same pattern with <code>width * height</code> and <code>2*(width+height)</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Abstract Methods — Animal Sounds -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>Abstract Methods — Animal Sounds</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> All animals breathe — that behavior is shared and can be defined in the abstract class. But <strong>how</strong> each animal makes a sound is different. Making <code>makeSound()</code> abstract forces every concrete subclass to provide its own sound implementation. This is the core power of abstract methods: enforce a contract without dictating the implementation.</div>
+                <div class="info-box">Create an <strong>abstract</strong> class <code>Animal</code> with a field <code>name</code> (String), a constructor, an <strong>abstract</strong> method <code>makeSound()</code>, and a <strong>concrete</strong> method <code>breathe()</code> that prints <code>"[name] is breathing"</code>. Create three concrete subclasses: <code>Dog</code> (prints "Woof!"), <code>Cat</code> (prints "Meow!"), and <code>Bird</code> (prints "Tweet!"). In <code>main</code>, create an array of <code>Animal</code> references and call both methods on each.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Rex is breathing
+Rex says: Woof!
+Whiskers is breathing
+Whiskers says: Meow!
+Tweety is breathing
+Tweety says: Tweet!</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" rows="48" spellcheck="false">abstract class Animal {
+    // Field: name (String)
+
+
+    // Constructor: Animal(String name)
+
+
+    // Abstract method: makeSound()
+
+
+    // Concrete method: breathe() — prints "[name] is breathing"
+
+}
+
+class Dog extends Animal {
+    // Constructor: Dog(String name)
+    // Call super(name)
+
+
+    // Override makeSound() — prints "[name] says: Woof!"
+
+}
+
+class Cat extends Animal {
+    // Constructor: Cat(String name)
+    // Call super(name)
+
+
+    // Override makeSound() — prints "[name] says: Meow!"
+
+}
+
+class Bird extends Animal {
+    // Constructor: Bird(String name)
+    // Call super(name)
+
+
+    // Override makeSound() — prints "[name] says: Tweet!"
+
+}
+
+public class TestAnimals {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Abstract Animal: <code>abstract class Animal { String name; Animal(String name){ this.name = name; } public abstract void makeSound(); public void breathe(){ System.out.println(name + " is breathing"); } }</code>. Dog: <code>class Dog extends Animal { Dog(String name){ super(name); } public void makeSound(){ System.out.println(name + " says: Woof!"); } }</code>. Cat and Bird follow the same pattern with "Meow!" and "Tweet!" respectively.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Interface — Drawable & Resizable -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Interface — Drawable &amp; Resizable</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A <code>Square</code> and a <code>Triangle</code> are unrelated shapes, but both can be drawn and resized. Interfaces let <strong>unrelated classes</strong> share a common capability without forcing an inheritance hierarchy. A class can implement <strong>multiple interfaces</strong>, which is impossible with abstract class inheritance.</div>
+                <div class="info-box">Create interface <code>Drawable</code> with method <code>draw()</code>. Create interface <code>Resizable</code> with method <code>resize(double factor)</code>. Create class <code>Square</code> with field <code>side</code> (double) that implements <strong>both</strong> interfaces: <code>draw()</code> prints the side length and <code>resize(factor)</code> multiplies <code>side</code> by <code>factor</code>. Create class <code>Triangle</code> with field <code>base</code> (double) that also implements both. In <code>main</code>, demonstrate both.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Drawing Square with side: 4.0
+Resizing Square by factor 2.0 → new side: 8.0
+Drawing Triangle with base: 3.0
+Resizing Triangle by factor 1.5 → new base: 4.5</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" rows="50" spellcheck="false">interface Drawable {
+    // Abstract method: draw()
+
+}
+
+interface Resizable {
+    // Abstract method: resize(double factor)
+
+}
+
+class Square implements Drawable, Resizable {
+    // Field: side (double)
+
+
+    // Constructor: Square(double side)
+
+
+    // Implement draw() — prints "Drawing Square with side: [side]"
+
+
+    // Implement resize(double factor) — multiplies side by factor
+    // Then prints "Resizing Square by factor [factor] → new side: [side]"
+
+}
+
+class Triangle implements Drawable, Resizable {
+    // Field: base (double)
+
+
+    // Constructor: Triangle(double base)
+
+
+    // Implement draw() — prints "Drawing Triangle with base: [base]"
+
+
+    // Implement resize(double factor) — multiplies base by factor
+    // Then prints "Resizing Triangle by factor [factor] → new base: [base]"
+
+}
+
+public class TestShapes {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Interface: <code>interface Drawable { void draw(); }</code> — all methods are implicitly <code>public abstract</code>. Implementing both: <code>class Square implements Drawable, Resizable { double side; Square(double side){ this.side = side; } public void draw(){ System.out.println("Drawing Square with side: " + side); } public void resize(double factor){ side *= factor; System.out.println("Resizing Square by factor " + factor + " \u2192 new side: " + side); } }</code>. Triangle follows the same pattern with <code>base</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4: Comparable Interface — Student Sorting -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>Comparable Interface — Student Sorting</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> How does <code>Arrays.sort()</code> know how to order your objects? It doesn't — unless your class implements <code>Comparable</code> and defines a <code>compareTo()</code> method. Implementing <code>Comparable&lt;T&gt;</code> gives your class a <strong>natural ordering</strong> that Java's built-in sort methods can use automatically.</div>
+                <div class="info-box">Create a <code>Student</code> class that implements <code>Comparable&lt;Student&gt;</code>. Fields: <code>name</code> (String) and <code>gpa</code> (double). Implement <code>compareTo(Student other)</code> to sort by GPA in <strong>ascending</strong> order (return negative if this GPA &lt; other GPA, positive if greater, zero if equal). Use <code>Double.compare(this.gpa, other.gpa)</code>. In <code>main</code>, create an array of students, sort with <code>Arrays.sort()</code>, and print them.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>--- Sorted by GPA (ascending) ---
+Omar: 3.1
+Ali: 3.5
+Lina: 3.7
+Sara: 3.9</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" rows="38" spellcheck="false">import java.util.Arrays;
+
+class Student implements Comparable&lt;Student&gt; {
+    // Fields: name (String), gpa (double)
+
+
+    // Constructor: Student(String name, double gpa)
+
+
+    // Implement compareTo(Student other)
+    // Use Double.compare(this.gpa, other.gpa) for ascending order
+
+
+    // toString() — returns "name: gpa"
+
+}
+
+public class TestSorting {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4"><code>class Student implements Comparable&lt;Student&gt;</code>. The <code>compareTo</code> method: <code>public int compareTo(Student other) { return Double.compare(this.gpa, other.gpa); }</code> — returns negative when this &lt; other, zero when equal, positive when this &gt; other. <code>toString()</code>: <code>public String toString() { return name + ": " + gpa; }</code>. Then <code>Arrays.sort(students)</code> will automatically use your <code>compareTo</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5: Multiple Interfaces — Flyable & Swimmable -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>Multiple Interfaces — Flyable &amp; Swimmable</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A <code>Duck</code> can both fly and swim — two capabilities that come from completely different domains. In Java, a class can only extend <strong>one</strong> abstract class, but it can implement <strong>multiple interfaces</strong>. This is the key advantage of interfaces when modeling unrelated capabilities that can be combined.</div>
+                <div class="info-box">Create interface <code>Flyable</code> with method <code>fly()</code>. Create interface <code>Swimmable</code> with method <code>swim()</code>. Create class <code>Duck</code> that implements <strong>both</strong>: <code>fly()</code> prints "Duck is flying", <code>swim()</code> prints "Duck is swimming". Create class <code>Eagle</code> that implements only <code>Flyable</code>: prints "Eagle is soaring". Create class <code>Fish</code> that implements only <code>Swimmable</code>: prints "Fish is swimming". In <code>main</code>, demonstrate each using interface references.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Duck is flying
+Duck is swimming
+Eagle is soaring
+Fish is swimming</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" rows="48" spellcheck="false">interface Flyable {
+    // Abstract method: fly()
+
+}
+
+interface Swimmable {
+    // Abstract method: swim()
+
+}
+
+class Duck implements Flyable, Swimmable {
+    // Implement fly() — prints "Duck is flying"
+
+
+    // Implement swim() — prints "Duck is swimming"
+
+}
+
+class Eagle implements Flyable {
+    // Implement fly() — prints "Eagle is soaring"
+
+}
+
+class Fish implements Swimmable {
+    // Implement swim() — prints "Fish is swimming"
+
+}
+
+public class TestInterfaces {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Interface declaration: <code>interface Flyable { void fly(); }</code>. Implementing multiple: <code>class Duck implements Flyable, Swimmable { public void fly(){ System.out.println("Duck is flying"); } public void swim(){ System.out.println("Duck is swimming"); } }</code>. Notice <code>Flyable eagle = new Eagle()</code> — an interface reference can hold any object that implements it. This enables polymorphism through interfaces.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 6: Abstract Class + Interface — ElectricCar -->
+        <div class="exercise-card" id="ex6">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">6</span>Abstract Class + Interface — ElectricCar</h3>
+                <span class="exercise-status" id="status6"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> An <code>ElectricCar</code> <em>is a</em> Vehicle (abstract class — shared state and behavior) and <em>can</em> be charged (interface — additional capability). This is the key design rule: use an <strong>abstract class</strong> for an "is-a" relationship where subclasses share code, and an <strong>interface</strong> for a "can-do" capability that unrelated classes might share.</div>
+                <div class="info-box">Create an <strong>abstract</strong> class <code>Vehicle</code> with field <code>brand</code> (String), a constructor, a <strong>concrete</strong> method <code>startEngine()</code> that prints "Starting [brand] engine", and an <strong>abstract</strong> method <code>drive()</code>. Create interface <code>Electric</code> with method <code>charge()</code>. Create class <code>ElectricCar</code> that <strong>extends</strong> <code>Vehicle</code> and <strong>implements</strong> <code>Electric</code>: <code>drive()</code> prints "Driving silently", <code>charge()</code> prints "Charging battery". Create class <code>GasCar</code> that extends <code>Vehicle</code> only: <code>drive()</code> prints "Driving with engine roar".</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Starting Tesla engine
+Driving silently
+Charging battery
+Starting Toyota engine
+Driving with engine roar</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(6)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor6" rows="52" spellcheck="false">abstract class Vehicle {
+    // Field: brand (String)
+
+
+    // Constructor: Vehicle(String brand)
+
+
+    // Concrete method: startEngine() — prints "Starting [brand] engine"
+
+
+    // Abstract method: drive()
+
+}
+
+interface Electric {
+    // Abstract method: charge()
+
+}
+
+class ElectricCar extends Vehicle implements Electric {
+    // Constructor: ElectricCar(String brand)
+    // Call super(brand)
+
+
+    // Implement drive() — prints "Driving silently"
+
+
+    // Implement charge() — prints "Charging battery"
+
+}
+
+class GasCar extends Vehicle {
+    // Constructor: GasCar(String brand)
+    // Call super(brand)
+
+
+    // Implement drive() — prints "Driving with engine roar"
+
+}
+
+public class TestVehicles {
+    public static void main(String[] args) {
+        // Write your test code here
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(5)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(5)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(5)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback6"></div>
+                <button class="hint-toggle" onclick="toggleHint(6)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint6">Abstract Vehicle: <code>abstract class Vehicle { String brand; Vehicle(String brand){ this.brand = brand; } public void startEngine(){ System.out.println("Starting " + brand + " engine"); } public abstract void drive(); }</code>. Electric interface: <code>interface Electric { void charge(); }</code>. ElectricCar: <code>class ElectricCar extends Vehicle implements Electric { ElectricCar(String brand){ super(brand); } public void drive(){ System.out.println("Driving silently"); } public void charge(){ System.out.println("Charging battery"); } }</code>. Key: a class can <code>extends</code> one class AND <code>implements</code> one or more interfaces simultaneously.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  { skeleton: "abstract class GeometricObject {\n    // Fields: color (String), filled (boolean)\n\n\n    // Constructor: GeometricObject(String color, boolean filled)\n\n\n    // Getters and setters for color and filled\n\n\n    // Abstract method: getArea() \u2014 returns double\n\n\n    // Abstract method: getPerimeter() \u2014 returns double\n\n}\n\nclass Circle extends GeometricObject {\n    // Field: radius (double)\n\n\n    // Constructor: Circle(double radius, String color, boolean filled)\n    // Call super(color, filled) first\n\n\n    // Implement getArea() \u2014 returns Math.PI * radius * radius\n\n\n    // Implement getPerimeter() \u2014 returns 2 * Math.PI * radius\n\n}\n\nclass Rectangle extends GeometricObject {\n    // Fields: width (double), height (double)\n\n\n    // Constructor: Rectangle(double width, double height, String color, boolean filled)\n    // Call super(color, filled) first\n\n\n    // Implement getArea() \u2014 returns width * height\n\n\n    // Implement getPerimeter() \u2014 returns 2 * (width + height)\n\n}\n\npublic class TestGeometry {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["abstract class GeometricObject", "abstract double getArea", "abstract double getPerimeter", "extends GeometricObject", "super(", "Math.PI", "implements"] },
+  { skeleton: "abstract class Animal {\n    // Field: name (String)\n\n\n    // Constructor: Animal(String name)\n\n\n    // Abstract method: makeSound()\n\n\n    // Concrete method: breathe() \u2014 prints \"[name] is breathing\"\n\n}\n\nclass Dog extends Animal {\n    // Constructor: Dog(String name)\n    // Call super(name)\n\n\n    // Override makeSound() \u2014 prints \"[name] says: Woof!\"\n\n}\n\nclass Cat extends Animal {\n    // Constructor: Cat(String name)\n    // Call super(name)\n\n\n    // Override makeSound() \u2014 prints \"[name] says: Meow!\"\n\n}\n\nclass Bird extends Animal {\n    // Constructor: Bird(String name)\n    // Call super(name)\n\n\n    // Override makeSound() \u2014 prints \"[name] says: Tweet!\"\n\n}\n\npublic class TestAnimals {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["abstract class Animal", "abstract void makeSound", "extends Animal", "super(", "@Override", "new Dog", "new Cat", "new Bird"] },
+  { skeleton: "interface Drawable {\n    // Abstract method: draw()\n\n}\n\ninterface Resizable {\n    // Abstract method: resize(double factor)\n\n}\n\nclass Square implements Drawable, Resizable {\n    // Field: side (double)\n\n\n    // Constructor: Square(double side)\n\n\n    // Implement draw() \u2014 prints \"Drawing Square with side: [side]\"\n\n\n    // Implement resize(double factor) \u2014 multiplies side by factor\n    // Then prints \"Resizing Square by factor [factor] \u2192 new side: [side]\"\n\n}\n\nclass Triangle implements Drawable, Resizable {\n    // Field: base (double)\n\n\n    // Constructor: Triangle(double base)\n\n\n    // Implement draw() \u2014 prints \"Drawing Triangle with base: [base]\"\n\n\n    // Implement resize(double factor) \u2014 multiplies base by factor\n    // Then prints \"Resizing Triangle by factor [factor] \u2192 new base: [base]\"\n\n}\n\npublic class TestShapes {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["interface Drawable", "interface Resizable", "implements Drawable, Resizable", "implements Drawable, Resizable", "void draw", "void resize", "this.side", "this.base"] },
+  { skeleton: "import java.util.Arrays;\n\nclass Student implements Comparable<Student> {\n    // Fields: name (String), gpa (double)\n\n\n    // Constructor: Student(String name, double gpa)\n\n\n    // Implement compareTo(Student other)\n    // Use Double.compare(this.gpa, other.gpa) for ascending order\n\n\n    // toString() \u2014 returns \"name: gpa\"\n\n}\n\npublic class TestSorting {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["implements Comparable", "compareTo", "Double.compare", "this.gpa", "Arrays.sort", "toString"] },
+  { skeleton: "interface Flyable {\n    // Abstract method: fly()\n\n}\n\ninterface Swimmable {\n    // Abstract method: swim()\n\n}\n\nclass Duck implements Flyable, Swimmable {\n    // Implement fly() \u2014 prints \"Duck is flying\"\n\n\n    // Implement swim() \u2014 prints \"Duck is swimming\"\n\n}\n\nclass Eagle implements Flyable {\n    // Implement fly() \u2014 prints \"Eagle is soaring\"\n\n}\n\nclass Fish implements Swimmable {\n    // Implement swim() \u2014 prints \"Fish is swimming\"\n\n}\n\npublic class TestInterfaces {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["interface Flyable", "interface Swimmable", "implements Flyable, Swimmable", "implements Flyable", "implements Swimmable", "void fly", "void swim"] },
+  { skeleton: "abstract class Vehicle {\n    // Field: brand (String)\n\n\n    // Constructor: Vehicle(String brand)\n\n\n    // Concrete method: startEngine() \u2014 prints \"Starting [brand] engine\"\n\n\n    // Abstract method: drive()\n\n}\n\ninterface Electric {\n    // Abstract method: charge()\n\n}\n\nclass ElectricCar extends Vehicle implements Electric {\n    // Constructor: ElectricCar(String brand)\n    // Call super(brand)\n\n\n    // Implement drive() \u2014 prints \"Driving silently\"\n\n\n    // Implement charge() \u2014 prints \"Charging battery\"\n\n}\n\nclass GasCar extends Vehicle {\n    // Constructor: GasCar(String brand)\n    // Call super(brand)\n\n\n    // Implement drive() \u2014 prints \"Driving with engine roar\"\n\n}\n\npublic class TestVehicles {\n    public static void main(String[] args) {\n        // Write your test code here\n    }\n}", keywords: ["abstract class Vehicle", "abstract void drive", "interface Electric", "extends Vehicle implements Electric", "extends Vehicle", "super(", "startEngine", "charge"] }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied to clipboard! Paste it in the compiler tab that just opened (Ctrl+V / \u2318+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use the required constructs: ' + missing.map(k=>'<code>'+k+'</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+// Tab key inserts spaces
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){const t=localStorage.getItem('theme')||'dark';if(t==='light')document.getElementById('themeIcon').className='fas fa-sun';})();
+
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+
+</body>
+</html>

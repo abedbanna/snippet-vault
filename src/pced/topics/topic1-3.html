@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.3: Data Validation and Integrity | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="../index.html#block1">Block 1</a>
+            <a href="../index.html#block2">Block 2</a>
+            <a href="../index.html#block3">Block 3</a>
+            <a href="../index.html#block4">Block 4</a>
+            <a href="../index.html#block5">Block 5</a>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../index.html#block1" onclick="this.parentElement.classList.remove('open')">Block 1</a>
+        <a href="../index.html#block2" onclick="this.parentElement.classList.remove('open')">Block 2</a>
+        <a href="../index.html#block3" onclick="this.parentElement.classList.remove('open')">Block 3</a>
+        <a href="../index.html#block4" onclick="this.parentElement.classList.remove('open')">Block 4</a>
+        <a href="../index.html#block5" onclick="this.parentElement.classList.remove('open')">Block 5</a>
+    </div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Data Validation and Integrity</h1>
+        <p class="hero-sub">Block 1: Data Acquisition and Pre-Processing</p>
+        <p class="hero-sub" style="font-size:1.05rem;">Topic 1.3 &middot; 2 Objectives</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- ========== SECTION 1.3.1 ========== -->
+        <div class="section fade-up" id="validation-methods">
+            <h2 class="section-title"><i class="fa-solid fa-clipboard-check"></i> 1.3.1 Data Validation Methods</h2>
+            <p class="section-desc">Learn type checks, range checks, cross-reference validation, early validation benefits, and assert/try-except patterns for data validation.</p>
+
+            <h3 id="what-is-validation">What Is Data Validation?</h3>
+            <p><strong>Data validation</strong> is the process of checking whether data conforms to a set of predefined rules, constraints, or expectations before it is used in analysis, stored in a database, or passed to downstream systems. Validation acts as a gatekeeper: it prevents corrupt, incomplete, or nonsensical data from entering your pipeline.</p>
+
+            <p>At its core, validation answers one question: <em>"Does this data look the way it should?"</em> The three most common categories of validation are:</p>
+
+            <table class="dark-table">
+                <tr><th>Validation Type</th><th>What It Checks</th><th>Example</th></tr>
+                <tr><td><strong>Type validation</strong></td><td>Data is of the correct type (int, float, str, date, etc.)</td><td>Age should be an integer, not a string</td></tr>
+                <tr><td><strong>Range validation</strong></td><td>Values fall within an acceptable range</td><td>Temperature between &minus;50 and 60 &deg;C</td></tr>
+                <tr><td><strong>Cross-field validation</strong></td><td>Logical consistency between two or more fields</td><td>end_date must be after start_date</td></tr>
+            </table>
+
+            <div class="info-box"><i class="fa-solid fa-circle-info"></i>
+                <strong>Exam Note:</strong> This course expects you to know the difference between type, range, and cross-field validation and to identify the appropriate method for a given scenario.
+            </div>
+
+            <h4>Validation Tools and Approaches</h4>
+            <p>In Python-based data workflows, validation is typically implemented through:</p>
+            <ul>
+                <li><strong>Python logic:</strong> Custom <code>if</code> statements, <code>assert</code>, and <code>try/except</code> blocks</li>
+                <li><strong>Schema checks:</strong> Defining the expected shape and types of data (column names, dtypes, constraints) and programmatically verifying incoming data against that schema</li>
+                <li><strong>Library-based validators:</strong> Tools like pandas dtype checks, <code>isinstance()</code>, or dedicated validation libraries</li>
+            </ul>
+
+            <!-- Type Checks -->
+            <h3 id="type-checks">Type Checks: Ensuring Correct Data Types</h3>
+            <p>Type validation ensures that every value in your dataset is of the expected Python or pandas type. When data is loaded from CSVs, APIs, or user input, types are often inferred &mdash; and frequently inferred incorrectly. A column that should contain integers may be read as strings. A date column may come through as plain text.</p>
+
+            <h4>Using <code>isinstance()</code> in Python</h4>
+            <p>The built-in <code>isinstance()</code> function checks whether an object belongs to a specified type (or tuple of types). It returns <code>True</code> or <code>False</code>.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Basic isinstance() checks</span>
+age = <span class="num">25</span>
+name = <span class="str">"Alice"</span>
+salary = <span class="num">55000.50</span>
+
+<span class="fn">print</span>(<span class="fn">isinstance</span>(age, <span class="type">int</span>))       <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(name, <span class="type">str</span>))      <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(salary, <span class="type">float</span>))  <span class="cm"># True</span>
+
+<span class="cm"># Check against multiple types</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(age, (<span class="type">int</span>, <span class="type">float</span>)))  <span class="cm"># True - accepts either</span>
+
+<span class="cm"># Validation function using isinstance</span>
+<span class="kw">def</span> <span class="fn">validate_record</span>(record):
+    <span class="str">"""Validate a single data record."""</span>
+    errors = []
+    <span class="kw">if not</span> <span class="fn">isinstance</span>(record[<span class="str">'id'</span>], <span class="type">int</span>):
+        errors.append(<span class="str">"id must be an integer"</span>)
+    <span class="kw">if not</span> <span class="fn">isinstance</span>(record[<span class="str">'name'</span>], <span class="type">str</span>):
+        errors.append(<span class="str">"name must be a string"</span>)
+    <span class="kw">if not</span> <span class="fn">isinstance</span>(record[<span class="str">'score'</span>], (<span class="type">int</span>, <span class="type">float</span>)):
+        errors.append(<span class="str">"score must be numeric"</span>)
+    <span class="kw">return</span> errors
+
+record = {<span class="str">'id'</span>: <span class="num">1</span>, <span class="str">'name'</span>: <span class="str">"Alice"</span>, <span class="str">'score'</span>: <span class="num">92.5</span>}
+<span class="fn">print</span>(<span class="fn">validate_record</span>(record))  <span class="cm"># []  (no errors)</span>
+
+bad_record = {<span class="str">'id'</span>: <span class="str">"one"</span>, <span class="str">'name'</span>: <span class="num">42</span>, <span class="str">'score'</span>: <span class="str">"high"</span>}
+<span class="fn">print</span>(<span class="fn">validate_record</span>(bad_record))
+<span class="cm"># ['id must be an integer', 'name must be a string', 'score must be numeric']</span></div>
+
+            <h4>Using pandas dtype Checks</h4>
+            <p>When working with DataFrames, you validate types through the <code>.dtypes</code> attribute or the <code>.select_dtypes()</code> method. You can also enforce types with <code>.astype()</code>.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'employee_id'</span>: [<span class="num">101</span>, <span class="num">102</span>, <span class="num">103</span>],
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>],
+    <span class="str">'salary'</span>: [<span class="num">55000</span>, <span class="num">62000</span>, <span class="num">48000</span>],
+    <span class="str">'hire_date'</span>: [<span class="str">'2020-01-15'</span>, <span class="str">'2019-06-01'</span>, <span class="str">'2021-03-20'</span>]
+})
+
+<span class="cm"># Inspect current dtypes</span>
+<span class="fn">print</span>(df.dtypes)
+<span class="cm"># employee_id     int64</span>
+<span class="cm"># name           object</span>
+<span class="cm"># salary          int64</span>
+<span class="cm"># hire_date      object   &lt;-- should be datetime!</span>
+
+<span class="cm"># Define expected dtypes</span>
+expected_dtypes = {
+    <span class="str">'employee_id'</span>: <span class="str">'int64'</span>,
+    <span class="str">'name'</span>: <span class="str">'object'</span>,
+    <span class="str">'salary'</span>: <span class="str">'int64'</span>,
+    <span class="str">'hire_date'</span>: <span class="str">'datetime64[ns]'</span>
+}
+
+<span class="cm"># Validate and fix dtypes</span>
+<span class="kw">def</span> <span class="fn">validate_dtypes</span>(df, expected):
+    <span class="str">"""Check if DataFrame columns match expected dtypes."""</span>
+    mismatches = {}
+    <span class="kw">for</span> col, dtype <span class="kw">in</span> expected.items():
+        <span class="kw">if</span> col <span class="kw">not in</span> df.columns:
+            mismatches[col] = <span class="str">"column missing"</span>
+        <span class="kw">elif</span> <span class="fn">str</span>(df[col].dtype) != dtype:
+            mismatches[col] = <span class="str">f"expected {dtype}, got {df[col].dtype}"</span>
+    <span class="kw">return</span> mismatches
+
+<span class="cm"># Convert hire_date to datetime first</span>
+df[<span class="str">'hire_date'</span>] = pd.to_datetime(df[<span class="str">'hire_date'</span>])
+
+<span class="fn">print</span>(<span class="fn">validate_dtypes</span>(df, expected_dtypes))  <span class="cm"># {} (all match)</span></div>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>Best Practice:</strong> Always check and explicitly convert dtypes immediately after loading data. Use <code>pd.to_datetime()</code> for dates, <code>pd.to_numeric()</code> for numbers, and <code>.astype()</code> for categorical or string conversions.
+            </div>
+
+            <!-- Range Checks -->
+            <h3 id="range-checks">Range Checks: Ensuring Values Fall Within Expected Ranges</h3>
+            <p>Range validation ensures that numeric or date values fall within acceptable boundaries. Values outside these bounds are likely errors &mdash; for example, a human age of 250 or a percentage greater than 100.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Simple range check function</span>
+<span class="kw">def</span> <span class="fn">validate_range</span>(value, min_val, max_val, field_name=<span class="str">"value"</span>):
+    <span class="str">"""Check if a value is within the expected range."""</span>
+    <span class="kw">if</span> value <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="str">f"{field_name} is missing (None)"</span>
+    <span class="kw">if not</span> (min_val &lt;= value &lt;= max_val):
+        <span class="kw">return</span> <span class="str">f"{field_name}={value} is out of range [{min_val}, {max_val}]"</span>
+    <span class="kw">return</span> <span class="kw">None</span>  <span class="cm"># No error</span>
+
+<span class="cm"># Test the function</span>
+<span class="fn">print</span>(<span class="fn">validate_range</span>(<span class="num">25</span>, <span class="num">0</span>, <span class="num">120</span>, <span class="str">"age"</span>))       <span class="cm"># None (valid)</span>
+<span class="fn">print</span>(<span class="fn">validate_range</span>(<span class="num">-5</span>, <span class="num">0</span>, <span class="num">120</span>, <span class="str">"age"</span>))       <span class="cm"># "age=-5 is out of range [0, 120]"</span>
+<span class="fn">print</span>(<span class="fn">validate_range</span>(<span class="num">105</span>, <span class="num">0</span>, <span class="num">100</span>, <span class="str">"score"</span>))   <span class="cm"># "score=105 is out of range [0, 100]"</span>
+
+<span class="cm"># Range validation on a pandas DataFrame</span>
+df = pd.DataFrame({
+    <span class="str">'student'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>, <span class="str">'Diana'</span>],
+    <span class="str">'age'</span>: [<span class="num">20</span>, <span class="num">-3</span>, <span class="num">22</span>, <span class="num">200</span>],
+    <span class="str">'grade'</span>: [<span class="num">85</span>, <span class="num">92</span>, <span class="num">110</span>, <span class="num">78</span>]
+})
+
+<span class="cm"># Flag rows with out-of-range ages (valid: 0-120)</span>
+invalid_age = df[(df[<span class="str">'age'</span>] &lt; <span class="num">0</span>) | (df[<span class="str">'age'</span>] &gt; <span class="num">120</span>)]
+<span class="fn">print</span>(<span class="str">"Invalid ages:"</span>)
+<span class="fn">print</span>(invalid_age)
+<span class="cm">#   student  age  grade</span>
+<span class="cm"># 1     Bob   -3     92</span>
+<span class="cm"># 3   Diana  200     78</span>
+
+<span class="cm"># Flag rows with out-of-range grades (valid: 0-100)</span>
+invalid_grade = df[(df[<span class="str">'grade'</span>] &lt; <span class="num">0</span>) | (df[<span class="str">'grade'</span>] &gt; <span class="num">100</span>)]
+<span class="fn">print</span>(<span class="str">"Invalid grades:"</span>)
+<span class="fn">print</span>(invalid_grade)
+<span class="cm">#    student  age  grade</span>
+<span class="cm"># 2  Charlie   22    110</span>
+
+<span class="cm"># Using .between() for cleaner range checks</span>
+df[<span class="str">'age_valid'</span>] = df[<span class="str">'age'</span>].between(<span class="num">0</span>, <span class="num">120</span>)
+df[<span class="str">'grade_valid'</span>] = df[<span class="str">'grade'</span>].between(<span class="num">0</span>, <span class="num">100</span>)
+<span class="fn">print</span>(df)</div>
+
+            <div class="info-box"><i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>Common Pitfall:</strong> Be careful with floating-point comparisons. A value like <code>99.999999999</code> might technically be within range but could indicate a precision issue. Always consider how your data is produced when setting boundaries.
+            </div>
+
+            <!-- Cross-Reference Checks -->
+            <h3 id="cross-reference-checks">Cross-Reference Checks: Validating Data Against Other Fields</h3>
+            <p>Cross-field (or cross-reference) validation checks the <em>logical relationship</em> between two or more columns in a dataset. Unlike type or range checks that examine a single field in isolation, cross-field checks ensure that the combination of values makes sense.</p>
+
+            <p>Common examples include:</p>
+            <ul>
+                <li><code>end_date</code> must be greater than or equal to <code>start_date</code></li>
+                <li><code>min_salary</code> must be less than or equal to <code>max_salary</code></li>
+                <li>If <code>status</code> is "shipped", then <code>shipping_date</code> must not be null</li>
+                <li><code>discount_price</code> must be less than <code>original_price</code></li>
+            </ul>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Cross-field validation: end_date &gt; start_date</span>
+df = pd.DataFrame({
+    <span class="str">'project'</span>: [<span class="str">'Alpha'</span>, <span class="str">'Beta'</span>, <span class="str">'Gamma'</span>, <span class="str">'Delta'</span>],
+    <span class="str">'start_date'</span>: pd.to_datetime(
+        [<span class="str">'2024-01-01'</span>, <span class="str">'2024-03-15'</span>, <span class="str">'2024-06-01'</span>, <span class="str">'2024-09-01'</span>]
+    ),
+    <span class="str">'end_date'</span>: pd.to_datetime(
+        [<span class="str">'2024-06-30'</span>, <span class="str">'2024-02-28'</span>, <span class="str">'2024-12-31'</span>, <span class="str">'2024-08-15'</span>]
+    )
+})
+
+<span class="cm"># Find rows where end_date is before start_date</span>
+invalid_dates = df[df[<span class="str">'end_date'</span>] &lt; df[<span class="str">'start_date'</span>]]
+<span class="fn">print</span>(<span class="str">"Projects with invalid date ranges:"</span>)
+<span class="fn">print</span>(invalid_dates)
+<span class="cm">#   project start_date   end_date</span>
+<span class="cm"># 1    Beta 2024-03-15 2024-02-28</span>
+<span class="cm"># 3   Delta 2024-09-01 2024-08-15</span>
+
+<span class="cm"># Cross-field validation function for multiple rules</span>
+<span class="kw">def</span> <span class="fn">validate_cross_fields</span>(df):
+    <span class="str">"""Apply multiple cross-field validation rules."""</span>
+    errors = []
+
+    <span class="cm"># Rule 1: end_date must be &gt;= start_date</span>
+    mask = df[<span class="str">'end_date'</span>] &lt; df[<span class="str">'start_date'</span>]
+    <span class="kw">if</span> mask.any():
+        bad_rows = df[mask].index.tolist()
+        errors.append(<span class="str">f"end_date &lt; start_date at rows: {bad_rows}"</span>)
+
+    <span class="cm"># Rule 2: budget must be positive if status is 'active'</span>
+    <span class="kw">if</span> <span class="str">'budget'</span> <span class="kw">in</span> df.columns <span class="kw">and</span> <span class="str">'status'</span> <span class="kw">in</span> df.columns:
+        mask2 = (df[<span class="str">'status'</span>] == <span class="str">'active'</span>) &amp; (df[<span class="str">'budget'</span>] &lt;= <span class="num">0</span>)
+        <span class="kw">if</span> mask2.any():
+            bad_rows = df[mask2].index.tolist()
+            errors.append(<span class="str">f"Active projects with non-positive budget at rows: {bad_rows}"</span>)
+
+    <span class="kw">return</span> errors
+
+errors = <span class="fn">validate_cross_fields</span>(df)
+<span class="kw">for</span> e <span class="kw">in</span> errors:
+    <span class="fn">print</span>(<span class="str">f"VALIDATION ERROR: {e}"</span>)</div>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>Real-World Pattern:</strong> In production pipelines, cross-field validation rules are often stored in a configuration file or database table so they can be updated without changing code. Each rule is a function or expression that returns True/False for each row.
+            </div>
+
+            <!-- Early Validation -->
+            <h3 id="early-validation">Benefits of Early Type Checks in Ingestion Scripts</h3>
+            <p>Performing validation <strong>as early as possible</strong> in a data pipeline &mdash; ideally during ingestion (the point where data first enters your system) &mdash; offers several critical advantages:</p>
+
+            <table class="dark-table">
+                <tr><th>Benefit</th><th>Explanation</th></tr>
+                <tr><td><strong>Fail fast</strong></td><td>Bad data is caught immediately, before it contaminates downstream processes or storage</td></tr>
+                <tr><td><strong>Lower debugging cost</strong></td><td>Errors detected at the source are much easier to trace and fix than errors found in final reports</td></tr>
+                <tr><td><strong>Data trust</strong></td><td>Analysts and stakeholders can trust that data passing validation is clean and consistent</td></tr>
+                <tr><td><strong>Reduced rework</strong></td><td>Catching a type mismatch during ingestion prevents hours of wasted analysis on corrupt data</td></tr>
+                <tr><td><strong>Cleaner pipelines</strong></td><td>Downstream code can assume correct types, reducing defensive programming throughout the codebase</td></tr>
+            </table>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Example: validation during data ingestion</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">ingest_csv</span>(filepath, schema):
+    <span class="str">"""Load a CSV with upfront validation.
+
+    Parameters:
+        filepath (str): Path to the CSV file
+        schema (dict): Expected column names mapped to dtypes
+
+    Returns:
+        pd.DataFrame: Validated DataFrame
+
+    Raises:
+        ValueError: If validation fails
+    """</span>
+    df = pd.read_csv(filepath)
+
+    <span class="cm"># Step 1: Check all required columns exist</span>
+    missing_cols = <span class="fn">set</span>(schema.keys()) - <span class="fn">set</span>(df.columns)
+    <span class="kw">if</span> missing_cols:
+        <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">f"Missing columns: {missing_cols}"</span>)
+
+    <span class="cm"># Step 2: Convert and validate dtypes</span>
+    <span class="kw">for</span> col, dtype <span class="kw">in</span> schema.items():
+        <span class="kw">try</span>:
+            <span class="kw">if</span> dtype == <span class="str">'datetime'</span>:
+                df[col] = pd.to_datetime(df[col])
+            <span class="kw">elif</span> dtype == <span class="str">'numeric'</span>:
+                df[col] = pd.to_numeric(df[col])
+            <span class="kw">else</span>:
+                df[col] = df[col].astype(dtype)
+        <span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">TypeError</span>) <span class="kw">as</span> e:
+            <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">f"Column '{col}' failed {dtype} conversion: {e}"</span>)
+
+    <span class="cm"># Step 3: Check for unexpected nulls</span>
+    null_counts = df[<span class="fn">list</span>(schema.keys())].isnull().sum()
+    cols_with_nulls = null_counts[null_counts &gt; <span class="num">0</span>]
+    <span class="kw">if not</span> cols_with_nulls.empty:
+        <span class="fn">print</span>(<span class="str">f"WARNING: Null values found:\n{cols_with_nulls}"</span>)
+
+    <span class="kw">return</span> df
+
+<span class="cm"># Usage</span>
+schema = {
+    <span class="str">'employee_id'</span>: <span class="str">'int64'</span>,
+    <span class="str">'name'</span>: <span class="str">'object'</span>,
+    <span class="str">'salary'</span>: <span class="str">'numeric'</span>,
+    <span class="str">'hire_date'</span>: <span class="str">'datetime'</span>
+}
+<span class="cm"># df = ingest_csv('employees.csv', schema)</span></div>
+
+            <!-- Assert and Try/Except -->
+            <h3 id="assert-try-except">Using Assert Statements and Try/Except for Validation</h3>
+            <p>Python provides two built-in mechanisms that are commonly used for data validation:</p>
+
+            <h4>Assert Statements</h4>
+            <p>An <code>assert</code> statement tests a condition and raises an <code>AssertionError</code> if the condition is <code>False</code>. Assertions are ideal for catching programming errors and enforcing assumptions during development.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Assert statements for quick validation checks</span>
+
+<span class="cm"># Basic assertion</span>
+data = {<span class="str">'age'</span>: <span class="num">25</span>, <span class="str">'name'</span>: <span class="str">'Alice'</span>, <span class="str">'score'</span>: <span class="num">88</span>}
+
+<span class="kw">assert</span> <span class="fn">isinstance</span>(data[<span class="str">'age'</span>], <span class="type">int</span>), <span class="str">"Age must be an integer"</span>
+<span class="kw">assert</span> <span class="num">0</span> &lt;= data[<span class="str">'age'</span>] &lt;= <span class="num">120</span>, <span class="str">"Age must be between 0 and 120"</span>
+<span class="kw">assert</span> <span class="fn">len</span>(data[<span class="str">'name'</span>]) &gt; <span class="num">0</span>, <span class="str">"Name cannot be empty"</span>
+<span class="kw">assert</span> <span class="num">0</span> &lt;= data[<span class="str">'score'</span>] &lt;= <span class="num">100</span>, <span class="str">"Score must be between 0 and 100"</span>
+
+<span class="cm"># Schema validation with assertions</span>
+<span class="kw">def</span> <span class="fn">validate_schema</span>(df, required_columns):
+    <span class="str">"""Assert that a DataFrame contains all required columns."""</span>
+    <span class="kw">for</span> col <span class="kw">in</span> required_columns:
+        <span class="kw">assert</span> col <span class="kw">in</span> df.columns, <span class="str">f"Missing required column: {col}"</span>
+    <span class="fn">print</span>(<span class="str">"Schema validation passed!"</span>)
+
+<span class="cm"># DataFrame shape assertions</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.DataFrame({<span class="str">'a'</span>: [<span class="num">1</span>, <span class="num">2</span>], <span class="str">'b'</span>: [<span class="num">3</span>, <span class="num">4</span>]})
+<span class="kw">assert</span> df.shape[<span class="num">0</span>] &gt; <span class="num">0</span>, <span class="str">"DataFrame must not be empty"</span>
+<span class="kw">assert</span> df.shape[<span class="num">1</span>] == <span class="num">2</span>, <span class="str">"DataFrame must have exactly 2 columns"</span></div>
+
+            <div class="info-box"><i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>Important Caveat:</strong> <code>assert</code> statements are removed when Python runs with the <code>-O</code> (optimize) flag. Never use <code>assert</code> for validation that must always run in production. Use explicit <code>if</code>/<code>raise</code> instead.
+            </div>
+
+            <h4>Try/Except for Robust Validation</h4>
+            <p>The <code>try/except</code> pattern handles validation errors gracefully without crashing the program. This is essential in production data pipelines where you want to log errors and continue processing valid records.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Try/except for type conversion validation</span>
+<span class="kw">def</span> <span class="fn">safe_convert_to_numeric</span>(series, column_name):
+    <span class="str">"""Attempt to convert a Series to numeric, returning a report."""</span>
+    <span class="kw">try</span>:
+        converted = pd.to_numeric(series, errors=<span class="str">'raise'</span>)
+        <span class="fn">print</span>(<span class="str">f"Column '{column_name}': successfully converted to numeric"</span>)
+        <span class="kw">return</span> converted
+    <span class="kw">except</span> <span class="type">ValueError</span> <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"Column '{column_name}': conversion failed - {e}"</span>)
+        <span class="cm"># Coerce bad values to NaN instead of failing</span>
+        converted = pd.to_numeric(series, errors=<span class="str">'coerce'</span>)
+        bad_count = converted.isna().sum() - series.isna().sum()
+        <span class="fn">print</span>(<span class="str">f"  {bad_count} values coerced to NaN"</span>)
+        <span class="kw">return</span> converted
+
+<span class="cm"># Example with mixed data</span>
+s = pd.Series([<span class="str">'10'</span>, <span class="str">'20'</span>, <span class="str">'thirty'</span>, <span class="str">'40'</span>, <span class="str">'N/A'</span>])
+result = <span class="fn">safe_convert_to_numeric</span>(s, <span class="str">'quantity'</span>)
+<span class="fn">print</span>(result)
+<span class="cm"># 0    10.0</span>
+<span class="cm"># 1    20.0</span>
+<span class="cm"># 2     NaN</span>
+<span class="cm"># 3    40.0</span>
+<span class="cm"># 4     NaN</span>
+
+<span class="cm"># Comprehensive validation with try/except</span>
+<span class="kw">def</span> <span class="fn">validate_and_clean</span>(records):
+    <span class="str">"""Validate a list of records, returning valid and invalid sets."""</span>
+    valid = []
+    invalid = []
+
+    <span class="kw">for</span> i, rec <span class="kw">in</span> <span class="fn">enumerate</span>(records):
+        <span class="kw">try</span>:
+            <span class="cm"># Type checks</span>
+            <span class="kw">assert</span> <span class="fn">isinstance</span>(rec[<span class="str">'id'</span>], <span class="type">int</span>), <span class="str">"id must be int"</span>
+            <span class="kw">assert</span> <span class="fn">isinstance</span>(rec[<span class="str">'value'</span>], (<span class="type">int</span>, <span class="type">float</span>)), <span class="str">"value must be numeric"</span>
+            <span class="cm"># Range checks</span>
+            <span class="kw">assert</span> rec[<span class="str">'value'</span>] &gt;= <span class="num">0</span>, <span class="str">"value must be non-negative"</span>
+            valid.append(rec)
+        <span class="kw">except</span> (<span class="type">AssertionError</span>, <span class="type">KeyError</span>) <span class="kw">as</span> e:
+            invalid.append({<span class="str">'index'</span>: i, <span class="str">'record'</span>: rec, <span class="str">'error'</span>: <span class="fn">str</span>(e)})
+
+    <span class="fn">print</span>(<span class="str">f"Valid: {<span class="fn">len</span>(valid)}, Invalid: {<span class="fn">len</span>(invalid)}"</span>)
+    <span class="kw">return</span> valid, invalid
+
+records = [
+    {<span class="str">'id'</span>: <span class="num">1</span>, <span class="str">'value'</span>: <span class="num">100</span>},
+    {<span class="str">'id'</span>: <span class="str">'two'</span>, <span class="str">'value'</span>: <span class="num">200</span>},   <span class="cm"># bad id type</span>
+    {<span class="str">'id'</span>: <span class="num">3</span>, <span class="str">'value'</span>: <span class="num">-50</span>},    <span class="cm"># negative value</span>
+    {<span class="str">'id'</span>: <span class="num">4</span>, <span class="str">'value'</span>: <span class="num">400</span>},
+]
+valid, invalid = <span class="fn">validate_and_clean</span>(records)
+<span class="cm"># Valid: 2, Invalid: 2</span></div>
+        </div>
+
+        <!-- ========== SECTION 1.3.2 ========== -->
+        <div class="section fade-up" id="data-integrity">
+            <h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> 1.3.2 Data Integrity</h2>
+            <p class="section-desc">Understand entity, referential, and domain integrity; schema validation; and data quality frameworks.</p>
+
+            <h3 id="integrity-concept">Concept of Data Integrity and Its Importance</h3>
+            <p><strong>Data integrity</strong> refers to the accuracy, consistency, and reliability of data throughout its lifecycle &mdash; from creation and storage through processing and retrieval. While validation checks individual values, integrity focuses on the broader question: <em>"Can we trust this data as a whole?"</em></p>
+
+            <p>Data integrity encompasses four key dimensions:</p>
+
+            <table class="dark-table">
+                <tr><th>Integrity Type</th><th>Definition</th><th>Enforced By</th></tr>
+                <tr><td><strong>Entity integrity</strong></td><td>Every row is uniquely identifiable</td><td>Primary keys</td></tr>
+                <tr><td><strong>Referential integrity</strong></td><td>Relationships between tables are consistent</td><td>Foreign keys</td></tr>
+                <tr><td><strong>Domain integrity</strong></td><td>Values belong to a defined set of acceptable values</td><td>Constraints, enums, check rules</td></tr>
+                <tr><td><strong>User-defined integrity</strong></td><td>Business-specific rules are satisfied</td><td>Custom validation logic</td></tr>
+            </table>
+
+            <div class="info-box"><i class="fa-solid fa-circle-info"></i>
+                <strong>Why Data Integrity Matters:</strong> Without integrity, analysis results are unreliable. A broken foreign key means your JOIN produces incorrect counts. A duplicated primary key means aggregations are inflated. Violations cascade through every query and report that touches the data.
+            </div>
+
+            <!-- Referential Integrity -->
+            <h3 id="referential-integrity">Referential Integrity in Databases</h3>
+            <p><strong>Referential integrity</strong> ensures that relationships between tables remain valid. If table B references table A through a foreign key, then every foreign key value in table B must correspond to an existing primary key value in table A.</p>
+
+            <p>Common violations include:</p>
+            <ul>
+                <li><strong>Orphan records:</strong> A row in a child table references a parent record that does not exist (e.g., an order with a <code>customer_id</code> that has no matching customer)</li>
+                <li><strong>Dangling references:</strong> A parent record is deleted while child records still reference it</li>
+            </ul>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Simulating referential integrity checks with pandas</span>
+
+<span class="cm"># Parent table: customers</span>
+customers = pd.DataFrame({
+    <span class="str">'customer_id'</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>],
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>, <span class="str">'Diana'</span>]
+})
+
+<span class="cm"># Child table: orders</span>
+orders = pd.DataFrame({
+    <span class="str">'order_id'</span>: [<span class="num">101</span>, <span class="num">102</span>, <span class="num">103</span>, <span class="num">104</span>, <span class="num">105</span>],
+    <span class="str">'customer_id'</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">5</span>, <span class="num">3</span>, <span class="num">99</span>],  <span class="cm"># 5 and 99 don't exist!</span>
+    <span class="str">'amount'</span>: [<span class="num">250</span>, <span class="num">180</span>, <span class="num">340</span>, <span class="num">120</span>, <span class="num">500</span>]
+})
+
+<span class="cm"># Check referential integrity: all order customer_ids must exist in customers</span>
+valid_ids = <span class="fn">set</span>(customers[<span class="str">'customer_id'</span>])
+order_ids = <span class="fn">set</span>(orders[<span class="str">'customer_id'</span>])
+orphan_ids = order_ids - valid_ids
+
+<span class="kw">if</span> orphan_ids:
+    <span class="fn">print</span>(<span class="str">f"REFERENTIAL INTEGRITY VIOLATION!"</span>)
+    <span class="fn">print</span>(<span class="str">f"Orphan customer_ids in orders: {orphan_ids}"</span>)
+    orphan_orders = orders[orders[<span class="str">'customer_id'</span>].isin(orphan_ids)]
+    <span class="fn">print</span>(orphan_orders)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Referential integrity: OK"</span>)
+
+<span class="cm"># Output:</span>
+<span class="cm"># REFERENTIAL INTEGRITY VIOLATION!</span>
+<span class="cm"># Orphan customer_ids in orders: {99, 5}</span>
+<span class="cm">#    order_id  customer_id  amount</span>
+<span class="cm"># 2       103            5     340</span>
+<span class="cm"># 4       105           99     500</span>
+
+<span class="cm"># Reusable referential integrity checker</span>
+<span class="kw">def</span> <span class="fn">check_referential_integrity</span>(child_df, child_col, parent_df, parent_col):
+    <span class="str">"""Check if all values in child_col exist in parent_col."""</span>
+    child_values = <span class="fn">set</span>(child_df[child_col].dropna())
+    parent_values = <span class="fn">set</span>(parent_df[parent_col])
+    orphans = child_values - parent_values
+    <span class="kw">if</span> orphans:
+        <span class="kw">return</span> {
+            <span class="str">'valid'</span>: <span class="kw">False</span>,
+            <span class="str">'orphan_values'</span>: orphans,
+            <span class="str">'orphan_count'</span>: <span class="fn">len</span>(orphans)
+        }
+    <span class="kw">return</span> {<span class="str">'valid'</span>: <span class="kw">True</span>}</div>
+
+            <!-- Entity Integrity -->
+            <h3 id="entity-integrity">Entity Integrity (Primary Keys)</h3>
+            <p><strong>Entity integrity</strong> requires that every table has a primary key and that the primary key is unique and not null. This ensures that every record can be uniquely identified. Violations include duplicate IDs and null primary keys.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Entity integrity checks</span>
+df = pd.DataFrame({
+    <span class="str">'employee_id'</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">2</span>, <span class="kw">None</span>, <span class="num">5</span>],  <span class="cm"># duplicate 2, null value</span>
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>, <span class="str">'Bob2'</span>, <span class="str">'Eve'</span>, <span class="str">'Frank'</span>],
+    <span class="str">'department'</span>: [<span class="str">'HR'</span>, <span class="str">'IT'</span>, <span class="str">'IT'</span>, <span class="str">'Sales'</span>, <span class="str">'HR'</span>, <span class="str">'IT'</span>]
+})
+
+<span class="kw">def</span> <span class="fn">check_entity_integrity</span>(df, pk_column):
+    <span class="str">"""Verify entity integrity for a given primary key column."""</span>
+    issues = []
+
+    <span class="cm"># Check 1: Primary key must not contain nulls</span>
+    null_count = df[pk_column].isna().sum()
+    <span class="kw">if</span> null_count &gt; <span class="num">0</span>:
+        issues.append(<span class="str">f"NULL values in primary key: {null_count} row(s)"</span>)
+
+    <span class="cm"># Check 2: Primary key must be unique</span>
+    duplicate_count = df[pk_column].duplicated().sum()
+    <span class="kw">if</span> duplicate_count &gt; <span class="num">0</span>:
+        dupes = df[df[pk_column].duplicated(keep=<span class="kw">False</span>)]
+        issues.append(<span class="str">f"Duplicate primary keys: {duplicate_count} duplicate row(s)"</span>)
+        issues.append(<span class="str">f"Duplicate values: {df[pk_column][df[pk_column].duplicated()].tolist()}"</span>)
+
+    <span class="kw">if</span> issues:
+        <span class="fn">print</span>(<span class="str">"ENTITY INTEGRITY VIOLATIONS:"</span>)
+        <span class="kw">for</span> issue <span class="kw">in</span> issues:
+            <span class="fn">print</span>(<span class="str">f"  - {issue}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Entity integrity: OK"</span>)
+
+    <span class="kw">return</span> <span class="fn">len</span>(issues) == <span class="num">0</span>
+
+<span class="fn">check_entity_integrity</span>(df, <span class="str">'employee_id'</span>)
+<span class="cm"># ENTITY INTEGRITY VIOLATIONS:</span>
+<span class="cm">#   - NULL values in primary key: 1 row(s)</span>
+<span class="cm">#   - Duplicate primary keys: 1 duplicate row(s)</span>
+<span class="cm">#   - Duplicate values: [2.0]</span></div>
+
+            <!-- Domain Integrity -->
+            <h3 id="domain-integrity">Domain Integrity (Valid Values)</h3>
+            <p><strong>Domain integrity</strong> ensures that all values in a column come from a defined set of acceptable values (the "domain"). This includes data type restrictions, allowable value ranges, format patterns, and enumerated sets.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Domain integrity: Allowed values for categorical columns</span>
+VALID_DEPARTMENTS = {<span class="str">'HR'</span>, <span class="str">'IT'</span>, <span class="str">'Sales'</span>, <span class="str">'Marketing'</span>, <span class="str">'Finance'</span>}
+VALID_STATUSES = {<span class="str">'active'</span>, <span class="str">'inactive'</span>, <span class="str">'on_leave'</span>}
+
+df = pd.DataFrame({
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>, <span class="str">'Diana'</span>],
+    <span class="str">'department'</span>: [<span class="str">'HR'</span>, <span class="str">'IT'</span>, <span class="str">'Accounting'</span>, <span class="str">'Sales'</span>],  <span class="cm"># 'Accounting' not valid!</span>
+    <span class="str">'status'</span>: [<span class="str">'active'</span>, <span class="str">'fired'</span>, <span class="str">'active'</span>, <span class="str">'on_leave'</span>],  <span class="cm"># 'fired' not valid!</span>
+    <span class="str">'salary'</span>: [<span class="num">55000</span>, <span class="num">62000</span>, <span class="num">-1000</span>, <span class="num">48000</span>]  <span class="cm"># negative salary!</span>
+})
+
+<span class="kw">def</span> <span class="fn">check_domain_integrity</span>(df, domain_rules):
+    <span class="str">"""Check domain integrity against a set of rules.
+
+    domain_rules: dict with column names as keys and either:
+        - a set of valid values (for categorical columns)
+        - a tuple (min, max) for numeric ranges
+    """</span>
+    violations = []
+
+    <span class="kw">for</span> col, rule <span class="kw">in</span> domain_rules.items():
+        <span class="kw">if</span> col <span class="kw">not in</span> df.columns:
+            violations.append(<span class="str">f"Column '{col}' not found"</span>)
+            <span class="kw">continue</span>
+
+        <span class="kw">if</span> <span class="fn">isinstance</span>(rule, <span class="type">set</span>):
+            <span class="cm"># Categorical check: values must be in the allowed set</span>
+            invalid = df[~df[col].isin(rule)]
+            <span class="kw">if not</span> invalid.empty:
+                bad_vals = invalid[col].unique().tolist()
+                violations.append(
+                    <span class="str">f"'{col}' contains invalid values: {bad_vals}"</span>
+                )
+        <span class="kw">elif</span> <span class="fn">isinstance</span>(rule, <span class="type">tuple</span>) <span class="kw">and</span> <span class="fn">len</span>(rule) == <span class="num">2</span>:
+            <span class="cm"># Numeric range check</span>
+            min_val, max_val = rule
+            invalid = df[~df[col].between(min_val, max_val)]
+            <span class="kw">if not</span> invalid.empty:
+                violations.append(
+                    <span class="str">f"'{col}' has {<span class="fn">len</span>(invalid)} values outside [{min_val}, {max_val}]"</span>
+                )
+
+    <span class="kw">return</span> violations
+
+<span class="cm"># Define domain rules</span>
+rules = {
+    <span class="str">'department'</span>: VALID_DEPARTMENTS,
+    <span class="str">'status'</span>: VALID_STATUSES,
+    <span class="str">'salary'</span>: (<span class="num">0</span>, <span class="num">500000</span>)
+}
+
+violations = <span class="fn">check_domain_integrity</span>(df, rules)
+<span class="kw">for</span> v <span class="kw">in</span> violations:
+    <span class="fn">print</span>(<span class="str">f"DOMAIN VIOLATION: {v}"</span>)
+<span class="cm"># DOMAIN VIOLATION: 'department' contains invalid values: ['Accounting']</span>
+<span class="cm"># DOMAIN VIOLATION: 'status' contains invalid values: ['fired']</span>
+<span class="cm"># DOMAIN VIOLATION: 'salary' has 1 values outside [0, 500000]</span></div>
+
+            <!-- Schema Validation -->
+            <h3 id="schema-validation">Schema Validation Approaches</h3>
+            <p>A <strong>data schema</strong> defines the expected structure of a dataset: column names, data types, constraints, and relationships. Schema validation checks incoming data against this specification to ensure conformity.</p>
+
+            <p>Schema validation typically covers:</p>
+            <ul>
+                <li><strong>Column presence:</strong> All required columns exist</li>
+                <li><strong>Column types:</strong> Each column has the expected dtype</li>
+                <li><strong>Non-null constraints:</strong> Required fields are not missing</li>
+                <li><strong>Uniqueness:</strong> Columns that should be unique (e.g., IDs) have no duplicates</li>
+                <li><strong>Value constraints:</strong> Domain rules, ranges, and patterns</li>
+            </ul>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Comprehensive schema validation for DataFrames</span>
+<span class="kw">class</span> <span class="type">DataFrameSchema</span>:
+    <span class="str">"""A simple schema validator for pandas DataFrames."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.columns = {}
+
+    <span class="kw">def</span> <span class="fn">add_column</span>(self, name, dtype=<span class="kw">None</span>, nullable=<span class="kw">True</span>,
+                   unique=<span class="kw">False</span>, allowed_values=<span class="kw">None</span>,
+                   min_val=<span class="kw">None</span>, max_val=<span class="kw">None</span>):
+        <span class="str">"""Define expectations for a column."""</span>
+        self.columns[name] = {
+            <span class="str">'dtype'</span>: dtype,
+            <span class="str">'nullable'</span>: nullable,
+            <span class="str">'unique'</span>: unique,
+            <span class="str">'allowed_values'</span>: allowed_values,
+            <span class="str">'min_val'</span>: min_val,
+            <span class="str">'max_val'</span>: max_val
+        }
+        <span class="kw">return</span> self  <span class="cm"># enable method chaining</span>
+
+    <span class="kw">def</span> <span class="fn">validate</span>(self, df):
+        <span class="str">"""Validate a DataFrame against this schema."""</span>
+        errors = []
+
+        <span class="kw">for</span> col_name, rules <span class="kw">in</span> self.columns.items():
+            <span class="cm"># Check column exists</span>
+            <span class="kw">if</span> col_name <span class="kw">not in</span> df.columns:
+                errors.append(<span class="str">f"Missing column: '{col_name}'"</span>)
+                <span class="kw">continue</span>
+
+            col = df[col_name]
+
+            <span class="cm"># Check nullable</span>
+            <span class="kw">if not</span> rules[<span class="str">'nullable'</span>] <span class="kw">and</span> col.isna().any():
+                errors.append(<span class="str">f"'{col_name}' contains nulls but is non-nullable"</span>)
+
+            <span class="cm"># Check unique</span>
+            <span class="kw">if</span> rules[<span class="str">'unique'</span>] <span class="kw">and</span> col.duplicated().any():
+                errors.append(<span class="str">f"'{col_name}' contains duplicate values but must be unique"</span>)
+
+            <span class="cm"># Check allowed values</span>
+            <span class="kw">if</span> rules[<span class="str">'allowed_values'</span>] <span class="kw">is not</span> <span class="kw">None</span>:
+                invalid = col[~col.isin(rules[<span class="str">'allowed_values'</span>]) &amp; col.notna()]
+                <span class="kw">if not</span> invalid.empty:
+                    errors.append(
+                        <span class="str">f"'{col_name}' has invalid values: {invalid.unique().tolist()}"</span>
+                    )
+
+            <span class="cm"># Check range</span>
+            <span class="kw">if</span> rules[<span class="str">'min_val'</span>] <span class="kw">is not</span> <span class="kw">None</span>:
+                below = col[col &lt; rules[<span class="str">'min_val'</span>]]
+                <span class="kw">if not</span> below.empty:
+                    errors.append(<span class="str">f"'{col_name}' has values below {rules[<span class="str">'min_val'</span>]}"</span>)
+
+            <span class="kw">if</span> rules[<span class="str">'max_val'</span>] <span class="kw">is not</span> <span class="kw">None</span>:
+                above = col[col &gt; rules[<span class="str">'max_val'</span>]]
+                <span class="kw">if not</span> above.empty:
+                    errors.append(<span class="str">f"'{col_name}' has values above {rules[<span class="str">'max_val'</span>]}"</span>)
+
+        <span class="kw">return</span> errors
+
+<span class="cm"># Define and use the schema</span>
+schema = <span class="type">DataFrameSchema</span>()
+schema.add_column(<span class="str">'id'</span>, nullable=<span class="kw">False</span>, unique=<span class="kw">True</span>)
+schema.add_column(<span class="str">'name'</span>, nullable=<span class="kw">False</span>)
+schema.add_column(<span class="str">'age'</span>, min_val=<span class="num">0</span>, max_val=<span class="num">120</span>)
+schema.add_column(<span class="str">'status'</span>, allowed_values=[<span class="str">'active'</span>, <span class="str">'inactive'</span>])
+
+df = pd.DataFrame({
+    <span class="str">'id'</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">4</span>],
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="kw">None</span>, <span class="str">'Charlie'</span>, <span class="str">'Diana'</span>],
+    <span class="str">'age'</span>: [<span class="num">25</span>, <span class="num">130</span>, <span class="num">35</span>, <span class="num">-5</span>],
+    <span class="str">'status'</span>: [<span class="str">'active'</span>, <span class="str">'inactive'</span>, <span class="str">'pending'</span>, <span class="str">'active'</span>]
+})
+
+errors = schema.validate(df)
+<span class="kw">for</span> e <span class="kw">in</span> errors:
+    <span class="fn">print</span>(<span class="str">f"SCHEMA ERROR: {e}"</span>)
+<span class="cm"># SCHEMA ERROR: 'id' contains duplicate values but must be unique</span>
+<span class="cm"># SCHEMA ERROR: 'name' contains nulls but is non-nullable</span>
+<span class="cm"># SCHEMA ERROR: 'age' has values above 120</span>
+<span class="cm"># SCHEMA ERROR: 'age' has values below 0</span>
+<span class="cm"># SCHEMA ERROR: 'status' has invalid values: ['pending']</span></div>
+
+            <!-- Data Quality Frameworks -->
+            <h3 id="quality-frameworks">Data Quality Frameworks</h3>
+            <p>A <strong>data quality framework</strong> provides a structured approach to measuring, monitoring, and improving data quality across an organization. Rather than ad-hoc checks, a framework defines consistent <em>dimensions</em> of quality that all data should meet.</p>
+
+            <p>The most widely recognized data quality dimensions are:</p>
+
+            <table class="dark-table">
+                <tr><th>Dimension</th><th>Definition</th><th>Example Check</th></tr>
+                <tr><td><strong>Accuracy</strong></td><td>Data correctly represents the real-world entity</td><td>Customer address matches postal records</td></tr>
+                <tr><td><strong>Completeness</strong></td><td>All required data is present</td><td>No null values in mandatory fields</td></tr>
+                <tr><td><strong>Consistency</strong></td><td>Data does not contradict itself across sources</td><td>Total in summary matches sum of line items</td></tr>
+                <tr><td><strong>Timeliness</strong></td><td>Data is available when needed and is current</td><td>Records are updated within 24 hours of change</td></tr>
+                <tr><td><strong>Uniqueness</strong></td><td>No unintended duplicates exist</td><td>Each customer appears exactly once</td></tr>
+                <tr><td><strong>Validity</strong></td><td>Data conforms to the expected format and rules</td><td>Email addresses match a valid pattern</td></tr>
+            </table>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Data quality assessment function</span>
+<span class="kw">def</span> <span class="fn">assess_data_quality</span>(df, pk_column=<span class="kw">None</span>):
+    <span class="str">"""Generate a data quality report for a DataFrame."""</span>
+    report = {}
+
+    <span class="cm"># 1. Completeness: percentage of non-null values per column</span>
+    completeness = ((<span class="num">1</span> - df.isnull().mean()) * <span class="num">100</span>).round(<span class="num">2</span>)
+    report[<span class="str">'completeness'</span>] = completeness.to_dict()
+
+    <span class="cm"># 2. Uniqueness: percentage of unique values per column</span>
+    uniqueness = ((df.nunique() / <span class="fn">len</span>(df)) * <span class="num">100</span>).round(<span class="num">2</span>)
+    report[<span class="str">'uniqueness'</span>] = uniqueness.to_dict()
+
+    <span class="cm"># 3. Entity integrity: duplicate check on primary key</span>
+    <span class="kw">if</span> pk_column <span class="kw">and</span> pk_column <span class="kw">in</span> df.columns:
+        dup_count = df[pk_column].duplicated().sum()
+        null_pk = df[pk_column].isna().sum()
+        report[<span class="str">'entity_integrity'</span>] = {
+            <span class="str">'duplicates'</span>: <span class="fn">int</span>(dup_count),
+            <span class="str">'null_keys'</span>: <span class="fn">int</span>(null_pk),
+            <span class="str">'valid'</span>: dup_count == <span class="num">0</span> <span class="kw">and</span> null_pk == <span class="num">0</span>
+        }
+
+    <span class="cm"># 4. Row count and shape</span>
+    report[<span class="str">'total_rows'</span>] = <span class="fn">len</span>(df)
+    report[<span class="str">'total_columns'</span>] = <span class="fn">len</span>(df.columns)
+
+    <span class="kw">return</span> report
+
+<span class="cm"># Example usage</span>
+df = pd.DataFrame({
+    <span class="str">'id'</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>],
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="kw">None</span>, <span class="str">'Diana'</span>, <span class="str">'Eve'</span>],
+    <span class="str">'score'</span>: [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="kw">None</span>, <span class="num">95</span>],
+    <span class="str">'dept'</span>: [<span class="str">'HR'</span>, <span class="str">'IT'</span>, <span class="str">'IT'</span>, <span class="str">'HR'</span>, <span class="str">'IT'</span>]
+})
+
+quality = <span class="fn">assess_data_quality</span>(df, pk_column=<span class="str">'id'</span>)
+
+<span class="fn">print</span>(<span class="str">"=== Data Quality Report ==="</span>)
+<span class="fn">print</span>(<span class="str">f"Rows: {quality[<span class="str">'total_rows'</span>]}, Columns: {quality[<span class="str">'total_columns'</span>]}"</span>)
+<span class="fn">print</span>(<span class="str">f"\nCompleteness (% non-null):"</span>)
+<span class="kw">for</span> col, pct <span class="kw">in</span> quality[<span class="str">'completeness'</span>].items():
+    <span class="fn">print</span>(<span class="str">f"  {col}: {pct}%"</span>)
+<span class="fn">print</span>(<span class="str">f"\nEntity Integrity: {quality[<span class="str">'entity_integrity'</span>]}"</span>)</div>
+
+            <h4>Putting It All Together: Data Integrity Checks Before Database Insertion</h4>
+            <p>In a real pipeline, you validate data comprehensively before inserting it into a database. Here is a complete example that combines type, range, cross-field, entity, domain, and referential checks:</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">validate_for_insertion</span>(df):
+    <span class="str">"""Run all validation checks before inserting data into a database.
+
+    Returns a tuple: (is_valid: bool, errors: list, clean_df: DataFrame)
+    """</span>
+    errors = []
+
+    <span class="cm"># 1. Entity integrity - check primary key</span>
+    <span class="kw">if</span> df[<span class="str">'id'</span>].isna().any():
+        errors.append(<span class="str">"Primary key 'id' contains NULL values"</span>)
+    <span class="kw">if</span> df[<span class="str">'id'</span>].duplicated().any():
+        dupes = df[df[<span class="str">'id'</span>].duplicated()][<span class="str">'id'</span>].tolist()
+        errors.append(<span class="str">f"Duplicate IDs found: {dupes}"</span>)
+
+    <span class="cm"># 2. Type validation</span>
+    <span class="kw">try</span>:
+        df[<span class="str">'salary'</span>] = pd.to_numeric(df[<span class="str">'salary'</span>], errors=<span class="str">'raise'</span>)
+    <span class="kw">except</span> <span class="type">ValueError</span>:
+        errors.append(<span class="str">"'salary' contains non-numeric values"</span>)
+
+    <span class="cm"># 3. Range validation</span>
+    <span class="kw">if</span> (df[<span class="str">'salary'</span>] &lt; <span class="num">0</span>).any():
+        errors.append(<span class="str">"Negative salary values detected"</span>)
+
+    <span class="cm"># 4. Domain validation</span>
+    valid_depts = {<span class="str">'HR'</span>, <span class="str">'IT'</span>, <span class="str">'Sales'</span>, <span class="str">'Marketing'</span>}
+    invalid_depts = <span class="fn">set</span>(df[<span class="str">'department'</span>].dropna()) - valid_depts
+    <span class="kw">if</span> invalid_depts:
+        errors.append(<span class="str">f"Invalid departments: {invalid_depts}"</span>)
+
+    <span class="cm"># 5. Cross-field validation</span>
+    <span class="kw">if</span> <span class="str">'start_date'</span> <span class="kw">in</span> df.columns <span class="kw">and</span> <span class="str">'end_date'</span> <span class="kw">in</span> df.columns:
+        bad_dates = df[df[<span class="str">'end_date'</span>] &lt; df[<span class="str">'start_date'</span>]]
+        <span class="kw">if not</span> bad_dates.empty:
+            errors.append(<span class="str">f"end_date &lt; start_date in {<span class="fn">len</span>(bad_dates)} rows"</span>)
+
+    <span class="cm"># 6. Completeness check</span>
+    required_cols = [<span class="str">'id'</span>, <span class="str">'name'</span>, <span class="str">'department'</span>, <span class="str">'salary'</span>]
+    <span class="kw">for</span> col <span class="kw">in</span> required_cols:
+        null_count = df[col].isna().sum()
+        <span class="kw">if</span> null_count &gt; <span class="num">0</span>:
+            errors.append(<span class="str">f"Required column '{col}' has {null_count} null(s)"</span>)
+
+    is_valid = <span class="fn">len</span>(errors) == <span class="num">0</span>
+    <span class="kw">return</span> is_valid, errors, df
+
+<span class="cm"># Test it</span>
+df = pd.DataFrame({
+    <span class="str">'id'</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+    <span class="str">'name'</span>: [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>],
+    <span class="str">'department'</span>: [<span class="str">'HR'</span>, <span class="str">'IT'</span>, <span class="str">'Sales'</span>],
+    <span class="str">'salary'</span>: [<span class="num">55000</span>, <span class="num">62000</span>, <span class="num">48000</span>]
+})
+
+is_valid, errors, clean_df = <span class="fn">validate_for_insertion</span>(df)
+<span class="kw">if</span> is_valid:
+    <span class="fn">print</span>(<span class="str">"All checks passed. Safe to insert into database."</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Validation failed:"</span>)
+    <span class="kw">for</span> e <span class="kw">in</span> errors:
+        <span class="fn">print</span>(<span class="str">f"  - {e}"</span>)</div>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>Exam Tip:</strong> You may encounter scenarios where you need to identify which type of integrity is being violated (entity, referential, or domain). Focus on the definitions: entity = unique identifiers, referential = valid relationships, domain = valid values within a column.
+            </div>
+        </div>
+
+        <!-- ========== QUIZ ========== -->
+        <div class="section fade-up" id="quiz">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> Practice Quiz &mdash; Topic 1.3</h2>
+            <p class="section-desc">Test your understanding with 10 multiple-choice questions. Click an option to see the answer and explanation.</p>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q1. Which validation method checks whether a value is of the expected data type (e.g., integer, string, float)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) Range validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">B) Type validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">C) Cross-field validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) Referential validation</div>
+                <div class="quiz-explanation"><strong>Correct: B) Type validation.</strong> Type validation uses checks like <code>isinstance()</code> or pandas <code>.dtypes</code> to ensure values are of the correct data type. Range validation checks boundaries, cross-field checks relationships between columns, and referential validation checks foreign key relationships.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q2. What will <code>isinstance(3.14, (int, float))</code> return?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">A) True</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">B) False</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">C) TypeError</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) None</div>
+                <div class="quiz-explanation"><strong>Correct: A) True.</strong> When a tuple of types is passed as the second argument, <code>isinstance()</code> returns <code>True</code> if the object is an instance of <em>any</em> type in the tuple. Since <code>3.14</code> is a <code>float</code>, and <code>float</code> is in the tuple, the result is <code>True</code>.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q3. You have an orders table where each order references a <code>customer_id</code>. Some orders reference customer IDs that do not exist in the customers table. Which type of integrity is violated?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) Entity integrity</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">B) Referential integrity</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">C) Domain integrity</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) Type integrity</div>
+                <div class="quiz-explanation"><strong>Correct: B) Referential integrity.</strong> Referential integrity ensures that foreign key values in a child table correspond to valid primary key values in the parent table. Orders referencing non-existent customers are "orphan records" that violate referential integrity.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q4. What is the primary risk of using <code>assert</code> for validation in production code?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) Assert statements are slower than if/else</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">B) Assert statements cannot include custom error messages</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">C) Assert statements are disabled when Python runs with the <code>-O</code> flag</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) Assert statements can only check boolean values</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> When Python is invoked with the <code>-O</code> (optimize) flag, all <code>assert</code> statements are stripped from the bytecode and never executed. This means validation logic inside <code>assert</code> silently disappears in optimized production builds. Use explicit <code>if</code>/<code>raise</code> for critical validation.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q5. A dataset has a <code>start_date</code> and <code>end_date</code> column. You need to ensure that the end date is always after the start date. Which validation method applies?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) Type validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">B) Range validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">C) Cross-field validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) Domain validation</div>
+                <div class="quiz-explanation"><strong>Correct: C) Cross-field validation.</strong> Cross-field (cross-reference) validation checks the logical relationship between two or more fields. Verifying that <code>end_date &gt; start_date</code> requires comparing values across two columns, which is the definition of cross-field validation.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q6. Which of the following is an example of entity integrity violation?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) A salary column contains the value "N/A"</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">B) Two rows in a table have the same primary key value</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">C) An order references a customer_id that does not exist</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) A temperature reading is 999 degrees Celsius</div>
+                <div class="quiz-explanation"><strong>Correct: B) Two rows with the same primary key.</strong> Entity integrity requires that every row has a unique, non-null primary key. Duplicate primary keys mean two records cannot be distinguished, violating entity integrity. Option A is a domain issue, C is referential, and D is a range issue.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q7. What does the pandas method <code>df['age'].between(0, 120)</code> return?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) A filtered DataFrame with only rows where age is between 0 and 120</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">B) A boolean Series indicating whether each value is between 0 and 120 (inclusive)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">C) The count of values between 0 and 120</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) A new Series with values clipped to the range [0, 120]</div>
+                <div class="quiz-explanation"><strong>Correct: B) A boolean Series.</strong> The <code>.between()</code> method returns a boolean Series of the same length as the original, with <code>True</code> where the value falls within the specified range (inclusive by default) and <code>False</code> otherwise. It does not filter or modify the data.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q8. A column called <code>status</code> should only contain values from the set {"active", "inactive", "on_leave"}. A row contains the value "terminated". Which integrity type is violated?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) Entity integrity</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">B) Referential integrity</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">C) Domain integrity</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) Cross-field integrity</div>
+                <div class="quiz-explanation"><strong>Correct: C) Domain integrity.</strong> Domain integrity ensures that all values in a column come from a defined set of acceptable values. "terminated" is not in the allowed set, so it violates the domain constraint for the <code>status</code> column.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q9. What is the main benefit of performing data validation early in the data pipeline (at ingestion)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) It makes the code run faster</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">B) It eliminates the need for database constraints</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">C) It prevents bad data from propagating through downstream processes</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) It automatically corrects invalid data</div>
+                <div class="quiz-explanation"><strong>Correct: C) It prevents bad data from propagating downstream.</strong> Early validation ("fail fast") catches errors at the source before they contaminate storage, analysis, and reports. It does not automatically fix data or replace database constraints, but it dramatically reduces debugging costs and rework.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q13">
+                <div class="quiz-question">Q10. In the following code, what happens when the conversion fails?<br><code>try: df['price'] = pd.to_numeric(df['price'], errors='raise')<br>except ValueError: df['price'] = pd.to_numeric(df['price'], errors='coerce')</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">A) The program crashes with a ValueError</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">B) Non-numeric values are dropped from the DataFrame</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q13')">C) Non-numeric values are replaced with NaN</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q13')">D) Non-numeric values are replaced with 0</div>
+                <div class="quiz-explanation"><strong>Correct: C) Non-numeric values are replaced with NaN.</strong> The <code>try</code> block attempts strict conversion (<code>errors='raise'</code>), which raises a <code>ValueError</code> if any value cannot be converted. The <code>except</code> block catches that error and re-runs the conversion with <code>errors='coerce'</code>, which converts invalid values to <code>NaN</code> instead of failing.</div>
+            </div>
+
+            <div id="score-q13" class="score-box"></div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic1-2.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous Topic</a>
+            <a href="topic1-4.html" class="nav-btn next">Next Topic <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a href="#validation-methods" class="toc-item">1.3.1 Data Validation Methods</a>
+        <a href="#data-integrity" class="toc-item">1.3.2 Data Integrity</a>
+        <a href="#quiz" class="toc-item">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

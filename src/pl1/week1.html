@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1: Java Basics Revision - PL1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --footer:#080c14;--code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --text:#0f172a;--text2:#334155;--warning:#d97706;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --footer:#e2e8f0;--code:#1e293b;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}
+        body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}
+        body.light-mode .hero::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#1e3a5f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}
+        body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#2563eb}
+        body.light-mode .info-box h3{color:#0f172a}
+        body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .quiz-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .quiz-question{color:#0f172a}
+        body.light-mode .quiz-option{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .quiz-option:hover{border-color:#2563eb;color:#0f172a}
+        body.light-mode .quiz-option.correct{background:rgba(5,150,105,.12);border-color:#059669;color:#047857}
+        body.light-mode .quiz-option.incorrect{background:rgba(220,38,38,.1);border-color:#dc2626;color:#dc2626}
+        body.light-mode .trace-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .trace-box h4{color:#0f172a}
+        body.light-mode .trace-input{background:#fff;border-color:rgba(0,0,0,.12);color:#0f172a}
+        body.light-mode .bug-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}
+        body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#2563eb;border-left-color:#2563eb;background:rgba(37,99,235,.06)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}
+        body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .score-summary{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}
+        body.light-mode .dark-table td{color:#1e293b}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}
+        a:hover{color:#60a5fa}
+        ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu a{color:var(--text2);padding:12px 16px;border-radius:8px;font-size:.95rem;font-weight:500;display:block}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.15rem;color:var(--text2);margin-bottom:6px}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:20px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:0}
+        .info-box li{padding:3px 0;display:flex;align-items:flex-start;gap:8px}
+        .info-box li i{color:var(--success);margin-top:5px;font-size:.75rem;flex-shrink:0}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border)}
+        .dark-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .quiz-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .quiz-question{font-weight:600;color:var(--text);margin-bottom:14px;font-size:1rem}
+        .quiz-option{background:var(--surface);border:1px solid var(--border2);padding:12px 16px;margin:6px 0;border-radius:8px;cursor:pointer;transition:all .2s;color:var(--text2);font-size:.9rem}
+        .quiz-option:hover{border-color:var(--primary);color:var(--text)}
+        .quiz-option.correct{background:rgba(16,185,129,.12);border-color:var(--success);color:var(--success);cursor:default}
+        .quiz-option.incorrect{background:rgba(239,68,68,.1);border-color:#ef4444;color:#ef4444;cursor:default}
+        .quiz-explanation{display:none;margin-top:10px;padding:12px;background:rgba(59,130,246,.08);border-radius:8px;font-size:.88rem;color:var(--text2);border-left:3px solid var(--primary)}
+        .quiz-explanation.show{display:block}
+        .trace-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .trace-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .trace-box h4 i{color:var(--warning)}
+        .trace-input{background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;width:100%;margin:8px 0}
+        .trace-input:focus{outline:none;border-color:var(--primary)}
+        .check-btn{background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;margin-top:6px}
+        .check-btn:hover{background:#2563eb}
+        .trace-result{margin-top:8px;font-size:.88rem;padding:8px 12px;border-radius:6px;display:none}
+        .trace-result.correct{display:block;background:rgba(16,185,129,.12);color:var(--success)}
+        .trace-result.incorrect{display:block;background:rgba(239,68,68,.1);color:#ef4444}
+        .bug-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid #ef4444;border-radius:12px;padding:24px;margin:20px 0}
+        .bug-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .bug-box h4 i{color:#ef4444}
+        .score-summary{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin:24px 0;text-align:center}
+        .score-summary h4{font-size:1rem;font-weight:600;margin-bottom:8px}
+        .score-summary .score{font-size:2rem;font-weight:800;color:var(--primary)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:200px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.8rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(59,130,246,.05)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--success);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){
+            .hero h1{font-size:2rem}
+            .hero{padding:60px 20px 40px}
+            .section{padding:24px 16px}
+            .nav-links{display:none}
+            .hamburger{display:block}
+            .page-nav{flex-direction:column;gap:12px}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#elementary">Elementary</a>
+                <a href="#selections">Selections</a>
+                <a href="#math">Math</a>
+                <a href="#loops">Loops</a>
+                <a href="#methods">Methods</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="#elementary" onclick="this.parentElement.classList.remove('open')">Elementary</a>
+        <a href="#selections" onclick="this.parentElement.classList.remove('open')">Selections</a>
+        <a href="#math" onclick="this.parentElement.classList.remove('open')">Math</a>
+        <a href="#loops" onclick="this.parentElement.classList.remove('open')">Loops</a>
+        <a href="#methods" onclick="this.parentElement.classList.remove('open')">Methods</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Week 1: Revision - Java Basics</h1>
+            <p class="hero-sub">Liang Chapters 1-5: Elementary Programming, Selections, Math, Loops, Methods</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- ============ SECTION 1: ELEMENTARY PROGRAMMING ============ -->
+        <div class="section fade-up" id="elementary">
+            <h2 class="section-title"><i class="fa-solid fa-pencil"></i> Elementary Programming</h2>
+            <p class="section-desc">A Java program is executed from the <code>main</code> method. Variables store data values. Every variable has a data type that determines the size and layout of its memory. (Liang, Ch. 2)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-database"></i> Primitive Data Types</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Java has eight primitive data types (Liang, Table 2.2):</p>
+                <table class="dark-table">
+                    <tr><th>Type</th><th>Size</th><th>Range</th><th>Default</th></tr>
+                    <tr><td><code>byte</code></td><td>8 bits</td><td>-128 to 127</td><td>0</td></tr>
+                    <tr><td><code>short</code></td><td>16 bits</td><td>-32,768 to 32,767</td><td>0</td></tr>
+                    <tr><td><code>int</code></td><td>32 bits</td><td>-2^31 to 2^31 - 1</td><td>0</td></tr>
+                    <tr><td><code>long</code></td><td>64 bits</td><td>-2^63 to 2^63 - 1</td><td>0L</td></tr>
+                    <tr><td><code>float</code></td><td>32 bits</td><td>~7 decimal digits</td><td>0.0f</td></tr>
+                    <tr><td><code>double</code></td><td>64 bits</td><td>~15 decimal digits</td><td>0.0</td></tr>
+                    <tr><td><code>char</code></td><td>16 bits</td><td>Unicode 0 to 65,535</td><td>'\u0000'</td></tr>
+                    <tr><td><code>boolean</code></td><td>1 bit</td><td>true or false</td><td>false</td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-right-left"></i> Type Casting</h3>
+                <p style="color:var(--text2);margin-bottom:12px;"><strong>Widening (implicit):</strong> byte &rarr; short &rarr; int &rarr; long &rarr; float &rarr; double. <strong>Narrowing (explicit):</strong> requires a cast operator. (Liang, Section 2.15)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">double</span> d = <span class="num">3.14</span>;
+<span class="type">int</span> i = (<span class="type">int</span>) d;  <span class="cm">// i becomes 3 (truncation, not rounding)</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-lock"></i> Constants</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">A constant is declared using the <code>final</code> keyword. Once assigned, its value cannot be changed. (Liang, Section 2.6)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">final</span> <span class="type">double</span> PI = <span class="num">3.14159</span>;</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-play"></i> Example: ComputeArea (Liang, Listing 2.1)</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">ComputeArea</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        Scanner input = <span class="kw">new</span> Scanner(System.in);
+        System.out.print(<span class="str">"Enter a number for radius: "</span>);
+        <span class="type">double</span> radius = input.nextDouble();
+        <span class="type">double</span> area = radius * radius * <span class="num">3.14159</span>;
+        System.out.println(<span class="str">"The area for the circle of radius "</span>
+            + radius + <span class="str">" is "</span> + area);
+    }
+}</div>
+            </div>
+
+            <!-- MCQ -->
+            <div class="quiz-box" data-section="elementary">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the result of <code>(int) 3.9</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">A) 4</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'elementary')">B) 3</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">C) 3.9</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">D) Compilation error</div>
+                <div class="quiz-explanation">Casting a double to int truncates the decimal part (does not round). So (int) 3.9 = 3. (Liang, Section 2.15)</div>
+            </div>
+
+            <div class="quiz-box" data-section="elementary">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: Which data type would you use to store a student's GPA (e.g., 3.85)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">A) int</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'elementary')">B) double</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">C) boolean</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">D) char</div>
+                <div class="quiz-explanation">A GPA like 3.85 is a decimal number. The double type stores 64-bit floating-point values. (Liang, Section 2.9)</div>
+            </div>
+
+            <!-- Trace -->
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> x = <span class="num">10</span>;
+<span class="type">int</span> y = x / <span class="num">3</span>;
+<span class="type">double</span> z = x / <span class="num">3</span>;
+System.out.println(y + <span class="str">" "</span> + z);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-elem1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-elem1','3 3.0')">Check Answer</button>
+                <div class="trace-result" id="trace-elem1-result"></div>
+            </div>
+
+            <!-- Bug -->
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">double</span> temperature;
+System.out.println(<span class="str">"Temperature is "</span> + temperature);</div>
+                <div class="quiz-box" style="margin-top:12px;background:transparent;border:none;padding:0" data-section="elementary">
+                    <div class="quiz-question" style="font-size:.9rem;">What is the error?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'elementary')">A) Variable temperature might not have been initialized</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">B) Missing semicolon</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'elementary')">C) Wrong data type</div>
+                    <div class="quiz-explanation">Local variables must be initialized before use. The compiler will report "variable temperature might not have been initialized." (Liang, Section 2.5)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-elementary">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="elementary-correct">0</span> / <span id="elementary-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 2: SELECTIONS ============ -->
+        <div class="section fade-up" id="selections">
+            <h2 class="section-title"><i class="fa-solid fa-code-branch"></i> Selections</h2>
+            <p class="section-desc">Selection statements let you choose which action to perform based on conditions. Java provides if, if-else, nested if, switch, and the conditional expression operator. (Liang, Ch. 3)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-diagram-project"></i> if-else Statement</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">if</span> (score >= <span class="num">90</span>)
+    grade = <span class="str">'A'</span>;
+<span class="kw">else if</span> (score >= <span class="num">80</span>)
+    grade = <span class="str">'B'</span>;
+<span class="kw">else if</span> (score >= <span class="num">70</span>)
+    grade = <span class="str">'C'</span>;
+<span class="kw">else</span>
+    grade = <span class="str">'F'</span>;</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list-check"></i> switch Statement</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">The switch statement matches a variable against a list of constant values. (Liang, Section 3.13)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">switch</span> (day) {
+    <span class="kw">case</span> <span class="num">1</span>: System.out.println(<span class="str">"Monday"</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="num">2</span>: System.out.println(<span class="str">"Tuesday"</span>); <span class="kw">break</span>;
+    <span class="kw">default</span>: System.out.println(<span class="str">"Other"</span>);
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-question"></i> Conditional Expression</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">The ternary operator <code>condition ? expr1 : expr2</code> provides a shorthand for if-else. (Liang, Section 3.14)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> max = (a > b) ? a : b;</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-sort"></i> Operator Precedence (Liang, Table 3.7)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">From highest to lowest: <code>!</code> &rarr; <code>* / %</code> &rarr; <code>+ -</code> &rarr; <code>&lt; &lt;= &gt; &gt;=</code> &rarr; <code>== !=</code> &rarr; <code>&&</code> &rarr; <code>||</code> &rarr; <code>= += -=</code></p>
+            </div>
+
+            <!-- MCQ -->
+            <div class="quiz-box" data-section="selections">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the value of <code>x</code> after: <code>int x = (5 > 3) ? 10 : 20;</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'selections')">A) 10</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'selections')">B) 20</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'selections')">C) 5</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'selections')">D) 3</div>
+                <div class="quiz-explanation">Since 5 > 3 is true, the expression evaluates to 10. (Liang, Section 3.14)</div>
+            </div>
+
+            <div class="quiz-box" data-section="selections">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What happens if you forget <code>break</code> in a switch case?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'selections')">A) Compilation error</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'selections')">B) Fall-through: subsequent cases execute until a break is found</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'selections')">C) Only the matched case runs</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'selections')">D) Runtime error</div>
+                <div class="quiz-explanation">Without break, execution falls through to the next case(s). This is called fall-through behavior. (Liang, Section 3.13)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> x = <span class="num">5</span>;
+<span class="kw">if</span> (x > <span class="num">3</span>)
+    <span class="kw">if</span> (x > <span class="num">10</span>)
+        System.out.println(<span class="str">"A"</span>);
+    <span class="kw">else</span>
+        System.out.println(<span class="str">"B"</span>);
+<span class="kw">else</span>
+    System.out.println(<span class="str">"C"</span>);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-sel1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-sel1','B')">Check Answer</button>
+                <div class="trace-result" id="trace-sel1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-selections">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="selections-correct">0</span> / <span id="selections-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 3: MATHEMATICAL FUNCTIONS ============ -->
+        <div class="section fade-up" id="math">
+            <h2 class="section-title"><i class="fa-solid fa-square-root-variable"></i> Mathematical Functions</h2>
+            <p class="section-desc">Java provides the Math class with many useful methods for performing mathematical operations. All methods in the Math class are static. (Liang, Ch. 4)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-calculator"></i> Common Math Methods</h3>
+                <table class="dark-table">
+                    <tr><th>Method</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>Math.pow(a, b)</code></td><td>a raised to power b</td><td><code>Math.pow(2, 3)</code> = 8.0</td></tr>
+                    <tr><td><code>Math.sqrt(x)</code></td><td>Square root</td><td><code>Math.sqrt(16)</code> = 4.0</td></tr>
+                    <tr><td><code>Math.abs(x)</code></td><td>Absolute value</td><td><code>Math.abs(-5)</code> = 5</td></tr>
+                    <tr><td><code>Math.max(a, b)</code></td><td>Larger of two values</td><td><code>Math.max(3, 7)</code> = 7</td></tr>
+                    <tr><td><code>Math.min(a, b)</code></td><td>Smaller of two values</td><td><code>Math.min(3, 7)</code> = 3</td></tr>
+                    <tr><td><code>Math.random()</code></td><td>Random double in [0, 1)</td><td><code>(int)(Math.random() * 10)</code></td></tr>
+                    <tr><td><code>Math.ceil(x)</code></td><td>Round up</td><td><code>Math.ceil(2.1)</code> = 3.0</td></tr>
+                    <tr><td><code>Math.floor(x)</code></td><td>Round down</td><td><code>Math.floor(2.9)</code> = 2.0</td></tr>
+                    <tr><td><code>Math.round(x)</code></td><td>Round to nearest</td><td><code>Math.round(2.5)</code> = 3</td></tr>
+                </table>
+            </div>
+
+            <div class="quiz-box" data-section="math">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is <code>Math.ceil(-2.1)</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'math')">A) -3.0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'math')">B) -2.0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'math')">C) -2.1</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'math')">D) -1.0</div>
+                <div class="quiz-explanation">Math.ceil rounds up (toward positive infinity). ceil(-2.1) = -2.0. (Liang, Section 4.2)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>System.out.println((<span class="type">int</span>)Math.pow(<span class="num">2</span>, <span class="num">3</span>) + (<span class="type">int</span>)Math.sqrt(<span class="num">9</span>));</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-math1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-math1','11')">Check Answer</button>
+                <div class="trace-result" id="trace-math1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-math">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="math-correct">0</span> / <span id="math-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 4: LOOPS ============ -->
+        <div class="section fade-up" id="loops">
+            <h2 class="section-title"><i class="fa-solid fa-rotate"></i> Loops</h2>
+            <p class="section-desc">Loops enable your program to execute statements repeatedly. Java provides three loop statements: while, do-while, and for. (Liang, Ch. 5)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrow-rotate-right"></i> while Loop</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> count = <span class="num">0</span>;
+<span class="kw">while</span> (count < <span class="num">5</span>) {
+    System.out.println(<span class="str">"Count is: "</span> + count);
+    count++;
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrow-rotate-left"></i> do-while Loop</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">The do-while loop executes the body at least once before checking the condition. (Liang, Section 5.3)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> n = <span class="num">0</span>;
+<span class="kw">do</span> {
+    System.out.println(n);
+    n++;
+} <span class="kw">while</span> (n < <span class="num">3</span>);</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list-ol"></i> for Loop</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {
+    System.out.print(i + <span class="str">" "</span>);
+}
+<span class="cm">// Output: 0 1 2 3 4</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-layer-group"></i> Nested Loops Example</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">for</span> (<span class="type">int</span> i = <span class="num">1</span>; i <= <span class="num">3</span>; i++) {
+    <span class="kw">for</span> (<span class="type">int</span> j = <span class="num">1</span>; j <= i; j++) {
+        System.out.print(<span class="str">"* "</span>);
+    }
+    System.out.println();
+}
+<span class="cm">// Output:
+// *
+// * *
+// * * *</span></div>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fa-solid fa-circle-info"></i> break and continue</h3>
+                <p><code>break</code> immediately terminates the loop. <code>continue</code> skips the current iteration and moves to the next one. (Liang, Section 5.8)</p>
+            </div>
+
+            <div class="quiz-box" data-section="loops">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: How many times does this loop execute? <code>for (int i = 1; i <= 10; i += 3)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">A) 3</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'loops')">B) 4</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">C) 10</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">D) 5</div>
+                <div class="quiz-explanation">i takes values 1, 4, 7, 10 (4 iterations). When i becomes 13, the condition fails. (Liang, Section 5.4)</div>
+            </div>
+
+            <div class="quiz-box" data-section="loops">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What is the difference between while and do-while?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">A) while is faster</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">B) do-while cannot use break</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'loops')">C) do-while always executes at least once</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">D) No difference</div>
+                <div class="quiz-explanation">do-while checks the condition after executing the body, guaranteeing at least one execution. (Liang, Section 5.3)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> sum = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">1</span>; i <= <span class="num">5</span>; i++) {
+    <span class="kw">if</span> (i % <span class="num">2</span> == <span class="num">0</span>) <span class="kw">continue</span>;
+    sum += i;
+}
+System.out.println(sum);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-loop1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-loop1','9')">Check Answer</button>
+                <div class="trace-result" id="trace-loop1-result"></div>
+            </div>
+
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">int</span> i = <span class="num">0</span>;
+<span class="kw">while</span> (i < <span class="num">10</span>)
+    System.out.println(i);
+    i++;</div>
+                <div class="quiz-box" style="margin-top:12px;background:transparent;border:none;padding:0" data-section="loops">
+                    <div class="quiz-question" style="font-size:.9rem;">What is the bug?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'loops')">A) Missing braces causes infinite loop (only println is in the loop)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">B) Wrong initial value of i</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'loops')">C) Should use for loop instead</div>
+                    <div class="quiz-explanation">Without braces, only the first statement (println) is in the loop body. The i++ is outside the loop, so i never changes and the loop runs forever. (Liang, Section 5.2)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-loops">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="loops-correct">0</span> / <span id="loops-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 5: METHODS ============ -->
+        <div class="section fade-up" id="methods">
+            <h2 class="section-title"><i class="fa-solid fa-puzzle-piece"></i> Methods</h2>
+            <p class="section-desc">A method is a collection of statements grouped together to perform an operation. Methods help with code reuse and modular programming. (Liang, Ch. 6)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Defining a Method</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static</span> <span class="type">int</span> <span class="fn">max</span>(<span class="type">int</span> num1, <span class="type">int</span> num2) {
+    <span class="kw">if</span> (num1 > num2)
+        <span class="kw">return</span> num1;
+    <span class="kw">else</span>
+        <span class="kw">return</span> num2;
+}</div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Method Signature</h3>
+                    <p>A method signature consists of the method name and parameter list. The return type is NOT part of the signature. (Liang, Section 6.4)</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-clone"></i> Method Overloading</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Overloading means defining multiple methods with the same name but different parameter lists. The compiler determines which method to call based on arguments. (Liang, Section 6.8)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static</span> <span class="type">int</span> <span class="fn">max</span>(<span class="type">int</span> a, <span class="type">int</span> b) { <span class="kw">return</span> (a > b) ? a : b; }
+<span class="kw">public static</span> <span class="type">double</span> <span class="fn">max</span>(<span class="type">double</span> a, <span class="type">double</span> b) { <span class="kw">return</span> (a > b) ? a : b; }
+<span class="kw">public static</span> <span class="type">int</span> <span class="fn">max</span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) { <span class="kw">return</span> max(max(a,b),c); }</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-eye-slash"></i> Scope of Variables</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">A local variable is declared inside a method and is only accessible within that method. A variable declared in a for loop header is only accessible inside the loop. (Liang, Section 6.9)</p>
+            </div>
+
+            <div class="quiz-box" data-section="methods">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the return type of a method that does not return a value?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">A) int</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">B) null</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'methods')">C) void</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">D) empty</div>
+                <div class="quiz-explanation">A void method does not return a value. You cannot use return with a value inside a void method. (Liang, Section 6.3)</div>
+            </div>
+
+            <div class="quiz-box" data-section="methods">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: Can two overloaded methods have the same parameter types but different return types?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">A) Yes, always</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'methods')">B) No, that causes a compilation error</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">C) Only with static methods</div>
+                <div class="quiz-explanation">Overloaded methods must differ in parameter lists. The return type alone is not sufficient to distinguish two methods. (Liang, Section 6.8)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+    <span class="type">int</span> a = <span class="num">5</span>;
+    change(a);
+    System.out.println(a);
+}
+<span class="kw">public static void</span> <span class="fn">change</span>(<span class="type">int</span> x) {
+    x = x * <span class="num">2</span>;
+}</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-meth1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-meth1','5')">Check Answer</button>
+                <div class="trace-result" id="trace-meth1-result"></div>
+            </div>
+
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public static</span> <span class="type">int</span> <span class="fn">sum</span>(<span class="type">int</span> n) {
+    <span class="type">int</span> result = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">1</span>; i <= n; i++)
+        result += i;
+}</div>
+                <div class="quiz-box" style="margin-top:12px;background:transparent;border:none;padding:0" data-section="methods">
+                    <div class="quiz-question" style="font-size:.9rem;">What is the bug?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'methods')">A) Missing return statement</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">B) Wrong loop condition</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'methods')">C) result should be double</div>
+                    <div class="quiz-explanation">The method has return type int but no return statement. It should have "return result;" at the end. (Liang, Section 6.4)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-methods">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="methods-correct">0</span> / <span id="methods-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="index.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Course Home</a>
+            <a href="week2.html" class="nav-btn next">Week 2: Arrays <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-bottom">601112 - Programming Language 1 (Java) - University of Petra - Dr. Abdulkarim Albanna</div>
+    </footer>
+
+    <div class="toc" id="toc">
+        <h4>Week 1</h4>
+        <a class="toc-item" href="#elementary">Elementary</a>
+        <a class="toc-item" href="#selections">Selections</a>
+        <a class="toc-item" href="#math">Math Functions</a>
+        <a class="toc-item" href="#loops">Loops</a>
+        <a class="toc-item" href="#methods">Methods</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Theme
+        function toggleTheme(){
+            document.body.classList.toggle('light-mode');
+            const isLight=document.body.classList.contains('light-mode');
+            localStorage.setItem('pl1-theme',isLight?'light':'dark');
+            document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+        }
+        (function(){const s=localStorage.getItem('pl1-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+
+        // Copy
+        function copyCode(btn){
+            const block=btn.parentElement;
+            const text=block.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();
+            navigator.clipboard.writeText(text).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});
+        }
+
+        // Scores
+        const scores={elementary:{c:0,t:0},selections:{c:0,t:0},math:{c:0,t:0},loops:{c:0,t:0},methods:{c:0,t:0}};
+        function updateScore(sec){
+            const ce=document.getElementById(sec+'-correct');
+            const te=document.getElementById(sec+'-total');
+            if(ce)ce.textContent=scores[sec].c;
+            if(te)te.textContent=scores[sec].t;
+        }
+
+        // Quiz
+        function checkQuiz(el,correct,section){
+            const box=el.closest('.quiz-box');
+            if(box.dataset.answered) return;
+            box.dataset.answered='true';
+            const opts=box.querySelectorAll('.quiz-option');
+            opts.forEach(o=>o.style.pointerEvents='none');
+            scores[section].t++;
+            if(correct){
+                el.classList.add('correct');
+                el.innerHTML+=' <i class="fa-solid fa-circle-check"></i>';
+                scores[section].c++;
+            }else{
+                el.classList.add('incorrect');
+                el.innerHTML+=' <i class="fa-solid fa-circle-xmark"></i>';
+                opts.forEach(o=>{if(!o.classList.contains('incorrect')&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');});
+            }
+            const exp=box.querySelector('.quiz-explanation');
+            if(exp)exp.classList.add('show');
+            updateScore(section);
+        }
+
+        // Trace
+        function checkTrace(id,answer){
+            const input=document.getElementById(id);
+            const result=document.getElementById(id+'-result');
+            const val=input.value.trim();
+            if(val===answer){
+                result.className='trace-result correct';
+                result.innerHTML='<i class="fa-solid fa-circle-check"></i> Correct! The output is: '+answer;
+            }else{
+                result.className='trace-result incorrect';
+                result.innerHTML='<i class="fa-solid fa-circle-xmark"></i> Incorrect. The correct output is: '+answer;
+            }
+        }
+
+        // Scroll & TOC
+        const scrollTop=document.getElementById('scrollTop');
+        const toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{
+            const y=window.scrollY;
+            scrollTop.classList.toggle('visible',y>500);
+            toc.classList.toggle('visible',y>500);
+        });
+        const secs=['elementary','selections','math','loops','methods'];
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{
+            const y=window.scrollY+150;
+            secs.forEach((s,i)=>{
+                const el=document.getElementById(s);
+                if(!el)return;
+                tocItems[i].classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);
+            });
+        });
+
+        // Fade-up
+        const obs=new IntersectionObserver((entries)=>{
+            entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+        },{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

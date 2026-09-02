@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 4.1: Data Analysis with Pandas and NumPy | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Topic 4.1: Data Analysis with Pandas and NumPy</h1>
+        <p class="hero-sub">Block 4: Data Analysis and Modeling</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- Objectives Overview -->
+        <div class="section fade-up">
+            <h2><i class="fa-solid fa-bullseye"></i> Learning Objectives (6)</h2>
+            <div class="info-box">
+                <ul style="margin:0;padding-left:1.2rem;">
+                    <li>4.1.1 Organize and Clean Data with Pandas</li>
+                    <li>4.1.2 Merge and Reshape Datasets</li>
+                    <li>4.1.3 Series vs DataFrames</li>
+                    <li>4.1.4 Data Access with .loc and .iloc</li>
+                    <li>4.1.5 NumPy Array Operations</li>
+                    <li>4.1.6 GroupBy and Insights</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.1.1 Organize and Clean Data with Pandas -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj1">
+            <h2><i class="fa-solid fa-broom"></i> 4.1.1 Organize and Clean Data with Pandas</h2>
+
+            <p>Data cleaning is the foundational step in any data analysis workflow. Real-world datasets are rarely clean; they contain missing values, duplicates, inconsistent formatting, and erroneous entries. Pandas provides a rich set of tools for filtering, sorting, and managing these issues.</p>
+
+            <div class="subsection">
+                <h3>Handling Missing Values</h3>
+                <p>Missing values appear as <code>NaN</code> (Not a Number) in Pandas. Two core methods let you handle them: <code>dropna()</code> to remove rows or columns with missing data, and <code>fillna()</code> to replace missing values with a specified value or strategy.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>import pandas as pd
+import numpy as np
+
+# Create a sample DataFrame with missing values
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
+    'Age': [25, np.nan, 30, 22, np.nan],
+    'Score': [88.5, 92.0, np.nan, 76.0, 95.5],
+    'City': ['NY', 'LA', 'NY', np.nan, 'LA']
+})
+
+# Detect missing values
+print(df.isnull())        # Boolean mask of NaN values
+print(df.isnull().sum())  # Count NaN per column
+
+# dropna() - Remove rows with any NaN
+df_clean = df.dropna()
+print(df_clean)
+# Output: Only Alice and Eve remain (rows 0 and 4)
+
+# dropna() with subset - Only consider specific columns
+df_age_clean = df.dropna(subset=['Age'])
+print(df_age_clean)
+# Output: Drops rows where Age is NaN (Bob and Eve)
+
+# fillna() - Replace NaN with a specific value
+df['Age'] = df['Age'].fillna(df['Age'].mean())
+print(df['Age'])
+# NaN replaced with mean of [25, 30, 22] = 25.666...
+
+# fillna() with method - Forward fill
+df['City'] = df['City'].fillna(method='ffill')
+print(df['City'])
+# Diana's City filled with Charlie's City ('NY')</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Sorting Data</h3>
+                <p>The <code>sort_values()</code> method sorts a DataFrame by one or more columns. You can control sort direction and how NaN values are positioned.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Sort by a single column
+df_sorted = df.sort_values('Score', ascending=False)
+print(df_sorted)
+
+# Sort by multiple columns
+df_multi = df.sort_values(['City', 'Score'], ascending=[True, False])
+print(df_multi)
+
+# Control NaN placement
+df_nan_last = df.sort_values('Score', na_position='last')
+print(df_nan_last)
+
+# sort_index() - Sort by index
+df_by_index = df.sort_index(ascending=False)
+print(df_by_index)</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Replacing Values</h3>
+                <p>The <code>replace()</code> method substitutes values across a DataFrame or Series. It is essential for fixing inconsistent entries like typos or standardizing categories.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Replace specific values
+df['City'] = df['City'].replace('NY', 'New York')
+df['City'] = df['City'].replace('LA', 'Los Angeles')
+
+# Replace multiple values at once using a dictionary
+df['City'] = df['City'].replace({
+    'New York': 'NYC',
+    'Los Angeles': 'LA'
+})
+
+# Replace across the entire DataFrame
+df = df.replace('unknown', np.nan)</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Filtering Data</h3>
+                <p>Boolean conditions allow you to filter rows based on criteria. You can chain multiple conditions with <code>&amp;</code> (and) and <code>|</code> (or).</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Filter rows where Score is above 85
+high_scorers = df[df['Score'] > 85]
+print(high_scorers)
+
+# Multiple conditions (use parentheses!)
+result = df[(df['Score'] > 80) &amp; (df['Age'] < 28)]
+print(result)
+
+# Filter with isin()
+nyc_la = df[df['City'].isin(['NYC', 'LA'])]
+print(nyc_la)
+
+# Filter with string methods
+a_names = df[df['Name'].str.startswith('A')]
+print(a_names)</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-lightbulb"></i> Exam Tip:</strong>
+                Remember that <code>dropna()</code> and <code>fillna()</code> return new DataFrames by default. Use <code>inplace=True</code> or assign the result back to modify the original. Also note that <code>fillna(method='ffill')</code> propagates the last valid observation forward, while <code>fillna(method='bfill')</code> uses the next valid observation.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.1.2 Merge and Reshape Datasets -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj2">
+            <h2><i class="fa-solid fa-code-merge"></i> 4.1.2 Merge and Reshape Datasets</h2>
+
+            <p>Combining datasets from multiple sources is a common operation. Pandas offers <code>merge()</code> for SQL-style joins, <code>concat()</code> for stacking DataFrames, and <code>pivot()</code>/<code>melt()</code> for reshaping between wide and long formats.</p>
+
+            <div class="subsection">
+                <h3>pd.merge() - SQL-Style Joins</h3>
+                <p>The <code>merge()</code> function joins two DataFrames on a common column or index, supporting inner, outer, left, and right join types.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Create two DataFrames
+employees = pd.DataFrame({
+    'emp_id': [1, 2, 3, 4],
+    'name': ['Alice', 'Bob', 'Charlie', 'Diana'],
+    'dept_id': [10, 20, 10, 30]
+})
+
+departments = pd.DataFrame({
+    'dept_id': [10, 20, 40],
+    'dept_name': ['Engineering', 'Marketing', 'Sales']
+})
+
+# INNER JOIN - Only matching rows from both
+inner = pd.merge(employees, departments, on='dept_id', how='inner')
+print(inner)
+#    emp_id     name  dept_id    dept_name
+# 0       1    Alice       10  Engineering
+# 1       3  Charlie       10  Engineering
+# 2       2      Bob       20    Marketing
+# Diana (dept 30) and Sales (dept 40) excluded
+
+# LEFT JOIN - All rows from left, matching from right
+left = pd.merge(employees, departments, on='dept_id', how='left')
+print(left)
+# Diana included with dept_name = NaN
+
+# RIGHT JOIN - All rows from right, matching from left
+right = pd.merge(employees, departments, on='dept_id', how='right')
+print(right)
+# Sales included with name = NaN
+
+# OUTER JOIN - All rows from both DataFrames
+outer = pd.merge(employees, departments, on='dept_id', how='outer')
+print(outer)
+# Both Diana and Sales included with NaN where no match</div>
+
+                <table class="dark-table">
+                    <tr><th>Join Type</th><th>Keeps From Left</th><th>Keeps From Right</th><th>Description</th></tr>
+                    <tr><td><code>inner</code></td><td>Matching only</td><td>Matching only</td><td>Intersection of keys</td></tr>
+                    <tr><td><code>left</code></td><td>All rows</td><td>Matching only</td><td>All left + matched right</td></tr>
+                    <tr><td><code>right</code></td><td>Matching only</td><td>All rows</td><td>Matched left + all right</td></tr>
+                    <tr><td><code>outer</code></td><td>All rows</td><td>All rows</td><td>Union of keys</td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>pd.concat() - Stacking DataFrames</h3>
+                <p>Use <code>concat()</code> to stack DataFrames vertically (rows) or horizontally (columns).</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Vertical stacking (axis=0, default)
+df1 = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+df2 = pd.DataFrame({'A': [5, 6], 'B': [7, 8]})
+
+stacked = pd.concat([df1, df2], ignore_index=True)
+print(stacked)
+#    A  B
+# 0  1  3
+# 1  2  4
+# 2  5  7
+# 3  6  8
+
+# Horizontal stacking (axis=1)
+side_by_side = pd.concat([df1, df2], axis=1)
+print(side_by_side)
+#    A  B  A  B
+# 0  1  3  5  7
+# 1  2  4  6  8
+
+# Handling mismatched columns
+df3 = pd.DataFrame({'A': [9], 'C': [10]})
+result = pd.concat([df1, df3], ignore_index=True)
+print(result)
+#      A    B     C
+# 0  1.0  3.0   NaN
+# 1  2.0  4.0   NaN
+# 2  9.0  NaN  10.0</div>
+            </div>
+
+            <div class="subsection">
+                <h3>pivot() and melt() - Reshaping Data</h3>
+                <p><code>pivot()</code> converts long-format data to wide-format, while <code>melt()</code> does the reverse. <code>pivot_table()</code> adds aggregation capability when duplicate entries exist.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Long-format data
+sales = pd.DataFrame({
+    'Date': ['2024-01', '2024-01', '2024-02', '2024-02'],
+    'Product': ['A', 'B', 'A', 'B'],
+    'Revenue': [100, 150, 120, 160]
+})
+
+# pivot() - Long to wide
+wide = sales.pivot(index='Date', columns='Product', values='Revenue')
+print(wide)
+# Product      A    B
+# Date
+# 2024-01    100  150
+# 2024-02    120  160
+
+# melt() - Wide to long
+long = wide.reset_index().melt(
+    id_vars='Date',
+    value_vars=['A', 'B'],
+    var_name='Product',
+    value_name='Revenue'
+)
+print(long)
+
+# pivot_table() - With aggregation (handles duplicates)
+sales_dup = pd.DataFrame({
+    'Date': ['2024-01', '2024-01', '2024-01', '2024-02'],
+    'Product': ['A', 'A', 'B', 'A'],
+    'Revenue': [100, 110, 150, 120]
+})
+
+pt = sales_dup.pivot_table(
+    index='Date',
+    columns='Product',
+    values='Revenue',
+    aggfunc='mean'  # Aggregates duplicate entries
+)
+print(pt)
+# Product        A      B
+# Date
+# 2024-01    105.0  150.0   (mean of 100 and 110)
+# 2024-02    120.0    NaN</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-triangle-exclamation"></i> Key Difference:</strong>
+                <code>pivot()</code> raises a <code>ValueError</code> if there are duplicate index-column pairs. Use <code>pivot_table()</code> with an <code>aggfunc</code> parameter when duplicates exist. Common aggfunc values: <code>'mean'</code>, <code>'sum'</code>, <code>'count'</code>, <code>'min'</code>, <code>'max'</code>.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.1.3 Series vs DataFrames -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj3">
+            <h2><i class="fa-solid fa-table-columns"></i> 4.1.3 Series vs DataFrames</h2>
+
+            <p>Understanding the relationship and differences between Pandas Series and DataFrames is fundamental. A <strong>Series</strong> is a one-dimensional labeled array, while a <strong>DataFrame</strong> is a two-dimensional labeled data structure made up of multiple Series sharing the same index.</p>
+
+            <div class="subsection">
+                <h3>Conceptual Differences</h3>
+
+                <table class="dark-table">
+                    <tr><th>Feature</th><th>Series</th><th>DataFrame</th></tr>
+                    <tr><td>Dimensions</td><td>1-D (single column)</td><td>2-D (rows and columns)</td></tr>
+                    <tr><td>Structure</td><td>Index + Values</td><td>Index + Columns (each column is a Series)</td></tr>
+                    <tr><td>Creation</td><td><code>pd.Series(data)</code></td><td><code>pd.DataFrame(data)</code></td></tr>
+                    <tr><td>Accessing column</td><td>N/A</td><td>Returns a Series</td></tr>
+                    <tr><td>Has <code>.columns</code></td><td>No (has <code>.name</code>)</td><td>Yes</td></tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Creating a Series
+s = pd.Series([10, 20, 30], index=['a', 'b', 'c'], name='values')
+print(s)
+# a    10
+# b    20
+# c    30
+# Name: values, dtype: int64
+
+print(type(s))         # &lt;class 'pandas.core.series.Series'&gt;
+print(s.shape)          # (3,)
+print(s.ndim)           # 1
+
+# Creating a DataFrame
+df = pd.DataFrame({
+    'x': [1, 2, 3],
+    'y': [4, 5, 6]
+})
+print(type(df))        # &lt;class 'pandas.core.frame.DataFrame'&gt;
+print(df.shape)         # (3, 2)
+print(df.ndim)          # 2
+
+# A DataFrame column is a Series
+col = df['x']
+print(type(col))       # &lt;class 'pandas.core.series.Series'&gt;</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Indexing Techniques</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Series indexing
+s = pd.Series([10, 20, 30, 40], index=['a', 'b', 'c', 'd'])
+
+print(s['b'])           # 20 (label-based)
+print(s[1])             # 20 (positional - use with caution)
+print(s['a':'c'])       # a=10, b=20, c=30 (label slicing is inclusive)
+
+# DataFrame indexing
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'age': [25, 30, 35],
+    'score': [88, 92, 85]
+}, index=['r1', 'r2', 'r3'])
+
+print(df['name'])        # Returns Series
+print(df[['name', 'age']])  # Returns DataFrame (double brackets)</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Vectorized Operations</h3>
+                <p>Both Series and DataFrames support vectorized operations, meaning operations are applied element-wise without explicit loops. This is far more efficient than iterating over rows.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Vectorized arithmetic on Series
+s = pd.Series([10, 20, 30])
+print(s * 2)           # Series([20, 40, 60])
+print(s + 5)           # Series([15, 25, 35])
+print(s ** 2)          # Series([100, 400, 900])
+
+# Vectorized operations on DataFrames
+df = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
+print(df * 10)
+#     a   b
+# 0  10  30
+# 1  20  40
+
+# Applying functions
+print(s.apply(lambda x: x ** 2 + 1))   # Series([101, 401, 901])
+print(df.apply(np.sum, axis=0))        # Sum per column: a=3, b=7
+print(df.apply(np.sum, axis=1))        # Sum per row: 0=4, 1=6
+
+# String vectorized operations on Series
+names = pd.Series(['alice', 'bob', 'charlie'])
+print(names.str.upper())    # Series(['ALICE', 'BOB', 'CHARLIE'])
+print(names.str.len())      # Series([5, 3, 7])</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-circle-info"></i> Remember:</strong>
+                When you select a single column from a DataFrame with <code>df['col']</code>, you get a Series. When you select multiple columns with <code>df[['col1', 'col2']]</code> (double brackets), you get a DataFrame. This distinction frequently appears on exams.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.1.4 Data Access with .loc and .iloc -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj4">
+            <h2><i class="fa-solid fa-crosshairs"></i> 4.1.4 Data Access with .loc and .iloc</h2>
+
+            <p>Pandas provides two primary accessors for selecting data: <code>.loc</code> for <strong>label-based</strong> indexing and <code>.iloc</code> for <strong>integer-based</strong> (positional) indexing. Understanding the difference is critical for the exam.</p>
+
+            <div class="subsection">
+                <h3>.loc - Label-Based Access</h3>
+                <p><code>.loc</code> selects data by row and column <strong>labels</strong>. Slicing with <code>.loc</code> is <strong>inclusive</strong> on both ends.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie', 'Diana'],
+    'age': [25, 30, 35, 28],
+    'score': [88, 92, 85, 95]
+}, index=['r1', 'r2', 'r3', 'r4'])
+
+# Single row by label
+print(df.loc['r2'])
+# name     Bob
+# age       30
+# score     92
+
+# Single value
+print(df.loc['r2', 'name'])   # 'Bob'
+
+# Row slice (INCLUSIVE on both ends)
+print(df.loc['r1':'r3'])
+# Returns rows r1, r2, AND r3
+
+# Specific rows and columns
+print(df.loc[['r1', 'r4'], ['name', 'score']])
+#     name  score
+# r1  Alice     88
+# r4  Diana     95
+
+# Setting values
+df.loc['r2', 'score'] = 99</div>
+            </div>
+
+            <div class="subsection">
+                <h3>.iloc - Integer-Based Access</h3>
+                <p><code>.iloc</code> selects data by <strong>integer position</strong> (0-based). Slicing with <code>.iloc</code> is <strong>exclusive</strong> on the end (like Python lists).</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Single row by position
+print(df.iloc[0])
+# name     Alice
+# age         25
+# score       88
+
+# Single value
+print(df.iloc[0, 1])    # 25 (row 0, column 1)
+
+# Row slice (EXCLUSIVE on end, like Python)
+print(df.iloc[0:3])
+# Returns rows at position 0, 1, 2 (NOT 3)
+
+# Specific rows and columns by position
+print(df.iloc[[0, 3], [0, 2]])
+#     name  score
+# r1  Alice     88
+# r4  Diana     95
+
+# Last row
+print(df.iloc[-1])     # Diana's row</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Boolean Indexing with .loc</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Conditional selection with .loc
+print(df.loc[df['age'] > 27])
+# Returns Bob (30), Charlie (35), Diana (28)
+
+# Conditional selection with specific columns
+print(df.loc[df['score'] >= 90, ['name', 'score']])
+#     name  score
+# r2   Bob     99
+# r4  Diana     95
+
+# Complex boolean conditions
+mask = (df['age'] < 30) &amp; (df['score'] > 85)
+print(df.loc[mask])</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-circle-exclamation"></i> Critical Exam Point:</strong>
+                <code>.loc</code> slicing is <strong>inclusive</strong> on both ends: <code>df.loc['a':'c']</code> includes 'c'. <code>.iloc</code> slicing is <strong>exclusive</strong> on the end: <code>df.iloc[0:3]</code> returns positions 0, 1, 2 only. Confusing these is one of the most common exam mistakes.
+            </div>
+
+            <table class="dark-table">
+                <tr><th>Feature</th><th><code>.loc</code></th><th><code>.iloc</code></th></tr>
+                <tr><td>Based on</td><td>Labels (names)</td><td>Integer positions (0-based)</td></tr>
+                <tr><td>Slice end</td><td>Inclusive</td><td>Exclusive</td></tr>
+                <tr><td>Accepts booleans</td><td>Yes</td><td>Yes</td></tr>
+                <tr><td>Use case</td><td>Named rows/columns</td><td>Position-based selection</td></tr>
+            </table>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.1.5 NumPy Array Operations -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj5">
+            <h2><i class="fa-solid fa-calculator"></i> 4.1.5 NumPy Array Operations</h2>
+
+            <p>NumPy is the foundation of numerical computing in Python. Its core data structure, the <code>ndarray</code>, provides fast element-wise operations, broadcasting, and a rich set of mathematical functions. Pandas is built on top of NumPy.</p>
+
+            <div class="subsection">
+                <h3>Element-Wise Arithmetic</h3>
+                <p>NumPy arrays support arithmetic operations that are applied element-by-element, unlike Python lists.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>import numpy as np
+
+# Create arrays
+a = np.array([1, 2, 3, 4])
+b = np.array([10, 20, 30, 40])
+
+# Element-wise operations
+print(a + b)     # array([11, 22, 33, 44])
+print(a * b)     # array([ 10,  40,  90, 160])
+print(a ** 2)    # array([ 1,  4,  9, 16])
+print(b / a)     # array([10., 10., 10., 10.])
+print(a > 2)     # array([False, False, True, True])
+
+# Compare with Python lists (VERY different!)
+lst = [1, 2, 3]
+print(lst * 2)   # [1, 2, 3, 1, 2, 3]  (repeats list!)
+
+arr = np.array([1, 2, 3])
+print(arr * 2)   # array([2, 4, 6])     (element-wise!)</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Broadcasting</h3>
+                <p>Broadcasting allows NumPy to perform operations on arrays of different shapes by automatically expanding the smaller array to match the larger one.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Scalar broadcasting
+a = np.array([1, 2, 3])
+print(a + 10)   # array([11, 12, 13]) - scalar broadcast to all elements
+
+# 2D array broadcasting
+matrix = np.array([[1, 2, 3],
+                   [4, 5, 6]])     # Shape: (2, 3)
+row = np.array([10, 20, 30])        # Shape: (3,)
+
+print(matrix + row)
+# array([[11, 22, 33],
+#        [14, 25, 36]])
+# Row broadcast across both rows of the matrix
+
+# Column broadcasting (requires reshaping)
+col = np.array([[100], [200]])      # Shape: (2, 1)
+print(matrix + col)
+# array([[101, 102, 103],
+#        [204, 205, 206]])</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-info"></i> Broadcasting Rules:</strong>
+                    <ol style="margin:0.5rem 0 0 0;padding-left:1.2rem;">
+                        <li>If arrays have different numbers of dimensions, the shape of the smaller array is padded with 1s on the left.</li>
+                        <li>Arrays with a size of 1 along a dimension are stretched to match the other array's size along that dimension.</li>
+                        <li>If sizes disagree and neither is 1, broadcasting fails with a <code>ValueError</code>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Aggregation Functions</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>data = np.array([15, 22, 8, 31, 19, 27])
+
+print(np.sum(data))     # 122
+print(np.mean(data))    # 20.333...
+print(np.std(data))     # 7.586... (population std)
+print(np.min(data))     # 8
+print(np.max(data))     # 31
+print(np.median(data))  # 20.5
+
+# Axis-based aggregation on 2D arrays
+matrix = np.array([[1, 2, 3],
+                   [4, 5, 6]])
+
+print(np.sum(matrix, axis=0))  # array([5, 7, 9])  - sum down columns
+print(np.sum(matrix, axis=1))  # array([ 6, 15])   - sum across rows
+print(np.mean(matrix, axis=0)) # array([2.5, 3.5, 4.5])</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Key Differences: Arrays, Lists, Series, DataFrames, NDArrays</h3>
+
+                <table class="dark-table">
+                    <tr><th>Type</th><th>Library</th><th>Dimensions</th><th>Homogeneous?</th><th>Key Feature</th></tr>
+                    <tr><td>Python <code>list</code></td><td>Built-in</td><td>1-D (nestable)</td><td>No</td><td>Flexible, slow for math</td></tr>
+                    <tr><td>NumPy <code>ndarray</code></td><td>NumPy</td><td>N-D</td><td>Yes</td><td>Fast element-wise ops</td></tr>
+                    <tr><td>Pandas <code>Series</code></td><td>Pandas</td><td>1-D</td><td>Yes*</td><td>Labeled index</td></tr>
+                    <tr><td>Pandas <code>DataFrame</code></td><td>Pandas</td><td>2-D</td><td>Per column</td><td>Labeled rows + columns</td></tr>
+                </table>
+                <p><em>* Series can hold mixed types but is most efficient with a single dtype.</em></p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Performance comparison
+import time
+
+size = 1_000_000
+py_list = list(range(size))
+np_array = np.arange(size)
+
+# Python list: sum using a loop
+start = time.time()
+total = sum(py_list)
+print(f"List sum: {time.time() - start:.4f}s")
+
+# NumPy: vectorized sum
+start = time.time()
+total = np.sum(np_array)
+print(f"NumPy sum: {time.time() - start:.4f}s")
+# NumPy is typically 10-100x faster</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-lightbulb"></i> Performance Insight:</strong>
+                NumPy arrays are stored in contiguous memory blocks and operations are implemented in optimized C code. This makes NumPy 10-100x faster than Python lists for numerical operations. Always prefer NumPy arrays over lists when performing mathematical computations.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.1.6 GroupBy and Insights -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj6">
+            <h2><i class="fa-solid fa-layer-group"></i> 4.1.6 GroupBy and Insights</h2>
+
+            <p>The <code>groupby()</code> method is one of the most powerful tools in Pandas. It follows a <strong>split-apply-combine</strong> pattern: split data into groups, apply a function to each group, and combine the results back into a single structure.</p>
+
+            <div class="subsection">
+                <h3>Basic GroupBy Operations</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>df = pd.DataFrame({
+    'department': ['Sales', 'Sales', 'Engineering', 'Engineering', 'HR', 'HR'],
+    'employee': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'],
+    'salary': [60000, 65000, 80000, 85000, 55000, 58000],
+    'experience': [3, 5, 7, 9, 2, 4]
+})
+
+# Group by department and calculate mean salary
+print(df.groupby('department')['salary'].mean())
+# department
+# Engineering    82500.0
+# HR             56500.0
+# Sales          62500.0
+
+# Multiple aggregations
+print(df.groupby('department')['salary'].describe())
+
+# Count per group
+print(df.groupby('department').size())
+
+# Sum per group
+print(df.groupby('department')['salary'].sum())</div>
+            </div>
+
+            <div class="subsection">
+                <h3>The agg() Method</h3>
+                <p><code>agg()</code> lets you apply multiple aggregation functions at once, and even different functions to different columns.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Multiple aggregations on one column
+result = df.groupby('department')['salary'].agg(['mean', 'min', 'max', 'count'])
+print(result)
+#                 mean    min    max  count
+# department
+# Engineering  82500.0  80000  85000      2
+# HR           56500.0  55000  58000      2
+# Sales        62500.0  60000  65000      2
+
+# Different functions per column
+result = df.groupby('department').agg({
+    'salary': ['mean', 'sum'],
+    'experience': ['mean', 'max']
+})
+print(result)
+
+# Named aggregations (cleaner output)
+result = df.groupby('department').agg(
+    avg_salary=('salary', 'mean'),
+    total_salary=('salary', 'sum'),
+    max_experience=('experience', 'max'),
+    headcount=('employee', 'count')
+)
+print(result)
+#              avg_salary  total_salary  max_experience  headcount
+# department
+# Engineering     82500.0        165000               9          2
+# HR              56500.0        113000               4          2
+# Sales           62500.0        125000               5          2</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Pivot Tables</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>orders = pd.DataFrame({
+    'region': ['East', 'East', 'West', 'West', 'East', 'West'],
+    'product': ['Widget', 'Gadget', 'Widget', 'Gadget', 'Widget', 'Widget'],
+    'sales': [200, 150, 300, 250, 180, 320]
+})
+
+# Pivot table with aggregation
+pt = pd.pivot_table(
+    orders,
+    values='sales',
+    index='region',
+    columns='product',
+    aggfunc='sum'
+)
+print(pt)
+# product  Gadget  Widget
+# region
+# East        150     380
+# West        250     620
+
+# Pivot table with margins (totals)
+pt_margins = pd.pivot_table(
+    orders,
+    values='sales',
+    index='region',
+    columns='product',
+    aggfunc='sum',
+    margins=True,
+    margins_name='Total'
+)
+print(pt_margins)
+# product  Gadget  Widget  Total
+# region
+# East        150     380    530
+# West        250     620    870
+# Total       400    1000   1400</div>
+            </div>
+
+            <div class="subsection">
+                <h3>Cross-Tabulation with pd.crosstab()</h3>
+                <p><code>pd.crosstab()</code> computes a frequency table of two or more factors. It is similar to <code>pivot_table()</code> but defaults to counting occurrences.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>survey = pd.DataFrame({
+    'gender': ['M', 'F', 'M', 'F', 'M', 'F', 'M', 'F'],
+    'preference': ['A', 'B', 'A', 'A', 'B', 'B', 'A', 'A']
+})
+
+# Basic cross-tabulation (frequency counts)
+ct = pd.crosstab(survey['gender'], survey['preference'])
+print(ct)
+# preference  A  B
+# gender
+# F           2  2
+# M           3  1
+
+# Cross-tab with margins
+ct_margins = pd.crosstab(
+    survey['gender'],
+    survey['preference'],
+    margins=True
+)
+print(ct_margins)
+# preference  A  B  All
+# gender
+# F           2  2    4
+# M           3  1    4
+# All         5  3    8
+
+# Normalize to get proportions
+ct_norm = pd.crosstab(
+    survey['gender'],
+    survey['preference'],
+    normalize='index'   # Normalize across rows
+)
+print(ct_norm)
+# preference     A     B
+# gender
+# F           0.50  0.50
+# M           0.75  0.25</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-lightbulb"></i> Extracting Insights Pattern:</strong>
+                A typical data analysis workflow combines groupby with multiple techniques:
+                <code>df.groupby('category')['value'].agg(['mean', 'count']).sort_values('mean', ascending=False)</code>.
+                This groups the data, computes aggregations, and sorts to reveal the top-performing category.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- Practice Quiz -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <h2><i class="fa-solid fa-circle-question"></i> Practice Quiz: Data Analysis with Pandas and NumPy</h2>
+            <p>Test your understanding with these 10 questions. Click on an option to check your answer.</p>
+
+            <!-- Q1 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q1: What does <code>df.dropna(subset=['Age'])</code> do?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">Drops the 'Age' column from the DataFrame</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')">Drops rows where the 'Age' column has NaN values</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">Fills NaN values in the 'Age' column with 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">Drops all rows that contain any NaN value</div>
+                <div class="quiz-explanation">The <code>subset</code> parameter in <code>dropna()</code> specifies which columns to check for NaN values. Only rows where 'Age' is NaN are removed. Without <code>subset</code>, rows with NaN in any column would be dropped.</div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q2: Given <code>df</code> with index labels ['a', 'b', 'c', 'd'], what does <code>df.loc['a':'c']</code> return?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">Rows 'a' and 'b' only</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')">Rows 'a', 'b', and 'c'</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">Rows 'a', 'b', 'c', and 'd'</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">A KeyError because slicing is not supported with .loc</div>
+                <div class="quiz-explanation"><code>.loc</code> uses label-based slicing, which is <strong>inclusive</strong> on both ends. So <code>'a':'c'</code> includes rows labeled 'a', 'b', and 'c'. This is different from <code>.iloc</code>, which uses exclusive end slicing like standard Python.</div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q3: What is the result of <code>np.array([1, 2, 3]) * 2</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>[1, 2, 3, 1, 2, 3]</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>[2, 2, 2]</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')"><code>array([2, 4, 6])</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">A TypeError</div>
+                <div class="quiz-explanation">NumPy arrays perform element-wise operations. Multiplying by a scalar multiplies each element individually, giving <code>array([2, 4, 6])</code>. A Python list would repeat instead: <code>[1, 2, 3] * 2</code> gives <code>[1, 2, 3, 1, 2, 3]</code>.</div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q4: Which method is used to combine two DataFrames with an SQL-style join?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>pd.concat()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')"><code>pd.merge()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>df.append()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>df.join_sql()</code></div>
+                <div class="quiz-explanation"><code>pd.merge()</code> performs SQL-style joins (inner, outer, left, right) on one or more keys. <code>pd.concat()</code> is used for stacking DataFrames along an axis, not for key-based joining.</div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q5: What does <code>df.iloc[0:3]</code> return if the DataFrame has 5 rows?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')">The first 3 rows (positions 0, 1, 2)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">The first 4 rows (positions 0, 1, 2, 3)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">Only the row at position 3</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">All 5 rows</div>
+                <div class="quiz-explanation"><code>.iloc</code> uses integer-based indexing with Python-style slicing, where the end index is <strong>exclusive</strong>. So <code>iloc[0:3]</code> returns rows at positions 0, 1, and 2 (three rows total).</div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q6: What happens when you call <code>pivot()</code> on data that has duplicate index-column pairs?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">It silently takes the first value</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">It averages the duplicate values</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')">It raises a <code>ValueError</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">It concatenates the duplicate values into a list</div>
+                <div class="quiz-explanation"><code>pivot()</code> cannot handle duplicate entries and raises a <code>ValueError</code>. Use <code>pivot_table()</code> with an <code>aggfunc</code> parameter (e.g., <code>'mean'</code>, <code>'sum'</code>) to aggregate duplicate values.</div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q7: What does <code>df.groupby('dept')['salary'].agg(['mean', 'count'])</code> return?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">A Series with the mean salary per department</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')">A DataFrame with mean and count columns grouped by department</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">A single float value representing the overall mean</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">A GroupBy object that needs further iteration</div>
+                <div class="quiz-explanation">When you pass a list of aggregation functions to <code>agg()</code>, the result is a DataFrame with one column per function. The index contains the group labels (department names), and the columns are 'mean' and 'count'.</div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q8: Which of the following correctly describes NumPy broadcasting?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">It copies the smaller array multiple times in memory to match the larger array</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')">It stretches the smaller array virtually to match dimensions, without extra memory copies</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">It only works when both arrays have identical shapes</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')">It always raises an error when array shapes differ</div>
+                <div class="quiz-explanation">Broadcasting is a memory-efficient mechanism where NumPy virtually stretches the smaller array to match the larger one without actually copying data. It works when dimensions are compatible (either equal or one of them is 1).</div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q9: What is the output of <code>type(df['column_name'])</code> where <code>df</code> is a Pandas DataFrame?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>&lt;class 'pandas.core.frame.DataFrame'&gt;</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')"><code>&lt;class 'pandas.core.series.Series'&gt;</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>&lt;class 'numpy.ndarray'&gt;</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>&lt;class 'list'&gt;</code></div>
+                <div class="quiz-explanation">Selecting a single column from a DataFrame using bracket notation (<code>df['col']</code>) returns a Pandas Series. To get a DataFrame instead, use double brackets: <code>df[['col']]</code>.</div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="quiz-box" data-section="q41">
+                <div class="quiz-question">Q10: Which function converts a wide-format DataFrame to long format?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>df.pivot()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>pd.merge()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q41')"><code>df.melt()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q41')"><code>df.stack()</code></div>
+                <div class="quiz-explanation"><code>melt()</code> unpivots a wide-format DataFrame into long format. It takes <code>id_vars</code> (columns to keep), <code>value_vars</code> (columns to unpivot), <code>var_name</code>, and <code>value_name</code> as parameters. <code>pivot()</code> does the opposite: long to wide.</div>
+            </div>
+
+            <div id="score-q41"></div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic3-2.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 3.2 Inferential Statistics</a>
+            <a href="topic4-2.html" class="nav-btn next">Next: 4.2 Statistical Methods and ML <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#obj1">4.1.1 Organize &amp; Clean Data</a>
+        <a class="toc-item" href="#obj2">4.1.2 Merge &amp; Reshape</a>
+        <a class="toc-item" href="#obj3">4.1.3 Series vs DataFrames</a>
+        <a class="toc-item" href="#obj4">4.1.4 .loc and .iloc</a>
+        <a class="toc-item" href="#obj5">4.1.5 NumPy Arrays</a>
+        <a class="toc-item" href="#obj6">4.1.6 GroupBy &amp; Insights</a>
+        <a class="toc-item" href="#quiz">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

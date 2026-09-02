@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI/CD Pipeline - Vibe Coding, Shipped Right</title>
+    <meta name="description" content="Put tests, quality gates, and image builds on autopilot with GitHub Actions, so every push is checked and built automatically — the pipeline that makes AI-speed shipping safe.">
+    <link rel="alternate" hreflang="en" href="https://albanna-tutorials.com/vibe-coding/09_cicd.html">
+    <link rel="alternate" hreflang="ar" href="https://albanna-tutorials.com/vibe-coding/ar/09_cicd.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#ec4899;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#be185d;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#9d174d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#be185d}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#be185d;border-left-color:#be185d;background:rgba(236,72,153,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#f472b6}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .mobile-menu a{color:var(--text2);padding:10px 12px;border-radius:8px;font-size:.9rem}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre-wrap}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#f472b6}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#be185d;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(236,72,153,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-wand-magic-sparkles"></i> Vibe Coding</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#what">What CI/CD Is</a>
+                <a href="#actions">GitHub Actions</a>
+                <a href="#cd">Continuous Delivery</a>
+                <a href="#gate">The Merge Gate</a>
+                <a href="ar/09_cicd.html" lang="ar" dir="rtl"><i class="fa-solid fa-globe" style="margin-right:6px"></i>عربي</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#what" onclick="this.parentElement.classList.remove('open')">What CI/CD Is</a>
+        <a href="#actions" onclick="this.parentElement.classList.remove('open')">GitHub Actions</a>
+        <a href="#cd" onclick="this.parentElement.classList.remove('open')">Continuous Delivery</a>
+        <a href="#gate" onclick="this.parentElement.classList.remove('open')">The Merge Gate</a>
+        <a href="ar/09_cicd.html" lang="ar" dir="rtl" onclick="this.parentElement.classList.remove('open')">عربي</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>CI/CD Pipeline</h1>
+            <p class="hero-sub">Test, gate, and build on autopilot &mdash; every push checked automatically, before it can break anything.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 9 &middot; GitHub Actions, bridging into the DevOps Lab.</p>
+            <span class="diff-badge" style="background:#f59e0b">Intermediate</span>
+            <span class="cat-badge"><i class="fa-solid fa-arrows-spin" style="margin-right:6px"></i>CI/CD</span>
+            <span class="cat-badge"><i class="fa-solid fa-flask" style="margin-right:6px"></i>Includes Lab</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~50 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>What Continuous Integration and Continuous Delivery actually mean</li>
+                    <li>Write a <strong>GitHub Actions</strong> workflow that runs on every push</li>
+                    <li>Run your lint, tests, and build automatically &mdash; the gates from Modules 6&ndash;7, now enforced</li>
+                    <li>Build the Docker image in CI so it's always deploy-ready</li>
+                    <li><strong>Hands-on lab:</strong> push to GitHub and watch your pipeline go green</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 8, a free GitHub account. Deep dive: <a href="../devops/09_cicd.html">DevOps Lab: CI/CD</a>.</p>
+        </div>
+
+        <!-- What -->
+        <div class="section fade-up" id="what">
+            <h2 class="section-title"><i class="fa-solid fa-arrows-spin"></i> What CI/CD Really Is</h2>
+            <p class="section-desc">You've been running lint, tests, and builds by hand. A pipeline runs them <em>for</em> you, automatically, on a clean machine, every time you push. That's the difference between "I remembered to check" and "it's impossible to merge broken code."</p>
+            <table class="dark-table">
+                <thead><tr><th>Term</th><th>Plain meaning</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>CI</strong> (Continuous Integration)</td><td>Every push is automatically linted, tested, and built.</td></tr>
+                    <tr><td><strong>CD</strong> (Continuous Delivery)</td><td>Passing builds are automatically packaged &mdash; and, optionally, deployed.</td></tr>
+                    <tr><td><strong>Workflow</strong></td><td>The YAML file describing the steps to run.</td></tr>
+                    <tr><td><strong>Runner</strong></td><td>The clean machine GitHub spins up to run your workflow.</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-robot"></i> Why it's the perfect fit for AI code</h3>
+                <p>An AI can introduce a subtle break at any moment. CI catches it on the very next push, on a machine that isn't "your machine" &mdash; so "works for me" never reaches anyone else.</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="section fade-up" id="actions">
+            <h2 class="section-title"><i class="fa-brands fa-github"></i> A GitHub Actions Workflow</h2>
+            <p class="section-desc">A workflow is one YAML file in <code>.github/workflows/</code>. This runs your gates on every push:</p>
+            <div class="code-block"># .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build</div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-diagram-project"></i> Same file you'll see in the DevOps Lab</h3>
+                <p>The <a href="../devops/09_cicd.html">DevOps Lab CI/CD module</a> and its <code>sample-app/.github/workflows/ci.yml</code> use exactly this pattern, extended with a Docker build-and-push. Have the assistant draft yours &mdash; then read it, because a workflow is code too.</p>
+            </div>
+        </div>
+
+        <!-- CD -->
+        <div class="section fade-up" id="cd">
+            <h2 class="section-title"><i class="fa-solid fa-truck-fast"></i> From Integration to Delivery</h2>
+            <p class="section-desc">Once CI is green, CD takes the next step: build the container image from Module 8 and publish it to a registry, so a deployable artifact exists for every passing commit. Full auto-deploy comes in Module 10 &mdash; here we make sure the image is always built and ready.</p>
+            <div class="code-block"># extra CD step: build + push the image on main
+      - run: docker build -t ghcr.io/OWNER/snippet-vault-api ./api
+      - run: docker push ghcr.io/OWNER/snippet-vault-api</div>
+        </div>
+
+        <!-- Gate -->
+        <div class="section fade-up" id="gate">
+            <h2 class="section-title"><i class="fa-solid fa-door-closed"></i> Make CI a Required Gate</h2>
+            <p class="section-desc">The payoff: turn on <strong>branch protection</strong> so a pull request can't merge into <code>main</code> unless CI passes. Now the gates from Modules 6&ndash;7 aren't a suggestion &mdash; they're enforced by the platform, for you and any future collaborator (human or AI).</p>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-shield"></i> The loop closes</h3>
+                <p>Spec &rarr; build with the loop &rarr; tests &rarr; gates &rarr; <strong>CI enforces them on every push</strong>. Broken or unsafe code physically can't reach your main branch. That's the professional standard, running itself.</p>
+            </div>
+        </div>
+
+        <!-- Practical Lab -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-flask"></i> Practical Lab: Your Pipeline Goes Green</h2>
+            <p class="section-desc">You'll push the vault to GitHub, add a CI workflow that runs your gates on every push, and watch it pass &mdash; then prove it blocks a break.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-screwdriver-wrench"></i> What you need</h3>
+                <p>Your containerized <code>snippet-vault</code> from Module 8 and a free GitHub account.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Push to GitHub</h3>
+                    <p class="section-desc">Create a new repo on GitHub, then:</p>
+                    <div class="code-block">git remote add origin https://github.com/YOU/snippet-vault.git
+git push -u origin main</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Add the CI workflow</h3>
+                    <div class="code-block">Create .github/workflows/ci.yml that, on push and pull_request, runs
+npm ci, npm run lint, npm test, and npm run build for the api. Use Node 20.</div>
+                    <p class="section-desc">Review it, commit, and push.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Watch it run</h3>
+                    <p class="section-desc">Open the <strong>Actions</strong> tab on GitHub. Your workflow runs on the clean runner &mdash; watch lint, test, and build go green.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Prove the gate blocks a break</h3>
+                    <p class="section-desc">On a branch, deliberately break a test, push, and open a pull request. CI should go <strong>red</strong> and block the merge. Fix it, push again, watch it turn green. Then add a CI status badge to your <code>README.md</code>.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>Reflect</h3>
+                    <p class="section-desc">In <code>REFLECTION.md</code>: what did CI catch that you might have merged locally? Commit and push.</p>
+                </div>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-paper-plane"></i> What to hand in</h3>
+                <p>Your GitHub repo URL. Self-check:</p>
+                <ul>
+                    <li>The repo is on GitHub with a green CI run</li>
+                    <li><code>ci.yml</code> runs lint, tests, and build on every push</li>
+                    <li>You saw CI go red on a broken commit and block the PR</li>
+                    <li>A CI badge in the README; <code>REFLECTION.md</code> updated</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Glossary -->
+        <div class="section fade-up" id="glossary">
+            <h2 class="section-title"><i class="fa-solid fa-book"></i> Mini Glossary</h2>
+            <table class="dark-table">
+                <thead><tr><th>Term</th><th>Plain meaning</th></tr></thead>
+                <tbody>
+                    <tr><td>Pipeline</td><td>The automated sequence of checks/builds a push goes through.</td></tr>
+                    <tr><td>Workflow</td><td>The YAML file defining that sequence (GitHub Actions).</td></tr>
+                    <tr><td>Runner</td><td>The fresh machine that executes the workflow.</td></tr>
+                    <tr><td>Branch protection</td><td>A rule that blocks merges unless checks pass.</td></tr>
+                    <tr><td>Registry</td><td>Where built container images are stored (e.g. GHCR).</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now have</h3>
+                <p>A CI pipeline that runs your gates on every push, blocks broken code from merging, and builds a deployable image &mdash; your engineering standards, enforced automatically.</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 10 &mdash; Deploy + Infrastructure as Code</strong>. We take that built image live, and define the infrastructure it runs on as version-controlled code &mdash; reproducible deployments, no clicking around.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="08_containerizing.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 8</a>
+            <a href="10_deploy_iac.html" class="nav-btn next">Module 10: Deploy + Infrastructure as Code <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Vibe Coding, Shipped Right &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>CI/CD Pipeline</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#what">What CI/CD Is</a>
+        <a class="toc-item" href="#actions">GitHub Actions</a>
+        <a class="toc-item" href="#cd">Continuous Delivery</a>
+        <a class="toc-item" href="#gate">The Merge Gate</a>
+        <a class="toc-item" href="#lab">Practical Lab</a>
+        <a class="toc-item" href="#glossary">Glossary</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('vibe-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('vibe-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Fundamentals - Professional Tutorial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom: 3px solid #667eea;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 500px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .circuit-diagram {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .circuit-diagram img {
+            max-width: 100%;
+            height: auto;
+            border: 4px solid #e9ecef;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-card.blue { background: #e7f3ff; border-color: #2196F3; }
+        .info-card.green { background: #e8f5e9; border-color: #4CAF50; }
+        .info-card.orange { background: #fff3e0; border-color: #FF9800; }
+        .info-card.purple { background: #f3e5f5; border-color: #9C27B0; }
+        .info-card.red { background: #ffebee; border-color: #f44336; }
+
+        .info-card h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-card li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre;
+        }
+
+        .code-block .comment { color: #6a9955; font-style: italic; }
+        .code-block .keyword { color: #569cd6; font-weight: bold; }
+        .code-block .function { color: #dcdcaa; }
+        .code-block .string { color: #ce9178; }
+        .code-block .number { color: #b5cea8; }
+        
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e91e63;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .challenge-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .challenge-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔌 Arduino Fundamentals</h1>
+            <p>Professional Tutorial - From Basics to Practice</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('intro')">Introduction</button>
+            <button class="nav-tab" onclick="showSection('hardware')">Hardware</button>
+            <button class="nav-tab" onclick="showSection('breadboard')">Breadboard</button>
+            <button class="nav-tab" onclick="showSection('circuit1')">Circuit 1: LED</button>
+            <button class="nav-tab" onclick="showSection('code1')">Code: LED</button>
+            <button class="nav-tab" onclick="showSection('circuit2')">Circuit 2: Button</button>
+            <button class="nav-tab" onclick="showSection('code2')">Code: Button</button>
+            <button class="nav-tab" onclick="showSection('pwm')">PWM Control</button>
+            <button class="nav-tab" onclick="showSection('functions')">Functions</button>
+            <button class="nav-tab" onclick="showSection('tips')">Tips & Debug</button>
+        </div>
+
+        <div class="content">
+            <!-- Introduction Section -->
+            <div id="intro" class="section active">
+                <h2>What is Arduino?</h2>
+                <p style="font-size: 1.2em; margin: 20px 0;">Open-source electronics platform based on easy-to-use hardware and software, designed for creating interactive electronic projects.</p>
+                
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>✨ Key Features</h3>
+                        <ul>
+                            <li>Easy to use for beginners</li>
+                            <li>Powerful for professionals</li>
+                            <li>Large community support</li>
+                            <li>Affordable and accessible</li>
+                            <li>Cross-platform IDE</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card green">
+                        <h3>🚀 Applications</h3>
+                        <ul>
+                            <li>Robotics projects</li>
+                            <li>Home automation</li>
+                            <li>IoT devices</li>
+                            <li>Sensor systems</li>
+                            <li>Interactive art installations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>💡 Did you know?</strong> Arduino was created in 2005 in Italy to help students learn electronics without expensive equipment!
+                </div>
+            </div>
+
+            <!-- Hardware Section -->
+            <div id="hardware" class="section">
+                <h2>Arduino UNO - Technical Specifications</h2>
+                
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Specification</th>
+                    </tr>
+                    <tr>
+                        <td>Microcontroller</td>
+                        <td>ATmega328P</td>
+                    </tr>
+                    <tr>
+                        <td>Operating Voltage</td>
+                        <td>5V</td>
+                    </tr>
+                    <tr>
+                        <td>Input Voltage</td>
+                        <td>7-12V (recommended)</td>
+                    </tr>
+                    <tr>
+                        <td>Digital I/O Pins</td>
+                        <td>14 (6 with PWM capability)</td>
+                    </tr>
+                    <tr>
+                        <td>Analog Input Pins</td>
+                        <td>6 (A0-A5)</td>
+                    </tr>
+                    <tr>
+                        <td>Flash Memory</td>
+                        <td>32 KB</td>
+                    </tr>
+                    <tr>
+                        <td>SRAM</td>
+                        <td>2 KB</td>
+                    </tr>
+                    <tr>
+                        <td>Clock Speed</td>
+                        <td>16 MHz</td>
+                    </tr>
+                </table>
+
+                <div class="info-grid">
+                    <div class="info-card purple">
+                        <h3>🔌 Key Components</h3>
+                        <ul>
+                            <li><strong>USB Port:</strong> Programming & power supply</li>
+                            <li><strong>Power Jack:</strong> External power (7-12V)</li>
+                            <li><strong>Digital Pins:</strong> 0-13 for I/O operations</li>
+                            <li><strong>Analog Pins:</strong> A0-A5 for sensor reading</li>
+                            <li><strong>Power Pins:</strong> 5V, 3.3V, GND, VIN</li>
+                            <li><strong>Reset Button:</strong> Restart program</li>
+                            <li><strong>Built-in LED:</strong> Connected to pin 13</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card orange">
+                        <h3>⚡ PWM Pins</h3>
+                        <p>Pins with PWM capability (marked with ~):</p>
+                        <ul>
+                            <li>Pin 3</li>
+                            <li>Pin 5</li>
+                            <li>Pin 6</li>
+                            <li>Pin 9</li>
+                            <li>Pin 10</li>
+                            <li>Pin 11</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><em>These pins can produce analog-like output using Pulse Width Modulation</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breadboard Section -->
+            <div id="breadboard" class="section">
+                <h2>Understanding the Breadboard</h2>
+                <p style="font-size: 1.1em; margin: 20px 0;">A solderless prototyping board that allows you to build and test circuits without permanent connections.</p>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>🔧 Structure</h3>
+                        <ul>
+                            <li><strong style="color: red;">Power Rails (Vertical):</strong> Red (+) and Blue (-) lines running along both sides</li>
+                            <li><strong style="color: blue;">Terminal Strips (Horizontal):</strong> 5 holes connected internally in each row</li>
+                            <li><strong>Center Gap:</strong> Separates two sides, perfect for IC chips</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card green">
+                        <h3>✅ Advantages</h3>
+                        <ul>
+                            <li>No soldering required</li>
+                            <li>Reusable for multiple projects</li>
+                            <li>Easy to modify circuits</li>
+                            <li>Quick prototyping</li>
+                            <li>Beginner-friendly</li>
+                            <li>Cost-effective</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>💡 Pro Tip:</strong> Use color-coded wires - Red for power (+), Black for ground (-), other colors for signals
+                </div>
+            </div>
+
+            <!-- Circuit 1 Section -->
+            <div id="circuit1" class="section">
+                <h2>Circuit 1: Basic LED Blink</h2>
+                
+                <div class="circuit-diagram">
+                    <img src="1.PNG" width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23f8f9fa'/%3E%3Ctext x='400' y='150' font-family='Arial' font-size='24' text-anchor='middle' fill='%23667eea'%3ECircuit Diagram: Arduino UNO + LED%3C/text%3E%3Ctext x='400' y='180' font-family='Arial' font-size='16' text-anchor='middle' fill='%23666'%3E(Image shows Arduino connected to breadboard with LED and resistor)%3C/text%3E%3C/svg%3E" alt="Circuit 1: LED Blink" style="border: 3px solid #667eea;">
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>📦 Components Needed</h3>
+                        <ul>
+                            <li>Arduino UNO board</li>
+                            <li>Breadboard</li>
+                            <li>LED (Green) - 1 unit</li>
+                            <li>220Ω Resistor (Red-Red-Brown)</li>
+                            <li>Jumper wires (3 pieces)</li>
+                            <li>USB cable for programming</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card green">
+                        <h3>🔌 Step-by-Step Connections</h3>
+                        <ul>
+                            <li><strong>Step 1:</strong> Connect Arduino GND to breadboard ground rail (blue)</li>
+                            <li><strong>Step 2:</strong> Connect LED cathode (-) short leg to ground rail</li>
+                            <li><strong>Step 3:</strong> Connect LED anode (+) long leg to resistor</li>
+                            <li><strong>Step 4:</strong> Connect resistor other end to breadboard row</li>
+                            <li><strong>Step 5:</strong> Connect Arduino Pin 6 to same breadboard row</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card red">
+                    <h3>⚡ Important: LED Polarity</h3>
+                    <p><strong>Long leg = Anode (+)</strong> → Connects to resistor</p>
+                    <p><strong>Short leg = Cathode (-)</strong> → Connects to ground</p>
+                    <p style="margin-top: 10px;"><em>If connected backwards, the LED won't light up!</em></p>
+                </div>
+            </div>
+
+            <!-- Code 1 Section -->
+            <div id="code1" class="section">
+                <h2>Code: Basic LED Blink</h2>
+                
+                <div class="code-block"><span class="comment">/*
+  Basic LED Blink Tutorial
+  This program blinks an LED connected to pin 6
+*/</span>
+
+<span class="comment">// Define the LED pin</span>
+<span class="keyword">const int</span> ledPin = <span class="number">6</span>;
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="comment">// Initialize the LED pin as an output</span>
+  <span class="function">pinMode</span>(ledPin, OUTPUT);
+  
+  <span class="comment">// Initialize serial communication for debugging</span>
+  Serial.<span class="function">begin</span>(<span class="number">9600</span>);
+  Serial.<span class="function">println</span>(<span class="string">"LED Blink Program Started"</span>);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Turn the LED on</span>
+  <span class="function">digitalWrite</span>(ledPin, HIGH);
+  Serial.<span class="function">println</span>(<span class="string">"LED ON"</span>);
+  
+  <span class="comment">// Wait for 1 second (1000 milliseconds)</span>
+  <span class="function">delay</span>(<span class="number">1000</span>);
+  
+  <span class="comment">// Turn the LED off</span>
+  <span class="function">digitalWrite</span>(ledPin, LOW);
+  Serial.<span class="function">println</span>(<span class="string">"LED OFF"</span>);
+  
+  <span class="comment">// Wait for 1 second</span>
+  <span class="function">delay</span>(<span class="number">1000</span>);
+}</div>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>📋 Code Structure</h3>
+                        <p><strong>setup():</strong> Runs once when Arduino starts. Initialize pins, serial communication, and variables.</p>
+                        <p style="margin-top: 10px;"><strong>loop():</strong> Runs continuously after setup. Contains main program logic.</p>
+                    </div>
+
+                    <div class="info-card green">
+                        <h3>🔑 Key Functions Used</h3>
+                        <ul>
+                            <li><code>pinMode(pin, OUTPUT)</code> - Configure pin</li>
+                            <li><code>digitalWrite(pin, HIGH/LOW)</code> - Turn on/off</li>
+                            <li><code>delay(ms)</code> - Pause execution</li>
+                            <li><code>Serial.begin(9600)</code> - Start serial</li>
+                            <li><code>Serial.println()</code> - Print to monitor</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>🎯 Expected Result:</strong> The LED will blink ON for 1 second, then OFF for 1 second, repeating continuously. Serial Monitor will display "LED ON" and "LED OFF" messages.
+                </div>
+            </div>
+
+            <!-- Circuit 2 Section -->
+            <div id="circuit2" class="section">
+                <h2>Circuit 2: Push Button LED Control</h2>
+                
+                <div class="circuit-diagram">
+                                        <img src="2.PNG" width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23f8f9fa'/%3E%3Ctext x='400' y='150' font-family='Arial' font-size='24' text-anchor='middle' fill='%23667eea'%3ECircuit Diagram: Arduino UNO + LED%3C/text%3E%3Ctext x='400' y='180' font-family='Arial' font-size='16' text-anchor='middle' fill='%23666'%3E(Image shows Arduino connected to breadboard with LED and resistor)%3C/text%3E%3C/svg%3E" alt="Circuit 1: LED Blink" style="border: 3px solid #667eea;">
+
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>📦 Additional Components</h3>
+                        <ul>
+                            <li>All components from Circuit 1</li>
+                            <li>Push button switch (1 unit)</li>
+                            <li>Additional jumper wires (2 pieces)</li>
+                        </ul>
+                        <p style="margin-top: 15px; padding: 10px; background: white; border-radius: 5px;">
+                            <strong>💡 Note:</strong> No external resistor needed for button - we use Arduino's internal pull-up resistor!
+                        </p>
+                    </div>
+
+                    <div class="info-card green">
+                        <h3>🔌 New Connections</h3>
+                        <ul>
+                            <li><strong>Button Pin 1:</strong> Connect to Arduino Pin 13</li>
+                            <li><strong>Button Pin 2:</strong> Connect to Ground rail</li>
+                            <li><strong>LED Circuit:</strong> Remains the same as Circuit 1</li>
+                        </ul>
+                        <p style="margin-top: 15px; padding: 10px; background: white; border-radius: 5px;">
+                            <strong>⚙️ How it works:</strong><br>
+                            • Button pressed = LOW signal<br>
+                            • Button released = HIGH signal (pull-up)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="info-card orange">
+                    <h3>🎯 Objective</h3>
+                    <p style="font-size: 1.1em;">LED turns ON when button is pressed, OFF when released - creating an interactive circuit controlled by user input!</p>
+                </div>
+            </div>
+
+            <!-- Code 2 Section -->
+            <div id="code2" class="section">
+                <h2>Code: Push Button LED Control</h2>
+                
+                <div class="code-block"><span class="comment">/*
+  Push Button LED Control
+  LED turns on when button is pressed
+*/</span>
+
+<span class="comment">// Define pin numbers</span>
+<span class="keyword">const int</span> buttonPin = <span class="number">13</span>;  <span class="comment">// Push button on pin 13</span>
+<span class="keyword">const int</span> ledPin = <span class="number">6</span>;      <span class="comment">// LED on pin 6</span>
+
+<span class="keyword">int</span> buttonState = <span class="number">0</span>;  <span class="comment">// Variable to store button state</span>
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="comment">// Initialize LED pin as output</span>
+  <span class="function">pinMode</span>(ledPin, OUTPUT);
+  
+  <span class="comment">// Initialize button with internal pull-up resistor</span>
+  <span class="function">pinMode</span>(buttonPin, INPUT_PULLUP);
+  
+  <span class="comment">// Start serial communication</span>
+  Serial.<span class="function">begin</span>(<span class="number">9600</span>);
+  Serial.<span class="function">println</span>(<span class="string">"Button Control Started"</span>);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Read the button state</span>
+  buttonState = <span class="function">digitalRead</span>(buttonPin);
+  
+  <span class="comment">// Check if button is pressed</span>
+  <span class="comment">// With INPUT_PULLUP: pressed = LOW, released = HIGH</span>
+  <span class="keyword">if</span> (buttonState == LOW) {
+    <span class="function">digitalWrite</span>(ledPin, HIGH);  <span class="comment">// Turn LED on</span>
+    Serial.<span class="function">println</span>(<span class="string">"Button Pressed - LED ON"</span>);
+  } 
+  <span class="keyword">else</span> {
+    <span class="function">digitalWrite</span>(ledPin, LOW);   <span class="comment">// Turn LED off</span>
+    Serial.<span class="function">println</span>(<span class="string">"Button Released - LED OFF"</span>);
+  }
+  
+  <span class="function">delay</span>(<span class="number">50</span>);  <span class="comment">// Small delay for stability</span>
+}</div>
+
+                <div class="info-card purple">
+                    <h3>🔑 Key Concept: INPUT_PULLUP</h3>
+                    <p style="font-size: 1.05em; line-height: 1.6;">
+                        The <code>INPUT_PULLUP</code> mode enables an internal resistor (20-50kΩ) that pulls the pin to HIGH (5V) when the button is not pressed. 
+                        When you press the button, it connects the pin to ground (GND), making it read LOW.
+                    </p>
+                    <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 5px;">
+                        <strong>Logic Summary:</strong><br>
+                        • Button NOT pressed → Pin reads HIGH<br>
+                        • Button pressed → Pin reads LOW<br>
+                        • This inverted logic is why we check <code>if (buttonState == LOW)</code>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>🎯 Expected Result:</strong> LED lights up immediately when you press the button and turns off when you release it. Serial Monitor shows real-time button state.
+                </div>
+            </div>
+
+            <!-- PWM Section -->
+            <div id="pwm" class="section">
+                <h2>PWM - LED Fading Effect</h2>
+                <p style="font-size: 1.1em; margin: 20px 0;"><strong>Pulse Width Modulation (PWM)</strong> allows us to simulate analog output on digital pins by rapidly switching between HIGH and LOW.</p>
+
+                <div class="code-block"><span class="comment">/*
+  PWM LED Fading Effect
+  LED gradually brightens and dims
+*/</span>
+
+<span class="keyword">const int</span> ledPin = <span class="number">6</span>;  <span class="comment">// Must be PWM pin (~)</span>
+<span class="keyword">int</span> brightness = <span class="number">0</span>;
+<span class="keyword">int</span> fadeAmount = <span class="number">5</span>;
+
+<span class="keyword">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(ledPin, OUTPUT);
+  Serial.<span class="function">begin</span>(<span class="number">9600</span>);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Set LED brightness using PWM (0-255)</span>
+  <span class="function">analogWrite</span>(ledPin, brightness);
+  
+  <span class="comment">// Change brightness for next iteration</span>
+  brightness = brightness + fadeAmount;
+  
+  <span class="comment">// Reverse direction at the limits</span>
+  <span class="keyword">if</span> (brightness <= <span class="number">0</span> || brightness >= <span class="number">255</span>) {
+    fadeAmount = -fadeAmount;
+  }
+  
+  Serial.<span class="function">print</span>(<span class="string">"Brightness: "</span>);
+  Serial.<span class="function">println</span>(brightness);
+  
+  <span class="function">delay</span>(<span class="number">30</span>);  <span class="comment">// Controls fading speed</span>
+}</div>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>📊 PWM Value Range</h3>
+                        <p><strong>0</strong> = Completely OFF (0% duty cycle)</p>
+                        <p><strong>64</strong> = 25% brightness</p>
+                        <p><strong>128</strong> = 50% brightness</p>
+                        <p><strong>192</strong> = 75% brightness</p>
+                        <p><strong>255</strong> = Full brightness (100% duty cycle)</p>
+                    </div>
+
+                    <div class="info-card purple">
+                        <h3>~ PWM-Capable Pins</h3>
+                        <p>Only these pins can use <code>analogWrite()</code>:</p>
+                        <ul>
+                            <li>Pin 3</li>
+                            <li>Pin 5</li>
+                            <li>Pin 6 ← (We're using this)</li>
+                            <li>Pin 9</li>
+                            <li>Pin 10</li>
+                            <li>Pin 11</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><em>Look for the ~ symbol next to the pin number on the board!</em></p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>⚡ How PWM Works:</strong> The pin rapidly switches on and off. A higher value means more "on" time, making the LED appear brighter. The switching happens so fast (490 Hz) that our eyes perceive it as varying brightness!
+                </div>
+            </div>
+
+            <!-- Functions Section -->
+            <div id="functions" class="section">
+                <h2>Essential Arduino Functions Reference</h2>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>📤 Output Functions</h3>
+                        <p><code><strong>pinMode(pin, OUTPUT)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Configure pin as output</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>digitalWrite(pin, HIGH/LOW)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Set digital pin to 5V (HIGH) or 0V (LOW)</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>analogWrite(pin, 0-255)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">PWM output with duty cycle 0-255</p>
+                    </div>
+
+                    <div class="info-card green">
+                        <h3>📥 Input Functions</h3>
+                        <p><code><strong>pinMode(pin, INPUT_PULLUP)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Configure pin as input with internal pull-up</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>digitalRead(pin)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Read digital value: HIGH or LOW</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>analogRead(pin)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Read analog value: 0-1023 (10-bit ADC)</p>
+                    </div>
+
+                    <div class="info-card purple">
+                        <h3>⏱️ Timing Functions</h3>
+                        <p><code><strong>delay(milliseconds)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Pause program for specified time</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>millis()</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Returns time (ms) since program started</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>delayMicroseconds(us)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Microsecond-precision delays</p>
+                    </div>
+
+                    <div class="info-card orange">
+                        <h3>💬 Serial Communication</h3>
+                        <p><code><strong>Serial.begin(9600)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Initialize serial at 9600 baud rate</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>Serial.println(data)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Print data with newline</p>
+                        
+                        <p style="margin-top: 10px;"><code><strong>Serial.print(data)</strong></code></p>
+                        <p style="margin-left: 20px; color: #666;">Print data without newline</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div id="tips" class="section">
+                <h2>Best Practices & Troubleshooting</h2>
+
+                <div class="info-grid">
+                    <div class="info-card blue">
+                        <h3>🔧 Hardware Best Practices</h3>
+                        <ul>
+                            <li>Always check LED polarity before connecting</li>
+                            <li>Use appropriate resistor values (220Ω-1kΩ for LEDs)</li>
+                            <li>Verify all connections before powering on</li>
+                            <li>Use color-coded wires for organization</li>
+                            <li>Disconnect power when modifying circuits</li>
+                            <li>Keep breadboard neat and organized</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card green">
+                        <h3>💻 Software Best Practices</h3>
+                        <ul>
+                            <li>Comment your code clearly</li>
+                            <li>Use meaningful variable names</li>
+                            <li>Initialize all variables properly</li>
+                            <li>Use Serial Monitor for debugging</li>
+                            <li>Test code incrementally</li>
+                            <li>Save versions of working code</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card red">
+                        <h3>⚠️ Safety Guidelines</h3>
+                        <ul>
+                            <li>Never exceed voltage ratings (max 5V on pins)</li>
+                            <li>Avoid short circuits (connecting + to - directly)</li>
+                            <li>Always use current-limiting resistors with LEDs</li>
+                            <li>Don't connect high voltage to Arduino pins</li>
+                            <li>Check component datasheets for specifications</li>
+                            <li>Keep liquids away from electronics</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card orange">
+                        <h3>🐛 Common Problems & Solutions</h3>
+                        <p><strong>LED Not Working?</strong></p>
+                        <ul>
+                            <li>Check LED polarity (long leg = +)</li>
+                            <li>Verify resistor is connected</li>
+                            <li>Confirm correct pin number in code</li>
+                            <li>Try different LED (may be burnt)</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Button Not Responding?</strong></p>
+                        <ul>
+                            <li>Check button orientation on breadboard</li>
+                            <li>Verify INPUT_PULLUP is used</li>
+                            <li>Add debouncing delay (50ms)</li>
+                            <li>Test with Serial.println(buttonState)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="challenge-box">
+                    <h3>🎯 Practice Challenges</h3>
+                    <p><strong>Challenge 1: Traffic Light System</strong><br>
+                    Build a 3-LED traffic light (Red, Yellow, Green) that cycles through proper sequences: Red (5s) → Yellow (2s) → Green (5s) → Yellow (2s)</p>
+                    
+                    <p style="margin-top: 20px;"><strong>Challenge 2: Multi-Level Brightness</strong><br>
+                    Use a button to cycle through 4 brightness levels: OFF → DIM (64) → MEDIUM (128) → BRIGHT (255)</p>
+                    
+                    <p style="margin-top: 20px;"><strong>Challenge 3: Reaction Timer Game</strong><br>
+                    LED lights up after random delay. Measure how fast user presses button using millis()</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <h3>🚀 Thank You!</h3>
+            <p style="margin-top: 10px;">Continue your Arduino journey at <strong>arduino.cc</strong></p>
+            <p style="margin-top: 10px;">Happy Making! ✨</p>
+        </footer>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+
+            // Scroll to top of content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

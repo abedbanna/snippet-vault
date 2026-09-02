@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTM · GRU · Bi-LSTM Simulator - Deep Learning</title>
+    <meta name="description" content="Interactive simulator for LSTM, GRU and Bi-LSTM cells: step through every gate computation with real numbers, edit the input sequence, tune gate biases, and watch the cell state and hidden state evolve. Companion to Module 9 of Dr. Abdulkarim Albanna's Deep Learning course.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--sig:#ec4899;--tanh:#f59e0b;--op:#3b82f6;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--wire:#475569;--wirehot:#10b981}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--sig:#db2777;--tanh:#d97706;--op:#2563eb;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--wire:#94a3b8;--wirehot:#059669}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#065f46);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hero{margin-top:64px;padding:56px 24px 28px;text-align:center}
+        .hero h1{font-size:2.2rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,var(--text),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{color:var(--text2);margin-top:8px;font-size:1rem}
+        .container{max-width:1000px;margin:0 auto;padding:0 24px 48px}
+        .tabs{display:flex;gap:8px;justify-content:center;margin:24px 0}
+        .tab-btn{background:var(--surface);border:1px solid var(--border2);color:var(--text2);padding:10px 26px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;transition:all .2s}
+        .tab-btn:hover{border-color:var(--primary);color:var(--text)}
+        .tab-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+        .pane{display:none}
+        .pane.active{display:block}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin:16px 0}
+        .card h2{font-size:1.15rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+        .card h2 i{color:var(--primary);font-size:1rem}
+        .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+        .ctl{display:flex;flex-direction:column;gap:4px}
+        .ctl label{font-size:.72rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+        .ctl input[type=text]{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:.85rem;width:220px}
+        .ctl input[type=range]{width:130px;accent-color:var(--primary)}
+        .ctl .slider-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--primary)}
+        .btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 16px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+        .btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .btn.primary:hover{color:#fff;filter:brightness(1.1)}
+        .stepbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+        .stepbar .pos{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text2);margin-left:auto}
+        svg{width:100%;height:auto;display:block}
+        svg text{font-family:'Inter',sans-serif}
+        .mono{font-family:'JetBrains Mono',monospace}
+        .wire{stroke:var(--wire);stroke-width:2.5;fill:none}
+        .wire.hot{stroke:var(--wirehot);stroke-width:3.5}
+        .gnode rect,.gnode circle{transition:all .25s}
+        .gnode{opacity:.45;transition:opacity .25s}
+        .gnode.lit{opacity:1}
+        .gnode.lit .gbox{filter:drop-shadow(0 0 6px rgba(16,185,129,.65))}
+        .gsig .gbox{fill:var(--sig)}
+        .gtanh .gbox{fill:var(--tanh)}
+        .gop .gbox{fill:var(--op)}
+        .gval{fill:#fff;font-weight:700}
+        .glabel{fill:var(--text);font-weight:700}
+        .gsub{fill:var(--text2)}
+        .formula{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:.86rem;line-height:2;min-height:76px;overflow-x:auto}
+        .formula .hl{color:var(--primary);font-weight:700}
+        .formula .dim{color:var(--text2)}
+        .stage-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:6px}
+        table.hist{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+        table.hist th{background:var(--surface2);color:var(--text);padding:7px 10px;text-align:right;font-weight:600;border-bottom:1px solid var(--border2)}
+        table.hist td{padding:6px 10px;color:var(--text2);text-align:right;border-bottom:1px solid var(--border)}
+        table.hist tr.now td{color:var(--text);background:rgba(16,185,129,.10)}
+        table.hist th:first-child,table.hist td:first-child{text-align:center}
+        .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:.78rem;color:var(--text2)}
+        .legend span{display:inline-flex;align-items:center;gap:6px}
+        .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+        .weights{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text2);margin-top:10px;line-height:1.9;word-spacing:6px}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:24px}
+        .footer-bottom{padding:18px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        @media(max-width:768px){.hero h1{font-size:1.6rem}.nav-links{display:none}.ctl input[type=text]{width:100%}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> Deep Learning</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="09_sequence_models.html">Module 9: RNNs</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>LSTM &middot; GRU &middot; Bi-LSTM Simulator</h1>
+        <p>Every gate computed live with real numbers &mdash; edit the sequence, tune the biases, and step through the cell.<br>Companion to <a href="09_sequence_models.html">Module 9: Recurrent Neural Networks</a> &middot; Dr. Abdulkarim Albanna</p>
+    </section>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="lstm" onclick="showTab('lstm')">LSTM</button>
+            <button class="tab-btn" data-tab="gru" onclick="showTab('gru')">GRU</button>
+            <button class="tab-btn" data-tab="bilstm" onclick="showTab('bilstm')">Bi-LSTM</button>
+        </div>
+
+        <!-- ============ LSTM ============ -->
+        <div class="pane active" id="pane-lstm">
+            <div class="card">
+                <h2><i class="fa-solid fa-sliders"></i> Setup</h2>
+                <div class="controls">
+                    <div class="ctl"><label>Input sequence x&#8321;&hellip;x&#8345;</label><input type="text" id="lstm-seq" value="1, 0.5, -1, 2"></div>
+                    <div class="ctl"><label>Forget bias b&#402; <span class="slider-val" id="lstm-bf-v">0.50</span></label><input type="range" id="lstm-bf" min="-3" max="3" step="0.1" value="0.5"></div>
+                    <div class="ctl"><label>Input bias b&#7522; <span class="slider-val" id="lstm-bi-v">0.00</span></label><input type="range" id="lstm-bi" min="-3" max="3" step="0.1" value="0"></div>
+                    <div class="ctl"><label>Output bias b&#8338; <span class="slider-val" id="lstm-bo-v">0.00</span></label><input type="range" id="lstm-bo" min="-3" max="3" step="0.1" value="0"></div>
+                    <button class="btn" onclick="SIMS.lstm.randomize()"><i class="fa-solid fa-dice"></i> Randomize weights</button>
+                </div>
+                <div class="weights" id="lstm-weights"></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-diagram-project"></i> The cell, one time step at a time</h2>
+                <svg id="lstm-svg" viewBox="0 0 880 400" role="img" aria-label="LSTM cell diagram"></svg>
+                <div class="legend">
+                    <span><span class="dot" style="background:var(--sig)"></span> sigmoid gate (0&ndash;1)</span>
+                    <span><span class="dot" style="background:var(--tanh)"></span> tanh (&minus;1&ndash;1)</span>
+                    <span><span class="dot" style="background:var(--op)"></span> pointwise &times; / +</span>
+                    <span><span class="dot" style="background:var(--wirehot)"></span> active path</span>
+                </div>
+                <div class="stepbar">
+                    <button class="btn" onclick="SIMS.lstm.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                    <button class="btn" onclick="SIMS.lstm.back()"><i class="fa-solid fa-backward-step"></i> Back</button>
+                    <button class="btn primary" id="lstm-play" onclick="SIMS.lstm.toggle()"><i class="fa-solid fa-play"></i> Play</button>
+                    <button class="btn" onclick="SIMS.lstm.fwd()">Next <i class="fa-solid fa-forward-step"></i></button>
+                    <span class="pos" id="lstm-pos"></span>
+                </div>
+                <div style="margin-top:14px">
+                    <div class="stage-title" id="lstm-stage-title">&nbsp;</div>
+                    <div class="formula" id="lstm-formula"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-chart-line"></i> Cell state &amp; hidden state over time</h2>
+                <svg id="lstm-chart" viewBox="0 0 880 170"></svg>
+                <div style="overflow-x:auto;margin-top:12px"><table class="hist" id="lstm-table"></table></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-lightbulb"></i> What to try</h2>
+                <p style="color:var(--text2);font-size:.9rem">Drag the <strong>forget bias</strong> to +3: the forget gate saturates near 1 and the cell state accumulates &mdash; long memory. Drag it to &minus;3: the gate closes near 0 and the cell forgets everything each step &mdash; short-term memory, exactly the failure plain RNNs suffer. The forget bias is why LSTMs are often initialized with b&#402; &gt; 0.</p>
+            </div>
+        </div>
+
+        <!-- ============ GRU ============ -->
+        <div class="pane" id="pane-gru">
+            <div class="card">
+                <h2><i class="fa-solid fa-sliders"></i> Setup</h2>
+                <div class="controls">
+                    <div class="ctl"><label>Input sequence x&#8321;&hellip;x&#8345;</label><input type="text" id="gru-seq" value="1, 0.5, -1, 2"></div>
+                    <div class="ctl"><label>Update bias b&#8342; <span class="slider-val" id="gru-bz-v">0.00</span></label><input type="range" id="gru-bz" min="-3" max="3" step="0.1" value="0"></div>
+                    <div class="ctl"><label>Reset bias b&#7523; <span class="slider-val" id="gru-br-v">0.00</span></label><input type="range" id="gru-br" min="-3" max="3" step="0.1" value="0"></div>
+                    <button class="btn" onclick="SIMS.gru.randomize()"><i class="fa-solid fa-dice"></i> Randomize weights</button>
+                </div>
+                <div class="weights" id="gru-weights"></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-diagram-project"></i> The cell, one time step at a time</h2>
+                <svg id="gru-svg" viewBox="0 0 880 380" role="img" aria-label="GRU cell diagram"></svg>
+                <div class="legend">
+                    <span><span class="dot" style="background:var(--sig)"></span> sigmoid gate (0&ndash;1)</span>
+                    <span><span class="dot" style="background:var(--tanh)"></span> tanh (&minus;1&ndash;1)</span>
+                    <span><span class="dot" style="background:var(--op)"></span> pointwise ops</span>
+                    <span><span class="dot" style="background:var(--wirehot)"></span> active path</span>
+                </div>
+                <div class="stepbar">
+                    <button class="btn" onclick="SIMS.gru.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                    <button class="btn" onclick="SIMS.gru.back()"><i class="fa-solid fa-backward-step"></i> Back</button>
+                    <button class="btn primary" id="gru-play" onclick="SIMS.gru.toggle()"><i class="fa-solid fa-play"></i> Play</button>
+                    <button class="btn" onclick="SIMS.gru.fwd()">Next <i class="fa-solid fa-forward-step"></i></button>
+                    <span class="pos" id="gru-pos"></span>
+                </div>
+                <div style="margin-top:14px">
+                    <div class="stage-title" id="gru-stage-title">&nbsp;</div>
+                    <div class="formula" id="gru-formula"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-chart-line"></i> Hidden state over time</h2>
+                <svg id="gru-chart" viewBox="0 0 880 170"></svg>
+                <div style="overflow-x:auto;margin-top:12px"><table class="hist" id="gru-table"></table></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-lightbulb"></i> What to try</h2>
+                <p style="color:var(--text2);font-size:.9rem">The <strong>update gate z</strong> is the GRU's traffic controller: with b&#8342; at &minus;3, z &asymp; 0 and h&#8324; = (1&minus;z)&middot;h&#8324;&#8331;&#8321; keeps the old state almost unchanged (long memory). With b&#8342; at +3, z &asymp; 1 and the state is overwritten by the candidate every step. The <strong>reset gate r</strong> decides how much of the past the candidate is even allowed to see. Two gates, no separate cell state &mdash; that is why GRU is faster than LSTM.</p>
+            </div>
+        </div>
+
+        <!-- ============ BiLSTM ============ -->
+        <div class="pane" id="pane-bilstm">
+            <div class="card">
+                <h2><i class="fa-solid fa-sliders"></i> Setup</h2>
+                <div class="controls">
+                    <div class="ctl"><label>Input sequence x&#8321;&hellip;x&#8345;</label><input type="text" id="bilstm-seq" value="1, 0.5, -1, 2, 0.3"></div>
+                    <button class="btn" onclick="SIMS.bilstm.randomize()"><i class="fa-solid fa-dice"></i> Randomize weights</button>
+                </div>
+                <div class="weights" id="bilstm-weights"></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-arrows-left-right"></i> Forward pass, backward pass, then combine</h2>
+                <svg id="bilstm-svg" viewBox="0 0 880 420" role="img" aria-label="Bidirectional LSTM diagram"></svg>
+                <div class="legend">
+                    <span><span class="dot" style="background:var(--primary)"></span> forward LSTM (left&rarr;right)</span>
+                    <span><span class="dot" style="background:var(--op)"></span> backward LSTM (right&rarr;left)</span>
+                    <span><span class="dot" style="background:var(--tanh)"></span> combined output y&#8324; = h&#8594; + h&#8592;</span>
+                </div>
+                <div class="stepbar">
+                    <button class="btn" onclick="SIMS.bilstm.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                    <button class="btn" onclick="SIMS.bilstm.back()"><i class="fa-solid fa-backward-step"></i> Back</button>
+                    <button class="btn primary" id="bilstm-play" onclick="SIMS.bilstm.toggle()"><i class="fa-solid fa-play"></i> Play</button>
+                    <button class="btn" onclick="SIMS.bilstm.fwd()">Next <i class="fa-solid fa-forward-step"></i></button>
+                    <span class="pos" id="bilstm-pos"></span>
+                </div>
+                <div style="margin-top:14px">
+                    <div class="stage-title" id="bilstm-stage-title">&nbsp;</div>
+                    <div class="formula" id="bilstm-formula"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-table"></i> Both directions, side by side</h2>
+                <div style="overflow-x:auto"><table class="hist" id="bilstm-table"></table></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-lightbulb"></i> What to try</h2>
+                <p style="color:var(--text2);font-size:.9rem">Watch the play order: the forward LSTM reads x&#8321;&rarr;x&#8345;, the backward LSTM reads x&#8345;&rarr;x&#8321;, and only then is each output y&#8324; formed from <em>both</em> directions. Notice that y&#8321; already contains information about the <em>end</em> of the sequence &mdash; something a one-directional LSTM can never do. That is the whole idea of Bi-LSTM: context from left to right and right to left.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Deep Learning &middot; Course notes by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+
+<script>
+"use strict";
+/* ---------- theme ---------- */
+function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+(function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+
+/* ---------- helpers ---------- */
+const S=x=>1/(1+Math.exp(-x));
+const T=Math.tanh;
+const f2=v=>(v>=0?'':'')+v.toFixed(2);
+const f3=v=>v.toFixed(3);
+const rnd=()=>Math.round((Math.random()*2-1)*100)/100;
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function txt(parent,x,y,str,cls,size,anchor){const t=el('text',{x,y,'font-size':size||12,'text-anchor':anchor||'middle',class:cls||''},parent);t.textContent=str;return t;}
+
+/* gate node: colored box with name + live value */
+function gate(svg,id,x,y,w,h,cls,name){
+    const g=el('g',{id,class:'gnode '+cls},svg);
+    el('rect',{x:x-w/2,y:y-h/2,width:w,height:h,rx:9,class:'gbox'},g);
+    txt(g,x,y-4,name,'gval',13);
+    const v=txt(g,x,y+13,'','gval',11);
+    v.classList.add('mono');
+    return {g,v};
+}
+/* op node: circle with symbol + live value below */
+function op(svg,id,x,y,sym){
+    const g=el('g',{id,class:'gnode gop'},svg);
+    el('circle',{cx:x,cy:y,r:15,class:'gbox'},g);
+    txt(g,x,y+5,sym,'gval',15);
+    const v=txt(g,x,y+32,'','gsub mono',11);
+    return {g,v};
+}
+function wire(svg,d,id){return el('path',{d,class:'wire',id:id||''},svg);}
+function arrowLabel(svg,x,y,str,size,anchor){return txt(svg,x,y,str,'glabel mono',size||13,anchor);}
+
+/* ---------- base sim ---------- */
+class Sim{
+    constructor(key,stagesPerT){this.key=key;this.spt=stagesPerT;this.pos=0;this.playing=false;this.timer=null;}
+    total(){return this.hist.length*this.spt;}
+    toggle(){this.playing?this.pause():this.play();}
+    play(){
+        if(this.pos>=this.total())this.pos=0;
+        this.playing=true;
+        document.getElementById(this.key+'-play').innerHTML='<i class="fa-solid fa-pause"></i> Pause';
+        this.timer=setInterval(()=>{ if(this.pos>=this.total()-1){this.render();this.pause();} else {this.pos++;this.render();} },1300);
+        this.render();
+    }
+    pause(){this.playing=false;clearInterval(this.timer);document.getElementById(this.key+'-play').innerHTML='<i class="fa-solid fa-play"></i> Play';}
+    fwd(){this.pause();if(this.pos<this.total()-1)this.pos++;this.render();}
+    back(){this.pause();if(this.pos>0)this.pos--;this.render();}
+    reset(){this.pause();this.pos=0;this.recompute();}
+    seqInput(){
+        const raw=document.getElementById(this.key+'-seq').value;
+        let s=raw.split(/[,\s]+/).map(Number).filter(v=>!isNaN(v));
+        if(s.length<1)s=[1];
+        return s.slice(0,8);
+    }
+    setPos(t,stage){this.pos=t*this.spt+stage;}
+    curT(){return Math.floor(this.pos/this.spt);}
+    curStage(){return this.pos%this.spt;}
+}
+
+/* =================================================================
+   LSTM
+================================================================= */
+class LstmSim extends Sim{
+    constructor(){super('lstm',4);this.W=this.freshW();this.buildSvg();this.hook();this.recompute();}
+    freshW(){return {wf:0.45,uf:0.35,wi:0.6,ui:-0.2,wc:0.7,uc:0.4,wo:0.5,uo:0.3};}
+    randomize(){this.W={wf:rnd(),uf:rnd(),wi:rnd(),ui:rnd(),wc:rnd(),uc:rnd(),wo:rnd(),uo:rnd()};this.recompute();}
+    biases(){return {bf:+document.getElementById('lstm-bf').value,bi:+document.getElementById('lstm-bi').value,bo:+document.getElementById('lstm-bo').value};}
+    hook(){
+        document.getElementById('lstm-seq').addEventListener('change',()=>this.reset());
+        for(const b of ['bf','bi','bo']){
+            document.getElementById('lstm-'+b).addEventListener('input',e=>{
+                document.getElementById('lstm-'+b+'-v').textContent=(+e.target.value).toFixed(2);
+                this.recompute();
+            });
+        }
+    }
+    recompute(){
+        const {bf,bi,bo}=this.biases(),W=this.W;
+        this.seq=this.seqInput();
+        let h=0,c=0;this.hist=[];
+        for(const x of this.seq){
+            const f=S(W.wf*x+W.uf*h+bf);
+            const i=S(W.wi*x+W.ui*h+bi);
+            const g=T(W.wc*x+W.uc*h);
+            const cn=f*c+i*g;
+            const o=S(W.wo*x+W.uo*h+bo);
+            const hn=o*T(cn);
+            this.hist.push({x,hPrev:h,cPrev:c,f,i,g,c:cn,o,h:hn});
+            h=hn;c=cn;
+        }
+        if(this.pos>=this.total())this.pos=this.total()-1;
+        document.getElementById('lstm-weights').textContent=
+            `w_f=${f2(W.wf)} u_f=${f2(W.uf)}   w_i=${f2(W.wi)} u_i=${f2(W.ui)}   w_c=${f2(W.wc)} u_c=${f2(W.uc)}   w_o=${f2(W.wo)} u_o=${f2(W.uo)}`;
+        this.render();
+    }
+    buildSvg(){
+        const svg=document.getElementById('lstm-svg');
+        svg.innerHTML='';
+        /* wires */
+        this.wCell=wire(svg,'M60 80 H840');                       // cell state line
+        this.wF=wire(svg,'M300 210 V95');                         // f up to ×
+        this.wI=wire(svg,'M400 210 V155');                        // i up to ×ig
+        this.wG=wire(svg,'M480 210 V155 H455');                   // g to ×ig (approx merge)
+        this.wIG=wire(svg,'M430 125 V95 L470 95');                // ×ig up to +
+        this.wTan=wire(svg,'M640 80 V150');                       // branch down to tanh
+        this.wO=wire(svg,'M660 210 H698 V185');                   // o to ×out
+        this.wOut=wire(svg,'M700 150 V320 H840');                 // ×out to h_t
+        this.wH=wire(svg,'M60 320 H180 V240');                    // h_{t-1} into gates
+        this.wX=wire(svg,'M120 380 V330');                        // x_t in
+        this.wGateBus=wire(svg,'M180 240 H660');                  // bus feeding gates (visual)
+        /* labels */
+        arrowLabel(svg,52,84,'Cₜ₋₁',13,'end');
+        arrowLabel(svg,52,324,'hₜ₋₁',13,'end');
+        arrowLabel(svg,120,396,'xₜ',13);
+        this.lblC=arrowLabel(svg,868,70,'Cₜ',13,'end');
+        this.lblH=arrowLabel(svg,868,336,'hₜ',13,'end');
+        this.valCPrev=txt(svg,110,68,'','gsub mono',11);
+        this.valHPrev=txt(svg,110,308,'','gsub mono',11);
+        this.valX=txt(svg,148,362,'','gsub mono',11);
+        this.valCOut=txt(svg,800,64,'','glabel mono',12,'end');
+        this.valHOut=txt(svg,800,344,'','glabel mono',12,'end');
+        /* nodes */
+        this.nF=gate(svg,'lstm-nf',300,235,76,48,'gsig','forget σ');
+        this.nI=gate(svg,'lstm-ni',400,235,66,48,'gsig','input σ');
+        this.nG=gate(svg,'lstm-ng',490,235,66,48,'gtanh','tanh');
+        this.nO=gate(svg,'lstm-no',620,235,72,48,'gsig','output σ');
+        this.oF=op(svg,'lstm-of',300,80,'×');
+        this.oIG=op(svg,'lstm-oig',430,140,'×');
+        this.oAdd=op(svg,'lstm-oadd',490,80,'+');
+        this.nTan=gate(svg,'lstm-ntan',640,168,56,34,'gtanh','tanh');
+        this.oOut=op(svg,'lstm-oout',700,168,'×');
+        txt(svg,440,30,'cell state — the memory conveyor belt','gsub',12);
+    }
+    render(){
+        const t=this.curT(),st=this.curStage(),d=this.hist[t];
+        document.getElementById('lstm-pos').textContent=`time step ${t+1}/${this.hist.length} · stage ${st+1}/4`;
+        /* values on diagram */
+        this.valCPrev.textContent='C='+f3(d.cPrev);
+        this.valHPrev.textContent='h='+f3(d.hPrev);
+        this.valX.textContent='x='+f3(d.x);
+        this.nF.v.textContent=st>=0?f3(d.f):'';
+        this.nI.v.textContent=st>=1?f3(d.i):'';
+        this.nG.v.textContent=st>=1?f3(d.g):'';
+        this.oF.v.textContent=st>=2?f3(d.f*d.cPrev):'';
+        this.oIG.v.textContent=st>=2?f3(d.i*d.g):'';
+        this.oAdd.v.textContent=st>=2?f3(d.c):'';
+        this.nO.v.textContent=st>=3?f3(d.o):'';
+        this.nTan.v.textContent=st>=3?f3(T(d.c)):'';
+        this.oOut.v.textContent=st>=3?f3(d.h):'';
+        this.valCOut.textContent=st>=2?'Cₜ='+f3(d.c):'';
+        this.valHOut.textContent=st>=3?'hₜ='+f3(d.h):'';
+        /* highlights */
+        const lit={0:['lstm-nf'],1:['lstm-ni','lstm-ng'],2:['lstm-of','lstm-oig','lstm-oadd'],3:['lstm-no','lstm-ntan','lstm-oout']}[st];
+        for(const id of ['lstm-nf','lstm-ni','lstm-ng','lstm-no','lstm-of','lstm-oig','lstm-oadd','lstm-ntan','lstm-oout'])
+            document.getElementById(id).classList.toggle('lit',lit.includes(id));
+        const hotWires={0:[this.wH,this.wX,this.wGateBus,this.wF],1:[this.wH,this.wX,this.wGateBus,this.wI,this.wG],2:[this.wCell,this.wF,this.wIG],3:[this.wTan,this.wO,this.wOut]}[st];
+        for(const w of [this.wCell,this.wF,this.wI,this.wG,this.wIG,this.wTan,this.wO,this.wOut,this.wH,this.wX,this.wGateBus])
+            w.classList.toggle('hot',hotWires.includes(w));
+        /* formula */
+        const B=this.biases(),W=this.W;
+        const stages=[
+            ['Stage 1 · Forget gate — how much old memory survives?',
+             `fₜ = σ(w_f·xₜ + u_f·hₜ₋₁ + b_f) = σ(${f2(W.wf)}·${f2(d.x)} + ${f2(W.uf)}·${f2(d.hPrev)} + ${f2(B.bf)}) = <span class="hl">${f3(d.f)}</span><br><span class="dim">${(d.f*100).toFixed(0)}% of the old cell state Cₜ₋₁=${f3(d.cPrev)} will be kept.</span>`],
+            ['Stage 2 · Input gate — what new information comes in?',
+             `iₜ = σ(w_i·xₜ + u_i·hₜ₋₁ + b_i) = σ(${f2(W.wi)}·${f2(d.x)} + ${f2(W.ui)}·${f2(d.hPrev)} + ${f2(B.bi)}) = <span class="hl">${f3(d.i)}</span><br>ĉₜ = tanh(w_c·xₜ + u_c·hₜ₋₁) = tanh(${f2(W.wc)}·${f2(d.x)} + ${f2(W.uc)}·${f2(d.hPrev)}) = <span class="hl">${f3(d.g)}</span>`],
+            ['Stage 3 · Cell state update — the memory conveyor belt',
+             `Cₜ = fₜ·Cₜ₋₁ + iₜ·ĉₜ = ${f3(d.f)}·${f3(d.cPrev)} + ${f3(d.i)}·${f3(d.g)} = ${f3(d.f*d.cPrev)} + ${f3(d.i*d.g)} = <span class="hl">${f3(d.c)}</span><br><span class="dim">Old memory (scaled by forget) + new candidate (scaled by input).</span>`],
+            ['Stage 4 · Output gate — what does the cell reveal?',
+             `oₜ = σ(w_o·xₜ + u_o·hₜ₋₁ + b_o) = σ(${f2(W.wo)}·${f2(d.x)} + ${f2(W.uo)}·${f2(d.hPrev)} + ${f2(B.bo)}) = <span class="hl">${f3(d.o)}</span><br>hₜ = oₜ·tanh(Cₜ) = ${f3(d.o)}·tanh(${f3(d.c)}) = ${f3(d.o)}·${f3(T(d.c))} = <span class="hl">${f3(d.h)}</span>`],
+        ];
+        document.getElementById('lstm-stage-title').textContent=stages[st][0];
+        document.getElementById('lstm-formula').innerHTML=stages[st][1];
+        this.chart();this.table();
+    }
+    chart(){
+        const svg=document.getElementById('lstm-chart');svg.innerHTML='';
+        drawChart(svg,this.hist.map(d=>d.c),this.hist.map(d=>d.h),this.curT(),'Cₜ','hₜ');
+    }
+    table(){
+        const tb=document.getElementById('lstm-table');
+        let html='<tr><th>t</th><th>xₜ</th><th>fₜ</th><th>iₜ</th><th>ĉₜ</th><th>Cₜ</th><th>oₜ</th><th>hₜ</th></tr>';
+        this.hist.forEach((d,i)=>{html+=`<tr${i===this.curT()?' class="now"':''}><td>${i+1}</td><td>${f3(d.x)}</td><td>${f3(d.f)}</td><td>${f3(d.i)}</td><td>${f3(d.g)}</td><td>${f3(d.c)}</td><td>${f3(d.o)}</td><td>${f3(d.h)}</td></tr>`;});
+        tb.innerHTML=html;
+    }
+}
+
+/* =================================================================
+   GRU
+================================================================= */
+class GruSim extends Sim{
+    constructor(){super('gru',4);this.W=this.freshW();this.buildSvg();this.hook();this.recompute();}
+    freshW(){return {wz:0.5,uz:0.3,wr:0.6,ur:-0.3,wh:0.8,uh:0.5};}
+    randomize(){this.W={wz:rnd(),uz:rnd(),wr:rnd(),ur:rnd(),wh:rnd(),uh:rnd()};this.recompute();}
+    biases(){return {bz:+document.getElementById('gru-bz').value,br:+document.getElementById('gru-br').value};}
+    hook(){
+        document.getElementById('gru-seq').addEventListener('change',()=>this.reset());
+        for(const b of ['bz','br']){
+            document.getElementById('gru-'+b).addEventListener('input',e=>{
+                document.getElementById('gru-'+b+'-v').textContent=(+e.target.value).toFixed(2);
+                this.recompute();
+            });
+        }
+    }
+    recompute(){
+        const {bz,br}=this.biases(),W=this.W;
+        this.seq=this.seqInput();
+        let h=0;this.hist=[];
+        for(const x of this.seq){
+            const z=S(W.wz*x+W.uz*h+bz);
+            const r=S(W.wr*x+W.ur*h+br);
+            const g=T(W.wh*x+W.uh*(r*h));
+            const hn=(1-z)*h+z*g;
+            this.hist.push({x,hPrev:h,z,r,g,h:hn});
+            h=hn;
+        }
+        if(this.pos>=this.total())this.pos=this.total()-1;
+        document.getElementById('gru-weights').textContent=
+            `w_z=${f2(W.wz)} u_z=${f2(W.uz)}   w_r=${f2(W.wr)} u_r=${f2(W.ur)}   w_h=${f2(W.wh)} u_h=${f2(W.uh)}`;
+        this.render();
+    }
+    buildSvg(){
+        const svg=document.getElementById('gru-svg');
+        svg.innerHTML='';
+        this.wH=wire(svg,'M60 80 H840');                          // h line
+        this.wHold=wire(svg,'M560 80 V80');                       // (visual anchor)
+        this.wZ=wire(svg,'M240 210 V110');                        // z up
+        this.wR=wire(svg,'M370 210 V150 H430');                   // r to ×r
+        this.wHr=wire(svg,'M450 80 V128');                        // h down to ×r
+        this.wRG=wire(svg,'M450 172 V210');                       // ×r into candidate
+        this.wG=wire(svg,'M520 235 H600 V180');                   // g to ×z
+        this.wZG=wire(svg,'M240 110 H590');                       // z bus (to 1−z and ×z)
+        this.wKeep=wire(svg,'M560 110 V95');                      // (1−z) applies on h line
+        this.wNew=wire(svg,'M600 140 V95');                       // ×z up to +
+        this.wIn=wire(svg,'M60 320 H150 V262');                   // h_{t-1} to gates bus
+        this.wX=wire(svg,'M110 380 V330');                        // x in
+        this.wBus=wire(svg,'M150 262 H520');                      // gate bus
+        arrowLabel(svg,52,84,'hₜ₋₁',13,'end');
+        arrowLabel(svg,110,396,'xₜ',13);
+        arrowLabel(svg,868,84,'hₜ',13,'end');
+        this.valHPrev=txt(svg,115,68,'','gsub mono',11);
+        this.valX=txt(svg,140,362,'','gsub mono',11);
+        this.valHOut=txt(svg,800,64,'','glabel mono',12,'end');
+        this.nZ=gate(svg,'gru-nz',240,235,84,48,'gsig','update σ z');
+        this.nR=gate(svg,'gru-nr',370,235,76,48,'gsig','reset σ r');
+        this.nG=gate(svg,'gru-ng',480,235,80,48,'gtanh','cand tanh');
+        this.oR=op(svg,'gru-or',450,150,'×');
+        this.oKeep=op(svg,'gru-okeep',560,80,'×');
+        this.oNZ=gate(svg,'gru-nnz',520,140,62,30,'gop','1−z');
+        this.oZ=op(svg,'gru-oz',600,160,'×');
+        this.oAdd=op(svg,'gru-oadd',640,80,'+');
+        txt(svg,440,30,'hidden state — GRU has no separate cell state','gsub',12);
+    }
+    render(){
+        const t=this.curT(),st=this.curStage(),d=this.hist[t];
+        document.getElementById('gru-pos').textContent=`time step ${t+1}/${this.hist.length} · stage ${st+1}/4`;
+        this.valHPrev.textContent='h='+f3(d.hPrev);
+        this.valX.textContent='x='+f3(d.x);
+        this.nZ.v.textContent=st>=0?f3(d.z):'';
+        this.nR.v.textContent=st>=1?f3(d.r):'';
+        this.oR.v.textContent=st>=1?f3(d.r*d.hPrev):'';
+        this.nG.v.textContent=st>=2?f3(d.g):'';
+        this.oNZ.v.textContent=st>=3?f3(1-d.z):'';
+        this.oKeep.v.textContent=st>=3?f3((1-d.z)*d.hPrev):'';
+        this.oZ.v.textContent=st>=3?f3(d.z*d.g):'';
+        this.oAdd.v.textContent=st>=3?f3(d.h):'';
+        this.valHOut.textContent=st>=3?'hₜ='+f3(d.h):'';
+        const lit={0:['gru-nz'],1:['gru-nr','gru-or'],2:['gru-ng'],3:['gru-nnz','gru-okeep','gru-oz','gru-oadd']}[st];
+        for(const id of ['gru-nz','gru-nr','gru-ng','gru-or','gru-nnz','gru-okeep','gru-oz','gru-oadd'])
+            document.getElementById(id).classList.toggle('lit',lit.includes(id));
+        const hot={0:[this.wIn,this.wX,this.wBus,this.wZ],1:[this.wIn,this.wX,this.wBus,this.wR,this.wHr],2:[this.wRG,this.wBus,this.wX],3:[this.wZG,this.wKeep,this.wG,this.wNew,this.wH]}[st];
+        for(const w of [this.wH,this.wZ,this.wR,this.wHr,this.wRG,this.wG,this.wZG,this.wKeep,this.wNew,this.wIn,this.wX,this.wBus])
+            w.classList.toggle('hot',hot.includes(w));
+        const B=this.biases(),W=this.W;
+        const stages=[
+            ['Stage 1 · Update gate — keep the old state or write a new one?',
+             `zₜ = σ(w_z·xₜ + u_z·hₜ₋₁ + b_z) = σ(${f2(W.wz)}·${f2(d.x)} + ${f2(W.uz)}·${f2(d.hPrev)} + ${f2(B.bz)}) = <span class="hl">${f3(d.z)}</span><br><span class="dim">z blends old and new: ${(100*(1-d.z)).toFixed(0)}% old state, ${(100*d.z).toFixed(0)}% new candidate. (Update Gate = Forget + Input in one.)</span>`],
+            ['Stage 2 · Reset gate — how much past may the candidate see?',
+             `rₜ = σ(w_r·xₜ + u_r·hₜ₋₁ + b_r) = σ(${f2(W.wr)}·${f2(d.x)} + ${f2(W.ur)}·${f2(d.hPrev)} + ${f2(B.br)}) = <span class="hl">${f3(d.r)}</span><br>rₜ·hₜ₋₁ = ${f3(d.r)}·${f3(d.hPrev)} = <span class="hl">${f3(d.r*d.hPrev)}</span> <span class="dim">— the past, partially reset.</span>`],
+            ['Stage 3 · Candidate — the proposed new state',
+             `h̃ₜ = tanh(w_h·xₜ + u_h·(rₜ·hₜ₋₁)) = tanh(${f2(W.wh)}·${f2(d.x)} + ${f2(W.uh)}·${f3(d.r*d.hPrev)}) = <span class="hl">${f3(d.g)}</span>`],
+            ['Stage 4 · Interpolate — the new hidden state',
+             `hₜ = (1−zₜ)·hₜ₋₁ + zₜ·h̃ₜ = ${f3(1-d.z)}·${f3(d.hPrev)} + ${f3(d.z)}·${f3(d.g)} = ${f3((1-d.z)*d.hPrev)} + ${f3(d.z*d.g)} = <span class="hl">${f3(d.h)}</span>`],
+        ];
+        document.getElementById('gru-stage-title').textContent=stages[st][0];
+        document.getElementById('gru-formula').innerHTML=stages[st][1];
+        this.chart();this.table();
+    }
+    chart(){
+        const svg=document.getElementById('gru-chart');svg.innerHTML='';
+        drawChart(svg,this.hist.map(d=>d.h),null,this.curT(),'hₜ',null);
+    }
+    table(){
+        const tb=document.getElementById('gru-table');
+        let html='<tr><th>t</th><th>xₜ</th><th>zₜ</th><th>rₜ</th><th>h̃ₜ</th><th>hₜ</th></tr>';
+        this.hist.forEach((d,i)=>{html+=`<tr${i===this.curT()?' class="now"':''}><td>${i+1}</td><td>${f3(d.x)}</td><td>${f3(d.z)}</td><td>${f3(d.r)}</td><td>${f3(d.g)}</td><td>${f3(d.h)}</td></tr>`;});
+        tb.innerHTML=html;
+    }
+}
+
+/* =================================================================
+   Bi-LSTM  (stages: n forward cells, n backward cells, n combines)
+================================================================= */
+class BiSim extends Sim{
+    constructor(){super('bilstm',1);this.Wf=this.freshW();this.Wb=this.freshW();this.buildDone=false;this.hookDone=false;this.hook();this.recompute();}
+    freshW(){return {wf:rnd(),uf:rnd(),bf:0.5,wi:rnd(),ui:rnd(),wc:rnd(),uc:rnd(),wo:rnd(),uo:rnd()};}
+    randomize(){this.Wf=this.freshW();this.Wb=this.freshW();this.recompute();}
+    hook(){document.getElementById('bilstm-seq').addEventListener('change',()=>this.reset());}
+    runLstm(seq,W){
+        let h=0,c=0;const out=[];
+        for(const x of seq){
+            const f=S(W.wf*x+W.uf*h+W.bf),i=S(W.wi*x+W.ui*h),g=T(W.wc*x+W.uc*h);
+            c=f*c+i*g;
+            const o=S(W.wo*x+W.uo*h);
+            h=o*T(c);
+            out.push(h);
+        }
+        return out;
+    }
+    total(){return 3*this.seq.length;}
+    recompute(){
+        this.seq=this.seqInput();
+        const n=this.seq.length;
+        this.hf=this.runLstm(this.seq,this.Wf);
+        this.hb=this.runLstm([...this.seq].reverse(),this.Wb).reverse();
+        this.y=this.seq.map((_,i)=>this.hf[i]+this.hb[i]);
+        this.hist=this.seq.map(x=>({x})); // for Sim bookkeeping
+        if(this.pos>=this.total())this.pos=this.total()-1;
+        const W=this.Wf,V=this.Wb;
+        document.getElementById('bilstm-weights').textContent=
+            `forward: w_f=${f2(W.wf)} w_i=${f2(W.wi)} w_c=${f2(W.wc)} w_o=${f2(W.wo)}    backward: w_f=${f2(V.wf)} w_i=${f2(V.wi)} w_c=${f2(V.wc)} w_o=${f2(V.wo)}`;
+        this.buildSvg();
+        this.render();
+    }
+    buildSvg(){
+        const svg=document.getElementById('bilstm-svg');svg.innerHTML='';
+        const n=this.seq.length,W=880,cw=Math.min(110,(W-140)/n),x0=(W-cw*n)/2+cw/2;
+        this.cells={f:[],b:[],y:[],xv:[]};
+        const yF=250,yB=150,yY=60,yX=360;
+        for(let i=0;i<n;i++){
+            const cx=x0+i*cw;
+            /* wires */
+            wire(svg,`M${cx} ${yX-18} V${yF+26}`);                        // x up to fwd
+            wire(svg,`M${cx-14} ${yF-26} L${cx-14} ${yB+26}`);            // x/fwd up to bwd (visual)
+            wire(svg,`M${cx} ${yB-26} V${yY+24}`);                        // to output
+            if(i<n-1){wire(svg,`M${cx+26} ${yF} H${cx+cw-26}`,'').setAttribute('marker-end','');}
+            if(i>0){wire(svg,`M${cx-26} ${yB} H${cx-cw+26}`);}
+            /* forward cell */
+            const gf=el('g',{id:`bi-f${i}`,class:'gnode'},svg);
+            el('rect',{x:cx-26,y:yF-26,width:52,height:52,rx:10,class:'gbox',fill:'var(--primary)'},gf);
+            txt(gf,cx,yF-4,'LSTM','gval',10);
+            txt(gf,cx,yF+8,'→','gval',12);
+            const vf=txt(gf,cx,yF+42,'','glabel mono',10);
+            this.cells.f.push({g:gf,v:vf});
+            /* backward cell */
+            const gb=el('g',{id:`bi-b${i}`,class:'gnode'},svg);
+            el('rect',{x:cx-26,y:yB-26,width:52,height:52,rx:10,class:'gbox',fill:'var(--op)'},gb);
+            txt(gb,cx,yB-4,'LSTM','gval',10);
+            txt(gb,cx,yB+8,'←','gval',12);
+            const vb=txt(gb,cx,yB-34,'','glabel mono',10);
+            this.cells.b.push({g:gb,v:vb});
+            /* output */
+            const gy=el('g',{id:`bi-y${i}`,class:'gnode'},svg);
+            el('circle',{cx:cx,cy:yY,r:22,class:'gbox',fill:'var(--tanh)'},gy);
+            txt(gy,cx,yY+4,'y'+String.fromCharCode(0x2081+i),'gval',12);
+            const vy=txt(gy,cx,yY-32,'','glabel mono',10);
+            this.cells.y.push({g:gy,v:vy});
+            /* input */
+            const vx=txt(svg,cx,yX,'x'+String.fromCharCode(0x2081+i)+'='+f3(this.seq[i]),'glabel mono',11);
+            this.cells.xv.push(vx);
+        }
+        txt(svg,W/2,395,'inputs','gsub',11);
+        txt(svg,40,yF+4,'→','glabel',16);txt(svg,40,yB+4,'←','glabel',16);
+    }
+    render(){
+        const n=this.seq.length,p=this.pos;
+        const phase=Math.floor(p/n),k=p%n;
+        document.getElementById('bilstm-pos').textContent=
+            phase===0?`forward pass · cell ${k+1}/${n}`:phase===1?`backward pass · cell ${n-k}/${n}`:`combine · output ${k+1}/${n}`;
+        for(let i=0;i<n;i++){
+            const fDone=phase>0||(phase===0&&i<=k);
+            const bIdx=n-1-k;
+            const bDone=phase>1||(phase===1&&i>=bIdx);
+            const yDone=phase===2&&i<=k;
+            this.cells.f[i].v.textContent=fDone?f3(this.hf[i]):'';
+            this.cells.b[i].v.textContent=bDone?f3(this.hb[i]):'';
+            this.cells.y[i].v.textContent=yDone?f3(this.y[i]):'';
+            this.cells.f[i].g.classList.toggle('lit',phase===0&&i===k);
+            this.cells.b[i].g.classList.toggle('lit',phase===1&&i===bIdx);
+            this.cells.y[i].g.classList.toggle('lit',phase===2&&i===k);
+        }
+        const stages=[
+            ['Forward pass — reading the sequence left to right',
+             `The forward LSTM has just processed x${sub(k+1)}=${f3(this.seq[k])} → h→${sub(k+1)} = <span class="hl">${f3(this.hf[k])}</span><br><span class="dim">It has only seen x₁…x${sub(k+1)} — nothing from the future.</span>`],
+            ['Backward pass — reading the sequence right to left',
+             `The backward LSTM has just processed x${sub(n-k)}=${f3(this.seq[n-1-k])} → h←${sub(n-k)} = <span class="hl">${f3(this.hb[n-1-k])}</span><br><span class="dim">It has only seen x${sub(n)}…x${sub(n-k)} — nothing from the past.</span>`],
+            ['Combine — each output sees both directions',
+             `y${sub(k+1)} = h→${sub(k+1)} + h←${sub(k+1)} = ${f3(this.hf[k])} + ${f3(this.hb[k])} = <span class="hl">${f3(this.y[k])}</span><br><span class="dim">Left-to-right context AND right-to-left context, at every position.</span>`],
+        ];
+        document.getElementById('bilstm-stage-title').textContent=stages[phase][0];
+        document.getElementById('bilstm-formula').innerHTML=stages[phase][1];
+        this.table();
+    }
+    table(){
+        const tb=document.getElementById('bilstm-table');
+        let html='<tr><th>t</th><th>xₜ</th><th>h→ₜ (forward)</th><th>h←ₜ (backward)</th><th>yₜ = h→+h←</th></tr>';
+        this.seq.forEach((x,i)=>{html+=`<tr><td>${i+1}</td><td>${f3(x)}</td><td>${f3(this.hf[i])}</td><td>${f3(this.hb[i])}</td><td>${f3(this.y[i])}</td></tr>`;});
+        tb.innerHTML=html;
+    }
+}
+function sub(n){const m={0:'₀',1:'₁',2:'₂',3:'₃',4:'₄',5:'₅',6:'₆',7:'₇',8:'₈',9:'₉'};return String(n).split('').map(c=>m[c]).join('');}
+
+/* ---------- shared chart ---------- */
+function drawChart(svg,serA,serB,curT,nameA,nameB){
+    const W=880,H=170,pad=40,n=serA.length;
+    const all=serB?serA.concat(serB):serA.slice();
+    let mx=Math.max(1,...all.map(Math.abs));
+    const y0=H/2,sy=(H/2-24)/mx,sx=(W-2*pad)/Math.max(1,n-1);
+    el('line',{x1:pad-10,y1:y0,x2:W-pad+10,y2:y0,stroke:'var(--wire)','stroke-width':1,'stroke-dasharray':'4 4'},svg);
+    txt(svg,18,y0+4,'0','gsub mono',10);
+    txt(svg,18,y0-sy*mx+4,f2(mx),'gsub mono',10);
+    txt(svg,18,y0+sy*mx+4,f2(-mx),'gsub mono',10);
+    const line=(ser,color)=>{
+        let d='';ser.forEach((v,i)=>{d+=(i?'L':'M')+(pad+i*sx)+' '+(y0-v*sy)+' ';});
+        el('path',{d,stroke:color,'stroke-width':3,fill:'none','stroke-linecap':'round'},svg);
+        ser.forEach((v,i)=>{el('circle',{cx:pad+i*sx,cy:y0-v*sy,r:i===curT?7:4.5,fill:color,stroke:i===curT?'var(--text)':'none','stroke-width':2},svg);});
+    };
+    line(serA,'var(--primary)');
+    if(serB)line(serB,'var(--op)');
+    serA.forEach((_,i)=>txt(svg,pad+i*sx,H-4,'t='+(i+1),'gsub mono',10));
+    txt(svg,W-pad+8,26,nameA,'glabel mono',12,'start');
+    el('rect',{x:W-pad-14,y:18,width:12,height:12,rx:3,fill:'var(--primary)'},svg);
+    if(serB){txt(svg,W-pad+8,46,nameB,'glabel mono',12,'start');el('rect',{x:W-pad-14,y:38,width:12,height:12,rx:3,fill:'var(--op)'},svg);}
+}
+
+/* ---------- tabs & boot ---------- */
+const SIMS={};
+function showTab(k){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===k));
+    document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('active',p.id==='pane-'+k));
+    for(const s of Object.values(SIMS))s.pause();
+}
+SIMS.lstm=new LstmSim();
+SIMS.gru=new GruSim();
+SIMS.bilstm=new BiSim();
+</script>
+</body>
+</html>

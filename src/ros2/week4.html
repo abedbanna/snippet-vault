@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4: ROS2 Services & Client-Server Architecture - Complete Tutorial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #1e3a5f;
+            --secondary-color: #e74c3c;
+            --accent-color: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c5282 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c5282 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 1rem;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-header {
+            background: #1e1e1e;
+            padding: 0.5rem 1rem;
+            color: #888;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .copy-button:hover {
+            background: #45a049;
+        }
+
+        .copy-button.copied {
+            background: #2196F3;
+        }
+
+        .copy-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .alert-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .diagram-container {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .diagram-title {
+            color: #2196f3;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .table-custom {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .table-custom thead {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-left: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .sidebar .nav-link:hover {
+            background: #f8f9fa;
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar .nav-link.active {
+            color: var(--accent-color);
+            border-left-color: var(--accent-color);
+            background: #f8f9fa;
+        }
+
+        .badge-custom {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+        }
+
+        pre[class*="language-"] {
+            margin: 0;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    
+        /* DARK THEME OVERRIDE */
+        *{box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --warning:#f59e0b;--danger:#ef4444;
+            --text:#f1f5f9;--text2:#94a3b8;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --warning:#d97706;--danger:#dc2626;
+            --text:#0f172a;--text2:#334155;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --code:#1e293b;
+        }
+        body{
+            font-family:'Inter',sans-serif !important;
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            line-height:1.7;
+        }
+        a{color:var(--primary);transition:color .2s}
+        a:hover{color:#60a5fa}
+
+        /* Bootstrap overrides */
+        .navbar{
+            background:rgba(11,15,25,.92) !important;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border) !important;
+            padding:0 24px !important;
+            box-shadow:none !important;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{
+            font-weight:700 !important;font-size:1.15rem !important;
+            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
+        }
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{
+            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
+            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
+        }
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        .navbar-collapse{background:transparent !important}
+        @media(max-width:991px){
+            .navbar-collapse{
+                background:rgba(11,15,25,.98) !important;
+                border-radius:0 0 12px 12px;padding:12px 0;
+                border:1px solid var(--border);border-top:none;
+            }
+            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
+        }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            background:none !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
+            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+            transition:all .2s;margin-left:8px;
+        }
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Hero */
+        .hero, .hero-section{
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            position:relative;overflow:hidden;
+            padding:80px 0 60px !important;
+            margin-bottom:0 !important;
+        }
+        .hero::before,.hero-section::before{
+            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
+        }
+        .hero::after,.hero-section::after{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:32px 32px;pointer-events:none;
+        }
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
+        .hero h1,.hero-section h1{
+            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
+            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
+            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+            color:transparent !important;
+        }
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
+            color:var(--text2) !important;opacity:1 !important;
+        }
+        .hero .display-4{font-size:2.8rem !important}
+
+        /* Cards */
+        .card{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:12px !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-bottom:1px solid var(--border) !important;
+            font-weight:600;
+        }
+        .card-title{color:var(--text) !important}
+        .card-text{color:var(--text2) !important}
+
+        /* Section titles */
+        .section-title, h2.section-title, h3.section-title{
+            color:var(--text) !important;
+            border-bottom-color:var(--primary) !important;
+        }
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
+        p{color:var(--text2)}
+
+        /* Info/Warning/Success boxes */
+        .info-box,.alert-info-custom,.alert-info,.key-concept{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--primary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        
+        .warning-box,.alert-warning-custom,.alert-warning{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--warning) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
+        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
+        
+        .success-box,.alert-success-custom,.alert-success{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--success) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .success-box strong{color:var(--success) !important}
+        .success-box p{color:var(--text2) !important}
+
+        .alert-tip-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--secondary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert-danger,.alert-danger-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--danger) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+
+        /* Code blocks */
+        pre, pre[class*="language-"]{
+            background:var(--code) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:8px !important;
+            color:#e6edf3 !important;
+            font-family:'JetBrains Mono',monospace !important;
+            font-size:.875rem !important;
+            line-height:1.6 !important;
+            padding:20px !important;
+        }
+        code{
+            font-family:'JetBrains Mono',monospace !important;
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            padding:2px 6px;border-radius:4px;
+            font-size:.85em !important;
+        }
+        pre code{
+            background:transparent !important;
+            color:#e6edf3 !important;
+            padding:0 !important;
+        }
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn, .copy-btn{
+            position:absolute;top:10px;right:10px;
+            background:var(--surface2) !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
+            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
+        }
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Tables */
+        .table,.dark-table,table{
+            color:var(--text) !important;
+            border-color:var(--border) !important;
+        }
+        .table th,table th{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-color:var(--border2) !important;
+            font-weight:600;
+        }
+        .table td,table td{
+            color:var(--text2) !important;
+            border-color:var(--border) !important;
+            background:transparent !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>*{
+            background:rgba(255,255,255,.02) !important;
+            color:var(--text2) !important;
+        }
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        .table-bordered{border-color:var(--border2) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
+        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
+
+        /* Sidebar / TOC */
+        .sidebar,.toc{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:10px !important;
+            padding:16px !important;
+        }
+        .sidebar a,.toc a,.toc .nav-link{
+            color:var(--text2) !important;
+            border-left-color:transparent !important;
+        }
+        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
+            color:var(--primary) !important;
+            border-left-color:var(--primary) !important;
+            background:rgba(59,130,246,.05) !important;
+        }
+        .list-group-item{
+            background:var(--surface) !important;
+            border-color:var(--border) !important;
+            color:var(--text2) !important;
+        }
+        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
+
+        /* Badges */
+        .badge,.badge-custom{
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            border:1px solid var(--border2);
+        }
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+
+        /* Buttons */
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
+        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
+
+        /* Misc Bootstrap */
+        .breadcrumb{background:var(--surface) !important}
+        .breadcrumb-item a{color:var(--primary) !important}
+        .breadcrumb-item.active{color:var(--text2) !important}
+        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
+        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
+        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
+        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
+        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .modal-header{border-bottom-color:var(--border) !important}
+        .modal-footer{border-top-color:var(--border) !important}
+        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
+        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
+        .nav-tabs{border-bottom-color:var(--border2) !important}
+        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
+        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
+        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
+        .nav-pills .nav-link{color:var(--text2) !important}
+        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
+        .progress{background:var(--surface2) !important}
+        .progress-bar{background:var(--primary) !important}
+        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}
+        .text-dark{color:var(--text) !important}
+        .bg-light{background:var(--surface2) !important}
+        .bg-white{background:var(--surface) !important}
+        .border{border-color:var(--border2) !important}
+        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
+        .lead{color:var(--text2) !important}
+        strong,b{color:var(--text) !important}
+        ::selection{background:rgba(59,130,246,.3);color:#fff}
+
+        /* Step cards / numbered steps */
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+
+        /* Scroll to top */
+        .scroll-top{
+            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
+            color:var(--text2);display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
+        }
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* Footer override */
+        footer,.footer{
+            background:var(--surface) !important;
+            border-top:1px solid var(--border) !important;
+            color:var(--text2) !important;
+        }
+        footer a{color:var(--primary) !important}
+        footer p,footer span,footer div{color:var(--text2) !important}
+
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <strong>ROS2 Jazzy | Week 4</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tutorials">Tutorials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#project">Project</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4">Week 4: Services and Client-Server Architecture</h1>
+            <p class="lead">Request-Response Communication Patterns</p>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.3);">
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <h6>Instructor</h6>
+                    <p>Dr. Abdulkarim Albanna</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Department</h6>
+                    <p>Artificial Intelligence</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>University</h6>
+                    <p>University of Petra</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Duration</h6>
+                    <p>3 hours (Week 4 of 16)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <h5 class="mb-3">Contents</h5>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="#overview">Week Overview</a>
+                        <a class="nav-link" href="#introduction">Introduction to Services</a>
+                        <a class="nav-link" href="#architecture">Service Architecture</a>
+                        <a class="nav-link" href="#comparison">Services vs Topics</a>
+                        <a class="nav-link" href="#definitions">Service Definitions</a>
+                        <a class="nav-link" href="#servers">Creating Servers</a>
+                        <a class="nav-link" href="#clients">Creating Clients</a>
+                        <a class="nav-link" href="#sync-async">Sync vs Async</a>
+                        <a class="nav-link" href="#error-handling">Error Handling</a>
+                        <a class="nav-link" href="#complete-example">Complete Example</a>
+                        <a class="nav-link" href="#debugging">Debugging</a>
+                        <a class="nav-link" href="#best-practices">Best Practices</a>
+                        <a class="nav-link" href="#project">Week 4 Project</a>
+                        <a class="nav-link" href="#resources">Resources</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Week Overview -->
+                <section id="overview">
+                    <h2 class="section-title">Week Overview</h2>
+
+                    <h4 class="mt-4">Learning Objectives</h4>
+                    <p>By the end of this week, students will be able to:</p>
+                    <ol>
+                        <li>Understand the request-response communication pattern</li>
+                        <li>Create service servers to handle requests</li>
+                        <li>Create service clients to send requests</li>
+                        <li>Work with custom service definitions</li>
+                        <li>Implement synchronous and asynchronous service calls</li>
+                        <li>Handle errors and timeouts in service communication</li>
+                        <li>Build a complete robot task management system</li>
+                        <li>Debug service communication issues</li>
+                    </ol>
+
+                    <h4 class="mt-4">Topics Covered</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Request-response pattern</li>
+                                <li>Service architecture</li>
+                                <li>Creating service servers</li>
+                                <li>Creating service clients</li>
+                                <li>Custom service definitions</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Synchronous vs asynchronous calls</li>
+                                <li>Error handling and timeouts</li>
+                                <li>Retry mechanisms</li>
+                                <li>Concurrent service requests</li>
+                                <li>Debugging techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Introduction to Services -->
+                <section id="introduction" class="mt-5">
+                    <h2 class="section-title">Introduction to Service-Based Communication</h2>
+
+                    <h4 class="mt-4">What are Services?</h4>
+                    <p>Services in ROS2 provide a <strong>request/response</strong> communication pattern, unlike topics which use publish/subscribe. Services are ideal for:</p>
+                    <ul>
+                        <li>One-time operations (e.g., trigger scan, reset system)</li>
+                        <li>Request-response interactions (e.g., compute path, get status)</li>
+                        <li>Actions requiring acknowledgment</li>
+                        <li>Remote procedure calls (RPC)</li>
+                    </ul>
+
+                    <h4 class="mt-4">Service Communication Flow</h4>
+                    <div class="diagram-container">
+                        <div class="diagram-title">Basic Service Communication</div>
+                        <svg width="100%" height="150" viewBox="0 0 700 150">
+                            <!-- Client -->
+                            <ellipse cx="120" cy="75" rx="80" ry="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="120" y="80" text-anchor="middle" font-size="14" font-weight="bold">Service Client</text>
+
+                            <!-- Request Arrow -->
+                            <line x1="200" y1="60" x2="350" y2="60" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="275" y="50" text-anchor="middle" font-size="12" fill="#e74c3c">Request</text>
+
+                            <!-- Server -->
+                            <ellipse cx="430" cy="75" rx="80" ry="40" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                            <text x="430" y="80" text-anchor="middle" font-size="14" font-weight="bold">Service Server</text>
+
+                            <!-- Response Arrow -->
+                            <line x1="350" y1="90" x2="200" y2="90" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                            <text x="275" y="110" text-anchor="middle" font-size="12" fill="#4caf50">Response</text>
+
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                    <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                </marker>
+                                <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                    <polygon points="0 0, 10 3, 0 6" fill="#4caf50"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><strong>Key Characteristics of Services</strong></h6>
+                        <ul class="mb-0">
+                            <li><strong>Synchronous:</strong> Client waits for response</li>
+                            <li><strong>One-to-One:</strong> Direct connection between client and server</li>
+                            <li><strong>Blocking:</strong> Can block execution until complete</li>
+                            <li><strong>Reliable:</strong> Guaranteed delivery and response</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Service Architecture -->
+                <section id="architecture" class="mt-5">
+                    <h2 class="section-title">Service Architecture</h2>
+
+                    <h4 class="mt-4">Example: Robot Task Management</h4>
+                    <div class="diagram-container">
+                        <div class="diagram-title">Robot Task Management System</div>
+                        <svg width="100%" height="250" viewBox="0 0 800 250">
+                            <!-- Multiple Clients -->
+                            <ellipse cx="80" cy="60" rx="65" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="80" y="65" text-anchor="middle" font-size="12" font-weight="bold">Client 1</text>
+
+                            <ellipse cx="80" cy="125" rx="65" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="80" y="130" text-anchor="middle" font-size="12" font-weight="bold">Client 2</text>
+
+                            <ellipse cx="80" cy="190" rx="65" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="80" y="195" text-anchor="middle" font-size="12" font-weight="bold">Client 3</text>
+
+                            <!-- Service Server -->
+                            <rect x="250" y="85" width="120" height="80" rx="8" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                            <text x="310" y="110" text-anchor="middle" font-size="13" font-weight="bold">Task Server</text>
+                            <text x="310" y="130" text-anchor="middle" font-size="11">/robot_task</text>
+                            <text x="310" y="150" text-anchor="middle" font-size="10" fill="#666">Priority Queue</text>
+
+                            <!-- Task Executor -->
+                            <ellipse cx="550" cy="125" rx="80" ry="40" fill="#fff3cd" stroke="#ffc107" stroke-width="2"/>
+                            <text x="550" y="125" text-anchor="middle" font-size="13" font-weight="bold">Task</text>
+                            <text x="550" y="140" text-anchor="middle" font-size="13" font-weight="bold">Executor</text>
+
+                            <!-- Request Arrows -->
+                            <line x1="145" y1="60" x2="250" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+                            <line x1="145" y1="125" x2="250" y2="125" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+                            <line x1="145" y1="190" x2="250" y2="150" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow3)"/>
+
+                            <!-- Server to Executor -->
+                            <line x1="370" y1="125" x2="470" y2="125" stroke="#4caf50" stroke-width="2" marker-end="url(#arrow3)"/>
+
+                            <!-- Robot -->
+                            <ellipse cx="720" cy="125" rx="60" ry="35" fill="#ffccbc" stroke="#ff5722" stroke-width="2"/>
+                            <text x="720" y="130" text-anchor="middle" font-size="13" font-weight="bold">Robot</text>
+
+                            <!-- Executor to Robot -->
+                            <line x1="630" y1="125" x2="660" y2="125" stroke="#ff5722" stroke-width="2" marker-end="url(#arrow3)"/>
+
+                            <defs>
+                                <marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                    <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <p class="mt-3">In this architecture:</p>
+                    <ul>
+                        <li>Multiple <strong>clients</strong> send task requests (move, scan, report)</li>
+                        <li>The <strong>task server</strong> receives and queues tasks by priority</li>
+                        <li>A <strong>task executor</strong> processes tasks sequentially</li>
+                        <li>The <strong>robot</strong> executes the actual commands</li>
+                        <li><a href="week2_task1.html">See example</a> </li>
+                    </ul>
+                </section>
+
+                <!-- Services vs Topics Comparison -->
+                <section id="comparison" class="mt-5">
+                    <h2 class="section-title">Services vs Topics</h2>
+
+                    <table class="table table-custom table-striped">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Topics (Pub/Sub)</th>
+                                <th>Services (Req/Res)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Pattern</strong></td>
+                                <td>Publish/Subscribe</td>
+                                <td>Request/Response</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Communication</strong></td>
+                                <td>One-to-many</td>
+                                <td>One-to-one</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Timing</strong></td>
+                                <td>Asynchronous (fire and forget)</td>
+                                <td>Synchronous (wait for response)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Connection</strong></td>
+                                <td>Anonymous, decoupled</td>
+                                <td>Direct connection required</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Flow</strong></td>
+                                <td>Continuous streaming</td>
+                                <td>Discrete transactions</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Best For</strong></td>
+                                <td>Sensor data, status updates</td>
+                                <td>Commands, queries, computations</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Example Use</strong></td>
+                                <td>Camera feed, odometry</td>
+                                <td>Start navigation, compute path</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="diagram-container">
+                                <div class="diagram-title">Topic Communication</div>
+                                <svg width="100%" height="120" viewBox="0 0 400 120">
+                                    <ellipse cx="80" cy="60" rx="60" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="65" text-anchor="middle" font-size="12">Publisher</text>
+
+                                    <line x1="140" y1="50" x2="220" y2="30" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+                                    <line x1="140" y1="60" x2="220" y2="60" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+                                    <line x1="140" y1="70" x2="220" y2="90" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow4)"/>
+
+                                    <ellipse cx="290" cy="30" rx="55" ry="25" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="290" y="35" text-anchor="middle" font-size="11">Sub 1</text>
+
+                                    <ellipse cx="290" cy="60" rx="55" ry="25" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="290" y="65" text-anchor="middle" font-size="11">Sub 2</text>
+
+                                    <ellipse cx="290" cy="90" rx="55" ry="25" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="290" y="95" text-anchor="middle" font-size="11">Sub 3</text>
+
+                                    <defs>
+                                        <marker id="arrow4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                                <p class="mt-2"><small>Continuous data streaming</small></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="diagram-container">
+                                <div class="diagram-title">Service Communication</div>
+                                <svg width="100%" height="120" viewBox="0 0 400 120">
+                                    <ellipse cx="80" cy="60" rx="60" ry="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="80" y="65" text-anchor="middle" font-size="12">Client</text>
+
+                                    <line x1="140" y1="50" x2="220" y2="50" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow5)"/>
+                                    <text x="180" y="40" text-anchor="middle" font-size="10" fill="#e74c3c">Request</text>
+
+                                    <line x1="220" y1="70" x2="140" y2="70" stroke="#4caf50" stroke-width="2" marker-end="url(#arrow6)"/>
+                                    <text x="180" y="90" text-anchor="middle" font-size="10" fill="#4caf50">Response</text>
+
+                                    <ellipse cx="290" cy="60" rx="60" ry="30" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="290" y="65" text-anchor="middle" font-size="12">Server</text>
+
+                                    <defs>
+                                        <marker id="arrow5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+                                        </marker>
+                                        <marker id="arrow6" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#4caf50"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                                <p class="mt-2"><small>Request-response transaction</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Service Definitions -->
+                <section id="definitions" class="mt-5">
+                    <h2 class="section-title">Service Definition Files</h2>
+
+                    <h4 class="mt-4">Creating Custom Service Types</h4>
+                    <p>Service definitions use <code>.srv</code> files with two parts separated by <code>---</code>:</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Example: AddTwoInts.srv</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python"># Request
+int64 a
+int64 b
+---
+# Response
+int64 sum</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Robot Task Service Definition</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>RobotTask.srv - For task management system</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python"># Request
+string task_type    # "move", "scan", "report"
+string target       # target location or object
+int32 priority      # 1-10 (10 = highest)
+---
+# Response
+bool success        # whether task was accepted
+string message      # status message
+int32 task_id       # unique task identifier
+float32 estimated_time  # estimated completion time (seconds)</code></pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><strong>Service Definition Structure</strong></h6>
+                        <ul class="mb-0">
+                            <li><strong>Request section:</strong> Parameters sent by client</li>
+                            <li><strong>Separator:</strong> Three dashes (<code>---</code>)</li>
+                            <li><strong>Response section:</strong> Data returned by server</li>
+                            <li>Use standard ROS2 data types or custom messages</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Creating Service Servers -->
+                <section id="servers" class="mt-5">
+                    <h2 class="section-title">Creating Service Servers</h2>
+
+                    <h4 class="mt-4">Basic Service Server Example</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>add_two_ints_server.py</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from example_interfaces.srv import AddTwoInts
+
+
+class AddTwoIntsServer(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_server')
+
+        # Create service server
+        self.srv = self.create_service(
+            AddTwoInts,              # Service type
+            'add_two_ints',          # Service name
+            self.add_two_ints_callback  # Callback function
+        )
+
+        self.get_logger().info('Add Two Ints Server is ready')
+
+    def add_two_ints_callback(self, request, response):
+        """Handle incoming service requests"""
+        # Access request data
+        a = request.a
+        b = request.b
+
+        # Perform computation
+        response.sum = a + b
+
+        # Log the operation
+        self.get_logger().info(
+            f'Incoming request: {a} + {b} = {response.sum}'
+        )
+
+        # Return response
+        return response
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = AddTwoIntsServer()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Robot Task Server with Priority Queue</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>task_server.py - Complete implementation</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from my_robot_interfaces.srv import RobotTask
+from queue import PriorityQueue
+import threading
+import time
+
+
+class TaskManagementServer(Node):
+    def __init__(self):
+        super().__init__('task_management_server')
+
+        # Create service
+        self.srv = self.create_service(
+            RobotTask,
+            'robot_task',
+            self.handle_task_request
+        )
+
+        # Task management
+        self.task_queue = PriorityQueue()
+        self.task_counter = 0
+        self.current_task = None
+        self.lock = threading.Lock()
+
+        # Start task processor thread
+        self.processor_thread = threading.Thread(
+            target=self.process_tasks,
+            daemon=True
+        )
+        self.processor_thread.start()
+
+        self.get_logger().info('Task Management Server ready')
+
+    def handle_task_request(self, request, response):
+        """Handle incoming task requests"""
+        with self.lock:
+            self.task_counter += 1
+            task_id = self.task_counter
+
+        # Validate task type
+        valid_tasks = ['move', 'scan', 'report']
+        if request.task_type not in valid_tasks:
+            response.success = False
+            response.message = f'Invalid task: {request.task_type}'
+            response.task_id = -1
+            response.estimated_time = 0.0
+            return response
+
+        # Calculate estimated time
+        time_map = {'move': 5.0, 'scan': 3.0, 'report': 1.0}
+        estimated_time = time_map.get(request.task_type, 1.0)
+
+        # Add to priority queue (negative for max-heap)
+        task_data = {
+            'id': task_id,
+            'type': request.task_type,
+            'target': request.target,
+            'priority': request.priority
+        }
+        self.task_queue.put((-request.priority, task_id, task_data))
+
+        # Prepare response
+        response.success = True
+        response.message = f'Task queued: {request.task_type}'
+        response.task_id = task_id
+        response.estimated_time = estimated_time
+
+        self.get_logger().info(
+            f'Task {task_id} queued: {request.task_type} '
+            f'to {request.target} (priority: {request.priority})'
+        )
+
+        return response
+
+    def process_tasks(self):
+        """Background thread to process queued tasks"""
+        while True:
+            if not self.task_queue.empty():
+                _, task_id, task_data = self.task_queue.get()
+                self.execute_task(task_data)
+            time.sleep(0.1)
+
+    def execute_task(self, task_data):
+        """Execute a single task"""
+        self.current_task = task_data
+        self.get_logger().info(
+            f'Executing task {task_data["id"]}: '
+            f'{task_data["type"]} - {task_data["target"]}'
+        )
+
+        # Simulate task execution
+        time_map = {'move': 5.0, 'scan': 3.0, 'report': 1.0}
+        time.sleep(time_map.get(task_data['type'], 1.0))
+
+        self.get_logger().info(
+            f'Task {task_data["id"]} completed'
+        )
+        self.current_task = None
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    server = TaskManagementServer()
+    rclpy.spin(server)
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                    </div>
+                </section>
+
+                <!-- Creating Service Clients -->
+                <section id="clients" class="mt-5">
+                    <h2 class="section-title">Creating Service Clients</h2>
+
+                    <h4 class="mt-4">Basic Service Client Example</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>add_two_ints_client.py</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from example_interfaces.srv import AddTwoInts
+import sys
+
+
+class AddTwoIntsClient(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_client')
+
+        # Create client
+        self.client = self.create_client(
+            AddTwoInts,      # Service type
+            'add_two_ints'   # Service name
+        )
+
+        # Wait for service to be available
+        while not self.client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Service not available, waiting...')
+
+        self.get_logger().info('Connected to service')
+
+    def send_request(self, a, b):
+        """Send a service request"""
+        # Create request
+        request = AddTwoInts.Request()
+        request.a = a
+        request.b = b
+
+        # Call service asynchronously
+        future = self.client.call_async(request)
+
+        # Wait for result
+        rclpy.spin_until_future_complete(self, future)
+
+        if future.result() is not None:
+            return future.result()
+        else:
+            self.get_logger().error('Service call failed')
+            return None
+
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    if len(sys.argv) != 3:
+        print('Usage: ros2 run pkg client <a> <b>')
+        return
+
+    client = AddTwoIntsClient()
+
+    a = int(sys.argv[1])
+    b = int(sys.argv[2])
+
+    result = client.send_request(a, b)
+
+    if result:
+        client.get_logger().info(f'Result: {a} + {b} = {result.sum}')
+
+    client.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Robot Task Client with Multiple Requests</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>task_client.py - Asynchronous client</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from my_robot_interfaces.srv import RobotTask
+
+
+class TaskClient(Node):
+    def __init__(self):
+        super().__init__('task_client')
+
+        self.client = self.create_client(RobotTask, 'robot_task')
+
+        # Wait for service
+        if not self.client.wait_for_service(timeout_sec=5.0):
+            self.get_logger().error('Service not available')
+            raise RuntimeError('Service unavailable')
+
+        self.get_logger().info('Task client ready')
+
+    def send_task(self, task_type, target, priority):
+        """Send task request asynchronously"""
+        request = RobotTask.Request()
+        request.task_type = task_type
+        request.target = target
+        request.priority = priority
+
+        future = self.client.call_async(request)
+        future.add_done_callback(self.response_callback)
+
+        return future
+
+    def response_callback(self, future):
+        """Handle service response"""
+        try:
+            response = future.result()
+            if response.success:
+                self.get_logger().info(
+                    f'Task accepted! ID: {response.task_id}, '
+                    f'ETA: {response.estimated_time}s - {response.message}'
+                )
+            else:
+                self.get_logger().warn(
+                    f'Task rejected: {response.message}'
+                )
+        except Exception as e:
+            self.get_logger().error(f'Service call failed: {e}')
+
+    def send_multiple_tasks(self):
+        """Send multiple tasks"""
+        tasks = [
+            ('move', 'warehouse', 8),
+            ('scan', 'area_a', 9),
+            ('move', 'station_1', 5),
+            ('report', 'central', 3)
+        ]
+
+        for task_type, target, priority in tasks:
+            self.send_task(task_type, target, priority)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    client = TaskClient()
+
+    # Send tasks
+    client.send_multiple_tasks()
+
+    # Keep node alive to receive callbacks
+    rclpy.spin(client)
+
+    client.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                    </div>
+                </section>
+
+                <!-- Synchronous vs Asynchronous -->
+                <section id="sync-async" class="mt-5">
+                    <h2 class="section-title">Synchronous vs Asynchronous Calls</h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="diagram-container">
+                                <div class="diagram-title">Synchronous Call Flow</div>
+                                <svg width="100%" height="250" viewBox="0 0 350 250">
+                                    <!-- Steps -->
+                                    <rect x="100" y="20" width="150" height="40" rx="5" fill="#fff3cd" stroke="#ffc107" stroke-width="2"/>
+                                    <text x="175" y="45" text-anchor="middle" font-size="13">Send Request</text>
+
+                                    <line x1="175" y1="60" x2="175" y2="80" stroke="#666" stroke-width="2" marker-end="url(#arrow7)"/>
+
+                                    <rect x="100" y="80" width="150" height="40" rx="5" fill="#ffccbc" stroke="#ff5722" stroke-width="2"/>
+                                    <text x="175" y="100" text-anchor="middle" font-size="13">⏳ WAIT</text>
+                                    <text x="175" y="115" text-anchor="middle" font-size="11">(Blocked)</text>
+
+                                    <line x1="175" y1="120" x2="175" y2="140" stroke="#666" stroke-width="2" marker-end="url(#arrow7)"/>
+
+                                    <rect x="100" y="140" width="150" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="175" y="165" text-anchor="middle" font-size="13">Receive Response</text>
+
+                                    <line x1="175" y1="180" x2="175" y2="200" stroke="#666" stroke-width="2" marker-end="url(#arrow7)"/>
+
+                                    <rect x="100" y="200" width="150" height="40" rx="5" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="175" y="225" text-anchor="middle" font-size="13">Continue Execution</text>
+
+                                    <defs>
+                                        <marker id="arrow7" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="diagram-container">
+                                <div class="diagram-title">Asynchronous Call Flow</div>
+                                <svg width="100%" height="250" viewBox="0 0 350 250">
+                                    <!-- Steps -->
+                                    <rect x="100" y="20" width="150" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="175" y="45" text-anchor="middle" font-size="13">Send Request</text>
+
+                                    <line x1="175" y1="60" x2="175" y2="80" stroke="#666" stroke-width="2" marker-end="url(#arrow8)"/>
+
+                                    <rect x="100" y="80" width="150" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="175" y="100" text-anchor="middle" font-size="13"> Continue</text>
+                                    <text x="175" y="115" text-anchor="middle" font-size="11">(Non-blocking)</text>
+
+                                    <line x1="175" y1="120" x2="175" y2="140" stroke="#666" stroke-width="2" marker-end="url(#arrow8)"/>
+
+                                    <rect x="100" y="140" width="150" height="40" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                                    <text x="175" y="165" text-anchor="middle" font-size="13">Do Other Work</text>
+
+                                    <line x1="175" y1="180" x2="175" y2="200" stroke="#666" stroke-width="2" marker-end="url(#arrow8)"/>
+
+                                    <rect x="100" y="200" width="150" height="40" rx="5" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                                    <text x="175" y="225" text-anchor="middle" font-size="13">Callback Triggered</text>
+
+                                    <defs>
+                                        <marker id="arrow8" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-custom table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Synchronous</th>
+                                <th>Asynchronous</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Blocking</strong></td>
+                                <td>Yes - waits for response</td>
+                                <td>No - returns immediately</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Complexity</strong></td>
+                                <td>Simple, sequential</td>
+                                <td>More complex, callbacks</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Performance</strong></td>
+                                <td>Can block other operations</td>
+                                <td>Better for concurrent tasks</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Use Case</strong></td>
+                                <td>Simple scripts, testing</td>
+                                <td>Real-time systems, multiple requests</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box">
+                        <h6><strong>When to Use Each Approach</strong></h6>
+                        <p><strong>Use Synchronous when:</strong></p>
+                        <ul>
+                            <li>Writing simple command-line tools</li>
+                            <li>Sequential task execution is required</li>
+                            <li>Testing and debugging services</li>
+                        </ul>
+                        <p><strong>Use Asynchronous when:</strong></p>
+                        <ul class="mb-0">
+                            <li>Node needs to remain responsive</li>
+                            <li>Handling multiple concurrent requests</li>
+                            <li>Building real-time robotic systems</li>
+                            <li>Processing callbacks from other sources</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Error Handling -->
+                <section id="error-handling" class="mt-5">
+                    <h2 class="section-title">Error Handling and Timeouts</h2>
+
+                    <h4 class="mt-4">Timeout Handling</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Service call with timeout</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">def send_request_with_timeout(self, request, timeout=5.0):
+    """Send request with timeout handling"""
+    future = self.client.call_async(request)
+
+    start_time = self.get_clock().now()
+    while rclpy.ok():
+        rclpy.spin_once(self, timeout_sec=0.1)
+
+        if future.done():
+            try:
+                response = future.result()
+                return response
+            except Exception as e:
+                self.get_logger().error(f'Service failed: {e}')
+                return None
+
+        # Check timeout
+        elapsed = (self.get_clock().now() - start_time).nanoseconds / 1e9
+        if elapsed > timeout:
+            self.get_logger().warn('Service call timed out')
+            return None
+
+    return None</code></pre>
+                    </div>
+
+                    <h4 class="mt-4">Retry Logic with Exponential Backoff</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Automatic retry with backoff</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code class="language-python">import time
+
+def send_request_with_retry(self, request, max_retries=3):
+    """Send request with automatic retry"""
+    for attempt in range(max_retries):
+        try:
+            future = self.client.call_async(request)
+            rclpy.spin_until_future_complete(
+                self,
+                future,
+                timeout_sec=5.0
+            )
+
+            if future.done():
+                response = future.result()
+                if response:
+                    return response
+
+            self.get_logger().warn(
+                f'Attempt {attempt + 1} failed, retrying...'
+            )
+
+        except Exception as e:
+            self.get_logger().error(
+                f'Attempt {attempt + 1} error: {e}'
+            )
+
+        # Exponential backoff: 1s, 2s, 4s
+        time.sleep(2 ** attempt)
+
+    self.get_logger().error('All retry attempts failed')
+    return None</code></pre>
+                    </div>
+
+                    <div class="warning-box">
+                        <h6><strong>Timeout Best Practices</strong></h6>
+                        <ul class="mb-0">
+                            <li>Set timeout to 2-5x expected execution time</li>
+                            <li>Consider network latency in distributed systems</li>
+                            <li>Too short: False timeouts and wasted resources</li>
+                            <li>Too long: Poor user experience</li>
+                            <li>Always log timeout events for debugging</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Complete Example -->
+                <section id="complete-example" class="mt-5">
+                    <h2 class="section-title">Complete Example: Task Management System</h2>
+
+                    <div class="diagram-container">
+                        <div class="diagram-title">Complete System Architecture</div>
+                        <svg width="100%" height="300" viewBox="0 0 800 300">
+                            <!-- Clients Layer -->
+                            <text x="100" y="30" font-size="14" font-weight="bold" fill="#2196f3">Application Layer</text>
+
+                            <rect x="50" y="50" width="100" height="50" rx="5" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="100" y="80" text-anchor="middle" font-size="12">Task Client 1</text>
+
+                            <rect x="170" y="50" width="100" height="50" rx="5" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                            <text x="220" y="80" text-anchor="middle" font-size="12">Task Client 2</text>
+
+                            <!-- Service Layer -->
+                            <text x="100" y="140" font-size="14" font-weight="bold" fill="#4caf50">Service Layer</text>
+
+                            <rect x="50" y="160" width="220" height="60" rx="5" fill="#c8e6c9" stroke="#4caf50" stroke-width="2"/>
+                            <text x="160" y="180" text-anchor="middle" font-size="13" font-weight="bold">Task Server</text>
+                            <text x="160" y="200" text-anchor="middle" font-size="11">/robot_task service</text>
+
+                            <!-- Business Logic Layer -->
+                            <text x="450" y="140" font-size="14" font-weight="bold" fill="#ff9800">Business Logic</text>
+
+                            <rect x="350" y="160" width="120" height="60" rx="5" fill="#fff3cd" stroke="#ff9800" stroke-width="2"/>
+                            <text x="410" y="185" text-anchor="middle" font-size="12">Priority</text>
+                            <text x="410" y="205" text-anchor="middle" font-size="12">Queue</text>
+
+                            <rect x="490" y="160" width="120" height="60" rx="5" fill="#fff3cd" stroke="#ff9800" stroke-width="2"/>
+                            <text x="550" y="185" text-anchor="middle" font-size="12">Task</text>
+                            <text x="550" y="205" text-anchor="middle" font-size="12">Executor</text>
+
+                            <!-- Robot Layer -->
+                            <text x="670" y="140" font-size="14" font-weight="bold" fill="#f44336">Hardware</text>
+
+                            <ellipse cx="680" cy="190" rx="60" ry="35" fill="#ffccbc" stroke="#f44336" stroke-width="2"/>
+                            <text x="680" y="195" text-anchor="middle" font-size="13" font-weight="bold">Robot</text>
+
+                            <!-- Arrows -->
+                            <line x1="100" y1="100" x2="130" y2="160" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow9)"/>
+                            <line x1="220" y1="100" x2="190" y2="160" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow9)"/>
+
+                            <line x1="270" y1="190" x2="350" y2="190" stroke="#666" stroke-width="2" marker-end="url(#arrow9)"/>
+                            <line x1="470" y1="190" x2="490" y2="190" stroke="#666" stroke-width="2" marker-end="url(#arrow9)"/>
+                            <line x1="610" y1="190" x2="620" y2="190" stroke="#666" stroke-width="2" marker-end="url(#arrow9)"/>
+
+                            <defs>
+                                <marker id="arrow9" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                    <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <div class="success-box">
+                        <h6><strong>System Features</strong></h6>
+                        <ul class="mb-0">
+                            <li> Multiple clients can submit tasks concurrently</li>
+                            <li> Tasks are prioritized in a queue (1-10, highest first)</li>
+                            <li> Server validates and acknowledges requests immediately</li>
+                            <li> Task executor processes tasks sequentially</li>
+                            <li> Three task types: move, scan, report</li>
+                            <li> Estimated completion time provided to clients</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Debugging -->
+                <section id="debugging" class="mt-5">
+                    <h2 class="section-title">Debugging Services</h2>
+
+                    <h4 class="mt-4">Command Line Tools</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ROS2 Service Commands</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <svg

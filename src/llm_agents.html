@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Visual Guide to LLM Agents</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+  <style>
+    body {
+      scroll-behavior: smooth;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .hero-image {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url('https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc3177e12-432e-4e41-814f-6febf7a35f68_1360x972.png');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: relative;
+    }
+
+    .toc-item {
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .toc-item:hover, .toc-item.active {
+      border-left: 3px solid #3b82f6;
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    .section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+
+    .image-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .tooltip {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .expand-btn {
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .expand-btn:hover {
+      color: #3b82f6;
+    }
+
+    .content-expandable {
+      max-height: 300px;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    .content-expanded {
+      max-height: 2000px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+
+    #back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white fixed w-full z-10 shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="#" class="text-xl font-bold text-blue-600">LLM Agents Guide</a>
+      <div class="hidden md:flex space-x-4">
+        <a href="#introduction" class="px-3 py-2 rounded hover:bg-blue-100">Introduction</a>
+        <a href="#augmented-llms" class="px-3 py-2 rounded hover:bg-blue-100">Augmented LLMs</a>
+        <a href="#memory" class="px-3 py-2 rounded hover:bg-blue-100">Memory</a>
+        <a href="#tools" class="px-3 py-2 rounded hover:bg-blue-100">Tools</a>
+        <a href="#planning" class="px-3 py-2 rounded hover:bg-blue-100">Planning</a>
+        <a href="#multi-agents" class="px-3 py-2 rounded hover:bg-blue-100">Multi-Agents</a>
+      </div>
+      <button class="md:hidden focus:outline-none" id="menu-toggle">
+        <i class="fas fa-bars text-blue-600 text-xl"></i>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white px-4 py-2 shadow-inner">
+      <a href="#introduction" class="block py-2 hover:bg-blue-100 rounded px-3">Introduction</a>
+      <a href="#augmented-llms" class="block py-2 hover:bg-blue-100 rounded px-3">Augmented LLMs</a>
+      <a href="#memory" class="block py-2 hover:bg-blue-100 rounded px-3">Memory</a>
+      <a href="#tools" class="block py-2 hover:bg-blue-100 rounded px-3">Tools</a>
+      <a href="#planning" class="block py-2 hover:bg-blue-100 rounded px-3">Planning</a>
+      <a href="#multi-agents" class="block py-2 hover:bg-blue-100 rounded px-3">Multi-Agents</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+<!--  <header class="hero-image h-screen flex items-center justify-center text-white" style="padding-top: 4rem;">-->
+<!--    <div class="text-center p-5">-->
+<!--      <h1 class="text-4xl md:text-6xl font-bold mb-4">A Visual Guide to LLM Agents</h1>-->
+<!--      <p class="text-xl md:text-2xl mb-8">Explore the fascinating world of Large Language Model Agents</p>-->
+<!--      <p class="mb-8">Based on the tutorial by <a href="https://newsletter.maartengrootendorst.com/" class="text-blue-300 hover:underline" target="_blank">Maarten Grootendorst</a></p>-->
+<!--      <a href="#introduction" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105">-->
+<!--        Start Exploring-->
+<!--        <i class="fas fa-arrow-down ml-2"></i>-->
+<!--      </a>-->
+<!--    </div>-->
+<!--  </header>-->
+
+  <div class="container mx-auto px-4 py-12">
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Table of Contents Sidebar -->
+      <div class="md:w-1/4">
+        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+          <h2 class="text-xl font-bold mb-4 text-blue-600">Table of Contents</h2>
+          <ul class="space-y-2">
+            <li>
+              <a href="#introduction" class="toc-item block px-3 py-2 rounded">Introduction to LLMs</a>
+            </li>
+            <li>
+              <a href="#augmented-llms" class="toc-item block px-3 py-2 rounded">Augmented LLMs & Agents</a>
+            </li>
+            <li>
+              <a href="#memory" class="toc-item block px-3 py-2 rounded">Memory Systems</a>
+              <ul class="ml-4 mt-1 space-y-1">
+                <li><a href="#short-term-memory" class="toc-item block px-3 py-1 text-sm rounded">Short-term Memory</a></li>
+                <li><a href="#long-term-memory" class="toc-item block px-3 py-1 text-sm rounded">Long-term Memory</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#tools" class="toc-item block px-3 py-2 rounded">Tools & Interaction</a>
+            </li>
+            <li>
+              <a href="#planning" class="toc-item block px-3 py-2 rounded">Planning & Reasoning</a>
+              <ul class="ml-4 mt-1 space-y-1">
+                <li><a href="#reasoning" class="toc-item block px-3 py-1 text-sm rounded">Reasoning</a></li>
+                <li><a href="#react" class="toc-item block px-3 py-1 text-sm rounded">ReAct Framework</a></li>
+                <li><a href="#reflection" class="toc-item block px-3 py-1 text-sm rounded">Reflection</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#multi-agents" class="toc-item block px-3 py-2 rounded">Multi-Agent Systems</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="md:w-3/4">
+        <!-- Introduction Section -->
+        <section id="introduction" class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Introduction to LLMs</h2>
+
+
+
+          <div class="image-container mb-6">
+
+             <img src="images/book.jpg"
+                 alt="LLM Token Prediction"
+                 class="w-full h-auto" style="width: 20%;height: 40%">
+          </div>
+          <p class="mb-4">
+            To understand what LLM Agents are, let's first explore the basic capabilities of an LLM.
+            Traditionally, an LLM does nothing more than next-token prediction.
+          </p>
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F495cca88-574b-4ace-b785-d6d6746e8f81_1500x504.png"
+                 alt="LLM Token Prediction"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            By sampling many tokens in a row, we can mimic conversations and use the LLM to give more extensive answers to our queries.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6cc95dc7-b956-425c-a548-3f1f9f3f4fd1_1500x260.png"
+                 alt="LLM Conversation Example"
+                 class="w-full h-auto">
+          </div>
+
+          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <h3 class="font-bold text-lg mb-2">Limitations of LLMs</h3>
+            <p>One of the main disadvantages of LLMs is that they do not remember conversations:</p>
+
+            <div class="image-container mt-4">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F969ff525-cab0-419e-9d83-3d85c1acfbe9_1716x544.png"
+                   alt="LLM Memory Limitation"
+                   class="w-full h-auto">
+            </div>
+
+            <p class="mt-4">LLMs also often fail at basic math like multiplication and division:</p>
+
+            <div class="image-container mt-4">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fff414a39-4acb-4762-b902-433e5c8aadf1_1592x464.png"
+                   alt="LLM Math Limitation"
+                   class="w-full h-auto">
+            </div>
+          </div>
+
+          <div class="expand-section">
+            <p class="mb-4">
+              Does this mean LLMs are horrible? Definitely not! There is no need for LLMs to be capable of everything
+              as we can compensate for their disadvantages through external tools, memory, and retrieval systems.
+            </p>
+            <div class="content-expandable">
+              <p class="mb-4">
+                Through these external systems, the capabilities of the LLM can be enhanced significantly. We'll explore how
+                this enhancement works in the coming sections, looking at approaches like augmentation with tools,
+                memory systems, and planning capabilities.
+              </p>
+            </div>
+            <button class="expand-btn text-blue-600 font-medium flex items-center" data-target="content-expandable">
+              Read More <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Augmented LLMs Section -->
+        <section id="augmented-llms" class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Augmented LLMs & Agents</h2>
+
+          <p class="mb-4">
+            Through external systems, the capabilities of the LLM can be enhanced. Anthropic calls this The Augmented LLM.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d245ca0-e18a-4b40-91d6-9d7247f2b83f_1332x584.png"
+                 alt="Augmented LLM"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            For instance, when faced with a math question, the LLM may decide to use the appropriate tool (a <span class="tooltip font-bold">calculator <span class="tooltip-text">External tools that extend LLM capabilities</span></span>).
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F56ec0862-cffb-45cc-a8d3-aa0581719d2d_1592x464.png"
+                 alt="Tool Use Example"
+                 class="w-full h-auto">
+          </div>
+
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <h3 class="font-bold text-lg mb-2">Defining Agents</h3>
+            <blockquote class="italic mb-3">
+              "An <span class="tooltip font-bold">agent <span class="tooltip-text">Entity that can perceive and act upon its environment</span></span> is anything that can be viewed as perceiving its environment through <span class="tooltip font-bold">sensors <span class="tooltip-text">Components used to observe the environment</span></span> and acting upon that environment through <span class="tooltip font-bold">actuators <span class="tooltip-text">Components used to interact with the environment</span></span>."
+            </blockquote>
+            <p class="text-sm text-right">— Russell & Norvig, AI: A Modern Approach (2016)</p>
+          </div>
+
+          <p class="mb-4">
+            Agents interact with their environment and typically consist of several important components:
+          </p>
+
+          <ul class="mb-6 space-y-2 list-disc pl-6">
+            <li><strong>Environments</strong> - The world the agent interacts with</li>
+            <li><strong>Sensors</strong> - Used to observe the environment</li>
+            <li><strong>Actuators</strong> - Tools used to interact with the environment</li>
+            <li><strong>Effectors</strong> - The brain or rules deciding how to go from observations to actions</li>
+          </ul>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5f575b4a-783e-4ca5-be3f-c9ef7086b0da_1180x608.png"
+                 alt="Agent Framework"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            We can generalize this framework to make it suitable for the Augmented LLM:
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe5cdee7c-ac55-4185-95fb-d88cc6395bf0_1180x608.png"
+                 alt="Augmented LLM Framework"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            Using the Augmented LLM, the Agent can observe the environment through textual input (as LLMs are generally
+            <span class="tooltip font-bold">textual models <span class="tooltip-text">Models that process and generate text</span></span>)
+            and perform certain actions through its use of tools (like <span class="tooltip font-bold">searching the web <span class="tooltip-text">Using search engines to retrieve information</span></span>).
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7cc4d8b1-bb2b-45f1-a17e-a53357d3d999_1228x1004.png"
+                 alt="LLM Planning Behavior"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            This planning behavior allows the Agent to understand the situation (<strong>LLM</strong>),
+            plan next steps (<strong>planning</strong>), take actions (<strong>tools</strong>),
+            and keep track of the taken actions (<strong>memory</strong>).
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcece7ade-43c2-497a-8e78-e61cfcf467ac_1032x720.png"
+                 alt="Agent Components"
+                 class="w-full h-auto">
+          </div>
+
+          <div class="expand-section">
+            <div class="content-expandable">
+              <p class="mb-4">
+                Depending on the system, you can find LLM Agents with varying degrees of autonomy.
+              </p>
+
+              <div class="image-container mb-6">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F98d5ce2c-e9ba-4f67-bc11-e62983f890a1_1736x1140.png"
+                     alt="Agent Autonomy Levels"
+                     class="w-full h-auto">
+              </div>
+
+              <p class="mb-4">
+                Depending on who you ask, a system is more agentic the more the LLM decides how the system can behave.
+                In the next sections, we will go through various methods of autonomous behavior through the LLM Agents
+                three main components: <strong>Memory</strong>, <strong>Tools</strong>, and <strong>Planning</strong>.
+              </p>
+            </div>
+            <button class="expand-btn text-blue-600 font-medium flex items-center" data-target="content-expandable">
+              Read More <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Memory Systems Section -->
+        <section id="memory" class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Memory Systems</h2>
+
+          <p class="mb-4">
+            LLMs are forgetful systems, or more accurately, do not perform any memorization at all when interacting with them.
+            For instance, when you ask an LLM a question and then follow it up with another question, it will not remember the former.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7c6d3e7a-5cc0-440e-a3d6-3ddee9cd73f0_1032x568.png"
+                 alt="LLM Memory Issues"
+                 class="w-full h-auto">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div id="short-term-memory" class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-xl font-bold mb-3 text-blue-600">Short-term Memory</h3>
+              <p class="mb-3">
+                We typically refer to this as <strong>short-term memory</strong>, also called working memory, which functions
+                as a buffer for the (near-) immediate context. This includes recent actions the LLM Agent has taken.
+              </p>
+              <div class="image-container">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3512b33d-3987-41b9-8ab5-4db78718d6e1_1032x460.png"
+                     alt="Context Window"
+                     class="w-full h-auto">
+              </div>
+            </div>
+
+            <div id="long-term-memory" class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-xl font-bold mb-3 text-blue-600">Long-term Memory</h3>
+              <p class="mb-3">
+                The LLM Agent also needs to keep track of potentially dozens of steps, not only the most recent actions.
+                This is referred to as <strong>long-term memory</strong> as the LLM Agent could theoretically take dozens
+                or even hundreds of steps that need to be memorized.
+              </p>
+              <div class="image-container">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F81dfc42c-2cbd-4a1d-9430-4ac2518d4490_936x696.png"
+                     alt="Long-term Memory"
+                     class="w-full h-auto">
+              </div>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-blue-600">Enabling Short-term Memory</h3>
+
+          <p class="mb-4">
+            The most straightforward method for enabling short-term memory is to use the model's context window,
+            which is essentially the number of tokens an LLM can process.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F66e6afca-afc6-4a3f-a4b0-4d11e050c558_1204x616.png"
+                 alt="Context Window Memory"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            This works as long as the conversation history fits within the LLMs context window and is a nice way of mimicking
+            memory. However, instead of actually memorizing a conversation, we essentially tell the LLM what that conversation was.
+          </p>
+
+          <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+            <h3 class="font-bold text-lg mb-2">Memory Summarization</h3>
+            <p class="mb-3">
+              For models with a smaller context window, or when the conversation history is large, we can instead
+              use another LLM to summarize the conversations that happened thus far.
+            </p>
+            <div class="image-container">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F11f97b1d-737b-4843-b8a3-4ad1ac24b173_1320x812.png"
+                   alt="Memory Summarization"
+                   class="w-full h-auto">
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-blue-600">Enabling Long-term Memory</h3>
+
+          <p class="mb-4">
+            Long-term memory in LLM Agents includes the agents past action space that needs to be retained over an extended period.
+            A common technique to enable long-term memory is to store all previous interactions, actions, and conversations
+            in an external vector database.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="image-container">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8420e846-ec02-4101-a0c1-ad9ba1d4a4d7_1028x660.png"
+                   alt="Vector Database Creation"
+                   class="w-full h-auto">
+            </div>
+
+            <div class="image-container">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F47304195-33bd-4637-b18e-ad7c57c8aa2c_1028x756.png"
+                   alt="Vector Database Retrieval"
+                   class="w-full h-auto">
+            </div>
+          </div>
+
+          <p class="mb-4">
+            This method is often referred to as <span class="tooltip font-bold">Retrieval-Augmented Generation (RAG) <span class="tooltip-text">Technique to enhance LLM responses with external knowledge retrieval</span></span>.
+          </p>
+
+          <div class="expand-section">
+            <div class="content-expandable">
+              <p class="mb-4">
+                Different types of information can also be related to different types of memory to be stored.
+                In psychology, there are numerous types of memory to differentiate, but the
+                <em>Cognitive Architectures for Language Agents</em> paper coupled four of them to LLM Agents.
+              </p>
+
+              <div class="image-container mb-6">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa56c3d15-e512-4bf3-9815-d42cc01ccfa1_1204x416.png"
+                     alt="Memory Types"
+                     class="w-full h-auto">
+              </div>
+
+              <p class="mb-4">
+                This differentiation helps in building agentic frameworks. <em>Semantic memory</em> (facts about the world)
+                might be stored in a different database than <em>working memory</em> (current and recent circumstances).
+              </p>
+            </div>
+            <button class="expand-btn text-blue-600 font-medium flex items-center" data-target="content-expandable">
+              Read More <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section id="tools" class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Tools & Interaction</h2>
+
+          <p class="mb-4">
+            Tools allow a given LLM to either interact with an external environment (such as databases)
+            or use external applications (such as custom code to run).
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9dfac69b-7b8a-4eee-ad04-8a06ea3be617_1272x176.png"
+                 alt="Tool Types"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            Tools generally have two use cases: <strong>fetching data</strong> to retrieve up-to-date information
+            and <strong>taking action</strong> like setting a meeting or ordering food.
+          </p>
+
+          <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+            <h3 class="font-bold text-lg mb-2">Tool Integration</h3>
+            <p class="mb-3">
+              To actually use a tool, the LLM has to generate text that fits with the API of the given tool.
+              We tend to expect strings that can be formatted to <strong>JSON</strong> so that it can easily be fed to a <strong>code interpreter</strong>.
+            </p>
+            <div class="image-container">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F87b42a6f-87a8-4057-8975-969293f73bb2_1460x420.png"
+                   alt="JSON Tool Call"
+                   class="w-full h-auto">
+            </div>
+          </div>
+
+          <p class="mb-4">
+            You can also generate custom functions that the LLM can use, like a basic multiplication function.
+            This is often referred to as <span class="tooltip font-bold">function calling <span class="tooltip-text">Technique where LLMs can call specific functions with parameters</span></span>.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8152f4a2-34d4-40ee-8445-25b4eed4b179_1460x364.png"
+                 alt="Function Calling"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            Some LLMs can use any tools if they are prompted correctly and extensively.
+            Tool-use is something that most current LLMs are capable of.
+          </p>
+
+          <h3 class="text-2xl font-bold mb-4 text-blue-600">Tool Architecture</h3>
+
+          <p class="mb-4">
+            Tools can either be used in a given order if the agentic framework is fixed:
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F36192526-b953-4f5a-a2fa-9bde40a827ef_1624x648.png"
+                 alt="Fixed Tool Order"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            Or the LLM can autonomously choose which tool to use and when. LLM Agents are essentially
+            sequences of LLM calls (but with autonomous selection of actions/tools/etc.).
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F36870bf2-e0e5-42d7-bcdc-45b1a1ab7c15_1520x556.png"
+                 alt="Autonomous Tool Selection"
+                 class="w-full h-auto">
+          </div>
+
+          <div class="expand-section">
+            <div class="content-expandable">
+              <h3 class="text-2xl font-bold mb-4 text-blue-600">Toolformer & Training for Tool Use</h3>
+
+              <p class="mb-4">
+                Much of the research involves not only prompting LLMs for tool use but training them specifically for tool use instead.
+                One of the first techniques to do so is called Toolformer, a model trained to decide which APIs to call and how.
+              </p>
+
+              <div class="flex flex-col space-y-4 mb-6">
+                <div class="image-container">
+                  <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4f2fe527-6e4c-45b6-bfcf-ff34c4672c01_1592x208.png"
+                       alt="Toolformer Step 1"
+                       class="w-full h-auto">
+                </div>
+
+                <div class="image-container">
+                  <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F43bbc573-bebc-4057-82f8-6718be598770_1592x312.png"
+                       alt="Toolformer Step 2"
+                       class="w-full h-auto">
+                </div>
+
+                <div class="image-container">
+                  <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d88be14-0d49-433c-a2c6-ab0e96b041c0_1592x348.png"
+                       alt="Toolformer Step 3"
+                       class="w-full h-auto">
+                </div>
+              </div>
+
+              <p class="mb-4">
+                Since the release of Toolformer, there have been many exciting techniques such as
+                LLMs that can use thousands of tools (ToolLLM) or LLMs that can easily retrieve the most relevant tools (Gorilla).
+              </p>
+
+              <h3 class="text-2xl font-bold mb-4 text-blue-600">Model Context Protocol (MCP)</h3>
+
+              <p class="mb-4">
+                To make tools easier to implement for any given Agentic framework, Anthropic developed the Model Context Protocol (MCP).
+                MCP standardizes API access for services like weather apps and GitHub.
+              </p>
+
+              <div class="image-container mb-6">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F24c1c103-b26f-4fb2-8089-6a5b0696a99f_1624x764.png"
+                     alt="MCP Components"
+                     class="w-full h-auto">
+              </div>
+            </div>
+            <button class="expand-btn text-blue-600 font-medium flex items-center" data-target="content-expandable">
+              Read More <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Planning Section -->
+        <section id="planning" class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Planning & Reasoning</h2>
+
+          <p class="mb-4">
+            Planning in LLM Agents involves breaking a given task up into actionable steps.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F39a6b7eb-0700-4cde-bbe3-59b6d99baee8_1460x540.png"
+                 alt="Planning Process"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            This plan allows the model to iteratively reflect on past behavior and update the current plan if necessary.
+          </p>
+
+          <div id="reasoning" class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+            <h3 class="font-bold text-lg mb-2">Reasoning Capabilities</h3>
+            <p class="mb-3">
+              Planning actionable steps requires complex reasoning behavior. As such, the LLM must be able to
+              showcase this behavior before taking the next step in planning out the task.
+            </p>
+            <p class="mb-3">
+              Reasoning LLMs are those that tend to think before answering a question.
+            </p>
+            <div class="image-container">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8cdd114b-427f-454f-9e85-ee5d241d266f_1668x1060.png"
+                   alt="Reasoning Process"
+                   class="w-full h-auto">
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-blue-600">Enabling Reasoning</h3>
+
+          <p class="mb-4">
+            This reasoning behavior can be enabled by roughly two choices: fine-tuning the LLM or specific prompt engineering.
+            With prompt engineering, we can create examples of the reasoning process that the LLM should follow.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa05700ec-3ef5-4071-80b3-f97093196928_1480x748.png"
+                 alt="Chain-of-Thought Prompting"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            This methodology of providing examples of thought processes is called <span class="tooltip font-bold">Chain-of-Thought <span class="tooltip-text">Prompting technique where the model explains its reasoning step by step</span></span>
+            and enables more complex reasoning behavior.
+          </p>
+
+          <p class="mb-4">
+            Chain-of-thought can also be enabled without any examples (zero-shot prompting) by simply stating "Let's think step-by-step."
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F028e3be4-f1f5-451a-b441-20fcae781aac_1648x280.png"
+                 alt="Zero-shot Chain-of-Thought"
+                 class="w-full h-auto">
+          </div>
+
+          <div id="react" class="mb-6">
+            <h3 class="text-2xl font-bold mb-4 text-blue-600">ReAct Framework</h3>
+
+            <p class="mb-4">
+              One of the first techniques to combine both reasoning and action processes is called ReAct (Reason and Act).
+            </p>
+
+            <div class="image-container mb-6">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca0a3091-bcf9-4da6-9a28-242d82f12acf_1844x652.png"
+                   alt="ReAct Framework"
+                   class="w-full h-auto">
+            </div>
+
+            <p class="mb-4">
+              ReAct does so through careful prompt engineering. The ReAct prompt describes three steps:
+            </p>
+
+            <ul class="mb-4 space-y-2 list-disc pl-6">
+              <li><strong>Thought</strong> - A reasoning step about the current situation</li>
+              <li><strong>Action</strong> - A set of actions to execute (e.g., tools)</li>
+              <li><strong>Observation</strong> - A reasoning step about the result of the action</li>
+            </ul>
+
+            <div class="image-container mb-6">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F77b17db6-da65-4afb-a775-e6a939f1ea58_1900x1168.png"
+                   alt="ReAct Cycle"
+                   class="w-full h-auto">
+            </div>
+
+            <p class="mb-4">
+              It continues this behavior until an action specifies to return the result. By iterating over thoughts and observations,
+              the LLM can plan out actions, observe its output, and adjust accordingly.
+            </p>
+          </div>
+
+          <div id="reflection" class="mb-6">
+            <h3 class="text-2xl font-bold mb-4 text-blue-600">Reflection & Self-Improvement</h3>
+
+            <p class="mb-4">
+              Nobody, not even LLMs with ReAct, will perform every task perfectly. Failing is part of the process
+              as long as you can reflect on that process.
+            </p>
+
+            <p class="mb-4">
+              This process is missing from ReAct and is where <span class="tooltip font-bold">Reflexion <span class="tooltip-text">Technique where agents learn from past mistakes through verbal reinforcement</span></span> comes in.
+              Reflexion is a technique that uses verbal reinforcement to help agents learn from prior failures.
+            </p>
+
+            <div class="image-container mb-6">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb22cf4df-37b1-4359-8417-084a77248232_1176x588.png"
+                   alt="Reflexion Process"
+                   class="w-full h-auto">
+            </div>
+
+            <p class="mb-4">
+              Memory modules are added to track actions (short-term) and self-reflections (long-term),
+              helping the Agent learn from its mistakes and identify improved actions.
+            </p>
+
+            <p class="mb-4">
+              A similar and elegant technique is called SELF-REFINE, where actions of refining output
+              and generating feedback are repeated.
+            </p>
+
+            <div class="image-container mb-6">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F36c8b4af-5ca1-46e9-a5b6-e5ff94c8e32a_1484x580.png"
+                   alt="SELF-REFINE Process"
+                   class="w-full h-auto">
+            </div>
+          </div>
+        </section>
+
+        <!-- Multi-Agent Systems Section -->
+        <section id="multi-agents" class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Multi-Agent Systems</h2>
+
+          <p class="mb-4">
+            The single Agent we explored has several issues: too many tools may complicate selection,
+            context becomes too complex, and the task may require specialization.
+          </p>
+
+          <p class="mb-4">
+            Instead, we can look towards <strong>Multi-Agents</strong>, frameworks where multiple agents
+            (each with access to <strong>tools</strong>, <strong>memory</strong>, and <strong>planning</strong>)
+            are interacting with each other and their environments:
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb028b7eb-eeec-492c-816b-1c0837be2b40_1228x716.png"
+                 alt="Multi-Agent System"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            These Multi-Agent systems usually consist of specialized Agents, each equipped with their own toolset
+            and overseen by a supervisor. The supervisor manages communication between Agents and can assign
+            specific tasks to the specialized Agents.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa15cb88d-c059-41dc-b658-f643ad076588_1228x504.png"
+                 alt="Multi-Agent Architecture"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            In practice, there are dozens of Multi-Agent architectures with two components at their core:
+          </p>
+
+          <ul class="mb-6 space-y-2 list-disc pl-6">
+            <li><strong>Agent Initialization</strong> - How are individual (specialized) Agents created?</li>
+            <li><strong>Agent Orchestration</strong> - How are all Agents coordinated?</li>
+          </ul>
+
+          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <h3 class="font-bold text-lg mb-2">Generative Agents</h3>
+            <p class="mb-3">
+              One of the most influential Multi-Agent papers is "Generative Agents: Interactive Simulacra of Human Behavior".
+              In this paper, they created computational software agents that simulate believable human behavior.
+            </p>
+            <div class="image-container mb-3">
+              <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8a42fc17-5d98-40f4-a350-a2d4fe2f8890_1324x732.png"
+                   alt="Generative Agents"
+                   class="w-full h-auto">
+            </div>
+            <p>
+              The Memory module is one of the most vital components in this framework. It stores both the planning
+              and reflection behaviors, as well as all events thus far.
+            </p>
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-blue-600">Multi-Agent Frameworks</h3>
+
+          <p class="mb-4">
+            Whatever framework you choose for creating Multi-Agent systems, they are generally composed of
+            several ingredients, including its profile, perception of the environment, memory, planning, and available actions.
+          </p>
+
+          <div class="image-container mb-6">
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F16d08b46-3c57-434e-aa73-7a1e516305c7_1232x656.png"
+                 alt="Multi-Agent Components"
+                 class="w-full h-auto">
+          </div>
+
+          <p class="mb-4">
+            Popular frameworks for implementing these components are AutoGen, MetaGPT, and CAMEL.
+            However, each framework approaches communication between each Agent a bit differently.
+          </p>
+
+          <div class="expand-section">
+            <div class="content-expandable">
+              <p class="mb-4">
+                With CAMEL, for instance, the user first creates its question and defines <strong>AI User</strong>
+                and <strong>AI Assistant</strong> roles. The AI user role represents the human user and will guide the process.
+              </p>
+
+              <div class="image-container mb-6">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Faa8b7a80-9b4e-402b-a0da-b6ae21e8464a_1232x236.png"
+                     alt="CAMEL Roles"
+                     class="w-full h-auto">
+              </div>
+
+              <p class="mb-4">
+                After that, the AI User and AI Assistant will collaborate on resolving the query by interacting with each other.
+              </p>
+
+              <div class="image-container mb-6">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6bcc2339-cf84-4099-915b-ccd1c7417ff9_1232x648.png"
+                     alt="CAMEL Collaboration"
+                     class="w-full h-auto">
+              </div>
+
+              <p class="mb-4">
+                This role-playing methodology enables collaborative communication between agents.
+                AutoGen and MetaGPT have different methods of communication, but it all boils down
+                to this collaborative nature of communication.
+              </p>
+
+              <p class="mb-4">
+                In the last year, and especially the last few weeks, the growth of these frameworks has been explosive.
+              </p>
+
+              <div class="image-container mb-6">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fddc3ddb2-40f6-4e4a-b463-92bf902cda54_1044x700.png"
+                     alt="Framework Growth"
+                     class="w-full h-auto">
+              </div>
+            </div>
+            <button class="expand-btn text-blue-600 font-medium flex items-center" data-target="content-expandable">
+              Read More <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Conclusion Section -->
+        <section class="section bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">Conclusion</h2>
+
+          <p class="mb-4">
+            LLM Agents represent a powerful evolution in AI capabilities, combining the natural language
+            understanding of large language models with the ability to interact with their environment
+            through tools, retain information in memory systems, and plan complex actions.
+          </p>
+
+          <p class="mb-4">
+            The field continues to evolve rapidly, with advances in:
+          </p>
+
+          <ul class="mb-6 space-y-2 list-disc pl-6">
+            <li>More sophisticated planning and reasoning capabilities</li>
+            <li>Enhanced memory systems for better context retention</li>
+            <li>Improved tools integration and execution</li>
+            <li>Advanced multi-agent coordination for complex tasks</li>
+            <li>Self-reflection and improvement mechanisms</li>
+          </ul>
+
+          <p class="mb-4">
+            As these technologies continue to mature, we can expect LLM Agents to take on increasingly
+            complex tasks and provide more sophisticated assistance across a wide range of domains.
+          </p>
+
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-6">
+            <p class="italic">
+              "This concludes our journey of LLM Agents! Hopefully, this guide gives a better understanding
+              of how LLM Agents are built."
+            </p>
+            <p class="text-right mt-2">
+              — Maarten Grootendorst
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <h2 class="text-xl font-bold mb-2">A Visual Guide to LLM Agents</h2>
+          <p>Based on the tutorial by <a href="https://newsletter.maartengrootendorst.com/" class="text-blue-300 hover:underline" target="_blank">Maarten Grootendorst</a></p>
+        </div>
+        <div>
+          <p class="mb-2">Original article: <a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-llm-agents" class="text-blue-300 hover:underline" target="_blank">A Visual Guide to LLM Agents</a></p>
+          <p>All images and content © Maarten Grootendorst</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 transition duration-300">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script>
+    // Mobile menu toggle
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // Expandable content
+    document.querySelectorAll('.expand-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const targetClass = this.getAttribute('data-target');
+        const contentEl = this.previousElementSibling;
+
+        contentEl.classList.toggle('content-expanded');
+
+        if (contentEl.classList.contains('content-expanded')) {
+          this.innerHTML = 'Read Less <i class="fas fa-chevron-up ml-1"></i>';
+        } else {
+          this.innerHTML = 'Read More <i class="fas fa-chevron-down ml-1"></i>';
+        }
+      });
+    });
+
+    // Intersection Observer for scroll animations
+    const sections = document.querySelectorAll('.section');
+    const tocItems = document.querySelectorAll('.toc-item');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          // Update active TOC item
+          const id = entry.target.getAttribute('id');
+          tocItems.forEach(item => {
+            if (item.getAttribute('href') === `#${id}`) {
+              item.classList.add('active');
+            } else {
+              item.classList.remove('active');
+            }
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+
+    // Back to top button
+    const backToTopButton = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        backToTopButton.style.display = 'block';
+      } else {
+        backToTopButton.style.display = 'none';
+      }
+    });
+
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+
+          // Close mobile menu if open
+          document.getElementById('mobile-menu').classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

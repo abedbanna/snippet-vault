@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixture of Experts in LLMs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface2: #1e293b;
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --border2: rgba(255,255,255,0.08);
+            --code: #0d1117;
+            --footer: #080c14;
+        }
+        body.light-mode {
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --surface2: #e2e8f0;
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --text: #0f172a;
+            --text2: #334155;
+            --border: rgba(0,0,0,0.10);
+            --border2: rgba(0,0,0,0.12);
+            --code: #1e293b;
+            --footer: #e2e8f0;
+        }
+
+        /* ===== BASE ===== */
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ===== HERO — always dark regardless of theme ===== */
+        .hero-pattern {
+            background-color: #051e3e !important;
+            background-image: radial-gradient(#1a4a8e 0.5px, transparent 0.5px),
+                              radial-gradient(#1a4a8e 0.5px, #051e3e 0.5px) !important;
+            background-size: 20px 20px !important;
+            background-position: 0 0, 10px 10px !important;
+            color: white;
+        }
+        .hero-pattern h1, .hero-pattern h2, .hero-pattern p,
+        .hero-pattern li, .hero-pattern span:not(.bg-blue-600):not(.bg-transparent) {
+            color: white !important;
+        }
+
+        /* ===== NAV ===== */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11,15,25,0.92) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border) !important;
+            box-shadow: none !important;
+        }
+        body.light-mode .sticky-nav {
+            background: rgba(255,255,255,0.95) !important;
+            border-bottom: 1px solid var(--border2) !important;
+        }
+        .sticky-nav a { color: var(--text2) !important; transition: color .2s; }
+        .sticky-nav a:hover { color: var(--text) !important; background: rgba(255,255,255,0.06) !important; }
+        body.light-mode .sticky-nav a:hover { background: rgba(0,0,0,0.05) !important; }
+
+        /* ===== SECTIONS ===== */
+        section.bg-white { background: var(--surface) !important; }
+        section.bg-gray-50 { background: var(--bg) !important; }
+
+        /* ===== CARDS ===== */
+        .card {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            background: var(--surface) !important;
+            border: 1px solid var(--border2) !important;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25) !important;
+        }
+        .card p, .card li, .card span { color: var(--text2) !important; }
+        .card h3, .card h4 { color: var(--text) !important; }
+
+        /* ===== TEXT OVERRIDES ===== */
+        .text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700 { color: var(--text2) !important; }
+        .text-gray-800, .text-gray-900 { color: var(--text) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--text) !important; }
+        p, li { color: var(--text2) !important; }
+
+        /* ===== UTILITY BOXES ===== */
+        .bg-white { background: var(--surface) !important; }
+        .bg-gray-50 { background: var(--bg) !important; }
+        .bg-gray-100 { background: var(--surface2) !important; }
+
+        /* Colored info boxes */
+        .bg-blue-50 { background: rgba(59,130,246,0.12) !important; }
+        body.light-mode .bg-blue-50 { background: #eff6ff !important; }
+        .bg-green-50 { background: rgba(16,185,129,0.12) !important; }
+        body.light-mode .bg-green-50 { background: #f0fdf4 !important; }
+
+        /* Border-colored panels */
+        .bg-white.p-6.rounded-lg, .bg-white.p-5.rounded-lg { background: var(--surface) !important; }
+        .bg-white.p-4.rounded, .bg-white.p-4.rounded-lg { background: var(--surface2) !important; }
+
+        /* Future section gradient cards */
+        .bg-gradient-to-br.from-blue-100 {
+            background: linear-gradient(to bottom right, rgba(59,130,246,0.14), rgba(59,130,246,0.22)) !important;
+        }
+        .bg-gradient-to-br.from-green-100 {
+            background: linear-gradient(to bottom right, rgba(16,185,129,0.14), rgba(16,185,129,0.22)) !important;
+        }
+        .bg-gradient-to-br.from-purple-100 {
+            background: linear-gradient(to bottom right, rgba(139,92,246,0.14), rgba(139,92,246,0.22)) !important;
+        }
+        body.light-mode .bg-gradient-to-br.from-blue-100 {
+            background: linear-gradient(to bottom right, #dbeafe, #bfdbfe) !important;
+        }
+        body.light-mode .bg-gradient-to-br.from-green-100 {
+            background: linear-gradient(to bottom right, #dcfce7, #bbf7d0) !important;
+        }
+        body.light-mode .bg-gradient-to-br.from-purple-100 {
+            background: linear-gradient(to bottom right, #ede9fe, #ddd6fe) !important;
+        }
+
+        /* Icon circle badges */
+        .w-8.rounded-full.bg-blue-100 { background: rgba(59,130,246,0.2) !important; }
+        .w-8.rounded-full.bg-green-100 { background: rgba(16,185,129,0.2) !important; }
+        .w-8.rounded-full.bg-yellow-100 { background: rgba(245,158,11,0.2) !important; }
+        .w-8.rounded-full.bg-red-100 { background: rgba(239,68,68,0.2) !important; }
+
+        /* ===== ACCORDION ===== */
+        .accordion-button {
+            cursor: pointer; padding: 0.9rem 1rem; width: 100%;
+            text-align: left; border: none; outline: none;
+            transition: 0.3s; display: flex; justify-content: space-between;
+            align-items: center; border-radius: 8px;
+            background: var(--surface2) !important;
+            color: var(--text) !important;
+        }
+        .accordion-button:hover { background: rgba(255,255,255,0.08) !important; }
+        body.light-mode .accordion-button:hover { background: rgba(0,0,0,0.08) !important; }
+        .accordion-content {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: var(--surface) !important;
+            border-radius: 0 0 8px 8px;
+        }
+        .accordion-content.active { max-height: 1200px; }
+        .accordion-content p, .accordion-content li { color: var(--text2) !important; }
+        .accordion-content a { color: var(--primary) !important; }
+
+        /* ===== TABLE ===== */
+        table { border-color: var(--border2) !important; width: 100%; }
+        th {
+            background: var(--surface2) !important;
+            color: var(--text) !important;
+            border-color: var(--border2) !important;
+        }
+        td { color: var(--text2) !important; border-color: var(--border2) !important; }
+        tr:hover td { background: rgba(255,255,255,0.02) !important; }
+        body.light-mode tr:hover td { background: rgba(0,0,0,0.02) !important; }
+
+        /* ===== CODE BLOCKS ===== */
+        pre, code {
+            background: var(--code) !important;
+            color: #e6edf3 !important;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Syntax colours */
+        .kw  { color: #ff7b72; }
+        .str { color: #a5d6ff; }
+        .cm  { color: #8b949e; font-style: italic; }
+        .num { color: #79c0ff; }
+        .fn  { color: #d2a8ff; }
+        .tp  { color: #ffa657; }
+        .dec { color: #f97316; }
+
+        .code-block {
+            background: var(--code) !important;
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.84rem;
+            line-height: 1.65;
+            position: relative;
+            white-space: pre;
+            color: #e6edf3;
+            margin: 14px 0;
+        }
+        .copy-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: var(--surface2); border: 1px solid var(--border2);
+            color: var(--text2); padding: 4px 10px; border-radius: 6px;
+            cursor: pointer; font-size: 0.75rem; font-family: 'Inter', sans-serif;
+            transition: all .2s; z-index: 5;
+        }
+        .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ===== STEP CARDS (code examples) ===== */
+        .step-card {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+        .step-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 20px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border2);
+        }
+        .step-number {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--primary); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+        }
+        .step-title { font-weight: 700; font-size: 1rem; color: var(--text); }
+        .step-body { padding: 16px 20px; }
+        .step-body > p { color: var(--text2) !important; font-size: 0.95rem; margin-bottom: 12px; }
+        .step-body code {
+            background: var(--surface2) !important;
+            color: #ffa657 !important;
+            padding: 2px 6px; border-radius: 4px; font-size: 0.85em;
+        }
+
+        /* ===== MISC ===== */
+        .section-heading {
+            position: relative; display: inline-block; margin-bottom: 2rem;
+        }
+        .section-heading::after {
+            content: ''; position: absolute; width: 60%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            bottom: -10px; left: 0; border-radius: 2px;
+        }
+        .highlight {
+            background: linear-gradient(120deg, rgba(59,130,246,0.25) 0%, rgba(16,185,129,0.25) 100%);
+            padding: 2px 5px; border-radius: 4px;
+        }
+        .image-caption {
+            font-size: 0.85rem; font-style: italic;
+            text-align: center; color: var(--text2); margin-top: 0.5rem;
+        }
+        .animate-on-scroll {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== FOOTER ===== */
+        footer { background: var(--footer) !important; border-top: 1px solid var(--border); }
+        footer p, footer li, footer span, footer a { color: var(--text2) !important; }
+        footer h2, footer h3 { color: var(--text) !important; }
+        footer a:hover { color: var(--text) !important; }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+        /* ===== SHADOW ===== */
+        .shadow-sm, .shadow, .shadow-md, .shadow-lg {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+        }
+        body.light-mode .shadow-sm, body.light-mode .shadow,
+        body.light-mode .shadow-md, body.light-mode .shadow-lg {
+            box-shadow: 0 1px 4px rgba(0,0,0,0.09) !important;
+        }
+
+        @media print {
+            .sticky-nav { position: relative; }
+            .accordion-content { max-height: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Back to Course -->
+<a href="/cs/index.html" id="backBtn" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;">
+    <i class="fa-solid fa-arrow-left"></i> Back to Course
+</a>
+
+<!-- Theme Toggle -->
+<button onclick="toggleTheme()" id="themeToggleBtn" aria-label="Toggle theme"
+    style="position:fixed;top:16px;right:16px;z-index:9999;background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s;">
+    <i class="fa-solid fa-sun" id="themeIcon"></i>
+</button>
+
+<!-- ===== HERO ===== -->
+<header class="hero-pattern text-white py-20">
+    <div class="container mx-auto px-4 flex flex-col items-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-center mb-6">Mixture of Experts in LLMs</h1>
+        <p class="text-xl text-center max-w-3xl mb-10" style="color:rgba(255,255,255,0.85)!important;">
+            Exploring the architecture that powers today's most efficient large language models — from Mixtral and DeepSeek-V3 to Grok-1 and beyond.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="#overview" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition duration-300 flex items-center" style="color:white!important;">
+                <span>Learn More</span>
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+            <a href="#code-examples" class="border-2 border-white hover:bg-white font-bold py-2 px-6 rounded-full transition duration-300" style="color:white!important;">
+                <i class="fas fa-code mr-2"></i>Code Examples
+            </a>
+            <a href="#implementations" class="border-2 border-white hover:bg-white font-bold py-2 px-6 rounded-full transition duration-300" style="color:white!important;">
+                Implementations
+            </a>
+            <a href="moe_ar.html" class="border-2 border-white hover:bg-white font-bold py-2 px-6 rounded-full transition duration-300" style="color:white!important;">عربي</a>
+        </div>
+    </div>
+</header>
+
+<!-- ===== NAV ===== -->
+<nav class="sticky-nav py-4">
+    <div class="container mx-auto px-4">
+        <ul class="flex flex-wrap justify-center gap-1 md:gap-2">
+            <li><a href="#overview"         class="px-3 py-2 rounded transition text-sm font-medium">Overview</a></li>
+            <li><a href="#how-it-works"     class="px-3 py-2 rounded transition text-sm font-medium">How It Works</a></li>
+            <li><a href="#components"       class="px-3 py-2 rounded transition text-sm font-medium">Components</a></li>
+            <li><a href="#advantages"       class="px-3 py-2 rounded transition text-sm font-medium">Advantages</a></li>
+            <li><a href="#implementations" class="px-3 py-2 rounded transition text-sm font-medium">Implementations</a></li>
+            <li><a href="#code-examples"    class="px-3 py-2 rounded transition text-sm font-medium" style="color:var(--primary)!important;font-weight:700;"><i class="fas fa-code mr-1"></i>Code</a></li>
+            <li><a href="#challenges"       class="px-3 py-2 rounded transition text-sm font-medium">Challenges</a></li>
+            <li><a href="#future"           class="px-3 py-2 rounded transition text-sm font-medium">Future</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+<!-- ===== OVERVIEW ===== -->
+<section id="overview" class="py-16 bg-white">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">What is Mixture of Experts (MoE)?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="animate-on-scroll">
+                <p class="mb-4 text-lg">
+                    <span class="highlight">Mixture of Experts (MoE)</span> is a neural network architecture where instead of a single dense model, the network consists of multiple sub-models called "experts." Each expert specializes in processing different types of input.
+                </p>
+                <p class="mb-4">
+                    In Large Language Models, MoE replaces dense feedforward layers with a set of expert networks, allowing a model to have a much larger total parameter count while keeping per-token computation costs manageable.
+                </p>
+                <p class="mb-4">
+                    The key insight: for any given input token, only a small subset of parameters needs to activate. A "router" or "gating network" decides which expert(s) process each token — enabling massive capacity with efficient inference.
+                </p>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-6 rounded-r-lg">
+                    <p class="italic">
+                        "MoE enables models to be pretrained with far less compute, which means you can dramatically scale up the model or dataset size without a proportional increase in training costs."
+                        <span class="block text-right mt-2 font-semibold">— Hugging Face Blog</span>
+                    </p>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mt-6">
+                    <div class="text-center p-4 rounded-lg" style="background:var(--surface2);border:1px solid var(--border2);">
+                        <div class="text-2xl font-bold" style="color:var(--primary);">8–64</div>
+                        <div class="text-sm mt-1">Experts per layer</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg" style="background:var(--surface2);border:1px solid var(--border2);">
+                        <div class="text-2xl font-bold" style="color:var(--success);">Top-2</div>
+                        <div class="text-sm mt-1">Typical routing</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg" style="background:var(--surface2);border:1px solid var(--border2);">
+                        <div class="text-2xl font-bold" style="color:var(--secondary);">~20%</div>
+                        <div class="text-sm mt-1">Active params</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center items-center animate-on-scroll">
+                <div class="card" style="width:100%;">
+                    <img src="https://huggingface.co/blog/assets/moe/thumbnail.png" alt="Mixture of Experts Diagram" class="w-full h-auto" style="border-radius:8px 8px 0 0;">
+                    <div class="image-caption p-4">
+                        Visualization of the MoE architecture: multiple specialized expert networks with a routing mechanism that selects the best experts for each input token.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section id="how-it-works" class="py-16 bg-gray-50">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">How MoE Works in LLMs</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="animate-on-scroll order-2 md:order-1">
+                <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F50a9eba8-8490-4959-8cda-f0855af65d67_1360x972.png"
+                     alt="MoE Working Process" class="w-full rounded-lg" style="border:1px solid var(--border2);">
+                <div class="image-caption mt-3">Token routing through expert networks in an MoE layer</div>
+            </div>
+            <div class="animate-on-scroll order-1 md:order-2">
+                <h3 class="text-2xl font-semibold mb-4">Step-by-Step Process</h3>
+                <ol class="space-y-3">
+                    <li class="p-4 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                        <span class="font-bold" style="color:var(--primary);">1. Input Processing:</span>
+                        <span> The token embedding enters the MoE layer inside the transformer block.</span>
+                    </li>
+                    <li class="p-4 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                        <span class="font-bold" style="color:var(--primary);">2. Router Evaluation:</span>
+                        <span> The gate network computes a score for each expert via a learned linear projection + softmax.</span>
+                    </li>
+                    <li class="p-4 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                        <span class="font-bold" style="color:var(--primary);">3. Expert Selection:</span>
+                        <span> Top-k experts (typically k=2) are selected per token.</span>
+                    </li>
+                    <li class="p-4 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                        <span class="font-bold" style="color:var(--primary);">4. Parallel Processing:</span>
+                        <span> Selected experts process the token independently and in parallel.</span>
+                    </li>
+                    <li class="p-4 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                        <span class="font-bold" style="color:var(--primary);">5. Output Aggregation:</span>
+                        <span> Expert outputs are combined as a weighted sum using router probabilities.</span>
+                    </li>
+                    <li class="p-4 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                        <span class="font-bold" style="color:var(--primary);">6. Forward Propagation:</span>
+                        <span> Combined output continues through the next transformer layer.</span>
+                    </li>
+                </ol>
+                <div class="mt-5 p-4 rounded-lg" style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-left:4px solid var(--success);">
+                    <p>This allows models to have billions of <em>sparse</em> parameters while activating only a fraction per token — efficient inference at massive scale.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== COMPONENTS ===== -->
+<section id="components" class="py-16 bg-white">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">Key Components of MoE</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Experts -->
+            <div class="card p-6 animate-on-scroll">
+                <div class="text-4xl mb-4" style="color:var(--primary);"><i class="fas fa-brain"></i></div>
+                <h3 class="text-xl font-semibold mb-3">Experts</h3>
+                <p>Individual FFN sub-networks. Each expert learns to specialize in particular input patterns, enabling both breadth and depth of knowledge across diverse topics.</p>
+                <button class="accordion-button mt-4 rounded">
+                    <span>Learn More</span><i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4">
+                        <p class="mb-3">Experts in MoE are analogous to specialists: some may excel at mathematical reasoning, others at code, creative writing, or multilingual tasks.</p>
+                        <p>In most implementations, experts have identical architecture but differ in learned weights. Specialization emerges naturally during training through routing decisions.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Router -->
+            <div class="card p-6 animate-on-scroll" style="transition-delay:0.2s;">
+                <div class="text-4xl mb-4" style="color:var(--secondary);"><i class="fas fa-route"></i></div>
+                <h3 class="text-xl font-semibold mb-3">Router / Gate Network</h3>
+                <p>Selects which expert(s) process each token by computing a probability distribution over all experts and choosing the top-k most relevant ones.</p>
+                <button class="accordion-button mt-4 rounded">
+                    <span>Learn More</span><i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4">
+                        <p class="mb-3">The router is a simple linear layer: <code style="background:var(--surface2);padding:2px 5px;border-radius:3px;color:var(--primary);">nn.Linear(d_model, num_experts)</code>. It maps the token embedding to a score per expert, then a softmax yields probabilities.</p>
+                        <p>Routing strategies: "top-1" (single expert, Switch Transformer), "top-2" (Mixtral), or "expert choice" where experts pick tokens instead of tokens picking experts.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Load Balancing -->
+            <div class="card p-6 animate-on-scroll" style="transition-delay:0.4s;">
+                <div class="text-4xl mb-4" style="color:var(--success);"><i class="fas fa-balance-scale"></i></div>
+                <h3 class="text-xl font-semibold mb-3">Load Balancing</h3>
+                <p>Ensures tokens distribute evenly across experts, preventing "expert collapse" where the router favors only 1–2 experts, wasting the rest.</p>
+                <button class="accordion-button mt-4 rounded">
+                    <span>Learn More</span><i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4">
+                        <p class="mb-3">Common techniques:</p>
+                        <ul class="list-disc pl-5 mb-3 space-y-1">
+                            <li><strong>Auxiliary loss</strong>: penalizes uneven routing distributions during training</li>
+                            <li><strong>Expert capacity</strong>: caps tokens per expert per batch</li>
+                            <li><strong>Router z-loss</strong>: prevents extreme routing logits (Mistral's approach)</li>
+                        </ul>
+                        <p>Without balancing, most tokens flow to 1–2 experts, effectively reducing the model capacity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 animate-on-scroll">
+            <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe/03_switch_layer.png"
+                 alt="MoE Layer Detailed" class="w-full max-w-3xl mx-auto rounded-lg" style="border:1px solid var(--border2);">
+            <div class="image-caption mt-3 text-center">
+                Detailed view of an MoE layer: the router selects experts per token and combines their outputs with learned weights.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ADVANTAGES ===== -->
+<section id="advantages" class="py-16 bg-gray-50">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">Advantages of MoE</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="space-y-5 animate-on-scroll">
+                <div class="p-6 rounded-lg" style="background:var(--surface);border-left:4px solid var(--primary);border:1px solid var(--border2);border-left:4px solid var(--primary);">
+                    <h3 class="text-xl font-semibold mb-2">Improved Scalability</h3>
+                    <p>MoE models can reach hundreds of billions of parameters while activating only a fraction per token — enabling scale that would be prohibitively expensive with dense models.</p>
+                </div>
+                <div class="p-6 rounded-lg" style="background:var(--surface);border-left:4px solid var(--success);border:1px solid var(--border2);border-left:4px solid var(--success);">
+                    <h3 class="text-xl font-semibold mb-2">Computational Efficiency</h3>
+                    <p>Selective routing eliminates redundant computation. DeepSeek-V3 (671B params) runs at the cost of a ~37B dense model per token — 18× parameter efficiency.</p>
+                </div>
+                <div class="p-6 rounded-lg" style="background:var(--surface);border-left:4px solid var(--secondary);border:1px solid var(--border2);border-left:4px solid var(--secondary);">
+                    <h3 class="text-xl font-semibold mb-2">Specialized Knowledge</h3>
+                    <p>Each expert naturally develops specialization for particular domains — math, code, language — allowing depth and breadth simultaneously.</p>
+                </div>
+            </div>
+            <div class="space-y-5 animate-on-scroll" style="transition-delay:0.3s;">
+                <div class="p-6 rounded-lg" style="background:var(--surface);border-left:4px solid var(--warning);border:1px solid var(--border2);border-left:4px solid var(--warning);">
+                    <h3 class="text-xl font-semibold mb-2">Training Efficiency</h3>
+                    <p>Mixtral 8x7B matches Llama 2 70B quality using ~5× less compute per token during pretraining. DeepSeek-V3 trained on 2.788M H800 GPU-hours — a fraction of comparable dense models.</p>
+                </div>
+                <div class="p-6 rounded-lg" style="background:var(--surface);border-left:4px solid #ef4444;border:1px solid var(--border2);border-left:4px solid #ef4444;">
+                    <h3 class="text-xl font-semibold mb-2">Flexible Resource Allocation</h3>
+                    <p>The architecture dynamically focuses compute where it's most needed for each specific token, unlike dense models that apply uniform computation everywhere.</p>
+                </div>
+                <div class="p-6 rounded-lg" style="background:linear-gradient(135deg,#2563eb,#0891b2);color:white;">
+                    <blockquote class="text-lg italic" style="color:white!important;">
+                        "Mixtral outperforms Llama 2 70B on most benchmarks while using 5× fewer active parameters per token."
+                    </blockquote>
+                    <p class="text-right mt-2 font-semibold" style="color:rgba(255,255,255,0.85)!important;">— Mistral AI, 2023</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="mt-10 animate-on-scroll">
+            <div class="p-6 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                <h3 class="text-xl font-semibold mb-4 text-center">Dense vs. MoE: Side-by-Side</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b-2 text-left">Metric</th>
+                                <th class="py-2 px-4 border-b-2 text-left">Dense Model</th>
+                                <th class="py-2 px-4 border-b-2 text-left">MoE Model</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="py-2 px-4 border-b">Active params per token</td><td class="py-2 px-4 border-b">100% of total</td><td class="py-2 px-4 border-b">~10–25% of total</td></tr>
+                            <tr><td class="py-2 px-4 border-b">Memory at inference</td><td class="py-2 px-4 border-b">Proportional to size</td><td class="py-2 px-4 border-b">High (all experts loaded)</td></tr>
+                            <tr><td class="py-2 px-4 border-b">Inference FLOP/token</td><td class="py-2 px-4 border-b">High for large models</td><td class="py-2 px-4 border-b">Low relative to param count</td></tr>
+                            <tr><td class="py-2 px-4 border-b">Training compute</td><td class="py-2 px-4 border-b">Higher for same quality</td><td class="py-2 px-4 border-b">Lower for same quality</td></tr>
+                            <tr><td class="py-2 px-4 border-b">Knowledge specialization</td><td class="py-2 px-4 border-b">Uniform across layers</td><td class="py-2 px-4 border-b">Expert-specific niches</td></tr>
+                            <tr><td class="py-2 px-4">Fine-tuning stability</td><td class="py-2 px-4">More stable</td><td class="py-2 px-4">Requires careful tuning</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== IMPLEMENTATIONS ===== -->
+<section id="implementations" class="py-16 bg-white">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">Real-world Implementations</h2>
+        <p class="text-lg mb-8 animate-on-scroll">
+            MoE has been adopted across the most powerful open and closed models of 2023–2025:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Mixtral 8x7B -->
+            <div class="card shadow-lg overflow-hidden animate-on-scroll">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 h-3"></div>
+                <img src="https://miro.medium.com/v2/resize:fit:1400/1*mxMOyyzlzxF1VDauG3NDOg.png" alt="Mixtral 8x7B" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">Mixtral 8x7B / 8x22B</h3>
+                    <p class="mb-4">Mistral AI's open-source MoE model. 8 experts per layer, top-2 routing. The 8x7B (46.7B total) uses only 12.9B active params per token, outperforming Llama 2 70B.</p>
+                    <ul class="mb-4 space-y-1">
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> 8x22B: 141B total, ~39B active — rivals GPT-4 class models</li>
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Fully open weights, Apache 2.0 license</li>
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Token-level routing, 32K context window</li>
+                    </ul>
+                    <button class="accordion-button rounded">
+                        <span>Technical Details</span><i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-4">
+                            <p class="mb-2">Mixtral replaces every FFN layer in a Mistral-7B-style transformer with 8 experts. For each token, the router picks top-2 experts and combines their outputs with normalized softmax weights.</p>
+                            <p>The 8x22B variant (April 2024) features 65B active params for complex tasks with a 64K context window, matching GPT-4 on coding and reasoning benchmarks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DeepSeek-V3 -->
+            <div class="card shadow-lg overflow-hidden animate-on-scroll" style="transition-delay:0.2s;">
+                <div class="bg-gradient-to-r from-emerald-600 to-teal-700 h-3"></div>
+                <div class="w-full h-48 flex items-center justify-center" style="background:linear-gradient(135deg,#064e3b,#065f46);">
+                    <div class="text-center" style="color:white!important;">
+                        <div class="text-5xl font-black mb-2" style="color:white!important;">V3</div>
+                        <div class="text-lg font-semibold" style="color:rgba(255,255,255,0.85)!important;">DeepSeek MoE</div>
+                        <div class="text-sm mt-1" style="color:rgba(255,255,255,0.7)!important;">671B total · 37B active</div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">DeepSeek-V3 (2024)</h3>
+                    <p class="mb-4">DeepSeek's open-source flagship MoE. 671B total parameters, 37B active per token with 256 experts per layer and top-8 routing. Tops most open-source benchmarks.</p>
+                    <ul class="mb-4 space-y-1">
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Multi-Head Latent Attention (MLA) for KV cache efficiency</li>
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Trained on 14.8T tokens for $5.5M — remarkably cheap</li>
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Matches GPT-4o on coding (HumanEval 90.2%)</li>
+                    </ul>
+                    <button class="accordion-button rounded">
+                        <span>Technical Details</span><i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-4">
+                            <p class="mb-2">DeepSeek-V3 introduces an auxiliary-loss-free load balancing strategy via learned bias terms added to routing logits, avoiding the trade-off between balance and performance.</p>
+                            <p>Also uses FP8 mixed-precision training and a novel multi-token prediction auxiliary task that boosts benchmark performance at no extra inference cost.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Switch Transformer -->
+            <div class="card shadow-lg overflow-hidden animate-on-scroll" style="transition-delay:0.4s;">
+                <div class="bg-gradient-to-r from-red-600 to-pink-700 h-3"></div>
+                <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe/03_switch_layer.png" alt="Switch Transformer" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">Switch Transformer (Google)</h3>
+                    <p class="mb-4">Google Research's pioneering MoE transformer (2021) that proved the viability of trillion-parameter sparse models using simple top-1 routing.</p>
+                    <ul class="mb-4 space-y-1">
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Top-1 routing: one expert per token, maximum simplicity</li>
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> Scales to 1.6 trillion parameters</li>
+                        <li class="flex items-start"><span class="mr-2" style="color:var(--success);">✓</span> 7× speedup vs T5-XXL at same compute budget</li>
+                    </ul>
+                    <button class="accordion-button rounded">
+                        <span>Technical Details</span><i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-4">
+                            <p class="mb-2">Switch Transformer simplified MoE by routing each token to exactly one expert, reducing communication overhead. Key innovations: expert capacity factor, selective precision, and auxiliary load balancing loss.</p>
+                            <p>This paper established the modern MoE recipe and proved that routing instability could be solved at scale.</p>
+                            <a href="https://arxiv.org/abs/2101.03961" style="color:var(--primary);" class="flex items-center mt-2">
+                                <span>Read the paper</span><i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extended Table -->
+        <div class="mt-12 animate-on-scroll">
+            <h3 class="text-2xl font-semibold mb-5">MoE Model Timeline (2020–2025)</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full" style="border:1px solid var(--border2);">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-4 border-b text-left">Model</th>
+                            <th class="py-3 px-4 border-b text-left">Organization</th>
+                            <th class="py-3 px-4 border-b text-left">Architecture</th>
+                            <th class="py-3 px-4 border-b text-left">Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="py-3 px-4 border-b">GShard</td><td class="py-3 px-4 border-b">Google</td><td class="py-3 px-4 border-b">Top-2, alternating MoE layers, expert capacity</td><td class="py-3 px-4 border-b">2020</td></tr>
+                        <tr><td class="py-3 px-4 border-b">Switch Transformer</td><td class="py-3 px-4 border-b">Google</td><td class="py-3 px-4 border-b">Top-1, 1.6T params, load balancing loss</td><td class="py-3 px-4 border-b">2021</td></tr>
+                        <tr><td class="py-3 px-4 border-b">GLaM</td><td class="py-3 px-4 border-b">Google</td><td class="py-3 px-4 border-b">1.2T params, 64 experts/layer, 95% compute reduction</td><td class="py-3 px-4 border-b">2021</td></tr>
+                        <tr><td class="py-3 px-4 border-b">NLLB-MoE</td><td class="py-3 px-4 border-b">Meta AI</td><td class="py-3 px-4 border-b">Translation MoE, 1.5B active, 128 languages</td><td class="py-3 px-4 border-b">2022</td></tr>
+                        <tr><td class="py-3 px-4 border-b">Mixtral 8x7B</td><td class="py-3 px-4 border-b">Mistral AI</td><td class="py-3 px-4 border-b">8 experts, top-2, 46.7B total / 12.9B active</td><td class="py-3 px-4 border-b">2023</td></tr>
+                        <tr><td class="py-3 px-4 border-b">Grok-1</td><td class="py-3 px-4 border-b">xAI</td><td class="py-3 px-4 border-b">314B total, 8 experts, top-2, fully open weights</td><td class="py-3 px-4 border-b">2024</td></tr>
+                        <tr><td class="py-3 px-4 border-b">Mixtral 8x22B</td><td class="py-3 px-4 border-b">Mistral AI</td><td class="py-3 px-4 border-b">8 experts, top-2, 141B total / 39B active, 64K ctx</td><td class="py-3 px-4 border-b">2024</td></tr>
+                        <tr><td class="py-3 px-4 border-b">Qwen1.5-MoE</td><td class="py-3 px-4 border-b">Alibaba</td><td class="py-3 px-4 border-b">14.3B total, 2.7B active, 1/4 training cost of 7B dense</td><td class="py-3 px-4 border-b">2024</td></tr>
+                        <tr><td class="py-3 px-4 border-b">DeepSeek-V2</td><td class="py-3 px-4 border-b">DeepSeek</td><td class="py-3 px-4 border-b">236B total, 21B active, MLA + fine-grained MoE</td><td class="py-3 px-4 border-b">2024</td></tr>
+                        <tr><td class="py-3 px-4">DeepSeek-V3</td><td class="py-3 px-4">DeepSeek</td><td class="py-3 px-4">671B total, 37B active, 256 experts/layer, top-8</td><td class="py-3 px-4">2024</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CODE EXAMPLES ===== -->
+<section id="code-examples" class="py-16 bg-gray-50">
+    <div class="section-container" style="max-width:1100px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">Code Examples — Build MoE Step by Step</h2>
+        <p class="text-lg mb-10 animate-on-scroll">
+            Follow these five steps to build a complete Mixture of Experts layer in PyTorch from scratch, then see how to use a production MoE model via HuggingFace.
+        </p>
+
+        <!-- STEP 1 -->
+        <div class="step-card animate-on-scroll">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">The Expert Network — a feedforward sub-model</div>
+            </div>
+            <div class="step-body">
+                <p>Each "expert" is just a two-layer feedforward network, identical in structure to the FFN inside a standard transformer block. They only differ in their learned weights.</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+
+<span class="cm"># A single Expert = a 2-layer feedforward network (same as a transformer FFN)</span>
+<span class="kw">class</span> <span class="tp">Expert</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model: <span class="tp">int</span>, d_ff: <span class="tp">int</span>):
+        super().__init__()
+        self.fc1 = nn.Linear(d_model, d_ff)   <span class="cm"># expand</span>
+        self.fc2 = nn.Linear(d_ff, d_model)   <span class="cm"># project back</span>
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x: torch.Tensor) -&gt; torch.Tensor:
+        <span class="cm"># x: [num_tokens, d_model]</span>
+        <span class="kw">return</span> self.fc2(F.relu(self.fc1(x)))
+
+<span class="cm"># Try it out</span>
+expert = <span class="tp">Expert</span>(d_model=<span class="num">512</span>, d_ff=<span class="num">2048</span>)
+tokens = torch.randn(<span class="num">4</span>, <span class="num">512</span>)           <span class="cm"># batch of 4 tokens</span>
+output = expert(tokens)
+print(<span class="str">f"Input:  {tokens.shape}"</span>)           <span class="cm"># [4, 512]</span>
+print(<span class="str">f"Output: {output.shape}"</span>)          <span class="cm"># [4, 512] — same shape!</span></div>
+                <p style="margin-top:10px;">In a model with 8 experts you'd create 8 of these with <code>nn.ModuleList</code> — each will learn different specializations during training.</p>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-card animate-on-scroll">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">The Router — deciding which experts process each token</div>
+            </div>
+            <div class="step-body">
+                <p>The router is a single learned linear layer that maps each token embedding to a score for every expert. Top-k scores select which experts run.</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="tp">TopKRouter</span>(nn.Module):
+    <span class="str">"""Routes each token to the top-k most relevant experts."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model: <span class="tp">int</span>, num_experts: <span class="tp">int</span>, top_k: <span class="tp">int</span> = <span class="num">2</span>):
+        super().__init__()
+        self.top_k = top_k
+        self.num_experts = num_experts
+        <span class="cm"># Learned: maps token embedding → score per expert</span>
+        self.gate = nn.Linear(d_model, num_experts, bias=<span class="kw">False</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x: torch.Tensor):
+        <span class="cm"># x: [num_tokens, d_model]</span>
+
+        <span class="cm"># Step A: raw routing scores for every expert</span>
+        logits = self.gate(x)                          <span class="cm"># [num_tokens, num_experts]</span>
+
+        <span class="cm"># Step B: softmax → probability distribution</span>
+        probs = F.softmax(logits, dim=-<span class="num">1</span>)             <span class="cm"># [num_tokens, num_experts]</span>
+
+        <span class="cm"># Step C: pick the top-k experts per token</span>
+        top_k_probs, top_k_idx = torch.topk(probs, self.top_k, dim=-<span class="num">1</span>)
+        <span class="cm"># top_k_probs: [num_tokens, k]  — how much weight per expert</span>
+        <span class="cm"># top_k_idx:   [num_tokens, k]  — which expert indices</span>
+
+        <span class="cm"># Step D: renormalize so the k weights sum to 1</span>
+        top_k_probs = top_k_probs / top_k_probs.sum(dim=-<span class="num">1</span>, keepdim=<span class="kw">True</span>)
+
+        <span class="kw">return</span> top_k_probs, top_k_idx, probs   <span class="cm"># probs used for load-balancing loss</span>
+
+<span class="cm"># Example: 4 tokens, 8 experts, select top-2</span>
+router = <span class="tp">TopKRouter</span>(d_model=<span class="num">512</span>, num_experts=<span class="num">8</span>, top_k=<span class="num">2</span>)
+tokens = torch.randn(<span class="num">4</span>, <span class="num">512</span>)
+weights, indices, all_probs = router(tokens)
+
+print(<span class="str">"Expert indices per token:"</span>, indices)
+<span class="cm"># e.g. tensor([[3, 6], [1, 7], [0, 2], [5, 3]])</span>
+print(<span class="str">"Expert weights per token: "</span>, weights.round(decimals=<span class="num">2</span>))
+<span class="cm"># e.g. tensor([[0.62, 0.38], [0.71, 0.29], ...])</span></div>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-card animate-on-scroll">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">The MoE Layer — combining router + experts</div>
+            </div>
+            <div class="step-body">
+                <p>Now put it all together. The MoE layer takes a sequence of tokens, routes each one to its top-k experts, runs them in parallel (grouped by expert for efficiency), and returns the weighted sum of outputs.</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="tp">MoELayer</span>(nn.Module):
+    <span class="str">"""
+    Sparse Mixture of Experts Layer.
+    Replaces a single FFN in a Transformer with N expert FFNs.
+    Only k out of N experts activate per token (k &lt;&lt; N).
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model: <span class="tp">int</span>, d_ff: <span class="tp">int</span>,
+                 num_experts: <span class="tp">int</span> = <span class="num">8</span>, top_k: <span class="tp">int</span> = <span class="num">2</span>):
+        super().__init__()
+        self.top_k = top_k
+        self.num_experts = num_experts
+        <span class="cm"># N independent expert networks</span>
+        self.experts = nn.ModuleList([
+            <span class="tp">Expert</span>(d_model, d_ff) <span class="kw">for</span> _ <span class="kw">in</span> range(num_experts)
+        ])
+        <span class="cm"># Router selects which experts process each token</span>
+        self.router = <span class="tp">TopKRouter</span>(d_model, num_experts, top_k)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x: torch.Tensor):
+        <span class="cm"># x: [batch, seq_len, d_model]</span>
+        B, S, D = x.shape
+
+        <span class="cm"># Flatten batch and sequence dims — treat all tokens equally</span>
+        x_flat = x.reshape(-<span class="num">1</span>, D)              <span class="cm"># [B*S, d_model]</span>
+        N = x_flat.shape[<span class="num">0</span>]                    <span class="cm"># total tokens</span>
+
+        <span class="cm"># Get routing decisions</span>
+        weights, indices, all_probs = self.router(x_flat)
+        <span class="cm"># weights:  [N, top_k]  — how much each expert contributes</span>
+        <span class="cm"># indices:  [N, top_k]  — which expert to use</span>
+
+        output = torch.zeros_like(x_flat)       <span class="cm"># [N, d_model]</span>
+
+        <span class="cm"># For each expert slot (0 to top_k-1)</span>
+        <span class="kw">for</span> k <span class="kw">in</span> range(self.top_k):
+            expert_ids  = indices[:, k]          <span class="cm"># [N] which expert for slot k</span>
+            slot_weight = weights[:, k:k+<span class="num">1</span>]     <span class="cm"># [N, 1] contribution weight</span>
+
+            <span class="cm"># Group tokens by their assigned expert and run each expert once</span>
+            <span class="kw">for</span> e <span class="kw">in</span> range(self.num_experts):
+                mask = (expert_ids == e)         <span class="cm"># which tokens go to expert e</span>
+                <span class="kw">if not</span> mask.any():
+                    <span class="kw">continue</span>                   <span class="cm"># skip unused experts (saves compute!)</span>
+
+                expert_out = self.experts[e](x_flat[mask])         <span class="cm"># [n_e, D]</span>
+                output[mask] += slot_weight[mask] * expert_out     <span class="cm"># weighted add</span>
+
+        <span class="kw">return</span> output.reshape(B, S, D), all_probs  <span class="cm"># restore original shape</span>
+
+<span class="cm"># Test the full MoE layer</span>
+moe = <span class="tp">MoELayer</span>(d_model=<span class="num">512</span>, d_ff=<span class="num">2048</span>, num_experts=<span class="num">8</span>, top_k=<span class="num">2</span>)
+x   = torch.randn(<span class="num">2</span>, <span class="num">10</span>, <span class="num">512</span>)              <span class="cm"># batch=2, seq_len=10</span>
+out, probs = moe(x)
+print(<span class="str">f"Input:  {x.shape}"</span>)                  <span class="cm"># torch.Size([2, 10, 512])</span>
+print(<span class="str">f"Output: {out.shape}"</span>)                <span class="cm"># torch.Size([2, 10, 512]) ✓</span>
+
+<span class="cm"># Count parameters: 8 experts × (512×2048 + 2048×512) = ~33.6M expert params</span>
+<span class="cm"># But only 2/8 experts activate per token = 25% active compute</span>
+total  = sum(p.numel() <span class="kw">for</span> p <span class="kw">in</span> moe.parameters())
+active = total * (moe.top_k / moe.num_experts)
+print(<span class="str">f"Total params: {total:,}  |  Active per token: {int(active):,}"</span>)</div>
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step-card animate-on-scroll">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <div class="step-title">Load Balancing Loss — preventing expert collapse</div>
+            </div>
+            <div class="step-body">
+                <p>Without a load balancing term, the router quickly learns to send all tokens to 1–2 experts, wasting the rest. This auxiliary loss penalizes uneven expert utilization and is added to the main training loss with a small coefficient (typically 0.01).</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">auxiliary_load_balancing_loss</span>(
+    router_probs:   torch.Tensor,   <span class="cm"># [N, num_experts] — softmax output</span>
+    expert_indices: torch.Tensor,   <span class="cm"># [N, top_k]       — selected expert IDs</span>
+    num_experts:    <span class="tp">int</span>
+) -&gt; torch.Tensor:
+    <span class="str">"""
+    Switch Transformer / Mixtral style auxiliary load-balancing loss.
+    Encourages all experts to receive roughly equal token counts.
+
+    Loss = num_experts * sum_i(f_i * P_i)
+      f_i = fraction of tokens routed to expert i
+      P_i = mean router probability for expert i
+    Both terms should be ~1/num_experts for uniform distribution.
+    """</span>
+    N = router_probs.shape[<span class="num">0</span>]
+
+    <span class="cm"># f_i: fraction of tokens dispatched to each expert</span>
+    one_hot = F.one_hot(expert_indices, num_experts).float()  <span class="cm"># [N, k, E]</span>
+    tokens_per_expert = one_hot.sum(dim=[<span class="num">0</span>, <span class="num">1</span>]) / (N * expert_indices.shape[<span class="num">1</span>])
+    <span class="cm"># Shape: [num_experts]  — ideally all equal to 1/num_experts</span>
+
+    <span class="cm"># P_i: mean router probability assigned to each expert</span>
+    mean_probs = router_probs.mean(dim=<span class="num">0</span>)
+    <span class="cm"># Shape: [num_experts]  — ideally all equal to 1/num_experts</span>
+
+    <span class="cm"># Dot product × num_experts: 1.0 when perfectly balanced</span>
+    loss = num_experts * (tokens_per_expert * mean_probs).sum()
+    <span class="kw">return</span> loss
+
+
+<span class="cm"># ------ How to use it in your training loop ------</span>
+moe  = <span class="tp">MoELayer</span>(d_model=<span class="num">512</span>, d_ff=<span class="num">2048</span>, num_experts=<span class="num">8</span>, top_k=<span class="num">2</span>)
+x    = torch.randn(<span class="num">2</span>, <span class="num">10</span>, <span class="num">512</span>)
+
+out, all_probs = moe(x)
+_, indices, _  = moe.router(x.reshape(-<span class="num">1</span>, <span class="num">512</span>))
+
+<span class="cm"># Main task loss (e.g. cross-entropy for language modelling)</span>
+task_loss   = torch.tensor(<span class="num">2.5</span>)   <span class="cm"># placeholder</span>
+
+<span class="cm"># Add a small load-balancing penalty (coefficient α = 0.01)</span>
+balance_loss = auxiliary_load_balancing_loss(all_probs, indices, num_experts=<span class="num">8</span>)
+total_loss   = task_loss + <span class="num">0.01</span> * balance_loss
+
+print(<span class="str">f"Task loss:    {task_loss.item():.4f}"</span>)
+print(<span class="str">f"Balance loss: {balance_loss.item():.4f}"</span>)  <span class="cm"># ideally close to 1.0</span>
+print(<span class="str">f"Total loss:   {total_loss.item():.4f}"</span>)</div>
+            </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step-card animate-on-scroll">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <div class="step-title">Using Mixtral / DeepSeek via HuggingFace Transformers</div>
+            </div>
+            <div class="step-body">
+                <p>You don't need to build MoE from scratch to use it. HuggingFace Transformers ships Mixtral and other MoE models out of the box. Here's how to load and run them:</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Install: pip install transformers accelerate bitsandbytes</span>
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoModelForCausalLM, AutoTokenizer
+<span class="kw">import</span> torch
+
+<span class="cm"># ── Option A: Mixtral 8x7B (open weights, Apache-2.0) ──────────────────────</span>
+model_name = <span class="str">"mistralai/Mixtral-8x7B-Instruct-v0.1"</span>
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+<span class="cm"># Load with 4-bit quantization: reduces VRAM from ~90 GB → ~24 GB</span>
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    device_map=<span class="str">"auto"</span>,          <span class="cm"># spread across available GPUs/CPU</span>
+    torch_dtype=torch.float16,
+    load_in_4bit=<span class="kw">True</span>,          <span class="cm"># requires bitsandbytes</span>
+)
+
+<span class="cm"># Prepare a chat-formatted prompt</span>
+messages = [
+    {<span class="str">"role"</span>: <span class="str">"user"</span>,
+     <span class="str">"content"</span>: <span class="str">"Explain Mixture of Experts in three sentences."</span>}
+]
+input_ids = tokenizer.apply_chat_template(
+    messages, return_tensors=<span class="str">"pt"</span>, add_generation_prompt=<span class="kw">True</span>
+).to(model.device)
+
+<span class="cm"># Generate a response</span>
+<span class="kw">with</span> torch.no_grad():
+    output_ids = model.generate(
+        input_ids,
+        max_new_tokens=<span class="num">256</span>,
+        temperature=<span class="num">0.7</span>,
+        do_sample=<span class="kw">True</span>,
+    )
+
+response = tokenizer.decode(
+    output_ids[<span class="num">0</span>][input_ids.shape[<span class="num">1</span>]:],
+    skip_special_tokens=<span class="kw">True</span>
+)
+print(response)
+
+
+<span class="cm"># ── Option B: Inspect which experts were activated ─────────────────────────</span>
+<span class="cm"># Access the router logits for interpretability</span>
+outputs = model(input_ids, output_router_logits=<span class="kw">True</span>)
+router_logits = outputs.router_logits     <span class="cm"># tuple of tensors per MoE layer</span>
+
+<span class="kw">for</span> layer_idx, logits <span class="kw">in</span> enumerate(router_logits):
+    top2 = logits.topk(<span class="num">2</span>, dim=-<span class="num">1</span>).indices  <span class="cm"># [seq, 2]</span>
+    print(<span class="str">f"Layer {layer_idx}: top-2 experts used → {top2[0].tolist()}"</span>)</div>
+                <div class="mt-4 p-4 rounded-lg" style="background:rgba(59,130,246,0.12);border-left:4px solid var(--primary);border:1px solid rgba(59,130,246,0.3);border-left:4px solid var(--primary);">
+                    <p class="font-semibold" style="color:var(--primary)!important;"><i class="fas fa-lightbulb mr-2"></i>Tip — Small MoE model for experimentation</p>
+                    <p class="mt-1">Use <code style="background:var(--surface2);padding:2px 5px;border-radius:3px;color:#ffa657;">mistralai/Mixtral-8x7B-v0.1</code> for the base model or <code style="background:var(--surface2);padding:2px 5px;border-radius:3px;color:#ffa657;">deepseek-ai/deepseek-moe-16b-chat</code> for a smaller DeepSeek variant that fits on a single 24GB GPU.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===== CHALLENGES ===== -->
+<section id="challenges" class="py-16 bg-white">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">Technical Challenges</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="animate-on-scroll">
+                <h3 class="text-2xl font-semibold mb-4">Training &amp; Inference</h3>
+                <div class="space-y-4">
+                    <div class="p-5 rounded-lg" style="background:var(--surface);border-left:4px solid #ef4444;border:1px solid var(--border2);border-left:4px solid #ef4444;">
+                        <h4 class="font-semibold text-lg mb-2">High Memory Requirements</h4>
+                        <p>Although MoE activates only a subset of parameters per token, all experts must reside in VRAM. Mixtral 8x7B needs ~90 GB FP16 — requiring 4-bit quantization for most hardware.</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background:var(--surface);border-left:4px solid var(--warning);border:1px solid var(--border2);border-left:4px solid var(--warning);">
+                        <h4 class="font-semibold text-lg mb-2">Training Instabilities</h4>
+                        <p>The discrete routing decisions (non-differentiable top-k) can cause gradient instability. Auxiliary losses, router z-loss, and careful initialization are required.</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background:var(--surface);border-left:4px solid #f59e0b;border:1px solid var(--border2);border-left:4px solid #f59e0b;">
+                        <h4 class="font-semibold text-lg mb-2">Fine-tuning Challenges</h4>
+                        <p>MoE models overfit faster than dense models during supervised fine-tuning. Techniques like LoRA applied only to router/non-expert weights help stabilize it.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="animate-on-scroll" style="transition-delay:0.3s;">
+                <h3 class="text-2xl font-semibold mb-4">Architecture &amp; Deployment</h3>
+                <div class="space-y-4">
+                    <div class="p-5 rounded-lg" style="background:var(--surface);border-left:4px solid var(--success);border:1px solid var(--border2);border-left:4px solid var(--success);">
+                        <h4 class="font-semibold text-lg mb-2">Load Balancing</h4>
+                        <p>Without active balancing, routers collapse to using 1–2 experts for everything, wasting model capacity. Auxiliary losses and capacity factors are essential.</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background:var(--surface);border-left:4px solid var(--primary);border:1px solid var(--border2);border-left:4px solid var(--primary);">
+                        <h4 class="font-semibold text-lg mb-2">Communication Overhead</h4>
+                        <p>In distributed training, tokens must be sent to experts on different devices (all-to-all communication). This latency can bottleneck training throughput by 30–50%.</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background:var(--surface);border-left:4px solid var(--secondary);border:1px solid var(--border2);border-left:4px solid var(--secondary);">
+                        <h4 class="font-semibold text-lg mb-2">Expert Capacity Planning</h4>
+                        <p>Token drops occur when an expert receives more tokens than its capacity budget. Overflow tokens are dropped, potentially hurting quality. Capacity factor tuning is non-trivial.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 animate-on-scroll">
+            <div class="p-6 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                <h3 class="text-2xl font-semibold mb-4">Solutions &amp; Mitigations</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-lg mb-2">Training Stability</h4>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>Auxiliary load-balancing loss (Switch Transformer)</li>
+                            <li>Router z-loss to prevent extreme logits (ST-MoE)</li>
+                            <li>Bias-based load balancing without auxiliary loss (DeepSeek-V3)</li>
+                            <li>Selective precision: FP32 for router, FP16/BF16 for experts</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg mb-2">Deployment Efficiency</h4>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>4-bit / 8-bit quantization (bitsandbytes, GPTQ, AWQ)</li>
+                            <li>Expert parallelism: each GPU holds a subset of experts</li>
+                            <li>Flash Attention + MLA (Multi-Head Latent Attention) for memory</li>
+                            <li>vLLM and TensorRT-LLM for optimized MoE inference serving</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FUTURE ===== -->
+<section id="future" class="py-16 bg-gray-50">
+    <div class="section-container" style="max-width:1200px;margin:0 auto;padding:2rem;">
+        <h2 class="section-heading text-3xl font-bold">Future Directions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="animate-on-scroll">
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-6 rounded-lg h-full">
+                    <div class="text-4xl mb-4" style="color:var(--primary);"><i class="fas fa-microchip"></i></div>
+                    <h3 class="text-xl font-semibold mb-3">Hardware Co-design</h3>
+                    <p>Next-gen accelerators will optimize for sparse expert dispatch patterns — reducing the all-to-all communication overhead that currently limits MoE training throughput.</p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--primary);"></i><span>Sparse tensor cores for expert computation</span></li>
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--primary);"></i><span>NVLink bandwidth optimized for expert parallelism</span></li>
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--primary);"></i><span>On-demand expert paging from CPU ↔ GPU</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-on-scroll" style="transition-delay:0.2s;">
+                <div class="bg-gradient-to-br from-green-100 to-green-200 p-6 rounded-lg h-full">
+                    <div class="text-4xl mb-4" style="color:var(--success);"><i class="fas fa-brain"></i></div>
+                    <h3 class="text-xl font-semibold mb-3">Advanced Routing</h3>
+                    <p>Beyond simple top-k: smarter routing that understands semantic context, task type, and language, enabling better expert specialization and lower token drop rates.</p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--success);"></i><span>Expert-choice routing (experts select tokens)</span></li>
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--success);"></i><span>Soft/differentiable routing mechanisms</span></li>
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--success);"></i><span>Auxiliary-loss-free load balancing (DeepSeek-V3 style)</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-on-scroll" style="transition-delay:0.4s;">
+                <div class="bg-gradient-to-br from-purple-100 to-purple-200 p-6 rounded-lg h-full">
+                    <div class="text-4xl mb-4" style="color:var(--secondary);"><i class="fas fa-project-diagram"></i></div>
+                    <h3 class="text-xl font-semibold mb-3">Multimodal MoE</h3>
+                    <p>MoE architectures naturally extend to multimodal models — vision, audio, and text can each have dedicated experts, with cross-modal experts for integration.</p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--secondary);"></i><span>Modality-specific expert clusters</span></li>
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--secondary);"></i><span>Combining MoE + RAG for grounded generation</span></li>
+                        <li class="flex items-start"><i class="fas fa-angle-right mt-1 mr-2" style="color:var(--secondary);"></i><span>Dynamic expert merging / pruning post-training</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 animate-on-scroll">
+            <div class="p-8 rounded-lg" style="background:var(--surface);border:1px solid var(--border2);">
+                <h3 class="text-2xl font-semibold mb-6 text-center">Emerging Research Trends (2025)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2 text-sm" style="color:var(--primary);">
+                                <i class="fas fa-star"></i>
+                            </span>
+                            Expert Merging &amp; Model Soup
+                        </h4>
+                        <p class="ml-10">MoE experts can be merged post-training to create compact dense models. Techniques like DARE and TIES-merging enable knowledge distillation from MoE → dense without retraining.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2 text-sm" style="color:var(--success);">
+                                <i class="fas fa-rocket"></i>
+                            </span>
+                            Long-context MoE
+                        </h4>
+                        <p class="ml-10">Combining MoE with sliding window attention (Mixtral) and Multi-Head Latent Attention (DeepSeek) enables 128K+ context windows at manageable memory cost.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2 text-sm" style="color:var(--warning);">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            MoE for Reasoning Models
+                        </h4>
+                        <p class="ml-10">Chain-of-thought and RLHF training (GRPO, DPO) combined with MoE architectures. DeepSeek-R1 uses MoE + reinforcement learning for state-of-the-art mathematical reasoning.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-2 text-sm" style="color:#ef4444;">
+                                <i class="fas fa-cloud"></i>
+                            </span>
+                            Efficient On-device MoE
+                        </h4>
+                        <p class="ml-10">Small MoE models (Qwen-MoE, MobileMoE) target on-device deployment — using sparse activation to run large-capacity models on mobile GPUs and Apple Neural Engine.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="py-16" style="background:linear-gradient(135deg,#1e3a8a,#312e81);">
+    <div class="section-container text-center" style="max-width:1000px;margin:0 auto;padding:2rem;">
+        <h2 class="text-3xl font-bold mb-6" style="color:white!important;">Explore MoE in Your Projects</h2>
+        <p class="text-xl mb-8 max-w-3xl mx-auto" style="color:rgba(255,255,255,0.85)!important;">
+            Sparse Mixture of Experts is the dominant scaling paradigm for 2024–2025. Whether you're training from scratch or fine-tuning open models, MoE gives you more capability per FLOP than any dense alternative.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <a href="https://huggingface.co/blog/moe" style="color:white!important;" class="rounded-lg transition duration-300 flex flex-col items-center py-4 px-6" style="background:rgba(255,255,255,0.12);">
+                <i class="fas fa-book text-3xl mb-3" style="color:white!important;"></i>
+                <span class="font-semibold" style="color:white!important;">HuggingFace MoE Guide</span>
+            </a>
+            <a href="https://mistral.ai/news/mixtral-of-experts/" style="color:white!important;" class="rounded-lg transition duration-300 flex flex-col items-center py-4 px-6" style="background:rgba(255,255,255,0.12);">
+                <i class="fas fa-code text-3xl mb-3" style="color:white!important;"></i>
+                <span class="font-semibold" style="color:white!important;">Mixtral Paper &amp; Weights</span>
+            </a>
+            <a href="https://arxiv.org/abs/2412.19437" style="color:white!important;" class="rounded-lg transition duration-300 flex flex-col items-center py-4 px-6" style="background:rgba(255,255,255,0.12);">
+                <i class="fas fa-flask text-3xl mb-3" style="color:white!important;"></i>
+                <span class="font-semibold" style="color:white!important;">DeepSeek-V3 Paper</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="py-12">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0">
+                <h2 class="text-2xl font-bold mb-2">Mixture of Experts in LLMs</h2>
+                <p>An interactive guide covering theory, code, and 2024–2025 implementations</p>
+            </div>
+            <div class="flex flex-col md:flex-row gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://huggingface.co/blog/moe">Hugging Face MoE Blog</a></li>
+                        <li><a href="https://arxiv.org/abs/2101.03961">Switch Transformers Paper</a></li>
+                        <li><a href="https://arxiv.org/abs/2412.19437">DeepSeek-V3 Technical Report</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Models</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://mistral.ai/news/mixtral-of-experts/">Mixtral 8x7B / 8x22B</a></li>
+                        <li><a href="https://github.com/xai-org/grok-1">Grok-1 (open weights)</a></li>
+                        <li><a href="https://huggingface.co/deepseek-ai/DeepSeek-V3">DeepSeek-V3</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 pt-8" style="border-top:1px solid var(--border);text-align:center;">
+            <p>Images from Hugging Face, Mistral AI, and public research. Updated April 2025.</p>
+            <p class="mt-2">© 2025 albanna-tutorials.com — Interactive Guide to Mixture of Experts</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+/* ===== THEME TOGGLE ===== */
+function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    const btn = document.getElementById('themeToggleBtn');
+    btn.style.borderColor = isLight ? 'rgba(0,0,0,.15)' : 'rgba(255,255,255,.15)';
+    btn.style.color       = isLight ? '#334155' : 'rgba(255,255,255,.75)';
+}
+/* Restore saved theme on load */
+(function () {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+        document.body.classList.add('light-mode');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.className = 'fa-solid fa-moon';
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) { btn.style.borderColor = 'rgba(0,0,0,.15)'; btn.style.color = '#334155'; }
+    }
+})();
+
+/* ===== COPY BUTTON ===== */
+function copyCode(btn) {
+    const block = btn.parentElement;
+    // Get text content, strip the "Copy" button text
+    const text = block.textContent.replace(/^\s*Copy\s*/,'').replace(/\s*Copy\s*$/,'').trim();
+    navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+        setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+/* ===== ACCORDION ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.accordion-button').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const content = this.nextElementSibling;
+            const isActive = content.classList.contains('active');
+            content.classList.toggle('active', !isActive);
+            content.style.maxHeight = isActive ? null : content.scrollHeight + 'px';
+            const icon = this.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-chevron-down', isActive);
+                icon.classList.toggle('fa-chevron-up', !isActive);
+            }
+        });
+    });
+
+    /* Smooth scroll */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function (e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                window.scrollTo({ top: target.offsetTop - 70, behavior: 'smooth' });
+            }
+        });
+    });
+
+    /* Scroll animations */
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => obs.observe(el));
+});
+</script>
+</body>
+</html>

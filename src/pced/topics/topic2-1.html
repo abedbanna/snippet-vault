@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 2.1: Core Python Proficiency | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Core Python Proficiency</h1>
+        <p class="hero-sub">Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">Topic 2.1 &middot; 5 Objectives</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- ============================================================ -->
+        <!-- 2.1.1 Python Syntax and Control Structures                   -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="syntax">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-code"></i> 2.1.1 Python Syntax and Control Structures</h2>
+
+                <h3><i class="fa-solid fa-cube"></i> Variables and Data Types</h3>
+                <p>Python is dynamically typed, meaning you do not declare a variable's type explicitly. The interpreter infers the type at runtime based on the assigned value. The core built-in data types you must know for the exam are:</p>
+
+                <table class="dark-table">
+                    <tr><th>Type</th><th>Example</th><th>Description</th></tr>
+                    <tr><td><code>int</code></td><td><code>42</code></td><td>Whole numbers, arbitrary precision</td></tr>
+                    <tr><td><code>float</code></td><td><code>3.14</code></td><td>64-bit floating point (IEEE 754)</td></tr>
+                    <tr><td><code>str</code></td><td><code>"hello"</code></td><td>Immutable sequence of Unicode characters</td></tr>
+                    <tr><td><code>bool</code></td><td><code>True</code> / <code>False</code></td><td>Logical values; subclass of <code>int</code></td></tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Variables and type checking in a data-analysis context</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+sample_size = <span class="num">500</span>                  <span class="cm"># int</span>
+avg_revenue = <span class="num">12345.67</span>              <span class="cm"># float</span>
+dataset_name = <span class="str">"Q1_sales_2024"</span>     <span class="cm"># str</span>
+is_cleaned = <span class="kw">False</span>                  <span class="cm"># bool</span>
+
+<span class="fn">print</span>(<span class="fn">type</span>(sample_size))   <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(avg_revenue))   <span class="cm"># &lt;class 'float'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(dataset_name))  <span class="cm"># &lt;class 'str'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(is_cleaned))    <span class="cm"># &lt;class 'bool'&gt;</span></div>
+
+                <h3><i class="fa-solid fa-layer-group"></i> Variable Scopes and the LEGB Rule</h3>
+                <p>Python resolves variable names using the <strong>LEGB rule</strong>, searching in this order:</p>
+                <ol>
+                    <li><strong>Local</strong> &mdash; Variables defined inside the current function.</li>
+                    <li><strong>Enclosing</strong> &mdash; Variables in the enclosing (outer) function's scope (relevant for nested functions).</li>
+                    <li><strong>Global</strong> &mdash; Variables defined at the module level.</li>
+                    <li><strong>Built-in</strong> &mdash; Names pre-defined by Python (e.g., <code>print</code>, <code>len</code>, <code>range</code>).</li>
+                </ol>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>threshold = <span class="num">0.05</span>  <span class="cm"># Global scope</span>
+
+<span class="kw">def</span> <span class="fn">analyze_results</span>(p_values):
+    significance_count = <span class="num">0</span>  <span class="cm"># Local scope</span>
+
+    <span class="kw">def</span> <span class="fn">is_significant</span>(p):
+        <span class="cm"># 'threshold' resolved via Enclosing -> Global (LEGB)</span>
+        <span class="kw">return</span> p &lt; threshold
+
+    <span class="kw">for</span> p <span class="kw">in</span> p_values:
+        <span class="kw">if</span> <span class="fn">is_significant</span>(p):
+            significance_count += <span class="num">1</span>
+
+    <span class="kw">return</span> significance_count
+
+results = [<span class="num">0.03</span>, <span class="num">0.12</span>, <span class="num">0.001</span>, <span class="num">0.07</span>, <span class="num">0.04</span>]
+<span class="fn">print</span>(<span class="fn">analyze_results</span>(results))  <span class="cm"># 3</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-exclamation"></i> Exam Tip: global and nonlocal keywords</strong>
+                    <p>Use <code>global</code> to modify a global variable inside a function, and <code>nonlocal</code> to modify a variable in an enclosing function's scope. Avoid both when possible &mdash; prefer passing arguments and returning values.</p>
+                </div>
+
+                <h3><i class="fa-solid fa-arrows-split-up-and-left"></i> Control Structures</h3>
+
+                <h4>if / elif / else</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">classify_correlation</span>(r):
+    <span class="str">"""Classify a Pearson correlation coefficient."""</span>
+    <span class="kw">if</span> <span class="fn">abs</span>(r) &gt;= <span class="num">0.7</span>:
+        <span class="kw">return</span> <span class="str">"strong"</span>
+    <span class="kw">elif</span> <span class="fn">abs</span>(r) &gt;= <span class="num">0.4</span>:
+        <span class="kw">return</span> <span class="str">"moderate"</span>
+    <span class="kw">elif</span> <span class="fn">abs</span>(r) &gt;= <span class="num">0.2</span>:
+        <span class="kw">return</span> <span class="str">"weak"</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="str">"negligible"</span>
+
+<span class="fn">print</span>(<span class="fn">classify_correlation</span>(<span class="num">0.85</span>))   <span class="cm"># "strong"</span>
+<span class="fn">print</span>(<span class="fn">classify_correlation</span>(-<span class="num">0.35</span>))  <span class="cm"># "weak"</span></div>
+
+                <h4>for Loops</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Iterate over rows of data to compute a running total</span>
+sales = [<span class="num">120</span>, <span class="num">340</span>, <span class="num">210</span>, <span class="num">450</span>, <span class="num">180</span>]
+cumulative = []
+running_total = <span class="num">0</span>
+
+<span class="kw">for</span> sale <span class="kw">in</span> sales:
+    running_total += sale
+    cumulative.append(running_total)
+
+<span class="fn">print</span>(cumulative)  <span class="cm"># [120, 460, 670, 1120, 1300]</span></div>
+
+                <h4>while Loops</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Simulate convergence of a simple iterative algorithm</span>
+estimate = <span class="num">10.0</span>
+tolerance = <span class="num">0.001</span>
+iterations = <span class="num">0</span>
+
+<span class="kw">while</span> <span class="fn">abs</span>(estimate - <span class="num">5.0</span>) &gt; tolerance:
+    estimate = (estimate + <span class="num">5.0</span> / estimate) / <span class="num">2</span>  <span class="cm"># Newton's method for sqrt(5)</span>
+    iterations += <span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">f"Converged to </span>{estimate:<span class="num">.6f</span>}<span class="str"> in </span>{iterations}<span class="str"> iterations"</span>)</div>
+
+                <h4>break and continue</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>data_points = [<span class="num">23</span>, <span class="num">45</span>, -<span class="num">1</span>, <span class="num">67</span>, <span class="num">89</span>, <span class="num">12</span>]
+
+<span class="cm"># Skip negative values, stop at values above 80</span>
+clean_data = []
+<span class="kw">for</span> val <span class="kw">in</span> data_points:
+    <span class="kw">if</span> val &lt; <span class="num">0</span>:
+        <span class="kw">continue</span>   <span class="cm"># skip invalid entries</span>
+    <span class="kw">if</span> val &gt; <span class="num">80</span>:
+        <span class="kw">break</span>      <span class="cm"># stop processing (outlier threshold)</span>
+    clean_data.append(val)
+
+<span class="fn">print</span>(clean_data)  <span class="cm"># [23, 45, 67]</span></div>
+
+                <h3><i class="fa-solid fa-list-check"></i> List Comprehensions</h3>
+                <p>List comprehensions provide a concise, readable way to create lists by applying an expression to each item in an iterable, optionally filtering with a condition.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Basic comprehension: convert temperatures from Celsius to Fahrenheit</span>
+celsius = [<span class="num">0</span>, <span class="num">20</span>, <span class="num">37</span>, <span class="num">100</span>]
+fahrenheit = [c * <span class="num">9</span>/<span class="num">5</span> + <span class="num">32</span> <span class="kw">for</span> c <span class="kw">in</span> celsius]
+<span class="fn">print</span>(fahrenheit)  <span class="cm"># [32.0, 68.0, 98.6, 212.0]</span>
+
+<span class="cm"># Comprehension with condition: filter significant p-values</span>
+p_values = [<span class="num">0.03</span>, <span class="num">0.12</span>, <span class="num">0.001</span>, <span class="num">0.07</span>, <span class="num">0.04</span>, <span class="num">0.50</span>]
+significant = [p <span class="kw">for</span> p <span class="kw">in</span> p_values <span class="kw">if</span> p &lt; <span class="num">0.05</span>]
+<span class="fn">print</span>(significant)  <span class="cm"># [0.03, 0.001, 0.04]</span>
+
+<span class="cm"># Dictionary comprehension: column name mapping</span>
+raw_columns = [<span class="str">"First Name"</span>, <span class="str">"Last Name"</span>, <span class="str">"Annual Income"</span>]
+clean_map = {col: col.lower().replace(<span class="str">" "</span>, <span class="str">"_"</span>) <span class="kw">for</span> col <span class="kw">in</span> raw_columns}
+<span class="fn">print</span>(clean_map)
+<span class="cm"># {'First Name': 'first_name', 'Last Name': 'last_name', 'Annual Income': 'annual_income'}</span></div>
+
+                <h3><i class="fa-solid fa-diagram-project"></i> Nested Loops</h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Generate all combinations of parameters for a grid search</span>
+learning_rates = [<span class="num">0.01</span>, <span class="num">0.1</span>]
+max_depths = [<span class="num">3</span>, <span class="num">5</span>, <span class="num">10</span>]
+
+param_grid = []
+<span class="kw">for</span> lr <span class="kw">in</span> learning_rates:
+    <span class="kw">for</span> depth <span class="kw">in</span> max_depths:
+        param_grid.append({<span class="str">"lr"</span>: lr, <span class="str">"max_depth"</span>: depth})
+
+<span class="fn">print</span>(param_grid)
+<span class="cm"># [{'lr': 0.01, 'max_depth': 3}, {'lr': 0.01, 'max_depth': 5}, ...]</span>
+
+<span class="cm"># Equivalent one-liner using list comprehension</span>
+param_grid = [{<span class="str">"lr"</span>: lr, <span class="str">"max_depth"</span>: d}
+              <span class="kw">for</span> lr <span class="kw">in</span> learning_rates
+              <span class="kw">for</span> d <span class="kw">in</span> max_depths]</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 2.1.2 Python Functions                                       -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="functions">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-gears"></i> 2.1.2 Python Functions</h2>
+
+                <h3><i class="fa-solid fa-pen-to-square"></i> Defining Functions with def</h3>
+                <p>Functions encapsulate reusable logic. In data analysis, they help create modular, testable data-processing pipelines.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">calculate_mean</span>(values):
+    <span class="str">"""Return the arithmetic mean of a list of numbers."""</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(values) / <span class="fn">len</span>(values)
+
+scores = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="num">90</span>, <span class="num">88</span>]
+<span class="fn">print</span>(<span class="fn">calculate_mean</span>(scores))  <span class="cm"># 86.6</span></div>
+
+                <h3><i class="fa-solid fa-arrow-right-arrow-left"></i> Positional and Keyword Arguments</h3>
+                <p><strong>Positional arguments</strong> are matched by their position in the function call. <strong>Keyword arguments</strong> are matched by name, which makes calls more readable and order-independent.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">describe_column</span>(data, column, decimal_places):
+    <span class="str">"""Print summary statistics for a column."""</span>
+    mean_val = <span class="fn">round</span>(<span class="fn">sum</span>(data) / <span class="fn">len</span>(data), decimal_places)
+    min_val = <span class="fn">min</span>(data)
+    max_val = <span class="fn">max</span>(data)
+    <span class="fn">print</span>(<span class="str">f"</span>{column}<span class="str">: mean=</span>{mean_val}<span class="str">, min=</span>{min_val}<span class="str">, max=</span>{max_val}<span class="str">"</span>)
+
+revenue = [<span class="num">1200</span>, <span class="num">3400</span>, <span class="num">2100</span>, <span class="num">4500</span>]
+
+<span class="cm"># Positional call</span>
+<span class="fn">describe_column</span>(revenue, <span class="str">"revenue"</span>, <span class="num">2</span>)
+
+<span class="cm"># Keyword call (order doesn't matter)</span>
+<span class="fn">describe_column</span>(decimal_places=<span class="num">2</span>, column=<span class="str">"revenue"</span>, data=revenue)</div>
+
+                <h3><i class="fa-solid fa-sliders"></i> Optional vs Required Arguments and Default Values</h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">clean_text</span>(text, lowercase=<span class="kw">True</span>, strip_whitespace=<span class="kw">True</span>):
+    <span class="str">"""Clean a text value with configurable options.
+
+    Args:
+        text: The input string (required).
+        lowercase: Convert to lowercase (optional, default True).
+        strip_whitespace: Remove leading/trailing spaces (optional, default True).
+    """</span>
+    <span class="kw">if</span> strip_whitespace:
+        text = text.strip()
+    <span class="kw">if</span> lowercase:
+        text = text.lower()
+    <span class="kw">return</span> text
+
+<span class="fn">print</span>(<span class="fn">clean_text</span>(<span class="str">"  Hello World  "</span>))                  <span class="cm"># "hello world"</span>
+<span class="fn">print</span>(<span class="fn">clean_text</span>(<span class="str">"  Hello World  "</span>, lowercase=<span class="kw">False</span>))  <span class="cm"># "Hello World"</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Exam Tip: Mutable Default Arguments</strong>
+                    <p>Never use a mutable object (like a list or dict) as a default argument value. Use <code>None</code> instead and create the mutable inside the function body. Otherwise, the object is shared across all calls.</p>
+                </div>
+
+                <h3><i class="fa-solid fa-ellipsis"></i> *args and **kwargs</h3>
+                <p><code>*args</code> collects extra positional arguments into a tuple. <code>**kwargs</code> collects extra keyword arguments into a dictionary. They enable flexible function signatures.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">log_metrics</span>(experiment_name, *metrics, **metadata):
+    <span class="str">"""Log experiment metrics with optional metadata."""</span>
+    <span class="fn">print</span>(<span class="str">f"Experiment: </span>{experiment_name}<span class="str">"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Metrics: </span>{metrics}<span class="str">"</span>)
+    <span class="kw">for</span> key, value <span class="kw">in</span> metadata.items():
+        <span class="fn">print</span>(<span class="str">f"  </span>{key}<span class="str">: </span>{value}<span class="str">"</span>)
+
+<span class="fn">log_metrics</span>(
+    <span class="str">"model_v2"</span>,
+    <span class="num">0.95</span>, <span class="num">0.87</span>, <span class="num">0.91</span>,           <span class="cm"># captured by *metrics</span>
+    dataset=<span class="str">"training"</span>,          <span class="cm"># captured by **metadata</span>
+    algorithm=<span class="str">"random_forest"</span>
+)
+<span class="cm"># Experiment: model_v2</span>
+<span class="cm">#   Metrics: (0.95, 0.87, 0.91)</span>
+<span class="cm">#   dataset: training</span>
+<span class="cm">#   algorithm: random_forest</span></div>
+
+                <h3><i class="fa-solid fa-right-from-bracket"></i> Return Values and Multiple Returns</h3>
+                <p>Functions can return multiple values as a tuple. This is commonly used to return both a result and a status, or multiple computed statistics at once.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">compute_stats</span>(data):
+    <span class="str">"""Return mean, median, and standard deviation."""</span>
+    n = <span class="fn">len</span>(data)
+    mean = <span class="fn">sum</span>(data) / n
+    sorted_data = <span class="fn">sorted</span>(data)
+    mid = n // <span class="num">2</span>
+    median = (sorted_data[mid] + sorted_data[-mid - <span class="num">1</span>]) / <span class="num">2</span>
+    variance = <span class="fn">sum</span>((x - mean) ** <span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> data) / n
+    std_dev = variance ** <span class="num">0.5</span>
+    <span class="kw">return</span> mean, median, std_dev  <span class="cm"># returns a tuple</span>
+
+ages = [<span class="num">25</span>, <span class="num">30</span>, <span class="num">35</span>, <span class="num">40</span>, <span class="num">28</span>, <span class="num">33</span>]
+
+<span class="cm"># Unpack the returned tuple</span>
+avg, med, sd = <span class="fn">compute_stats</span>(ages)
+<span class="fn">print</span>(<span class="str">f"Mean: </span>{avg:<span class="num">.2f</span>}<span class="str">, Median: </span>{med:<span class="num">.2f</span>}<span class="str">, Std Dev: </span>{sd:<span class="num">.2f</span>}<span class="str">"</span>)
+<span class="cm"># Mean: 31.83, Median: 31.50, Std Dev: 4.79</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Key Concept</strong>
+                    <p>When a function uses <code>return a, b, c</code>, Python actually returns a single tuple <code>(a, b, c)</code>. You can unpack it into separate variables or keep it as a tuple.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 2.1.3 Python Data Science Ecosystem                          -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="ecosystem">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-cubes"></i> 2.1.3 Python Data Science Ecosystem</h2>
+
+                <p>Python's strength in data analysis comes from its rich ecosystem of specialized libraries. This course expects you to know which library to choose for a given task.</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Library</th>
+                        <th>Purpose</th>
+                        <th>Key Use Cases</th>
+                    </tr>
+                    <tr>
+                        <td><code>pandas</code></td>
+                        <td>Data manipulation and analysis</td>
+                        <td>DataFrames, reading CSV/Excel, groupby, merging, reshaping, time series</td>
+                    </tr>
+                    <tr>
+                        <td><code>numpy</code></td>
+                        <td>Numerical computing</td>
+                        <td>N-dimensional arrays, vectorized math, linear algebra, random sampling</td>
+                    </tr>
+                    <tr>
+                        <td><code>matplotlib</code></td>
+                        <td>Core plotting library</td>
+                        <td>Line plots, bar charts, histograms, scatter plots, full customization</td>
+                    </tr>
+                    <tr>
+                        <td><code>seaborn</code></td>
+                        <td>Statistical visualization</td>
+                        <td>Heatmaps, pair plots, box plots, violin plots, distribution plots</td>
+                    </tr>
+                    <tr>
+                        <td><code>scikit-learn</code></td>
+                        <td>Machine learning</td>
+                        <td>Classification, regression, clustering, model evaluation, preprocessing</td>
+                    </tr>
+                    <tr>
+                        <td><code>scipy</code></td>
+                        <td>Scientific computing</td>
+                        <td>Statistical tests, optimization, interpolation, signal processing</td>
+                    </tr>
+                    <tr>
+                        <td><code>statistics</code></td>
+                        <td>Basic statistics (stdlib)</td>
+                        <td>Mean, median, mode, stdev, variance &mdash; no install required</td>
+                    </tr>
+                </table>
+
+                <h3><i class="fa-solid fa-compass"></i> When to Use Which Library</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Task: Read CSV and compute summary stats per group</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.read_csv(<span class="str">"sales.csv"</span>)
+summary = df.groupby(<span class="str">"region"</span>)[<span class="str">"revenue"</span>].describe()
+
+<span class="cm"># Task: Fast element-wise math on large arrays</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+arr = np.array([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+normalized = (arr - arr.mean()) / arr.std()
+
+<span class="cm"># Task: Create a quick histogram</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+plt.hist(df[<span class="str">"revenue"</span>], bins=<span class="num">20</span>, edgecolor=<span class="str">"black"</span>)
+plt.xlabel(<span class="str">"Revenue"</span>)
+plt.title(<span class="str">"Revenue Distribution"</span>)
+plt.show()
+
+<span class="cm"># Task: Correlation heatmap with minimal code</span>
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+sns.heatmap(df.corr(), annot=<span class="kw">True</span>, cmap=<span class="str">"coolwarm"</span>)
+
+<span class="cm"># Task: Train a linear regression model</span>
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+
+<span class="cm"># Task: Perform a t-test</span>
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+t_stat, p_value = stats.ttest_ind(group_a, group_b)
+
+<span class="cm"># Task: Quick mean/median without external deps</span>
+<span class="kw">import</span> statistics
+<span class="fn">print</span>(statistics.mean([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]))       <span class="cm"># 20</span>
+<span class="fn">print</span>(statistics.median([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]))     <span class="cm"># 20</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-rocket"></i> Quick Decision Guide</strong>
+                    <p>Tabular data? Use <strong>pandas</strong>. Numerical arrays? Use <strong>numpy</strong>. Statistical tests? Use <strong>scipy.stats</strong>. Machine learning? Use <strong>scikit-learn</strong>. Plotting? Start with <strong>matplotlib</strong>; use <strong>seaborn</strong> for statistical plots. Simple stats without imports? Use <strong>statistics</strong> (standard library).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 2.1.4 Core Data Structures                                   -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="data-structures">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-database"></i> 2.1.4 Core Data Structures</h2>
+
+                <h3><i class="fa-solid fa-list-ol"></i> Lists</h3>
+                <p>Lists are <strong>ordered, mutable</strong> sequences. They are the most versatile data structure in Python and are used extensively for storing collections of data points.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Creating lists</span>
+temperatures = [<span class="num">22.1</span>, <span class="num">23.4</span>, <span class="num">19.8</span>, <span class="num">25.6</span>, <span class="num">21.3</span>]
+empty_list = []
+from_range = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>))  <span class="cm"># [1, 2, 3, 4, 5]</span>
+
+<span class="cm"># Indexing (0-based) and negative indexing</span>
+<span class="fn">print</span>(temperatures[<span class="num">0</span>])    <span class="cm"># 22.1 (first element)</span>
+<span class="fn">print</span>(temperatures[-<span class="num">1</span>])   <span class="cm"># 21.3 (last element)</span>
+
+<span class="cm"># Slicing: list[start:stop:step]</span>
+<span class="fn">print</span>(temperatures[<span class="num">1</span>:<span class="num">4</span>])   <span class="cm"># [23.4, 19.8, 25.6]</span>
+<span class="fn">print</span>(temperatures[::<span class="num">2</span>])   <span class="cm"># [22.1, 19.8, 21.3] (every 2nd element)</span>
+<span class="fn">print</span>(temperatures[::-<span class="num">1</span>])  <span class="cm"># [21.3, 25.6, 19.8, 23.4, 22.1] (reversed)</span>
+
+<span class="cm"># Common methods</span>
+temperatures.append(<span class="num">24.0</span>)         <span class="cm"># add one element to end</span>
+temperatures.extend([<span class="num">20.5</span>, <span class="num">22.8</span>]) <span class="cm"># add multiple elements</span>
+temperatures.pop()                  <span class="cm"># remove and return last element</span>
+temperatures.pop(<span class="num">0</span>)                <span class="cm"># remove and return first element</span>
+temperatures.sort()                 <span class="cm"># sort in-place (ascending)</span>
+temperatures.sort(reverse=<span class="kw">True</span>)    <span class="cm"># sort descending</span>
+temperatures.insert(<span class="num">0</span>, <span class="num">18.0</span>)      <span class="cm"># insert at index 0</span>
+<span class="fn">print</span>(<span class="fn">len</span>(temperatures))            <span class="cm"># number of elements</span></div>
+
+                <h3><i class="fa-solid fa-lock"></i> Tuples</h3>
+                <p>Tuples are <strong>ordered, immutable</strong> sequences. Once created, their elements cannot be changed. Use tuples for data that should not be modified, like database records or coordinates.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Creating tuples</span>
+coordinates = (<span class="num">40.7128</span>, -<span class="num">74.0060</span>)  <span class="cm"># NYC latitude, longitude</span>
+single = (<span class="num">42</span>,)                      <span class="cm"># single-element tuple needs trailing comma</span>
+record = (<span class="str">"Alice"</span>, <span class="num">28</span>, <span class="str">"analyst"</span>)
+
+<span class="cm"># Packing and unpacking</span>
+name, age, role = record  <span class="cm"># unpacking</span>
+<span class="fn">print</span>(<span class="str">f"</span>{name}<span class="str"> is a </span>{age}<span class="str">-year-old </span>{role}<span class="str">"</span>)
+
+<span class="cm"># Unpacking with * (extended unpacking)</span>
+first, *rest = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]
+<span class="fn">print</span>(first)  <span class="cm"># 10</span>
+<span class="fn">print</span>(rest)   <span class="cm"># [20, 30, 40, 50]</span>
+
+<span class="cm"># Tuples as dictionary keys (because they are hashable)</span>
+sales_by_location = {
+    (<span class="str">"US"</span>, <span class="str">"East"</span>): <span class="num">15000</span>,
+    (<span class="str">"US"</span>, <span class="str">"West"</span>): <span class="num">18000</span>,
+    (<span class="str">"EU"</span>, <span class="str">"North"</span>): <span class="num">12000</span>,
+}
+<span class="fn">print</span>(sales_by_location[(<span class="str">"US"</span>, <span class="str">"West"</span>)])  <span class="cm"># 18000</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Key Concept: Immutability</strong>
+                    <p>You cannot add, remove, or change elements of a tuple after creation. Attempting <code>coordinates[0] = 41.0</code> raises a <code>TypeError</code>. This makes tuples safer for data that should not change and slightly faster than lists.</p>
+                </div>
+
+                <h3><i class="fa-solid fa-book"></i> Dictionaries</h3>
+                <p>Dictionaries store <strong>key-value pairs</strong> with O(1) average lookup time. They are ideal for mapping identifiers to records, configuration settings, and JSON-like data.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Creating dictionaries</span>
+employee = {
+    <span class="str">"name"</span>: <span class="str">"Alice"</span>,
+    <span class="str">"department"</span>: <span class="str">"Data Science"</span>,
+    <span class="str">"salary"</span>: <span class="num">95000</span>,
+    <span class="str">"skills"</span>: [<span class="str">"Python"</span>, <span class="str">"SQL"</span>, <span class="str">"Tableau"</span>]
+}
+
+<span class="cm"># Accessing values</span>
+<span class="fn">print</span>(employee[<span class="str">"name"</span>])           <span class="cm"># "Alice"</span>
+<span class="fn">print</span>(employee.get(<span class="str">"title"</span>, <span class="str">"N/A"</span>))  <span class="cm"># "N/A" (safe access with default)</span>
+
+<span class="cm"># Common methods</span>
+<span class="fn">print</span>(<span class="fn">list</span>(employee.keys()))    <span class="cm"># ['name', 'department', 'salary', 'skills']</span>
+<span class="fn">print</span>(<span class="fn">list</span>(employee.values()))  <span class="cm"># ['Alice', 'Data Science', 95000, [...]]</span>
+<span class="fn">print</span>(<span class="fn">list</span>(employee.items()))   <span class="cm"># list of (key, value) tuples</span>
+
+<span class="cm"># Updating and adding</span>
+employee[<span class="str">"salary"</span>] = <span class="num">100000</span>    <span class="cm"># update existing</span>
+employee[<span class="str">"title"</span>] = <span class="str">"Senior"</span>   <span class="cm"># add new key</span>
+employee.update({<span class="str">"location"</span>: <span class="str">"NYC"</span>, <span class="str">"remote"</span>: <span class="kw">True</span>})
+
+<span class="cm"># Nested dictionaries (common for JSON data)</span>
+dataset_info = {
+    <span class="str">"train"</span>: {<span class="str">"rows"</span>: <span class="num">8000</span>, <span class="str">"features"</span>: <span class="num">15</span>},
+    <span class="str">"test"</span>: {<span class="str">"rows"</span>: <span class="num">2000</span>, <span class="str">"features"</span>: <span class="num">15</span>},
+}
+<span class="fn">print</span>(dataset_info[<span class="str">"train"</span>][<span class="str">"rows"</span>])  <span class="cm"># 8000</span>
+
+<span class="cm"># Iterating over a dictionary</span>
+<span class="kw">for</span> key, value <span class="kw">in</span> employee.items():
+    <span class="fn">print</span>(<span class="str">f"</span>{key}<span class="str">: </span>{value}<span class="str">"</span>)</div>
+
+                <h3><i class="fa-solid fa-fingerprint"></i> Sets</h3>
+                <p>Sets are <strong>unordered collections of unique elements</strong>. They support fast membership testing and mathematical set operations.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Creating sets</span>
+skills_alice = {<span class="str">"Python"</span>, <span class="str">"SQL"</span>, <span class="str">"Pandas"</span>, <span class="str">"Tableau"</span>}
+skills_bob = {<span class="str">"Python"</span>, <span class="str">"R"</span>, <span class="str">"SQL"</span>, <span class="str">"Excel"</span>}
+
+<span class="cm"># Set operations</span>
+common = skills_alice &amp; skills_bob               <span class="cm"># intersection</span>
+<span class="fn">print</span>(common)  <span class="cm"># {'Python', 'SQL'}</span>
+
+all_skills = skills_alice | skills_bob            <span class="cm"># union</span>
+<span class="fn">print</span>(all_skills)  <span class="cm"># {'Python', 'SQL', 'Pandas', 'Tableau', 'R', 'Excel'}</span>
+
+only_alice = skills_alice - skills_bob            <span class="cm"># difference</span>
+<span class="fn">print</span>(only_alice)  <span class="cm"># {'Pandas', 'Tableau'}</span>
+
+exclusive = skills_alice ^ skills_bob             <span class="cm"># symmetric difference</span>
+<span class="fn">print</span>(exclusive)  <span class="cm"># {'Pandas', 'Tableau', 'R', 'Excel'}</span>
+
+<span class="cm"># Practical use: remove duplicates from data</span>
+raw_ids = [<span class="num">101</span>, <span class="num">102</span>, <span class="num">101</span>, <span class="num">103</span>, <span class="num">102</span>, <span class="num">104</span>]
+unique_ids = <span class="fn">list</span>(<span class="fn">set</span>(raw_ids))
+<span class="fn">print</span>(unique_ids)  <span class="cm"># [101, 102, 103, 104] (order may vary)</span>
+
+<span class="cm"># Fast membership testing</span>
+valid_columns = {<span class="str">"name"</span>, <span class="str">"age"</span>, <span class="str">"salary"</span>, <span class="str">"department"</span>}
+<span class="fn">print</span>(<span class="str">"age"</span> <span class="kw">in</span> valid_columns)  <span class="cm"># True  (O(1) lookup)</span></div>
+
+                <h3><i class="fa-solid fa-font"></i> Strings</h3>
+                <p>Strings are <strong>immutable sequences of characters</strong>. Data analysts frequently use string methods for cleaning and formatting text data.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Common string methods for data cleaning</span>
+raw = <span class="str">"  John Doe  "</span>
+<span class="fn">print</span>(raw.strip())           <span class="cm"># "John Doe"</span>
+<span class="fn">print</span>(raw.lower())           <span class="cm"># "  john doe  "</span>
+<span class="fn">print</span>(raw.upper())           <span class="cm"># "  JOHN DOE  "</span>
+<span class="fn">print</span>(raw.strip().split())   <span class="cm"># ['John', 'Doe']</span>
+<span class="fn">print</span>(<span class="str">"-"</span>.join([<span class="str">"2024"</span>, <span class="str">"01"</span>, <span class="str">"15"</span>]))  <span class="cm"># "2024-01-15"</span>
+
+<span class="cm"># Checking content</span>
+filename = <span class="str">"report_2024.csv"</span>
+<span class="fn">print</span>(filename.endswith(<span class="str">".csv"</span>))      <span class="cm"># True</span>
+<span class="fn">print</span>(filename.startswith(<span class="str">"report"</span>))  <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="str">"12345"</span>.isdigit())              <span class="cm"># True</span>
+
+<span class="cm"># Replacing substrings</span>
+col_name = <span class="str">"Annual Revenue ($)"</span>
+clean_name = col_name.replace(<span class="str">" "</span>, <span class="str">"_"</span>).replace(<span class="str">"("</span>, <span class="str">""</span>).replace(<span class="str">")"</span>, <span class="str">""</span>).replace(<span class="str">"$"</span>, <span class="str">"usd"</span>).lower()
+<span class="fn">print</span>(clean_name)  <span class="cm"># "annual_revenue_usd"</span>
+
+<span class="cm"># f-strings (formatted string literals) - Python 3.6+</span>
+metric = <span class="str">"accuracy"</span>
+value = <span class="num">0.9534</span>
+<span class="fn">print</span>(<span class="str">f"Model </span>{metric}<span class="str">: </span>{value:<span class="num">.2%</span>}<span class="str">"</span>)  <span class="cm"># "Model accuracy: 95.34%"</span>
+<span class="fn">print</span>(<span class="str">f"Value: </span>{value:<span class="num">.4f</span>}<span class="str">"</span>)           <span class="cm"># "Value: 0.9534"</span>
+<span class="fn">print</span>(<span class="str">f"Count: </span>{<span class="num">1500000</span>:<span class="num">,</span>}<span class="str">"</span>)           <span class="cm"># "Count: 1,500,000"</span></div>
+
+                <h3><i class="fa-solid fa-scale-balanced"></i> Choosing the Right Data Structure</h3>
+                <table class="dark-table">
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Best Choice</th>
+                        <th>Reason</th>
+                    </tr>
+                    <tr>
+                        <td>Ordered collection that changes over time</td>
+                        <td><code>list</code></td>
+                        <td>Mutable, maintains insertion order</td>
+                    </tr>
+                    <tr>
+                        <td>Fixed record (e.g., database row)</td>
+                        <td><code>tuple</code></td>
+                        <td>Immutable, hashable, slightly faster</td>
+                    </tr>
+                    <tr>
+                        <td>Lookup by key / label mapping</td>
+                        <td><code>dict</code></td>
+                        <td>O(1) key lookup, key-value semantics</td>
+                    </tr>
+                    <tr>
+                        <td>Remove duplicates / membership tests</td>
+                        <td><code>set</code></td>
+                        <td>Unique elements, O(1) membership test</td>
+                    </tr>
+                    <tr>
+                        <td>Text data / labels</td>
+                        <td><code>str</code></td>
+                        <td>Rich methods for manipulation and formatting</td>
+                    </tr>
+                </table>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-graduation-cap"></i> Exam Tip</strong>
+                    <p>If a question asks about storing unique items or fast lookups, think <strong>set</strong> or <strong>dict</strong>. If order matters and elements may repeat, think <strong>list</strong>. If data should not change, think <strong>tuple</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 2.1.5 Python Scripting Best Practices                        -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="best-practices">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-star"></i> 2.1.5 Python Scripting Best Practices</h2>
+
+                <h3><i class="fa-solid fa-palette"></i> PEP 8: Style Guide for Python Code</h3>
+                <p><a href="https://peps.python.org/pep-0008/" target="_blank">PEP 8</a> is the official style guide for Python code. Following PEP 8 ensures consistency and readability across projects and teams.</p>
+
+                <h4>Naming Conventions</h4>
+                <table class="dark-table">
+                    <tr><th>Entity</th><th>Convention</th><th>Example</th></tr>
+                    <tr><td>Variables and functions</td><td><code>snake_case</code></td><td><code>total_revenue</code>, <code>calculate_mean()</code></td></tr>
+                    <tr><td>Constants</td><td><code>UPPER_SNAKE_CASE</code></td><td><code>MAX_RETRIES</code>, <code>DEFAULT_TIMEOUT</code></td></tr>
+                    <tr><td>Classes</td><td><code>PascalCase</code></td><td><code>DataProcessor</code>, <code>SalesReport</code></td></tr>
+                    <tr><td>Modules / packages</td><td><code>lowercase</code> (short)</td><td><code>utils.py</code>, <code>analysis.py</code></td></tr>
+                    <tr><td>Private attributes</td><td>Leading underscore</td><td><code>_internal_cache</code></td></tr>
+                </table>
+
+                <h4>Indentation and Line Length</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Use 4 spaces per indentation level (NEVER tabs)</span>
+<span class="kw">def</span> <span class="fn">process_data</span>(df):
+    <span class="kw">for</span> col <span class="kw">in</span> df.columns:
+        <span class="kw">if</span> df[col].dtype == <span class="str">"object"</span>:
+            df[col] = df[col].str.strip().str.lower()
+    <span class="kw">return</span> df
+
+<span class="cm"># Maximum line length: 79 characters (code), 72 (docstrings/comments)</span>
+<span class="cm"># Break long lines with parentheses (implicit continuation)</span>
+filtered_df = df[
+    (df[<span class="str">"revenue"</span>] &gt; <span class="num">1000</span>)
+    &amp; (df[<span class="str">"region"</span>] == <span class="str">"North"</span>)
+    &amp; (df[<span class="str">"year"</span>] &gt;= <span class="num">2023</span>)
+]</div>
+
+                <h4>Whitespace Conventions</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># YES: spaces around operators and after commas</span>
+x = <span class="num">1</span>
+y = x + <span class="num">2</span>
+data = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+result = <span class="fn">calculate</span>(a, b, c=<span class="num">10</span>)
+
+<span class="cm"># NO: extra spaces</span>
+<span class="cm"># x=1</span>
+<span class="cm"># data = [ 1 , 2 , 3 ]</span>
+<span class="cm"># result = calculate( a , b , c = 10 )</span>
+
+<span class="cm"># Blank lines: 2 blank lines before top-level functions/classes</span>
+<span class="cm"># 1 blank line between methods inside a class</span></div>
+
+                <h4>Import Organization</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Imports should be at the top of the file, grouped in this order:</span>
+<span class="cm"># 1. Standard library imports</span>
+<span class="kw">import</span> os
+<span class="kw">import</span> sys
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># 2. Third-party library imports</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+<span class="cm"># 3. Local/project-specific imports</span>
+<span class="kw">from</span> utils <span class="kw">import</span> clean_data
+<span class="kw">from</span> config <span class="kw">import</span> DATABASE_URL</div>
+
+                <h3><i class="fa-solid fa-file-lines"></i> PEP 257: Docstring Conventions</h3>
+                <p><a href="https://peps.python.org/pep-0257/" target="_blank">PEP 257</a> defines conventions for writing docstrings &mdash; the string literals that appear as the first statement in a module, function, class, or method.</p>
+
+                <h4>One-line Docstrings</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">square</span>(x):
+    <span class="str">"""Return the square of a number."""</span>
+    <span class="kw">return</span> x ** <span class="num">2</span></div>
+
+                <h4>Multi-line Docstrings</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">load_and_clean</span>(filepath, drop_na=<span class="kw">True</span>, encoding=<span class="str">"utf-8"</span>):
+    <span class="str">"""Load a CSV file and apply standard cleaning steps.
+
+    Read the file at the given path into a DataFrame, strip whitespace
+    from string columns, and optionally drop rows with missing values.
+
+    Args:
+        filepath: Path to the CSV file.
+        drop_na: If True, drop rows containing NaN values.
+            Defaults to True.
+        encoding: File encoding. Defaults to 'utf-8'.
+
+    Returns:
+        A cleaned pandas DataFrame ready for analysis.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+        ValueError: If the file is empty.
+    """</span>
+    <span class="kw">import</span> pandas <span class="kw">as</span> pd
+    df = pd.read_csv(filepath, encoding=encoding)
+    <span class="kw">if</span> df.empty:
+        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">f"File is empty: </span>{filepath}<span class="str">"</span>)
+    <span class="cm"># Strip whitespace from string columns</span>
+    str_cols = df.select_dtypes(include=<span class="str">"object"</span>).columns
+    df[str_cols] = df[str_cols].apply(<span class="kw">lambda</span> c: c.str.strip())
+    <span class="kw">if</span> drop_na:
+        df = df.dropna()
+    <span class="kw">return</span> df</div>
+
+                <h4>Module and Class Docstrings</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="str">"""Data processing utilities for the sales analysis project.
+
+This module provides helper functions for loading, cleaning,
+and transforming sales data from CSV files and SQL databases.
+"""</span>
+
+<span class="kw">class</span> <span class="type">SalesAnalyzer</span>:
+    <span class="str">"""Analyze sales data and generate summary reports.
+
+    Attributes:
+        data: A pandas DataFrame containing sales records.
+        period: The time period for the analysis (e.g., 'Q1_2024').
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data, period):
+        <span class="str">"""Initialize SalesAnalyzer with data and period."""</span>
+        self.data = data
+        self.period = period</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-bookmark"></i> PEP 257 Rules to Remember</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Use triple double quotes (<code>"""..."""</code>) for all docstrings.</li>
+                        <li>One-line docstrings: opening and closing quotes on the same line, ending with a period.</li>
+                        <li>Multi-line docstrings: summary line, blank line, then elaboration.</li>
+                        <li>The closing <code>"""</code> goes on its own line for multi-line docstrings.</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Common PEP 8 Violations on the Exam</strong>
+                    <p>Watch for questions that test whether you can spot style violations: using camelCase for variables, mixing tabs and spaces, putting imports at the bottom, missing blank lines between functions, or lines exceeding 79 characters.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- MCQ Quiz Section                                              -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-clipboard-question"></i> Practice Quiz: Core Python Proficiency</h2>
+
+                <!-- Question 1 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q1. In Python's LEGB rule, what does the "E" stand for?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) External &mdash; variables imported from other modules</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">B) Enclosing &mdash; the scope of an enclosing (outer) function</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">C) Environment &mdash; OS environment variables</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) Evaluated &mdash; variables evaluated at compile time</div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> LEGB stands for Local, Enclosing, Global, Built-in. The Enclosing scope refers to the local scope of any enclosing function, which is relevant when using nested (inner) functions.</div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q2. What is the output of the following code?<br><code>data = [10, 20, 30, 40, 50]</code><br><code>result = data[1:4]</code><br><code>print(result)</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) <code>[10, 20, 30, 40]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">B) <code>[20, 30, 40]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">C) <code>[20, 30, 40, 50]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>[10, 20, 30]</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> Slicing with <code>data[1:4]</code> returns elements at indices 1, 2, and 3. The start index is inclusive and the stop index is exclusive, so we get <code>[20, 30, 40]</code>.</div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q3. Which of the following correctly defines a function with a default argument?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) <code>def process(data, verbose) = True:</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">B) <code>def process(data, verbose=True):</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">C) <code>def process(verbose=True, data):</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>def process(data; verbose=True):</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> Default values are specified with <code>=</code> inside the parentheses. Parameters with defaults must come after parameters without defaults, which makes C) a <code>SyntaxError</code>.</div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q4. What does <code>**kwargs</code> collect in a function definition?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) All positional arguments as a list</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">B) All positional arguments as a tuple</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">C) All extra keyword arguments as a dictionary</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) All arguments (both positional and keyword) as a dictionary</div>
+                    <div class="quiz-explanation"><strong>Correct: C)</strong> <code>**kwargs</code> collects any keyword arguments that are not explicitly defined in the function signature into a dictionary. <code>*args</code> collects extra positional arguments into a tuple.</div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q5. Which library would you use to perform a t-test comparing two groups in Python?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) <code>pandas</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">B) <code>numpy</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">C) <code>scipy.stats</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>statistics</code></div>
+                    <div class="quiz-explanation"><strong>Correct: C)</strong> <code>scipy.stats</code> provides <code>ttest_ind()</code> for independent two-sample t-tests and <code>ttest_rel()</code> for paired t-tests. The <code>statistics</code> module only covers basic descriptive stats. <code>numpy</code> and <code>pandas</code> do not include hypothesis testing functions.</div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q6. What is the key difference between a list and a tuple in Python?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) Lists can contain mixed types; tuples cannot</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">B) Tuples are faster for element access; lists are faster for iteration</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">C) Lists are mutable; tuples are immutable</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) Lists are ordered; tuples are unordered</div>
+                    <div class="quiz-explanation"><strong>Correct: C)</strong> Both lists and tuples are ordered sequences that can contain mixed types. The fundamental difference is that lists are mutable (can be modified after creation) while tuples are immutable (cannot be changed after creation).</div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q7. What does the following list comprehension produce?<br><code>result = [x**2 for x in range(6) if x % 2 == 0]</code><br><code>print(result)</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) <code>[0, 1, 4, 9, 16, 25]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">B) <code>[0, 4, 16]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">C) <code>[4, 16, 36]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>[1, 9, 25]</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B)</strong> <code>range(6)</code> produces 0 through 5. The condition <code>x % 2 == 0</code> filters to even numbers: 0, 2, 4. Squaring these gives <code>[0, 4, 16]</code>.</div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q8. According to PEP 8, which naming convention should be used for a Python function?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) <code>CalculateMean</code> (PascalCase)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">B) <code>calculateMean</code> (camelCase)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">C) <code>calculate_mean</code> (snake_case)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>CALCULATE_MEAN</code> (UPPER_SNAKE_CASE)</div>
+                    <div class="quiz-explanation"><strong>Correct: C)</strong> PEP 8 specifies <code>snake_case</code> for functions and variables, <code>PascalCase</code> for classes, and <code>UPPER_SNAKE_CASE</code> for constants.</div>
+                </div>
+
+                <!-- Question 9 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q9. What is the result of the following set operation?<br><code>a = {1, 2, 3, 4}</code><br><code>b = {3, 4, 5, 6}</code><br><code>print(a - b)</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">A) <code>{1, 2}</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">B) <code>{5, 6}</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">C) <code>{3, 4}</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>{1, 2, 5, 6}</code></div>
+                    <div class="quiz-explanation"><strong>Correct: A)</strong> The <code>-</code> operator computes the set difference: elements in <code>a</code> that are not in <code>b</code>. Since 3 and 4 are in both sets, only <code>{1, 2}</code> remain. Note: <code>a ^ b</code> (symmetric difference) would give <code>{1, 2, 5, 6}</code>.</div>
+                </div>
+
+                <!-- Question 10 -->
+                <div class="quiz-box" data-section="q21">
+                    <div class="quiz-question">Q10. According to PEP 257, which of the following is a correctly formatted one-line docstring?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">A) <code># Return the square of x.</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">B) <code>'Return the square of x.'</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q21')">C) <code>"""Return the square of x."""</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q21')">D) <code>"""return the square of x"""</code></div>
+                    <div class="quiz-explanation"><strong>Correct: C)</strong> PEP 257 requires docstrings to use triple double quotes (<code>"""</code>). A one-line docstring should be a complete sentence starting with a capital letter and ending with a period, all on a single line. Option A is a comment (not a docstring), B uses single quotes, and D lacks capitalization and a period.</div>
+                </div>
+
+                <div id="score-q21" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <div class="page-nav">
+            <a href="topic1-4.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 1.4 Data Preparation Techniques</a>
+            <a href="topic2-2.html" class="nav-btn next">Next: 2.2 Module Management &amp; Exception Handling <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#syntax">2.1.1 Syntax &amp; Control</a>
+        <a class="toc-item" href="#functions">2.1.2 Functions</a>
+        <a class="toc-item" href="#ecosystem">2.1.3 Data Science Ecosystem</a>
+        <a class="toc-item" href="#data-structures">2.1.4 Data Structures</a>
+        <a class="toc-item" href="#best-practices">2.1.5 Best Practices</a>
+        <a class="toc-item" href="#quiz">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

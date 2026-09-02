@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam: Topic 2.2 - Module Management and Exception Handling | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a><a href="../topics/topic2-2.html">Study Material</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../topics/topic2-2.html" onclick="this.parentElement.classList.remove('open')">Study Material</a>
+    </div>
+    <section class="hero"><div class="hero-content">
+        <h1>Exam: Module Management and Exception Handling</h1>
+        <p class="hero-sub">Topic 2.2 &middot; Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">20 Questions &middot; 20 Minutes</p>
+    </div></section>
+    <div class="container narrow">
+        <div class="section" id="exam-controls">
+            <div class="exam-header">
+                <div class="exam-timer" id="timer"><i class="fa-solid fa-clock"></i> <span id="time-display">20:00</span></div>
+                <div class="exam-progress">Question <strong id="answered-count">0</strong> of <strong>20</strong> answered</div>
+            </div>
+            <div class="exam-nav" id="question-nav"></div>
+        </div>
+        <div id="questions-container"></div>
+        <div class="exam-actions" id="submit-section">
+            <button class="exam-submit" id="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Exam</button>
+        </div>
+        <div class="exam-result" id="result-section" style="display:none;">
+            <h2><i class="fa-solid fa-chart-bar" style="color:var(--primary);"></i> Exam Results</h2>
+            <div class="score-big" id="score-display"></div>
+            <div class="exam-result-details">
+                <div class="exam-result-item"><div class="num green" id="correct-count">0</div><div class="label">Correct</div></div>
+                <div class="exam-result-item"><div class="num red" id="incorrect-count">0</div><div class="label">Incorrect</div></div>
+                <div class="exam-result-item"><div class="num orange" id="skipped-count">0</div><div class="label">Skipped</div></div>
+            </div>
+            <div>
+                <button class="review-btn" onclick="reviewExam()"><i class="fa-solid fa-magnifying-glass"></i> Review Answers</button>
+                <button class="retake-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Retake Exam</button>
+                <a href="../index.html" class="retake-btn" style="text-decoration:none;"><i class="fa-solid fa-house"></i> Back to Course</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+    <script>
+    function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+    (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+    window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>500);});
+
+    const questions = [
+        {
+            q: "After <code>import math</code>, what is the correct way to call the square root function?",
+            options: [
+                "<code>sqrt(144)</code>",
+                "<code>math.sqrt(144)</code>",
+                "<code>math::sqrt(144)</code>",
+                "<code>from math sqrt(144)</code>"
+            ],
+            correct: 1,
+            explanation: "With a standard import (<code>import math</code>), you must use dot notation to access the module's contents: <code>math.sqrt(144)</code>. Calling <code>sqrt(144)</code> alone would raise a <code>NameError</code>."
+        },
+        {
+            q: "Which import style brings specific names directly into the current namespace?",
+            options: [
+                "<code>import math</code>",
+                "<code>import math as m</code>",
+                "<code>from math import sqrt, pi</code>",
+                "<code>require math</code>"
+            ],
+            correct: 2,
+            explanation: "A selective import (<code>from math import sqrt, pi</code>) brings <code>sqrt</code> and <code>pi</code> directly into the current namespace so you can use them without a module prefix."
+        },
+        {
+            q: "What PIP command saves all installed packages in requirements format to a file?",
+            options: [
+                "<code>pip list > requirements.txt</code>",
+                "<code>pip freeze > requirements.txt</code>",
+                "<code>pip save > requirements.txt</code>",
+                "<code>pip export > requirements.txt</code>"
+            ],
+            correct: 1,
+            explanation: "<code>pip freeze</code> outputs installed packages in <code>package==version</code> format, ideal for creating <code>requirements.txt</code> files. <code>pip list</code> shows a human-readable table but is not in requirements format."
+        },
+        {
+            q: "Which block in a <code>try/except/else/finally</code> structure runs <strong>only</strong> when no exception was raised?",
+            options: [
+                "<code>try</code>",
+                "<code>except</code>",
+                "<code>else</code>",
+                "<code>finally</code>"
+            ],
+            correct: 2,
+            explanation: "The <code>else</code> block executes only if no exception occurred in the <code>try</code> block. The <code>finally</code> block always runs regardless of whether an exception occurred."
+        },
+        {
+            q: "What exception is raised by <code>int('abc')</code>?",
+            options: [
+                "<code>TypeError</code>",
+                "<code>ValueError</code>",
+                "<code>NameError</code>",
+                "<code>SyntaxError</code>"
+            ],
+            correct: 1,
+            explanation: "<code>ValueError</code> is raised when a function receives an argument of the right type but an inappropriate value. <code>'abc'</code> is a string (correct type for <code>int()</code>) but cannot be converted to an integer."
+        },
+        {
+            q: "Which standard library module provides <code>Counter</code> and <code>defaultdict</code>?",
+            options: [
+                "<code>itertools</code>",
+                "<code>collections</code>",
+                "<code>functools</code>",
+                "<code>statistics</code>"
+            ],
+            correct: 1,
+            explanation: "The <code>collections</code> module provides specialized data structures including <code>Counter</code> (frequency counting), <code>defaultdict</code> (dict with default factory), <code>OrderedDict</code>, and <code>namedtuple</code>."
+        },
+        {
+            q: "What is the conventional alias for <code>numpy</code> in Python's data science ecosystem?",
+            options: [
+                "<code>import numpy as num</code>",
+                "<code>import numpy as np</code>",
+                "<code>import numpy as ny</code>",
+                "<code>import numpy as n</code>"
+            ],
+            correct: 1,
+            explanation: "The standard convention is <code>import numpy as np</code>. Similarly, <code>pandas</code> is aliased as <code>pd</code>, <code>matplotlib.pyplot</code> as <code>plt</code>, and <code>seaborn</code> as <code>sns</code>."
+        },
+        {
+            q: "What exception is raised when you try to concatenate a string and an integer: <code>'total: ' + 5</code>?",
+            options: [
+                "<code>ValueError</code>",
+                "<code>TypeError</code>",
+                "<code>AttributeError</code>",
+                "<code>RuntimeError</code>"
+            ],
+            correct: 1,
+            explanation: "<code>TypeError</code> is raised when an operation is applied to an object of an inappropriate type. You cannot concatenate <code>str</code> and <code>int</code> directly; use <code>str(5)</code> or an f-string."
+        },
+        {
+            q: "Which <code>finally</code> block behavior is correct?",
+            options: [
+                "It runs only if an exception occurred",
+                "It runs only if no exception occurred",
+                "It always runs, whether or not an exception occurred",
+                "It runs only if the <code>else</code> block was skipped"
+            ],
+            correct: 2,
+            explanation: "The <code>finally</code> block <strong>always</strong> executes, regardless of whether an exception was raised or not. This makes it ideal for cleanup operations like closing files and database connections."
+        },
+        {
+            q: "Which PIP command installs a specific version of a package?",
+            options: [
+                "<code>pip install pandas --version 2.1.0</code>",
+                "<code>pip install pandas==2.1.0</code>",
+                "<code>pip install pandas@2.1.0</code>",
+                "<code>pip get pandas==2.1.0</code>"
+            ],
+            correct: 1,
+            explanation: "To install a specific version, use the <code>==</code> operator: <code>pip install pandas==2.1.0</code>. The <code>--upgrade</code> flag upgrades to the latest version."
+        },
+        {
+            q: "When reading a Python traceback, where do you find the exception type and error message?",
+            options: [
+                "At the top of the traceback",
+                "In the middle of the traceback",
+                "At the bottom (last line) of the traceback",
+                "It is not shown in the traceback"
+            ],
+            correct: 2,
+            explanation: "Python tracebacks are read bottom to top. The last line shows the exception type and message. Lines above show the call stack, with the most recent call at the bottom."
+        },
+        {
+            q: "Which module would you use to calculate <code>mean()</code>, <code>median()</code>, and <code>stdev()</code> without installing any third-party packages?",
+            options: [
+                "<code>math</code>",
+                "<code>statistics</code>",
+                "<code>numpy</code>",
+                "<code>scipy</code>"
+            ],
+            correct: 1,
+            explanation: "The <code>statistics</code> module is part of the Python standard library and provides <code>mean()</code>, <code>median()</code>, <code>stdev()</code>, and <code>mode()</code> without requiring any third-party installation."
+        },
+        {
+            q: "What happens if you write <code>from math import *</code> in production code?",
+            options: [
+                "It is the recommended way to import math functions",
+                "It only imports the most commonly used functions",
+                "It pollutes the namespace and can cause name collisions",
+                "It raises an <code>ImportError</code>"
+            ],
+            correct: 2,
+            explanation: "Wildcard imports (<code>from module import *</code>) bring all public names into the current namespace, which can cause subtle bugs when two modules export identically named functions. PEP 8 discourages this in production code."
+        },
+        {
+            q: "What exception is raised when you access a key that does not exist in a dictionary?<br><code>d = {'name': 'Alice'}<br>print(d['email'])</code>",
+            options: [
+                "<code>IndexError</code>",
+                "<code>KeyError</code>",
+                "<code>ValueError</code>",
+                "<code>AttributeError</code>"
+            ],
+            correct: 1,
+            explanation: "<code>KeyError</code> is raised when you try to access a dictionary key that does not exist. Use <code>d.get('email', default)</code> for safe access with a fallback value."
+        },
+        {
+            q: "What does <code>datetime.timedelta(days=7)</code> represent?",
+            options: [
+                "A specific date 7 days in the future",
+                "A duration of 7 days that can be added to or subtracted from a datetime",
+                "The current date formatted as 7 days",
+                "A timestamp from 7 days ago"
+            ],
+            correct: 1,
+            explanation: "<code>timedelta</code> represents a <strong>duration</strong> or difference between two dates/times. You can add or subtract it from a <code>datetime</code> object: <code>datetime.now() - timedelta(days=7)</code> gives the date one week ago."
+        },
+        {
+            q: "How can you catch multiple exception types in a single <code>except</code> block?",
+            options: [
+                "<code>except ValueError, TypeError:</code>",
+                "<code>except (ValueError, TypeError) as e:</code>",
+                "<code>except [ValueError, TypeError]:</code>",
+                "<code>except ValueError or TypeError:</code>"
+            ],
+            correct: 1,
+            explanation: "To catch multiple exceptions in one handler, put them in a tuple: <code>except (ValueError, TypeError) as e:</code>. The <code>as e</code> part is optional and gives you access to the exception object."
+        },
+        {
+            q: "What does <code>pip show numpy</code> display?",
+            options: [
+                "The source code of the numpy package",
+                "A list of all numpy functions",
+                "Package metadata including name, version, summary, and location",
+                "The changelog of recent numpy updates"
+            ],
+            correct: 2,
+            explanation: "<code>pip show</code> displays detailed metadata about an installed package, including its name, version, summary, author, license, and installation location."
+        },
+        {
+            q: "What does a bare <code>raise</code> statement inside an <code>except</code> block do?",
+            options: [
+                "Raises a new generic <code>Exception</code>",
+                "Silences the exception and continues execution",
+                "Re-raises the same exception that was caught",
+                "Raises a <code>RuntimeError</code>"
+            ],
+            correct: 2,
+            explanation: "A bare <code>raise</code> (without arguments) inside an <code>except</code> block re-raises the currently handled exception. This is useful when you want to log an error but still let it propagate."
+        },
+        {
+            q: "Which function from the <code>os</code> module returns the current working directory?",
+            options: [
+                "<code>os.curdir()</code>",
+                "<code>os.pwd()</code>",
+                "<code>os.getcwd()</code>",
+                "<code>os.workdir()</code>"
+            ],
+            correct: 2,
+            explanation: "<code>os.getcwd()</code> returns the current working directory as a string. Other useful <code>os</code> functions include <code>os.listdir()</code>, <code>os.path.join()</code>, and <code>os.path.exists()</code>."
+        },
+        {
+            q: "What exception is raised when you try to call <code>.append()</code> on a tuple?",
+            options: [
+                "<code>TypeError</code>",
+                "<code>AttributeError</code>",
+                "<code>ValueError</code>",
+                "<code>NameError</code>"
+            ],
+            correct: 1,
+            explanation: "<code>AttributeError</code> is raised when an object does not have the requested attribute or method. Tuples are immutable and do not have an <code>append()</code> method."
+        }
+    ];
+
+    let userAnswers=new Array(questions.length).fill(-1), examSubmitted=false, timerInterval, timeLeft=20*60;
+    function init(){renderQuestions();renderNav();startTimer();}
+    function renderQuestions(){document.getElementById('questions-container').innerHTML=questions.map((q,i)=>`<div class="exam-question" id="q${i}"><div class="exam-q-header"><div class="exam-q-number">${i+1}</div><div class="exam-q-text">${q.q}</div></div>${q.options.map((opt,j)=>`<div class="exam-option" onclick="selectAnswer(${i},${j})" id="q${i}o${j}"><div class="exam-option-letter">${String.fromCharCode(65+j)}</div><div>${opt}</div></div>`).join('')}<div class="exam-explanation" id="exp${i}">${q.explanation}</div></div>`).join('');}
+    function renderNav(){document.getElementById('question-nav').innerHTML=questions.map((_,i)=>`<div class="exam-nav-btn" id="nav${i}" onclick="scrollToQ(${i})">${i+1}</div>`).join('');}
+    function selectAnswer(qi,oi){if(examSubmitted)return;userAnswers[qi]=oi;questions[qi].options.forEach((_,j)=>{document.getElementById(`q${qi}o${j}`).classList.toggle('selected',j===oi);});document.getElementById(`q${qi}`).classList.add('answered');document.getElementById(`nav${qi}`).classList.add('answered');updateProgress();}
+    function scrollToQ(i){document.getElementById(`q${i}`).scrollIntoView({behavior:'smooth',block:'center'});}
+    function updateProgress(){document.getElementById('answered-count').textContent=userAnswers.filter(a=>a!==-1).length;}
+    function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);submitExam();}},1000);}
+    function updateTimerDisplay(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('time-display').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;const t=document.getElementById('timer');t.classList.remove('warning','danger');if(timeLeft<=120)t.classList.add('danger');else if(timeLeft<=300)t.classList.add('warning');}
+    function submitExam(){if(examSubmitted)return;examSubmitted=true;clearInterval(timerInterval);let c=0,ic=0,sk=0;questions.forEach((q,i)=>{if(userAnswers[i]===-1)sk++;else if(userAnswers[i]===q.correct)c++;else ic++;});const pct=Math.round(c/questions.length*100);document.getElementById('score-display').textContent=pct+'%';document.getElementById('score-display').className='score-big '+(pct>=75?'pass':'fail');document.getElementById('correct-count').textContent=c;document.getElementById('incorrect-count').textContent=ic;document.getElementById('skipped-count').textContent=sk;document.getElementById('submit-section').style.display='none';document.getElementById('result-section').style.display='block';document.getElementById('result-section').scrollIntoView({behavior:'smooth'});document.querySelectorAll('.exam-option').forEach(el=>el.style.pointerEvents='none');}
+    function reviewExam(){questions.forEach((q,i)=>{const qEl=document.getElementById(`q${i}`),navEl=document.getElementById(`nav${i}`);if(userAnswers[i]===-1){qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-missed');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status skipped">Skipped</div>');}else if(userAnswers[i]===q.correct){qEl.classList.add('review-correct');navEl.classList.add('review-correct');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status correct"><i class="fa-solid fa-check"></i> Correct</div>');}else{qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${userAnswers[i]}`).classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status incorrect"><i class="fa-solid fa-xmark"></i> Incorrect</div>');}document.getElementById(`exp${i}`).classList.add('show');});document.getElementById('q0').scrollIntoView({behavior:'smooth'});}
+    init();
+    </script>
+</body>
+</html>

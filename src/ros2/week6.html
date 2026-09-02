@@ -1,0 +1,3369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 6: Parameters, Launch Systems, and Configuration | ROS2 Tutorial</title>    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        h4 {
+            color: #555;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        .topic-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-wrapper {
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        .copy-button.copied {
+            background: #28a745;
+        }
+
+        .copy-button.copied::before {
+            content: " ";
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 8px 8px 0 0;
+            font-size: 0.85em;
+            margin: 15px 0 0 0;
+            font-weight: 600;
+        }
+
+        .code-block + .code-block {
+            margin-top: 0;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+        .function { color: #8be9fd; }
+        .number { color: #bd93f9; }
+        .class { color: #f1fa8c; }
+
+        .interactive-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .interactive-box h4 {
+            color: #ff6f00;
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .project-section {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 3px solid #ff6f00;
+        }
+
+        .deliverable {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .accordion {
+            margin: 15px 0;
+        }
+
+        .accordion-item {
+            margin: 10px 0;
+        }
+
+        .accordion-header {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .accordion-header:hover {
+            background: #764ba2;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            border: 2px solid #667eea;
+            border-top: none;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.5em; }
+            nav ul { flex-direction: column; }
+            .content { padding: 20px; }
+        }
+    
+        /* DARK THEME OVERRIDE */
+        *{box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --warning:#f59e0b;--danger:#ef4444;
+            --text:#f1f5f9;--text2:#94a3b8;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --warning:#d97706;--danger:#dc2626;
+            --text:#0f172a;--text2:#334155;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --code:#1e293b;
+        }
+        body{
+            font-family:'Inter',sans-serif !important;
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            line-height:1.7;
+        }
+        a{color:var(--primary);transition:color .2s}
+        a:hover{color:#60a5fa}
+
+        /* Bootstrap overrides */
+        .navbar{
+            background:rgba(11,15,25,.92) !important;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border) !important;
+            padding:0 24px !important;
+            box-shadow:none !important;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{
+            font-weight:700 !important;font-size:1.15rem !important;
+            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
+        }
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{
+            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
+            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
+        }
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        .navbar-collapse{background:transparent !important}
+        @media(max-width:991px){
+            .navbar-collapse{
+                background:rgba(11,15,25,.98) !important;
+                border-radius:0 0 12px 12px;padding:12px 0;
+                border:1px solid var(--border);border-top:none;
+            }
+            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
+        }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            background:none !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
+            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+            transition:all .2s;margin-left:8px;
+        }
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Hero */
+        .hero, .hero-section{
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            position:relative;overflow:hidden;
+            padding:80px 0 60px !important;
+            margin-bottom:0 !important;
+        }
+        .hero::before,.hero-section::before{
+            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
+        }
+        .hero::after,.hero-section::after{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:32px 32px;pointer-events:none;
+        }
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
+        .hero h1,.hero-section h1{
+            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
+            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
+            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+            color:transparent !important;
+        }
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
+            color:var(--text2) !important;opacity:1 !important;
+        }
+        .hero .display-4{font-size:2.8rem !important}
+
+        /* Cards */
+        .card{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:12px !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-bottom:1px solid var(--border) !important;
+            font-weight:600;
+        }
+        .card-title{color:var(--text) !important}
+        .card-text{color:var(--text2) !important}
+
+        /* Section titles */
+        .section-title, h2.section-title, h3.section-title{
+            color:var(--text) !important;
+            border-bottom-color:var(--primary) !important;
+        }
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
+        p{color:var(--text2)}
+
+        /* Info/Warning/Success boxes */
+        .info-box,.alert-info-custom,.alert-info,.key-concept{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--primary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        
+        .warning-box,.alert-warning-custom,.alert-warning{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--warning) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
+        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
+        
+        .success-box,.alert-success-custom,.alert-success{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--success) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .success-box strong{color:var(--success) !important}
+        .success-box p{color:var(--text2) !important}
+
+        .alert-tip-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--secondary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert-danger,.alert-danger-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--danger) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+
+        /* Code blocks */
+        pre, pre[class*="language-"]{
+            background:var(--code) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:8px !important;
+            color:#e6edf3 !important;
+            font-family:'JetBrains Mono',monospace !important;
+            font-size:.875rem !important;
+            line-height:1.6 !important;
+            padding:20px !important;
+        }
+        code{
+            font-family:'JetBrains Mono',monospace !important;
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            padding:2px 6px;border-radius:4px;
+            font-size:.85em !important;
+        }
+        pre code{
+            background:transparent !important;
+            color:#e6edf3 !important;
+            padding:0 !important;
+        }
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn, .copy-btn{
+            position:absolute;top:10px;right:10px;
+            background:var(--surface2) !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
+            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
+        }
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Tables */
+        .table,.dark-table,table{
+            color:var(--text) !important;
+            border-color:var(--border) !important;
+        }
+        .table th,table th{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-color:var(--border2) !important;
+            font-weight:600;
+        }
+        .table td,table td{
+            color:var(--text2) !important;
+            border-color:var(--border) !important;
+            background:transparent !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>*{
+            background:rgba(255,255,255,.02) !important;
+            color:var(--text2) !important;
+        }
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        .table-bordered{border-color:var(--border2) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
+        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
+
+        /* Sidebar / TOC */
+        .sidebar,.toc{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:10px !important;
+            padding:16px !important;
+        }
+        .sidebar a,.toc a,.toc .nav-link{
+            color:var(--text2) !important;
+            border-left-color:transparent !important;
+        }
+        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
+            color:var(--primary) !important;
+            border-left-color:var(--primary) !important;
+            background:rgba(59,130,246,.05) !important;
+        }
+        .list-group-item{
+            background:var(--surface) !important;
+            border-color:var(--border) !important;
+            color:var(--text2) !important;
+        }
+        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
+
+        /* Badges */
+        .badge,.badge-custom{
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            border:1px solid var(--border2);
+        }
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+
+        /* Buttons */
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
+        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
+
+        /* Misc Bootstrap */
+        .breadcrumb{background:var(--surface) !important}
+        .breadcrumb-item a{color:var(--primary) !important}
+        .breadcrumb-item.active{color:var(--text2) !important}
+        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
+        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
+        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
+        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
+        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .modal-header{border-bottom-color:var(--border) !important}
+        .modal-footer{border-top-color:var(--border) !important}
+        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
+        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
+        .nav-tabs{border-bottom-color:var(--border2) !important}
+        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
+        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
+        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
+        .nav-pills .nav-link{color:var(--text2) !important}
+        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
+        .progress{background:var(--surface2) !important}
+        .progress-bar{background:var(--primary) !important}
+        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}
+        .text-dark{color:var(--text) !important}
+        .bg-light{background:var(--surface2) !important}
+        .bg-white{background:var(--surface) !important}
+        .border{border-color:var(--border2) !important}
+        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
+        .lead{color:var(--text2) !important}
+        strong,b{color:var(--text) !important}
+        ::selection{background:rgba(59,130,246,.3);color:#fff}
+
+        /* Step cards / numbered steps */
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+
+        /* Scroll to top */
+        .scroll-top{
+            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
+            color:var(--text2);display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
+        }
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* Footer override */
+        footer,.footer{
+            background:var(--surface) !important;
+            border-top:1px solid var(--border) !important;
+            color:var(--text2) !important;
+        }
+        footer a{color:var(--primary) !important}
+        footer p,footer span,footer div{color:var(--text2) !important}
+
+        /* Legacy element overrides (old hardcoded CSS fix) */
+        header{
+            background:var(--surface) !important;
+            border-bottom:1px solid var(--border) !important;
+            box-shadow:0 1px 0 var(--border) !important;
+            color:var(--text) !important;
+        }
+        header h1{color:var(--text) !important}
+        header .subtitle{color:var(--text2) !important}
+        nav{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            box-shadow:none !important;
+        }
+        nav a{
+            color:var(--text2) !important;
+            border-color:var(--border2) !important;
+        }
+        nav a:hover{
+            background:var(--primary) !important;
+            color:#fff !important;
+            border-color:var(--primary) !important;
+        }
+        .content{
+            background:var(--surface) !important;
+            box-shadow:none !important;
+            border:1px solid var(--border2) !important;
+            color:var(--text) !important;
+        }
+        .topic-card{
+            background:var(--surface2) !important;
+            border-left-color:var(--primary) !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .project-section{
+            background:var(--surface2) !important;
+            border-color:var(--warning) !important;
+            color:var(--text) !important;
+        }
+        .deliverable{
+            background:var(--surface) !important;
+            border-left-color:var(--success) !important;
+            color:var(--text) !important;
+        }
+        .interactive-box{
+            background:var(--surface2) !important;
+            border-color:var(--warning) !important;
+            color:var(--text) !important;
+        }
+        .interactive-box h4{color:var(--warning) !important}
+        .accordion-header{
+            background:var(--primary) !important;
+            color:#fff !important;
+        }
+        .accordion-header:hover{background:var(--secondary) !important}
+        .accordion-content{
+            background:var(--surface2) !important;
+            border-color:var(--border2) !important;
+            color:var(--text2) !important;
+        }
+        tr:hover>td{background:rgba(59,130,246,.04) !important}
+
+        /* Light mode reversals for legacy elements */
+        body.light-mode header{background:var(--surface) !important}
+        body.light-mode nav{background:var(--surface) !important}
+        body.light-mode .content{background:var(--surface) !important}
+        body.light-mode .topic-card{background:var(--surface2) !important}
+        body.light-mode .project-section{background:var(--surface2) !important}
+        body.light-mode .deliverable{background:var(--surface) !important}
+        body.light-mode .interactive-box{background:var(--surface2) !important}
+        body.light-mode .accordion-content{background:var(--surface2) !important}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fa-solid fa-robot"></i> Week 6: Parameters, Launch Systems, and Configuration</h1>
+            <p class="subtitle">Advanced ROS2 Robotics Programming</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#parameters">Parameters</a></li>
+                <li><a href="#launch">Launch Systems</a></li>
+                <li><a href="#dynamic">Dynamic Config</a></li>
+                <li><a href="#rqt">RQT Tools</a></li>
+                <li><a href="#project">Project</a></li>
+            </ul>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
+
+        <div class="content">
+            <section id="overview">
+                <h2><i class="fa-solid fa-book"></i> Learning Objectives</h2>
+                <div class="topic-card">
+                    <p>By the end of this week, you will master:</p>
+                    <ul>
+                        <li>Parameter server configuration for intelligent robot behavior</li>
+                        <li>Dynamic reconfiguration at runtime without restarting nodes</li>
+                        <li>Python launch files for complex multi-node systems</li>
+                        <li>Multi-node orchestration and coordination</li>
+                        <li>RQT tools for parameter visualization and management</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="parameters">
+                <h2><i class="fa-solid fa-gear"></i> 1. Parameter Server for Intelligent Robot Configuration</h2>
+
+                <h3>What are ROS2 Parameters?</h3>
+                <p>Parameters are configuration values that can be set for ROS2 nodes without recompiling code. They enable dynamic behavior modification and are essential for creating flexible, configurable robotic systems.</p>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Key Concept:</strong> Parameters allow you to tune robot behavior (speed, thresholds, gains) without changing source code.
+                </div>
+
+                <h3>Parameter Types in ROS2</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>bool</code></td>
+                            <td>Boolean values</td>
+                            <td>enable_safety: true</td>
+                        </tr>
+                        <tr>
+                            <td><code>int</code></td>
+                            <td>Integer numbers</td>
+                            <td>detection_threshold: 100</td>
+                        </tr>
+                        <tr>
+                            <td><code>double</code></td>
+                            <td>Floating-point numbers</td>
+                            <td>max_speed: 2.5</td>
+                        </tr>
+                        <tr>
+                            <td><code>string</code></td>
+                            <td>Text values</td>
+                            <td>robot_name: "MyRobot"</td>
+                        </tr>
+                        <tr>
+                            <td><code>array</code></td>
+                            <td>Lists of values</td>
+                            <td>waypoints: [1.0, 2.0, 3.0]</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Step-by-Step: Building Your First Parameterized Node</h3>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-bullseye"></i> Learning Path:</strong> We'll build a robot node in 4 progressive steps:
+                    <ol>
+                        <li>Step 1: Simple node with one parameter</li>
+                        <li>Step 2: Add multiple parameters</li>
+                        <li>Step 3: Add parameter validation</li>
+                        <li>Step 4: Add runtime reconfiguration</li>
+                    </ol>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 1: Your First Parameter</h4>
+                <p>Let's start with the simplest possible parameterized node - a robot that can change its speed.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> simple_robot_step1.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">import rclpy
+from rclpy.node import Node
+
+class SimpleRobot(Node):
+    def __init__(self):
+        super().__init__('simple_robot')
+
+        # Step 1: Declare a single parameter with a default value
+        self.declare_parameter('speed', 1.0)
+
+        # Get the parameter value
+        self.speed = self.get_parameter('speed').value
+
+        # Print it to verify
+        self.get_logger().info(f'Robot initialized with speed: {self.speed} m/s')
+
+        # Create a timer to demonstrate using the parameter
+        self.create_timer(2.0, self.timer_callback)
+
+    def timer_callback(self):
+        self.get_logger().info(f'Moving at {self.speed} m/s')
+
+def main(args=None):
+    rclpy.init(args=args)
+    robot = SimpleRobot()
+    rclpy.spin(robot)
+    robot.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 1</h4>
+                    <p><strong>Run with default value:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 run my_package simple_robot_step1</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">[INFO] [simple_robot]: Robot initialized with speed: 1.0 m/s
+[INFO] [simple_robot]: Moving at 1.0 m/s
+[INFO] [simple_robot]: Moving at 1.0 m/s</div>
+
+                    <p><strong>Run with custom value:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 run my_package simple_robot_step1 --ros-args -p speed:=2.5</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">[INFO] [simple_robot]: Robot initialized with speed: 2.5 m/s
+[INFO] [simple_robot]: Moving at 2.5 m/s</div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 2: Multiple Parameters with Descriptions</h4>
+                <p>Now let's add more parameters and make them self-documenting.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> simple_robot_step2.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">import rclpy
+from rclpy.node import Node
+from rcl_interfaces.msg import ParameterDescriptor
+
+class SimpleRobot(Node):
+    def __init__(self):
+        super().__init__('simple_robot')
+
+        # Step 2: Declare multiple parameters with descriptions
+        self.declare_parameter(
+            'speed',
+            1.0,
+            ParameterDescriptor(description='Robot maximum speed in m/s')
+        )
+
+        self.declare_parameter(
+            'robot_name',
+            'MyRobot',
+            ParameterDescriptor(description='Name identifier for this robot')
+        )
+
+        self.declare_parameter(
+            'enable_safety',
+            True,
+            ParameterDescriptor(description='Enable safety features')
+        )
+
+        # Get all parameter values
+        self.speed = self.get_parameter('speed').value
+        self.robot_name = self.get_parameter('robot_name').value
+        self.enable_safety = self.get_parameter('enable_safety').value
+
+        # Print configuration
+        self.get_logger().info(f'=== {self.robot_name} Configuration ===')
+        self.get_logger().info(f'Speed: {self.speed} m/s')
+        self.get_logger().info(f'Safety: {"ENABLED" if self.enable_safety else "DISABLED"}')
+
+        self.create_timer(2.0, self.timer_callback)
+
+    def timer_callback(self):
+        status = "SAFE" if self.enable_safety else "UNSAFE"
+        self.get_logger().info(f'[{self.robot_name}] Moving at {self.speed} m/s - {status} mode')
+
+def main(args=None):
+    rclpy.init(args=args)
+    robot = SimpleRobot()
+    rclpy.spin(robot)
+    robot.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 2</h4>
+                    <p><strong>Run with multiple parameters:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 run my_package simple_robot_step2 --ros-args \
+  -p speed:=3.0 \
+  -p robot_name:="Explorer" \
+  -p enable_safety:=false</div>
+                    </div>
+
+                    <p><strong>Check parameter descriptions:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 param describe /simple_robot speed</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">Parameter name: speed
+  Type: double
+  Description: Robot maximum speed in m/s
+  Constraints:</div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 3: Add Parameter Validation</h4>
+                <p>Let's add validation to prevent invalid values that could damage the robot.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> simple_robot_step3.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">import rclpy
+from rclpy.node import Node
+from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
+
+class SimpleRobot(Node):
+    def __init__(self):
+        super().__init__('simple_robot')
+
+        # Declare parameters
+        self.declare_parameter('speed', 1.0,
+            ParameterDescriptor(description='Robot speed (0.1-5.0 m/s)'))
+        self.declare_parameter('robot_name', 'MyRobot')
+        self.declare_parameter('enable_safety', True)
+
+        # Get initial values
+        self.speed = self.get_parameter('speed').value
+        self.robot_name = self.get_parameter('robot_name').value
+        self.enable_safety = self.get_parameter('enable_safety').value
+
+        # Step 3: Add parameter callback for validation
+        self.add_on_set_parameters_callback(self.parameter_callback)
+
+        self.get_logger().info(f'Robot {self.robot_name} ready!')
+        self.create_timer(2.0, self.timer_callback)
+
+    def parameter_callback(self, params):
+        """Validate parameter changes"""
+        result = SetParametersResult()
+        result.successful = True
+
+        for param in params:
+            if param.name == 'speed':
+                # Validate speed is in safe range
+                if param.value < 0.1 or param.value > 5.0:
+                    result.successful = False
+                    result.reason = f'Speed must be between 0.1 and 5.0, got {param.value}'
+                    self.get_logger().error(result.reason)
+                else:
+                    self.speed = param.value
+                    self.get_logger().info(f' Speed updated to {self.speed} m/s')
+
+            elif param.name == 'robot_name':
+                # Validate name is not empty
+                if len(param.value) == 0:
+                    result.successful = False
+                    result.reason = 'Robot name cannot be empty'
+                    self.get_logger().error(result.reason)
+                else:
+                    self.robot_name = param.value
+                    self.get_logger().info(f' Name updated to {self.robot_name}')
+
+            elif param.name == 'enable_safety':
+                self.enable_safety = param.value
+                self.get_logger().warn(f' Safety {"ENABLED" if param.value else "DISABLED"}')
+
+        return result
+
+    def timer_callback(self):
+        self.get_logger().info(f'[{self.robot_name}] Speed: {self.speed} m/s')
+
+def main(args=None):
+    rclpy.init(args=args)
+    robot = SimpleRobot()
+    rclpy.spin(robot)
+    robot.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 3 - Validation</h4>
+                    <p><strong>Test 1: Try to set invalid speed (should fail)</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># In terminal 1: Run the robot
+ros2 run my_package simple_robot_step3
+
+# In terminal 2: Try invalid speed
+ros2 param set /simple_robot speed 10.0</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">[ERROR] [simple_robot]: Speed must be between 0.1 and 5.0, got 10.0
+Set parameter failed</div>
+
+                    <p><strong>Test 2: Set valid speed (should succeed)</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 param set /simple_robot speed 2.5</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">[INFO] [simple_robot]:  Speed updated to 2.5 m/s
+Set parameter successful</div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 4: Complete Robot with Runtime Reconfiguration</h4>
+                <p>Finally, let's create a complete robot that responds to sensor data and runtime parameter changes.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> configurable_robot.py (Complete)</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">import</span> rclpy
+<span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
+<span class="keyword">from</span> geometry_msgs.msg <span class="keyword">import</span> Twist
+<span class="keyword">from</span> sensor_msgs.msg <span class="keyword">import</span> LaserScan
+<span class="keyword">from</span> rcl_interfaces.msg <span class="keyword">import</span> ParameterDescriptor
+
+<span class="keyword">class</span> <span class="class">ConfigurableRobot</span>(Node):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        <span class="function">super</span>().__init__(<span class="string">'configurable_robot'</span>)
+
+        <span class="comment"># Declare parameters with descriptors</span>
+        self.declare_parameter(
+            <span class="string">'max_speed'</span>,
+            <span class="number">1.0</span>,
+            ParameterDescriptor(description=<span class="string">'Maximum robot speed (m/s)'</span>)
+        )
+
+        self.declare_parameter(
+            <span class="string">'safety_distance'</span>,
+            <span class="number">0.5</span>,
+            ParameterDescriptor(description=<span class="string">'Minimum safe distance from obstacles (m)'</span>)
+        )
+
+        self.declare_parameter(
+            <span class="string">'detection_threshold'</span>,
+            <span class="number">100</span>,
+            ParameterDescriptor(description=<span class="string">'Object detection sensitivity'</span>)
+        )
+
+        self.declare_parameter(
+            <span class="string">'enable_safety'</span>,
+            <span class="keyword">True</span>,
+            ParameterDescriptor(description=<span class="string">'Enable/disable safety features'</span>)
+        )
+
+        <span class="comment"># Get initial parameter values</span>
+        self.max_speed = self.get_parameter(<span class="string">'max_speed'</span>).value
+        self.safety_distance = self.get_parameter(<span class="string">'safety_distance'</span>).value
+        self.detection_threshold = self.get_parameter(<span class="string">'detection_threshold'</span>).value
+        self.enable_safety = self.get_parameter(<span class="string">'enable_safety'</span>).value
+
+        <span class="comment"># Create publishers and subscribers</span>
+        self.cmd_vel_pub = self.create_publisher(Twist, <span class="string">'/cmd_vel'</span>, <span class="number">10</span>)
+        self.scan_sub = self.create_subscription(
+            LaserScan,
+            <span class="string">'/scan'</span>,
+            self.scan_callback,
+            <span class="number">10</span>
+        )
+
+        <span class="comment"># Add parameter callback for runtime changes</span>
+        self.add_on_set_parameters_callback(self.parameter_callback)
+
+        self.get_logger().info(<span class="string">f'Robot initialized with speed: {self.max_speed} m/s'</span>)
+
+    <span class="keyword">def</span> <span class="function">parameter_callback</span>(self, params):
+        <span class="string">"""Handle parameter changes at runtime"""</span>
+        <span class="keyword">for</span> param <span class="keyword">in</span> params:
+            <span class="keyword">if</span> param.name == <span class="string">'max_speed'</span>:
+                self.max_speed = param.value
+                self.get_logger().info(<span class="string">f'Max speed updated to: {self.max_speed}'</span>)
+            <span class="keyword">elif</span> param.name == <span class="string">'safety_distance'</span>:
+                self.safety_distance = param.value
+                self.get_logger().info(<span class="string">f'Safety distance updated to: {self.safety_distance}'</span>)
+            <span class="keyword">elif</span> param.name == <span class="string">'detection_threshold'</span>:
+                self.detection_threshold = param.value
+                self.get_logger().info(<span class="string">f'Detection threshold updated to: {self.detection_threshold}'</span>)
+            <span class="keyword">elif</span> param.name == <span class="string">'enable_safety'</span>:
+                self.enable_safety = param.value
+                self.get_logger().info(<span class="string">f'Safety features: {"enabled" if self.enable_safety else "disabled"}'</span>)
+
+        <span class="keyword">from</span> rcl_interfaces.msg <span class="keyword">import</span> SetParametersResult
+        <span class="keyword">return</span> SetParametersResult(successful=<span class="keyword">True</span>)
+
+    <span class="keyword">def</span> <span class="function">scan_callback</span>(self, msg):
+        <span class="string">"""Process laser scan data with configurable behavior"""</span>
+        <span class="comment"># Find minimum distance</span>
+        min_distance = <span class="function">min</span>(msg.ranges)
+
+        twist = Twist()
+
+        <span class="keyword">if</span> self.enable_safety <span class="keyword">and</span> min_distance < self.safety_distance:
+            <span class="comment"># Stop if too close to obstacle</span>
+            twist.linear.x = <span class="number">0.0</span>
+            self.get_logger().warn(<span class="string">f'Obstacle detected at {min_distance:.2f}m - STOPPING'</span>)
+        <span class="keyword">else</span>:
+            <span class="comment"># Move forward at configured speed</span>
+            twist.linear.x = self.max_speed
+
+        self.cmd_vel_pub.publish(twist)
+
+<span class="keyword">def</span> <span class="function">main</span>(args=<span class="keyword">None</span>):
+    rclpy.init(args=args)
+    robot = ConfigurableRobot()
+    rclpy.spin(robot)
+    robot.destroy_node()
+    rclpy.shutdown()
+
+<span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+    main()
+</div>
+                </div>
+
+                <h3>Setting Parameters via Command Line</h3>
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Terminal Commands</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="comment"># Run node with custom parameters</span>
+ros2 run my_package configurable_robot --ros-args \
+  -p max_speed:=<span class="number">2.5</span> \
+  -p safety_distance:=<span class="number">0.8</span> \
+  -p detection_threshold:=<span class="number">150</span>
+
+<span class="comment"># View current parameters</span>
+ros2 param list /configurable_robot
+
+<span class="comment"># Get specific parameter value</span>
+ros2 param get /configurable_robot max_speed
+
+<span class="comment"># Set parameter at runtime</span>
+ros2 param set /configurable_robot max_speed <span class="number">3.0</span>
+
+<span class="comment"># Dump all parameters to file</span>
+ros2 param dump /configurable_robot --output-dir ./config
+</div>
+                </div>
+
+                <h3>Using YAML Configuration Files</h3>
+                <div class="code-header"><i class="fa-solid fa-file"></i> robot_config.yaml</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">configurable_robot:
+  ros__parameters:
+    max_speed: <span class="number">2.0</span>
+    safety_distance: <span class="number">0.6</span>
+    detection_threshold: <span class="number">120</span>
+    enable_safety: <span class="keyword">true</span>
+    robot_name: <span class="string">"Explorer-1"</span>
+</div>
+                </div>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Loading Parameters from YAML</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="comment"># Run with YAML configuration</span>
+ros2 run my_package configurable_robot --ros-args \
+  --params-file ./config/robot_config.yaml
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-bullseye"></i> Practice Exercise</h4>
+                    <p>Create a node with the following parameters:</p>
+                    <ul>
+                        <li>Robot name (string)</li>
+                        <li>Maximum speed (double, 0.1 to 5.0 m/s)</li>
+                        <li>Turn rate (double, in rad/s)</li>
+                        <li>Enable autonomous mode (boolean)</li>
+                    </ul>
+                    <p>Test changing parameters at runtime using <code>ros2 param set</code></p>
+                </div>
+            </section>
+
+            <section id="launch">
+                <h2><i class="fa-solid fa-rocket"></i> 2. Python Launch Files for Complex Systems</h2>
+
+                <h3>Why Launch Files?</h3>
+                <p>Launch files allow you to start multiple nodes with specific configurations in a single command. They're essential for complex robotic systems that require coordination between many components.</p>
+
+                <div class="topic-card">
+                    <h4>Benefits of Launch Files:</h4>
+                    <ul>
+                        <li>Start multiple nodes simultaneously</li>
+                        <li>Set parameters for each node</li>
+                        <li>Configure remappings and namespaces</li>
+                        <li>Manage node dependencies and lifecycle</li>
+                        <li>Create reusable system configurations</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Benefits of Launch Files:</h4>
+                    <ul>
+                        <li>Start multiple nodes simultaneously</li>
+                        <li>Set parameters for each node</li>
+                        <li>Configure remappings and namespaces</li>
+                        <li>Manage node dependencies and lifecycle</li>
+                        <li>Create reusable system configurations</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-bullseye"></i> Learning Path:</strong> We'll build launch files progressively:
+                    <ol>
+                        <li>Step 1: Launch a single node</li>
+                        <li>Step 2: Launch with parameters</li>
+                        <li>Step 3: Launch multiple nodes</li>
+                        <li>Step 4: Use YAML configuration files</li>
+                        <li>Step 5: Add launch arguments for flexibility</li>
+                    </ol>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 1: Your First Launch File</h4>
+                <p>Let's create the simplest possible launch file that starts one node.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> step1_single_node.launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='my_package',
+            executable='simple_robot_step1',
+            name='my_robot'
+        )
+    ])
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 1</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># Run the launch file
+ros2 launch my_package step1_single_node.launch.py
+
+# Verify the node is running
+ros2 node list</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">/my_robot</div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 2: Launch with Parameters</h4>
+                <p>Now let's add parameters to configure the node at startup.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> step2_with_parameters.launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='my_package',
+            executable='simple_robot_step2',
+            name='explorer_bot',
+            output='screen',  # Show output in terminal
+            parameters=[{
+                'speed': 2.0,
+                'robot_name': 'Explorer-1',
+                'enable_safety': True
+            }]
+        )
+    ])
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 2</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 launch my_package step2_with_parameters.launch.py</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">[INFO] [explorer_bot]: === Explorer-1 Configuration ===
+[INFO] [explorer_bot]: Speed: 2.0 m/s
+[INFO] [explorer_bot]: Safety: ENABLED</div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 3: Launch Multiple Nodes</h4>
+                <p>Let's launch multiple nodes that work together.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> step3_multi_node.launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Define robot navigator node
+    navigator = Node(
+        package='my_package',
+        executable='simple_robot_step3',
+        name='navigator',
+        output='screen',
+        parameters=[{
+            'speed': 1.5,
+            'robot_name': 'Navigator',
+            'enable_safety': True
+        }]
+    )
+
+    # Define sensor processor node
+    sensor = Node(
+        package='my_package',
+        executable='sensor_processor',
+        name='sensor_handler',
+        output='screen',
+        parameters=[{
+            'rate': 10.0,
+            'threshold': 100
+        }]
+    )
+
+    # Define controller node
+    controller = Node(
+        package='my_package',
+        executable='controller',
+        name='motion_controller',
+        output='screen'
+    )
+
+    return LaunchDescription([
+        navigator,
+        sensor,
+        controller
+    ])
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 3</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># Launch all three nodes
+ros2 launch my_package step3_multi_node.launch.py
+
+# In another terminal, check all running nodes
+ros2 node list</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">/navigator
+/sensor_handler
+/motion_controller</div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 4: Using YAML Configuration Files</h4>
+                <p>For complex configurations, it's better to use YAML files.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> config/robot_params.yaml</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"># Robot configuration file
+navigator:
+  ros__parameters:
+    speed: 2.0
+    robot_name: "Navigator-Pro"
+    enable_safety: true
+
+sensor_handler:
+  ros__parameters:
+    rate: 20.0
+    threshold: 150
+    filter_enabled: true
+
+motion_controller:
+  ros__parameters:
+    kp_linear: 1.0
+    kp_angular: 2.0
+    max_acceleration: 0.5
+</div>
+                </div>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> step4_with_yaml.launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Get the path to our config file
+    config_file = os.path.join(
+        get_package_share_directory('my_package'),
+        'config',
+        'robot_params.yaml'
+    )
+
+    return LaunchDescription([
+        Node(
+            package='my_package',
+            executable='simple_robot_step3',
+            name='navigator',
+            output='screen',
+            parameters=[config_file]
+        ),
+        Node(
+            package='my_package',
+            executable='sensor_processor',
+            name='sensor_handler',
+            output='screen',
+            parameters=[config_file]
+        ),
+        Node(
+            package='my_package',
+            executable='controller',
+            name='motion_controller',
+            output='screen',
+            parameters=[config_file]
+        )
+    ])
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 4</h4>
+                    <p><strong>Important:</strong> First, install the config file in your package's setup.py:</p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># In setup.py, add to data_files:
+(os.path.join('share', package_name, 'config'),
+ glob('config/*.yaml')),</div>
+                    </div>
+
+                    <p><strong>Then rebuild and launch:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">cd ~/ros2_ws
+colcon build --packages-select my_package
+source install/setup.bash
+ros2 launch my_package step4_with_yaml.launch.py</div>
+                    </div>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 5: Launch Arguments for Flexibility</h4>
+                <p>The most powerful feature: allow users to customize the launch without editing files.</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> step5_with_arguments.launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Declare launch arguments
+    speed_arg = DeclareLaunchArgument(
+        'speed',
+        default_value='1.0',
+        description='Robot maximum speed in m/s'
+    )
+
+    robot_name_arg = DeclareLaunchArgument(
+        'robot_name',
+        default_value='MyRobot',
+        description='Name of the robot'
+    )
+
+    safety_arg = DeclareLaunchArgument(
+        'enable_safety',
+        default_value='true',
+        description='Enable safety features'
+    )
+
+    # Use the launch arguments in node parameters
+    robot_node = Node(
+        package='my_package',
+        executable='simple_robot_step3',
+        name='configurable_robot',
+        output='screen',
+        parameters=[{
+            'speed': LaunchConfiguration('speed'),
+            'robot_name': LaunchConfiguration('robot_name'),
+            'enable_safety': LaunchConfiguration('enable_safety')
+        }]
+    )
+
+    return LaunchDescription([
+        speed_arg,
+        robot_name_arg,
+        safety_arg,
+        robot_node
+    ])
+</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4><i class="fa-solid fa-flask"></i> Test Step 5</h4>
+                    <p><strong>Test 1: Use default values</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 launch my_package step5_with_arguments.launch.py</div>
+                    </div>
+
+                    <p><strong>Test 2: Override with custom values</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 launch my_package step5_with_arguments.launch.py \
+  speed:=3.0 \
+  robot_name:="SpeedRacer" \
+  enable_safety:=false</div>
+                    </div>
+
+                    <p><strong>Test 3: See available arguments</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block">ros2 launch my_package step5_with_arguments.launch.py --show-args</div>
+                    </div>
+                    <p><strong>Expected output:</strong></p>
+                    <div class="code-block">Arguments (pass arguments as '<name>:=<value>'):
+
+    'speed':
+        Robot maximum speed in m/s
+        (default: '1.0')
+
+    'robot_name':
+        Name of the robot
+        (default: 'MyRobot')
+
+    'enable_safety':
+        Enable safety features
+        (default: 'true')</div>
+                </div>
+
+                <h3>Basic Python Launch File Structure</h3>
+                <div class="code-header"><i class="fa-solid fa-file"></i> basic_launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
+<span class="keyword">from</span> launch_ros.actions <span class="keyword">import</span> Node
+
+<span class="keyword">def</span> <span class="function">generate_launch_description</span>():
+    <span class="keyword">return</span> LaunchDescription([
+        Node(
+            package=<span class="string">'my_package'</span>,
+            executable=<span class="string">'configurable_robot'</span>,
+            name=<span class="string">'robot_node'</span>,
+            output=<span class="string">'screen'</span>,
+            parameters=[{
+                <span class="string">'max_speed'</span>: <span class="number">2.0</span>,
+                <span class="string">'safety_distance'</span>: <span class="number">0.5</span>
+            }]
+        )
+    ])
+</div>
+                </div>
+
+                <h3>Advanced Multi-Node Launch File</h3>
+                <div class="code-header"><i class="fa-solid fa-file"></i> robot_system_launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">import</span> os
+<span class="keyword">from</span> ament_index_python.packages <span class="keyword">import</span> get_package_share_directory
+<span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
+<span class="keyword">from</span> launch.actions <span class="keyword">import</span> DeclareLaunchArgument, IncludeLaunchDescription
+<span class="keyword">from</span> launch.launch_description_sources <span class="keyword">import</span> PythonLaunchDescriptionSource
+<span class="keyword">from</span> launch.substitutions <span class="keyword">import</span> LaunchConfiguration
+<span class="keyword">from</span> launch_ros.actions <span class="keyword">import</span> Node
+
+<span class="keyword">def</span> <span class="function">generate_launch_description</span>():
+    <span class="comment"># Get package directory</span>
+    pkg_dir = get_package_share_directory(<span class="string">'my_package'</span>)
+
+    <span class="comment"># Declare launch arguments</span>
+    use_sim_time = DeclareLaunchArgument(
+        <span class="string">'use_sim_time'</span>,
+        default_value=<span class="string">'false'</span>,
+        description=<span class="string">'Use simulation clock if true'</span>
+    )
+
+    config_file = DeclareLaunchArgument(
+        <span class="string">'config_file'</span>,
+        default_value=os.path.join(pkg_dir, <span class="string">'config'</span>, <span class="string">'robot_config.yaml'</span>),
+        description=<span class="string">'Path to configuration file'</span>
+    )
+
+    <span class="comment"># Load configuration file</span>
+    config_path = LaunchConfiguration(<span class="string">'config_file'</span>)
+
+    <span class="comment"># Robot navigation node</span>
+    robot_node = Node(
+        package=<span class="string">'my_package'</span>,
+        executable=<span class="string">'configurable_robot'</span>,
+        name=<span class="string">'robot_navigator'</span>,
+        output=<span class="string">'screen'</span>,
+        parameters=[config_path],
+        remappings=[
+            (<span class="string">'/cmd_vel'</span>, <span class="string">'/robot/cmd_vel'</span>),
+            (<span class="string">'/scan'</span>, <span class="string">'/robot/scan'</span>)
+        ]
+    )
+
+    <span class="comment"># Sensor processing node</span>
+    sensor_node = Node(
+        package=<span class="string">'my_package'</span>,
+        executable=<span class="string">'sensor_processor'</span>,
+        name=<span class="string">'sensor_handler'</span>,
+        output=<span class="string">'screen'</span>,
+        parameters=[{
+            <span class="string">'detection_threshold'</span>: <span class="number">100</span>,
+            <span class="string">'update_rate'</span>: <span class="number">10.0</span>
+        }]
+    )
+
+    <span class="comment"># Planning node</span>
+    planner_node = Node(
+        package=<span class="string">'my_package'</span>,
+        executable=<span class="string">'path_planner'</span>,
+        name=<span class="string">'planner'</span>,
+        output=<span class="string">'screen'</span>,
+        parameters=[{
+            <span class="string">'algorithm'</span>: <span class="string">'A*'</span>,
+            <span class="string">'resolution'</span>: <span class="number">0.05</span>
+        }]
+    )
+
+    <span class="comment"># Controller node</span>
+    controller_node = Node(
+        package=<span class="string">'my_package'</span>,
+        executable=<span class="string">'motion_controller'</span>,
+        name=<span class="string">'controller'</span>,
+        output=<span class="string">'screen'</span>,
+        parameters=[config_path]
+    )
+
+    <span class="keyword">return</span> LaunchDescription([
+        use_sim_time,
+        config_file,
+        robot_node,
+        sensor_node,
+        planner_node,
+        controller_node
+    ])
+</div>
+                </div>
+
+                <h3>Launch File with Environment Configurations</h3>
+                <div class="code-header"><i class="fa-solid fa-file"></i> multi_environment_launch.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">import</span> os
+<span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
+<span class="keyword">from</span> launch.actions <span class="keyword">import</span> DeclareLaunchArgument, OpaqueFunction
+<span class="keyword">from</span> launch.substitutions <span class="keyword">import</span> LaunchConfiguration
+<span class="keyword">from</span> launch_ros.actions <span class="keyword">import</span> Node
+<span class="keyword">from</span> ament_index_python.packages <span class="keyword">import</span> get_package_share_directory
+
+<span class="keyword">def</span> <span class="function">launch_setup</span>(context, *args, **kwargs):
+    <span class="comment"># Get environment type from launch argument</span>
+    environment = LaunchConfiguration(<span class="string">'environment'</span>).perform(context)
+
+    <span class="comment"># Define configuration profiles for different environments</span>
+    configs = {
+        <span class="string">'indoor'</span>: {
+            <span class="string">'max_speed'</span>: <span class="number">1.0</span>,
+            <span class="string">'safety_distance'</span>: <span class="number">0.5</span>,
+            <span class="string">'detection_threshold'</span>: <span class="number">150</span>,
+            <span class="string">'enable_safety'</span>: <span class="keyword">True</span>
+        },
+        <span class="string">'outdoor'</span>: {
+            <span class="string">'max_speed'</span>: <span class="number">3.0</span>,
+            <span class="string">'safety_distance'</span>: <span class="number">1.0</span>,
+            <span class="string">'detection_threshold'</span>: <span class="number">100</span>,
+            <span class="string">'enable_safety'</span>: <span class="keyword">True</span>
+        },
+        <span class="string">'warehouse'</span>: {
+            <span class="string">'max_speed'</span>: <span class="number">1.5</span>,
+            <span class="string">'safety_distance'</span>: <span class="number">0.7</span>,
+            <span class="string">'detection_threshold'</span>: <span class="number">120</span>,
+            <span class="string">'enable_safety'</span>: <span class="keyword">True</span>
+        },
+        <span class="string">'racing'</span>: {
+            <span class="string">'max_speed'</span>: <span class="number">5.0</span>,
+            <span class="string">'safety_distance'</span>: <span class="number">0.3</span>,
+            <span class="string">'detection_threshold'</span>: <span class="number">80</span>,
+            <span class="string">'enable_safety'</span>: <span class="keyword">False</span>
+        }
+    }
+
+    <span class="comment"># Get configuration for selected environment</span>
+    config = configs.get(environment, configs[<span class="string">'indoor'</span>])
+
+    robot_node = Node(
+        package=<span class="string">'my_package'</span>,
+        executable=<span class="string">'configurable_robot'</span>,
+        name=<span class="string">f'robot_{environment}'</span>,
+        output=<span class="string">'screen'</span>,
+        parameters=[config]
+    )
+
+    <span class="keyword">return</span> [robot_node]
+
+<span class="keyword">def</span> <span class="function">generate_launch_description</span>():
+    environment_arg = DeclareLaunchArgument(
+        <span class="string">'environment'</span>,
+        default_value=<span class="string">'indoor'</span>,
+        description=<span class="string">'Environment type: indoor, outdoor, warehouse, or racing'</span>
+    )
+
+    <span class="keyword">return</span> LaunchDescription([
+        environment_arg,
+        OpaqueFunction(function=launch_setup)
+    ])
+</div>
+                </div>
+
+                <h3>Running Launch Files</h3>
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch Commands</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="comment"># Basic launch</span>
+ros2 launch my_package robot_system_launch.py
+
+<span class="comment"># Launch with arguments</span>
+ros2 launch my_package multi_environment_launch.py environment:=outdoor
+
+<span class="comment"># Launch with custom config file</span>
+ros2 launch my_package robot_system_launch.py \
+  config_file:=/path/to/custom_config.yaml
+
+<span class="comment"># List available launch files in a package</span>
+ros2 launch my_package --show-args
+</div>
+                </div>
+
+                <div class="success-box">
+                    <strong><i class="fa-solid fa-check"></i> Best Practice:</strong> Organize launch files by system complexity:
+                    <ul>
+                        <li><code>basic_launch.py</code> - Simple single-node launches</li>
+                        <li><code>system_launch.py</code> - Complete system with multiple nodes</li>
+                        <li><code>simulation_launch.py</code> - Simulator + robot system</li>
+                        <li><code>hardware_launch.py</code> - Real robot deployment</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="dynamic">
+                <a href="arduino/arduino_index.html"><h2>External Lab 1</h2></a>
+                <a href="arduino/arduino_analog_pins_tutorial.html"><h2>External Lab 3</h2></a>
+                <a href="arduino/arduino_progressive_tutorial.html"><h2>External Lab 4</h2></a>
+                <h2><i class="fa-solid fa-arrows-rotate"></i> 3. Dynamic Reconfiguration at Runtime</h2>
+
+                <h3>What is Dynamic Reconfiguration?</h3>
+                <p>Dynamic reconfiguration allows you to change node parameters while the system is running, without restarting nodes. This is crucial for tuning robot behavior in real-time.</p>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Use Cases:</strong>
+                    <ul>
+                        <li>Tuning PID controller gains while robot is running</li>
+                        <li>Adjusting sensor thresholds based on environment</li>
+                        <li>Enabling/disabling features on-the-fly</li>
+                        <li>Switching between operational modes</li>
+                    </ul>
+                </div>
+
+                <h3>Implementing Parameter Callbacks</h3>
+                <div class="code-header"><i class="fa-solid fa-file"></i> dynamic_robot.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">import</span> rclpy
+<span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
+<span class="keyword">from</span> rcl_interfaces.msg <span class="keyword">import</span> SetParametersResult, Parameter
+
+<span class="keyword">class</span> <span class="class">DynamicRobot</span>(Node):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        <span class="function">super</span>().__init__(<span class="string">'dynamic_robot'</span>)
+
+        <span class="comment"># Declare parameters with constraints</span>
+        self.declare_parameter(<span class="string">'speed'</span>, <span class="number">1.0</span>)
+        self.declare_parameter(<span class="string">'mode'</span>, <span class="string">'normal'</span>)
+        self.declare_parameter(<span class="string">'sensitivity'</span>, <span class="number">50</span>)
+
+        <span class="comment"># Add callback for parameter changes</span>
+        self.add_on_set_parameters_callback(self.on_parameter_change)
+
+        <span class="comment"># Create timer for periodic operations</span>
+        self.create_timer(<span class="number">1.0</span>, self.timer_callback)
+
+        self.get_logger().info(<span class="string">'Dynamic Robot initialized'</span>)
+
+    <span class="keyword">def</span> <span class="function">on_parameter_change</span>(self, params):
+        <span class="string">"""Validate and handle parameter changes"""</span>
+        result = SetParametersResult()
+        result.successful = <span class="keyword">True</span>
+
+        <span class="keyword">for</span> param <span class="keyword">in</span> params:
+            <span class="keyword">if</span> param.name == <span class="string">'speed'</span>:
+                <span class="comment"># Validate speed is within acceptable range</span>
+                <span class="keyword">if</span> <span class="number">0.0</span> <= param.value <= <span class="number">5.0</span>:
+                    self.get_logger().info(<span class="string">f'Speed changed to: {param.value} m/s'</span>)
+                <span class="keyword">else</span>:
+                    result.successful = <span class="keyword">False</span>
+                    result.reason = <span class="string">f'Speed must be between 0.0 and 5.0, got {param.value}'</span>
+
+            <span class="keyword">elif</span> param.name == <span class="string">'mode'</span>:
+                <span class="comment"># Validate mode is one of allowed values</span>
+                allowed_modes = [<span class="string">'normal'</span>, <span class="string">'aggressive'</span>, <span class="string">'cautious'</span>, <span class="string">'eco'</span>]
+                <span class="keyword">if</span> param.value <span class="keyword">in</span> allowed_modes:
+                    self.get_logger().info(<span class="string">f'Mode changed to: {param.value}'</span>)
+                    self.apply_mode_changes(param.value)
+                <span class="keyword">else</span>:
+                    result.successful = <span class="keyword">False</span>
+                    result.reason = <span class="string">f'Mode must be one of {allowed_modes}'</span>
+
+            <span class="keyword">elif</span> param.name == <span class="string">'sensitivity'</span>:
+                <span class="keyword">if</span> <span class="number">0</span> <= param.value <= <span class="number">100</span>:
+                    self.get_logger().info(<span class="string">f'Sensitivity changed to: {param.value}%'</span>)
+                <span class="keyword">else</span>:
+                    result.successful = <span class="keyword">False</span>
+                    result.reason = <span class="string">'Sensitivity must be between 0 and 100'</span>
+
+        <span class="keyword">return</span> result
+
+    <span class="keyword">def</span> <span class="function">apply_mode_changes</span>(self, mode):
+        <span class="string">"""Apply preset parameters based on mode"""</span>
+        mode_presets = {
+            <span class="string">'normal'</span>: {<span class="string">'speed'</span>: <span class="number">1.0</span>, <span class="string">'sensitivity'</span>: <span class="number">50</span>},
+            <span class="string">'aggressive'</span>: {<span class="string">'speed'</span>: <span class="number">3.0</span>, <span class="string">'sensitivity'</span>: <span class="number">30</span>},
+            <span class="string">'cautious'</span>: {<span class="string">'speed'</span>: <span class="number">0.5</span>, <span class="string">'sensitivity'</span>: <span class="number">80</span>},
+            <span class="string">'eco'</span>: {<span class="string">'speed'</span>: <span class="number">0.8</span>, <span class="string">'sensitivity'</span>: <span class="number">60</span>}
+        }
+
+        <span class="keyword">if</span> mode <span class="keyword">in</span> mode_presets:
+            preset = mode_presets[mode]
+            self.set_parameters([
+                Parameter(<span class="string">'speed'</span>, Parameter.Type.DOUBLE, preset[<span class="string">'speed'</span>]),
+                Parameter(<span class="string">'sensitivity'</span>, Parameter.Type.INTEGER, preset[<span class="string">'sensitivity'</span>])
+            ])
+
+    <span class="keyword">def</span> <span class="function">timer_callback</span>(self):
+        <span class="comment"># Get current parameter values</span>
+        speed = self.get_parameter(<span class="string">'speed'</span>).value
+        mode = self.get_parameter(<span class="string">'mode'</span>).value
+        sensitivity = self.get_parameter(<span class="string">'sensitivity'</span>).value
+
+        self.get_logger().info(
+            <span class="string">f'Running in {mode} mode: speed={speed} m/s, sensitivity={sensitivity}%'</span>
+        )
+</div>
+                </div>
+
+                <h3>Parameter Services</h3>
+                <p>ROS2 provides services for parameter manipulation that can be called programmatically:</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> parameter_client.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">import</span> rclpy
+<span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
+<span class="keyword">from</span> rcl_interfaces.srv <span class="keyword">import</span> SetParameters, GetParameters
+<span class="keyword">from</span> rcl_interfaces.msg <span class="keyword">import</span> Parameter, ParameterValue, ParameterType
+
+<span class="keyword">class</span> <span class="class">ParameterClient</span>(Node):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        <span class="function">super</span>().__init__(<span class="string">'parameter_client'</span>)
+
+        <span class="comment"># Create service clients</span>
+        self.set_param_client = self.create_client(
+            SetParameters,
+            <span class="string">'/dynamic_robot/set_parameters'</span>
+        )
+
+        self.get_param_client = self.create_client(
+            GetParameters,
+            <span class="string">'/dynamic_robot/get_parameters'</span>
+        )
+
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">set_robot_speed</span>(self, speed):
+        <span class="string">"""Set robot speed parameter"""</span>
+        <span class="keyword">while</span> <span class="keyword">not</span> self.set_param_client.wait_for_service(timeout_sec=<span class="number">1.0</span>):
+            self.get_logger().info(<span class="string">'Waiting for parameter service...'</span>)
+
+        request = SetParameters.Request()
+        param = Parameter()
+        param.name = <span class="string">'speed'</span>
+        param.value = ParameterValue(type=ParameterType.PARAMETER_DOUBLE, double_value=speed)
+        request.parameters = [param]
+
+        future = self.set_param_client.call_async(request)
+        <span class="keyword">await</span> future
+
+        <span class="keyword">if</span> future.result().results[<span class="number">0</span>].successful:
+            self.get_logger().info(<span class="string">f'Successfully set speed to {speed}'</span>)
+        <span class="keyword">else</span>:
+            self.get_logger().error(<span class="string">f'Failed to set speed: {future.result().results[0].reason}'</span>)
+
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">get_robot_parameters</span>(self):
+        <span class="string">"""Get current robot parameters"""</span>
+        request = GetParameters.Request()
+        request.names = [<span class="string">'speed'</span>, <span class="string">'mode'</span>, <span class="string">'sensitivity'</span>]
+
+        future = self.get_param_client.call_async(request)
+        <span class="keyword">await</span> future
+
+        <span class="keyword">for</span> i, name <span class="keyword">in</span> <span class="function">enumerate</span>(request.names):
+            value = future.result().values[i]
+            self.get_logger().info(<span class="string">f'{name}: {value.double_value if value.type == 3 else value.string_value if value.type == 4 else value.integer_value}'</span>)
+</div>
+                </div>
+
+                <div class="warning-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Important:</strong> Always validate parameter values in callbacks to prevent invalid configurations that could damage the robot or cause unsafe behavior.
+                </div>
+            </section>
+
+            <section id="rqt">
+                <h2>️ 4. RQT Tools for Parameter Management</h2>
+
+                <h3>What is RQT?</h3>
+                <p>RQT is a Qt-based framework for GUI development in ROS. It provides various plugins for visualization, debugging, and runtime parameter management.</p>
+
+                <h3>What is RQT?</h3>
+                <p>RQT is a Qt-based framework for GUI development in ROS. It provides various plugins for visualization, debugging, and runtime parameter management.</p>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-bullseye"></i> Hands-On Tutorial:</strong> Follow these steps to master RQT tools:
+                    <ol>
+                        <li>Step 1: Launch and explore rqt_reconfigure</li>
+                        <li>Step 2: Visualize data with rqt_plot</li>
+                        <li>Step 3: Monitor system with rqt_graph</li>
+                        <li>Step 4: Debug with rqt_console</li>
+                        <li>Step 5: Create a custom dashboard</li>
+                    </ol>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 1: Dynamic Reconfiguration with rqt_reconfigure</h4>
+
+                <div class="topic-card">
+                    <p><strong>Scenario:</strong> You have a robot running and want to tune its speed in real-time without restarting.</p>
+                </div>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 1.1: Start your robot</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"># Terminal 1: Launch the robot
+ros2 run my_package simple_robot_step3 --ros-args \
+  -p speed:=1.0 \
+  -p robot_name:="TestBot"</div>
+                </div>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 1.2: Open rqt_reconfigure</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"># Terminal 2: Launch rqt_reconfigure
+ros2 run rqt_reconfigure rqt_reconfigure</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4>What You'll See:</h4>
+                    <ol>
+                        <li><strong>Left Panel:</strong> List of nodes with parameters (look for /simple_robot)</li>
+                        <li><strong>Right Panel:</strong> Interactive controls for each parameter:
+                            <ul>
+                                <li>Speed: Slider (0.1 - 5.0)</li>
+                                <li>Robot Name: Text field</li>
+                                <li>Enable Safety: Checkbox</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <p><strong><i class="fa-solid fa-bullseye"></i> Try This:</strong></p>
+                    <ol>
+                        <li>Move the speed slider to 3.0</li>
+                        <li>Watch the robot's terminal - you should see: <code>[INFO]  Speed updated to 3.0 m/s</code></li>
+                        <li>Try setting speed to 10.0 (should fail validation)</li>
+                        <li>You'll see an error: <code>[ERROR] Speed must be between 0.1 and 5.0</code></li>
+                    </ol>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 2: Plotting Data with rqt_plot</h4>
+
+                <div class="topic-card">
+                    <p><strong>Scenario:</strong> You want to visualize how your robot's speed changes over time.</p>
+                </div>
+
+                <p>First, let's create a simple node that publishes data to plot:</p>
+
+                <div class="code-header"><i class="fa-solid fa-file"></i> data_publisher.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">import rclpy
+from rclpy.node import Node
+from std_msgs.msg import Float64
+import math
+
+class DataPublisher(Node):
+    def __init__(self):
+        super().__init__('data_publisher')
+        self.publisher = self.create_publisher(Float64, 'robot_speed', 10)
+        self.timer = self.create_timer(0.1, self.timer_callback)
+        self.counter = 0.0
+
+    def timer_callback(self):
+        msg = Float64()
+        # Create a sine wave for demonstration
+        msg.data = 2.0 + math.sin(self.counter)
+        self.publisher.publish(msg)
+        self.counter += 0.1
+
+def main():
+    rclpy.init()
+    node = DataPublisher()
+    rclpy.spin(node)
+
+if __name__ == '__main__':
+    main()
+</div>
+                </div>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 2.1: Start publishing data</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"># Terminal 1: Run the data publisher
+ros2 run my_package data_publisher</div>
+                </div>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 2.2: Launch rqt_plot</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"># Terminal 2: Launch plotter
+ros2 run rqt_plot rqt_plot</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4>How to Use rqt_plot:</h4>
+                    <ol>
+                        <li>In the topic field at the top, type: <code>/robot_speed/data</code></li>
+                        <li>Click the <strong>+</strong> button (or press Enter)</li>
+                        <li>You should see a real-time sine wave graph!</li>
+                        <li><strong>Tip:</strong> Right-click the graph for options like auto-scroll and zoom</li>
+                    </ol>
+
+                    <p><strong><i class="fa-solid fa-bullseye"></i> Experiment:</strong></p>
+                    <ul>
+                        <li>Add multiple topics to compare them</li>
+                        <li>Pause the plot to examine specific values</li>
+                        <li>Save the plot as an image</li>
+                    </ul>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 3: System Visualization with rqt_graph</h4>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 3: Launch rqt_graph</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"># While your nodes are running, open:
+ros2 run rqt_graph rqt_graph</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4>Understanding the Graph:</h4>
+                    <ul>
+                        <li><strong>Circles/Ovals:</strong> Represent nodes</li>
+                        <li><strong>Arrows:</strong> Show topic connections (publishers → subscribers)</li>
+                        <li><strong>Rectangles:</strong> Represent topics</li>
+                    </ul>
+
+                    <p><strong><i class="fa-solid fa-bullseye"></i> Try Different Views:</strong></p>
+                    <ol>
+                        <li><strong>Nodes only:</strong> Shows simplified node connections</li>
+                        <li><strong>Nodes/Topics (all):</strong> Shows complete system topology</li>
+                        <li><strong>Nodes/Topics (active):</strong> Shows only active connections</li>
+                    </ol>
+
+                    <p><strong>Debugging Tip:</strong> If your nodes aren't communicating, use this to verify:</p>
+                    <ul>
+                        <li>Are both nodes visible?</li>
+                        <li>Is there an arrow connecting them?</li>
+                        <li>Are the topic names correct?</li>
+                    </ul>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 4: Debugging with rqt_console</h4>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 4: Launch rqt_console</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">ros2 run rqt_console rqt_console</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4>Using rqt_console Effectively:</h4>
+
+                    <p><strong>Filter by Severity:</strong></p>
+                    <ul>
+                        <li><strong>DEBUG:</strong> Detailed diagnostic information</li>
+                        <li><strong>INFO:</strong> Normal operational messages</li>
+                        <li><strong>WARN:</strong> Warning messages (not errors)</li>
+                        <li><strong>ERROR:</strong> Error conditions</li>
+                        <li><strong>FATAL:</strong> Critical failures</li>
+                    </ul>
+
+                    <p><strong><i class="fa-solid fa-bullseye"></i> Practice Exercise:</strong></p>
+                    <ol>
+                        <li>Set severity filter to "WARN" or higher</li>
+                        <li>In another terminal, try to set an invalid parameter:
+                            <div class="code-wrapper">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                <div class="code-block">ros2 param set /simple_robot speed 100.0</div>
+                            </div>
+                        </li>
+                        <li>Watch the ERROR message appear in rqt_console</li>
+                        <li>Click on the message to see full details</li>
+                    </ol>
+
+                    <p><strong>Search Feature:</strong></p>
+                    <ul>
+                        <li>Use the search box to filter messages by keyword</li>
+                        <li>Example: Search for "speed" to see all speed-related logs</li>
+                    </ul>
+                </div>
+
+                <h4><i class="fa-solid fa-pen-to-square"></i> Step 5: Create Your Custom Dashboard</h4>
+
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 5.1: Launch main RQT</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block">rqt</div>
+                </div>
+
+                <div class="interactive-box">
+                    <h4>Building Your Dashboard:</h4>
+
+                    <p><strong>Step-by-Step:</strong></p>
+                    <ol>
+                        <li><strong>Add Parameter Plugin:</strong>
+                            <ul>
+                                <li>Plugins → Configuration → Dynamic Reconfigure</li>
+                            </ul>
+                        </li>
+                        <li><strong>Add Console:</strong>
+                            <ul>
+                                <li>Plugins → Logging → Console</li>
+                            </ul>
+                        </li>
+                        <li><strong>Add Plot:</strong>
+                            <ul>
+                                <li>Plugins → Visualization → Plot</li>
+                            </ul>
+                        </li>
+                        <li><strong>Add Node Graph:</strong>
+                            <ul>
+                                <li>Plugins → Introspection → Node Graph</li>
+                            </ul>
+                        </li>
+                        <li><strong>Arrange Windows:</strong>
+                            <ul>
+                                <li>Drag plugin tabs to split the screen</li>
+                                <li>Resize each panel as needed</li>
+                            </ul>
+                        </li>
+                        <li><strong>Save Your Layout:</strong>
+                            <ul>
+                                <li>Perspectives → Save Perspective → "my_robot_dashboard"</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <p><strong>Load Saved Layout:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># Next time, load your saved perspective
+rqt --perspective-file ~/.config/ros.org/rqt_gui.ini</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h4><i class="fa-solid fa-check"></i> Complete RQT Workflow Example</h4>
+                    <p>Here's how professionals use RQT for robot development:</p>
+                    <ol>
+                        <li><strong>Launch your robot system</strong></li>
+                        <li><strong>Open your custom RQT dashboard</strong> with all plugins</li>
+                        <li><strong>Monitor logs</strong> in rqt_console (bottom left)</li>
+                        <li><strong>Watch system topology</strong> in rqt_graph (bottom right)</li>
+                        <li><strong>Tune parameters</strong> with rqt_reconfigure (top right)</li>
+                        <li><strong>Visualize results</strong> in rqt_plot (top left)</li>
+                        <li><strong>Debug issues</strong> by correlating logs, parameters, and data</li>
+                    </ol>
+                </div>
+
+                <h3>Key RQT Tools for Parameters</h3>
+
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-chart-bar"></i> rqt_reconfigure - Dynamic Parameter Tuning
+                        </div>
+                        <div class="accordion-content">
+                            <p>The most important tool for runtime parameter adjustment with a user-friendly GUI.</p>
+
+                            <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_reconfigure</div>
+                            <div class="code-wrapper">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                <div class="code-block">ros2 run rqt_reconfigure rqt_reconfigure</div>
+                            </div>
+
+                            <p><strong>Features:</strong></p>
+                            <ul>
+                                <li>Real-time parameter adjustment with sliders and input fields</li>
+                                <li>Automatic detection of parameter types and constraints</li>
+                                <li>Visual feedback of parameter changes</li>
+                                <li>Save/load parameter configurations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-chart-line"></i> rqt_plot - Real-time Data Visualization
+                        </div>
+                        <div class="accordion-content">
+                            <p>Plot parameter values and topic data in real-time.</p>
+
+                            <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_plot</div>
+                            <div class="code-wrapper">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                <div class="code-block"><span class="comment"># Plot specific topics</span>
+ros2 run rqt_plot rqt_plot /robot/speed /robot/distance
+
+<span class="comment"># Monitor parameter changes over time</span>
+ros2 run rqt_plot rqt_plot /parameter_events
+</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-magnifying-glass"></i> rqt_graph - Node and Topic Visualization
+                        </div>
+                        <div class="accordion-content">
+                            <p>Visualize the ROS2 computation graph showing nodes, topics, and their connections.</p>
+
+                            <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_graph</div>
+                            <div class="code-wrapper">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                <div class="code-block">ros2 run rqt_graph rqt_graph</div>
+                            </div>
+
+                            <p>Useful for understanding system architecture and debugging communication issues.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-desktop"></i> rqt_console - Log Message Viewer
+                        </div>
+                        <div class="accordion-content">
+                            <p>View and filter log messages from all nodes in one place.</p>
+
+                            <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_console</div>
+                            <div class="code-wrapper">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                <div class="code-block">ros2 run rqt_console rqt_console</div>
+                            </div>
+
+                            <p><strong>Features:</strong></p>
+                            <ul>
+                                <li>Filter messages by severity (DEBUG, INFO, WARN, ERROR, FATAL)</li>
+                                <li>Search and filter by node name or message content</li>
+                                <li>Highlight specific message patterns</li>
+                                <li>Export logs to file</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-gamepad"></i> rqt_robot_steering - Manual Robot Control
+                        </div>
+                        <div class="accordion-content">
+                            <p>GUI for manually controlling robot movement.</p>
+
+                            <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_robot_steering</div>
+                            <div class="code-wrapper">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                <div class="code-block">ros2 run rqt_robot_steering rqt_robot_steering</div>
+                            </div>
+
+                            <p>Provides sliders for linear and angular velocity control, publishing to <code>/cmd_vel</code> topic.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Complete RQT Interface</h3>
+                <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch Full RQT with All Plugins</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="comment"># Launch main rqt interface</span>
+rqt
+
+<span class="comment"># You can then add plugins from: Plugins menu</span>
+<span class="comment"># - Configuration > Dynamic Reconfigure</span>
+<span class="comment"># - Introspection > Node Graph</span>
+<span class="comment"># - Logging > Console</span>
+<span class="comment"># - Topics > Message Publisher</span>
+<span class="comment"># - Visualization > Plot</span>
+</div>
+                </div>
+
+                <div class="success-box">
+                    <strong><i class="fa-solid fa-check"></i> Pro Tip:</strong> Save your RQT perspective (window layout and plugins) for quick access:
+                    <br>Perspectives → Save Perspective → "my_robot_debug"
+                </div>
+
+                <h3>Creating Custom RQT Plugin (Advanced)</h3>
+                <div class="code-header"><i class="fa-solid fa-file"></i> my_rqt_plugin.py</div>
+                <div class="code-wrapper">
+                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                    <div class="code-block"><span class="keyword">from</span> rqt_gui_py.plugin <span class="keyword">import</span> Plugin
+<span class="keyword">from</span> python_qt_binding.QtWidgets <span class="keyword">import</span> QWidget, QVBoxLayout, QPushButton, QLabel
+
+<span class="keyword">class</span> <span class="class">MyRobotControl</span>(Plugin):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, context):
+        <span class="function">super</span>(MyRobotControl, self).__init__(context)
+        self.setObjectName(<span class="string">'MyRobotControl'</span>)
+
+        <span class="comment"># Create main widget</span>
+        self._widget = QWidget()
+        layout = QVBoxLayout()
+
+        <span class="comment"># Add status label</span>
+        self.status_label = QLabel(<span class="string">'Robot Status: OK'</span>)
+        layout.addWidget(self.status_label)
+
+        <span class="comment"># Add control buttons</span>
+        start_btn = QPushButton(<span class="string">'Start Robot'</span>)
+        start_btn.clicked.connect(self.start_robot)
+        layout.addWidget(start_btn)
+
+        stop_btn = QPushButton(<span class="string">'Stop Robot'</span>)
+        stop_btn.clicked.connect(self.stop_robot)
+        layout.addWidget(stop_btn)
+
+        self._widget.setLayout(layout)
+        context.add_widget(self._widget)
+
+    <span class="keyword">def</span> <span class="function">start_robot</span>(self):
+        <span class="comment"># Call parameter service to start robot</span>
+        self.status_label.setText(<span class="string">'Robot Status: Running'</span>)
+
+    <span class="keyword">def</span> <span class="function">stop_robot</span>(self):
+        <span class="comment"># Call parameter service to stop robot</span>
+        self.status_label.setText(<span class="string">'Robot Status: Stopped'</span>)
+</div>
+                </div>
+            </section>
+
+            <section id="project">
+                <div class="project-section">
+                    <h2><i class="fa-solid fa-bullseye"></i> Hands-on Project 6.1: Configurable Intelligent Robot System</h2>
+
+                    <h3>Project Overview</h3>
+                    <p>Build a complete configurable robot system with multiple nodes, runtime parameter tuning, and environment-specific configurations.</p>
+
+                <div class="project-section">
+                    <h2><i class="fa-solid fa-bullseye"></i> Hands-on Project 6.1: Configurable Intelligent Robot System</h2>
+
+                    <h3>Project Overview</h3>
+                    <p>Build a complete configurable robot system with multiple nodes, runtime parameter tuning, and environment-specific configurations.</p>
+
+                    <div class="success-box">
+                        <h4><i class="fa-solid fa-book"></i> Complete Step-by-Step Guide</h4>
+                        <p>Follow this detailed walkthrough to complete the project successfully. Each step builds on the previous one.</p>
+                    </div>
+
+                    <h3><i class="fa-solid fa-hammer"></i> Detailed Implementation Walkthrough</h3>
+
+                    <h4>Phase 1: Project Setup (15 minutes)</h4>
+
+                    <div class="topic-card">
+                        <p><strong>Step 1.1: Create ROS2 Package</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python intelligent_robot \
+  --dependencies rclpy geometry_msgs sensor_msgs std_msgs
+
+cd intelligent_robot</div>
+                        </div>
+
+                        <p><strong>Step 1.2: Create Directory Structure</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">mkdir -p config launch
+touch intelligent_robot/robot_node.py
+touch intelligent_robot/sensor_node.py
+touch intelligent_robot/safety_node.py
+touch intelligent_robot/telemetry_node.py</div>
+                        </div>
+
+                        <p><strong>Step 1.3: Update setup.py</strong></p>
+                        <p>Edit <code>setup.py</code> and add:</p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">import os
+from glob import glob
+from setuptools import setup
+
+package_name = 'intelligent_robot'
+
+setup(
+    name=package_name,
+    version='0.0.1',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+        # Add launch files
+        (os.path.join('share', package_name, 'launch'),
+         glob('launch/*.py')),
+        # Add config files
+        (os.path.join('share', package_name, 'config'),
+         glob('config/*.yaml')),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='your_name',
+    maintainer_email='your_email@example.com',
+    description='Intelligent configurable robot system',
+    license='Apache-2.0',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'robot_node = intelligent_robot.robot_node:main',
+            'sensor_node = intelligent_robot.sensor_node:main',
+            'safety_node = intelligent_robot.safety_node:main',
+            'telemetry_node = intelligent_robot.telemetry_node:main',
+        ],
+    },
+)</div>
+                        </div>
+                    </div>
+
+                    <h4>Phase 2: Main Robot Node (30 minutes)</h4>
+
+                    <div class="topic-card">
+                        <p><strong>Step 2.1: Create robot_node.py</strong></p>
+                        <p>This is your main navigation node with full parameter support.</p>
+
+                        <div class="code-header"><i class="fa-solid fa-file"></i> intelligent_robot/robot_node.py</div>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
+
+class RobotNode(Node):
+    def __init__(self):
+        super().__init__('robot_navigator')
+
+        # Declare all required parameters with descriptions
+        self.declare_parameter('max_speed', 1.0,
+            ParameterDescriptor(description='Maximum linear velocity (0.1-5.0 m/s)'))
+        self.declare_parameter('safety_distance', 0.5,
+            ParameterDescriptor(description='Minimum obstacle clearance (0.1-2.0 m)'))
+        self.declare_parameter('detection_threshold', 100,
+            ParameterDescriptor(description='Sensor detection sensitivity (0-255)'))
+        self.declare_parameter('turn_rate', 1.0,
+            ParameterDescriptor(description='Maximum angular velocity (0.1-3.0 rad/s)'))
+        self.declare_parameter('enable_safety', True,
+            ParameterDescriptor(description='Enable/disable safety features'))
+        self.declare_parameter('robot_name', 'IntelligentRobot',
+            ParameterDescriptor(description='Robot identifier'))
+
+        # Get parameter values
+        self.max_speed = self.get_parameter('max_speed').value
+        self.safety_distance = self.get_parameter('safety_distance').value
+        self.detection_threshold = self.get_parameter('detection_threshold').value
+        self.turn_rate = self.get_parameter('turn_rate').value
+        self.enable_safety = self.get_parameter('enable_safety').value
+        self.robot_name = self.get_parameter('robot_name').value
+
+        # Add parameter callback
+        self.add_on_set_parameters_callback(self.parameter_callback)
+
+        # Publishers and subscribers
+        self.cmd_vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.scan_sub = self.create_subscription(
+            LaserScan, 'scan', self.scan_callback, 10)
+
+        # Status timer
+        self.create_timer(1.0, self.status_callback)
+
+        self.get_logger().info(f'<i class="fa-solid fa-robot"></i> {self.robot_name} initialized!')
+        self.get_logger().info(f'   Max Speed: {self.max_speed} m/s')
+        self.get_logger().info(f'   Safety Distance: {self.safety_distance} m')
+        self.get_logger().info(f'   Safety: {"ENABLED" if self.enable_safety else "DISABLED"}')
+
+    def parameter_callback(self, params):
+        """Validate and apply parameter changes"""
+        result = SetParametersResult()
+        result.successful = True
+
+        for param in params:
+            if param.name == 'max_speed':
+                if 0.1 <= param.value <= 5.0:
+                    self.max_speed = param.value
+                    self.get_logger().info(f' Max speed: {param.value} m/s')
+                else:
+                    result.successful = False
+                    result.reason = f'Speed must be 0.1-5.0, got {param.value}'
+
+            elif param.name == 'safety_distance':
+                if 0.1 <= param.value <= 2.0:
+                    self.safety_distance = param.value
+                    self.get_logger().info(f' Safety distance: {param.value} m')
+                else:
+                    result.successful = False
+                    result.reason = f'Distance must be 0.1-2.0, got {param.value}'
+
+            elif param.name == 'detection_threshold':
+                if 0 <= param.value <= 255:
+                    self.detection_threshold = param.value
+                    self.get_logger().info(f' Threshold: {param.value}')
+                else:
+                    result.successful = False
+                    result.reason = f'Threshold must be 0-255, got {param.value}'
+
+            elif param.name == 'turn_rate':
+                if 0.1 <= param.value <= 3.0:
+                    self.turn_rate = param.value
+                    self.get_logger().info(f' Turn rate: {param.value} rad/s')
+                else:
+                    result.successful = False
+                    result.reason = f'Turn rate must be 0.1-3.0, got {param.value}'
+
+            elif param.name == 'enable_safety':
+                self.enable_safety = param.value
+                status = "ENABLED" if param.value else "DISABLED"
+                self.get_logger().warn(f' Safety {status}')
+
+            elif param.name == 'robot_name':
+                if len(param.value) > 0:
+                    self.robot_name = param.value
+                    self.get_logger().info(f' Name: {param.value}')
+                else:
+                    result.successful = False
+                    result.reason = 'Robot name cannot be empty'
+
+        return result
+
+    def scan_callback(self, msg):
+        """Process laser scan and control robot"""
+        # Find minimum distance
+        valid_ranges = [r for r in msg.ranges if r > 0.0]
+        if not valid_ranges:
+            return
+
+        min_distance = min(valid_ranges)
+
+        twist = Twist()
+
+        if self.enable_safety and min_distance < self.safety_distance:
+            # Obstacle detected - stop
+            twist.linear.x = 0.0
+            twist.angular.z = self.turn_rate  # Turn to avoid
+            self.get_logger().warn(f' Obstacle at {min_distance:.2f}m - Turning!')
+        else:
+            # Clear path - move forward
+            twist.linear.x = self.max_speed
+            twist.angular.z = 0.0
+
+        self.cmd_vel_pub.publish(twist)
+
+    def status_callback(self):
+        """Periodic status report"""
+        safety = "<i class="fa-solid fa-shield-halved"></i> SAFE" if self.enable_safety else "<i class="fa-solid fa-bolt"></i> PERFORMANCE"
+        self.get_logger().info(
+            f'[{self.robot_name}] {safety} | Speed: {self.max_speed} m/s'
+        )
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = RobotNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+</div>
+                        </div>
+
+                        <p><strong>Step 2.2: Test the Robot Node</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">cd ~/ros2_ws
+colcon build --packages-select intelligent_robot
+source install/setup.bash
+
+# Test with default parameters
+ros2 run intelligent_robot robot_node
+
+# Test with custom parameters
+ros2 run intelligent_robot robot_node --ros-args \
+  -p max_speed:=2.0 \
+  -p robot_name:="Explorer"</div>
+                        </div>
+                    </div>
+
+                    <h4>Phase 3: Configuration Files (20 minutes)</h4>
+
+                    <div class="topic-card">
+                        <p><strong>Step 3.1: Create Indoor Configuration</strong></p>
+                        <div class="code-header"><i class="fa-solid fa-file"></i> config/indoor_config.yaml</div>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">robot_navigator:
+  ros__parameters:
+    max_speed: 1.0
+    safety_distance: 0.5
+    detection_threshold: 150
+    turn_rate: 1.0
+    enable_safety: true
+    robot_name: "IndoorBot"
+
+sensor_handler:
+  ros__parameters:
+    update_rate: 10.0
+    filter_enabled: true
+
+safety_monitor:
+  ros__parameters:
+    emergency_stop_distance: 0.3
+    warning_distance: 0.7
+
+telemetry_publisher:
+  ros__parameters:
+    publish_rate: 1.0
+    include_diagnostics: true
+</div>
+                        </div>
+
+                        <p><strong>Step 3.2: Create Other Environment Configs</strong></p>
+                        <p>Create similar files for each environment:</p>
+                        <ul>
+                            <li><code>outdoor_config.yaml</code> - Higher speeds, larger distances</li>
+                            <li><code>warehouse_config.yaml</code> - Medium settings, optimized for structured environment</li>
+                            <li><code>competition_config.yaml</code> - Maximum performance, minimal safety</li>
+                        </ul>
+                    </div>
+
+                    <h4>Phase 4: Launch Files (25 minutes)</h4>
+
+                    <div class="topic-card">
+                        <p><strong>Step 4.1: Create Main Launch File</strong></p>
+                        <div class="code-header"><i class="fa-solid fa-file"></i> launch/robot_system.launch.py</div>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block">#!/usr/bin/env python3
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Get package directory
+    pkg_dir = get_package_share_directory('intelligent_robot')
+
+    # Declare launch argument for config file
+    config_file_arg = DeclareLaunchArgument(
+        'config_file',
+        default_value=os.path.join(pkg_dir, 'config', 'indoor_config.yaml'),
+        description='Path to robot configuration file'
+    )
+
+    config_file = LaunchConfiguration('config_file')
+
+    # Define all nodes
+    robot_node = Node(
+        package='intelligent_robot',
+        executable='robot_node',
+        name='robot_navigator',
+        output='screen',
+        parameters=[config_file]
+    )
+
+    sensor_node = Node(
+        package='intelligent_robot',
+        executable='sensor_node',
+        name='sensor_handler',
+        output='screen',
+        parameters=[config_file]
+    )
+
+    safety_node = Node(
+        package='intelligent_robot',
+        executable='safety_node',
+        name='safety_monitor',
+        output='screen',
+        parameters=[config_file]
+    )
+
+    telemetry_node = Node(
+        package='intelligent_robot',
+        executable='telemetry_node',
+        name='telemetry_publisher',
+        output='screen',
+        parameters=[config_file]
+    )
+
+    return LaunchDescription([
+        config_file_arg,
+        robot_node,
+        sensor_node,
+        safety_node,
+        telemetry_node
+    ])
+</div>
+                        </div>
+
+                        <p><strong>Step 4.2: Test the Launch File</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block"># Rebuild after adding launch file
+cd ~/ros2_ws
+colcon build --packages-select intelligent_robot
+source install/setup.bash
+
+# Launch with default config (indoor)
+ros2 launch intelligent_robot robot_system.launch.py
+
+# Launch with outdoor config
+ros2 launch intelligent_robot robot_system.launch.py \
+  config_file:=config/outdoor_config.yaml</div>
+                        </div>
+                    </div>
+
+                    <h4>Phase 5: Testing & Validation (20 minutes)</h4>
+
+                    <div class="interactive-box">
+                        <h4><i class="fa-solid fa-flask"></i> Complete Testing Checklist</h4>
+
+                        <p><strong>Test 1: Basic Functionality</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block"># Terminal 1: Launch system
+ros2 launch intelligent_robot robot_system.launch.py
+
+# Terminal 2: Verify all nodes are running
+ros2 node list
+
+# Expected output:
+# /robot_navigator
+# /sensor_handler
+# /safety_monitor
+# /telemetry_publisher</div>
+                        </div>
+
+                        <p><strong>Test 2: Parameter Changes</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block"># View current parameters
+ros2 param list /robot_navigator
+
+# Try valid parameter change
+ros2 param set /robot_navigator max_speed 2.5
+
+# Try invalid parameter change (should fail)
+ros2 param set /robot_navigator max_speed 10.0</div>
+                        </div>
+
+                        <p><strong>Test 3: RQT Integration</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block"># Open RQT reconfigure
+ros2 run rqt_reconfigure rqt_reconfigure
+
+# Adjust parameters using GUI and verify changes</div>
+                        </div>
+
+                        <p><strong>Test 4: Environment Switching</strong></p>
+                        <div class="code-wrapper">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                            <div class="code-block"># Test each environment configuration
+ros2 launch intelligent_robot robot_system.launch.py \
+  config_file:=config/indoor_config.yaml
+
+ros2 launch intelligent_robot robot_system.launch.py \
+  config_file:=config/outdoor_config.yaml
+
+ros2 launch intelligent_robot robot_system.launch.py \
+  config_file:=config/warehouse_config.yaml
+
+ros2 launch intelligent_robot robot_system.launch.py \
+  config_file:=config/competition_config.yaml</div>
+                        </div>
+                    </div>
+
+                    <h3>Requirements</h3>
+
+                    <h4>1. Parameterized Robot Node</h4>
+                    <div class="topic-card">
+                        <p>Create a robot node with the following configurable parameters:</p>
+                        <ul>
+                            <li><strong>max_speed</strong> (double): Maximum linear velocity (0.1 - 5.0 m/s)</li>
+                            <li><strong>safety_distance</strong> (double): Minimum obstacle clearance (0.1 - 2.0 m)</li>
+                            <li><strong>detection_threshold</strong> (int): Sensor detection sensitivity (0 - 255)</li>
+                            <li><strong>turn_rate</strong> (double): Maximum angular velocity (0.1 - 3.0 rad/s)</li>
+                            <li><strong>enable_safety</strong> (bool): Enable/disable safety features</li>
+                            <li><strong>robot_name</strong> (string): Robot identifier</li>
+                        </ul>
+                    </div>
+
+                    <h4>2. Multi-Node Launch System</h4>
+                    <div class="topic-card">
+                        <p>Implement a launch file that starts:</p>
+                        <ul>
+                            <li>Main robot navigation node</li>
+                            <li>Sensor processing node</li>
+                            <li>Safety monitor node</li>
+                            <li>Telemetry publisher node</li>
+                        </ul>
+                        <p>All nodes should load parameters from a centralized YAML configuration file.</p>
+                    </div>
+
+                    <h4>3. Runtime Parameter Tuning</h4>
+                    <div class="topic-card">
+                        <ul>
+                            <li>Implement parameter validation callbacks</li>
+                            <li>Support dynamic reconfiguration without node restart</li>
+                            <li>Log all parameter changes with timestamps</li>
+                            <li>Provide parameter bounds checking</li>
+                        </ul>
+                    </div>
+
+                    <h4>4. Configuration Profiles</h4>
+                    <div class="topic-card">
+                        <p>Create configuration files for different environments:</p>
+                        <ul>
+                            <li><strong>Indoor</strong>: Low speed, high safety</li>
+                            <li><strong>Outdoor</strong>: Medium speed, moderate safety</li>
+                            <li><strong>Warehouse</strong>: Optimized for structured environment</li>
+                            <li><strong>Competition</strong>: Maximum performance</li>
+                        </ul>
+                    </div>
+
+                    <h3>Implementation Steps</h3>
+
+                    <div class="accordion">
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                Step 1: Create Package Structure
+                            </div>
+                            <div class="accordion-content">
+                                <div class="code-wrapper">
+                                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                                    <div class="code-block">cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python intelligent_robot \
+  --dependencies rclpy geometry_msgs sensor_msgs
+
+cd intelligent_robot
+mkdir -p config launch
+</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                Step 2: Implement Main Robot Node
+                            </div>
+                            <div class="accordion-content">
+                                <p>Create <code>intelligent_robot/robot_node.py</code> with full parameter support and validation.</p>
+                                <p>Include:</p>
+                                <ul>
+                                    <li>Parameter declarations with descriptors</li>
+                                    <li>Parameter callback with validation</li>
+                                    <li>Sensor data processing using parameters</li>
+                                    <li>Velocity command publishing</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                Step 3: Create Configuration Files
+                            </div>
+                            <div class="accordion-content">
+                                <p>Create YAML files in <code>config/</code> directory:</p>
+                                <ul>
+                                    <li><code>indoor_config.yaml</code></li>
+                                    <li><code>outdoor_config.yaml</code></li>
+                                    <li><code>warehouse_config.yaml</code></li>
+                                    <li><code>competition_config.yaml</code></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                Step 4: Develop Launch Files
+                            </div>
+                            <div class="accordion-content">
+                                <p>Create in <code>launch/</code> directory:</p>
+                                <ul>
+                                    <li><code>single_robot.launch.py</code> - Basic single node</li>
+                                    <li><code>multi_node_system.launch.py</code> - Full system</li>
+                                    <li><code>environment_launch.py</code> - Environment-specific</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                Step 5: Test with RQT Tools
+                            </div>
+                            <div class="accordion-content">
+                                <p>Use RQT tools to verify functionality:</p>
+                                <ol>
+                                    <li>Launch your robot system</li>
+                                    <li>Open <code>rqt_reconfigure</code> for parameter tuning</li>
+                                    <li>Use <code>rqt_console</code> to monitor logs</li>
+                                    <li>Visualize with <code>rqt_graph</code></li>
+                                    <li>Plot data with <code>rqt_plot</code></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fa-solid fa-clipboard-list"></i> Deliverables</h3>
+
+                    <div class="deliverable">
+                        <h4><i class="fa-solid fa-check"></i> 1. Parameterized Robot Node</h4>
+                        <ul>
+                            <li>Complete Python node with all required parameters</li>
+                            <li>Parameter validation and error handling</li>
+                            <li>Runtime reconfiguration support</li>
+                            <li>Comprehensive logging</li>
+                        </ul>
+                    </div>
+
+                    <div class="deliverable">
+                        <h4><i class="fa-solid fa-check"></i> 2. Launch File System</h4>
+                        <ul>
+                            <li>Multi-node launch file</li>
+                            <li>Environment-specific launch configurations</li>
+                            <li>Parameter file loading</li>
+                            <li>Launch arguments for flexibility</li>
+                        </ul>
+                    </div>
+
+                    <div class="deliverable">
+                        <h4><i class="fa-solid fa-check"></i> 3. Configuration Documentation</h4>
+                        <ul>
+                            <li>README.md with project overview</li>
+                            <li>Parameter descriptions and valid ranges</li>
+                            <li>Launch file usage instructions</li>
+                            <li>Environment configuration guide</li>
+                            <li>Troubleshooting section</li>
+                        </ul>
+                    </div>
+
+                    <h3>Testing Checklist</h3>
+                    <div class="interactive-box">
+                        <h4><i class="fa-solid fa-flask"></i> Verify Your Implementation</h4>
+                        <ul>
+                            <li> All parameters can be set via command line</li>
+                            <li> Parameters load correctly from YAML files</li>
+                            <li> Runtime parameter changes work without restart</li>
+                            <li> Invalid parameters are rejected with clear errors</li>
+                            <li> All four environment configs produce different behaviors</li>
+                            <li> Launch files start all nodes successfully</li>
+                            <li> RQT tools can connect and modify parameters</li>
+                            <li> Documentation is clear and complete</li>
+                        </ul>
+                    </div>
+
+                    <h3>Bonus Challenges <i class="fa-solid fa-star"></i></h3>
+                    <div class="topic-card">
+                        <ol>
+                            <li><strong>Parameter Presets:</strong> Implement a service to switch between predefined parameter sets</li>
+                            <li><strong>Auto-Tuning:</strong> Create a node that automatically adjusts parameters based on sensor feedback</li>
+                            <li><strong>Parameter History:</strong> Log and visualize parameter changes over time</li>
+                            <li><strong>Custom RQT Plugin:</strong> Build a custom GUI for your robot's parameters</li>
+                            <li><strong>Cloud Config:</strong> Load parameters from a remote server or database</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2><i class="fa-solid fa-book-open"></i> Additional Resources</h2>
+                <div class="topic-card">
+                    <h4>Official Documentation:</h4>
+                    <ul>
+                        <li><a href="https://docs.ros.org/en/humble/Tutorials/Parameters.html" target="_blank">ROS2 Parameters Tutorial</a></li>
+                        <li><a href="https://docs.ros.org/en/humble/Tutorials/Launch-Files.html" target="_blank">ROS2 Launch Files</a></li>
+                        <li><a href="http://wiki.ros.org/rqt" target="_blank">RQT Documentation</a></li>
+                    </ul>
+
+                    <h4>Best Practices:</h4>
+                    <ul>
+                        <li>Always provide parameter descriptors with meaningful descriptions</li>
+                        <li>Use YAML files for complex configurations</li>
+                        <li>Implement parameter validation to prevent invalid states</li>
+                        <li>Document parameter ranges and units clearly</li>
+                        <li>Use namespaces to organize parameters logically</li>
+                        <li>Test parameter changes thoroughly before deployment</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2><i class="fa-solid fa-wrench"></i> Troubleshooting Common Issues</h2>
+
+                <div class="warning-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Having problems? Follow these step-by-step solutions!</strong>
+                </div>
+
+                <h3>Problem 1: "Package not found"</h3>
+                <div class="topic-card">
+                    <p><strong>Error:</strong> <code>Package 'my_package' not found</code></p>
+
+                    <p><strong>Solution:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># Step 1: Build the package
+cd ~/ros2_ws
+colcon build --packages-select my_package
+
+# Step 2: Source the workspace
+source install/setup.bash
+
+# Step 3: Verify
+ros2 pkg list | grep my_package</div>
+                    </div>
+                </div>
+
+                <h3>Problem 2: YAML Parameters Not Loading</h3>
+                <div class="topic-card">
+                    <p><strong>Common Mistake:</strong> Wrong YAML format</p>
+
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># <i class="fa-solid fa-check"></i> CORRECT (note double underscore):
+node_name:
+  ros__parameters:
+    param1: value1
+
+# <i class="fa-solid fa-xmark"></i> WRONG:
+node_name:
+  ros_parameters:  # Missing underscore!
+    param1: value1</div>
+                    </div>
+
+                    <p><strong>Also check setup.py:</strong></p>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># Ensure config files are installed:
+data_files=[
+    (os.path.join('share', package_name, 'config'),
+     glob('config/*.yaml')),
+]
+
+# Then rebuild:
+cd ~/ros2_ws && colcon build</div>
+                    </div>
+                </div>
+
+                <h3>Problem 3: Parameters Won't Change at Runtime</h3>
+                <div class="topic-card">
+                    <p><strong>Checklist - All 4 items required:</strong></p>
+                    <ol>
+                        <li> Declare: <code>self.declare_parameter('speed', 1.0)</code></li>
+                        <li> Add callback: <code>self.add_on_set_parameters_callback(self.parameter_callback)</code></li>
+                        <li> Update in callback: <code>self.speed = param.value</code></li>
+                        <li> Use member var: <code>twist.linear.x = self.speed</code></li>
+                    </ol>
+                </div>
+
+                <div class="success-box">
+                    <h4><i class="fa-solid fa-check"></i> Quick Debug Commands</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
+                        <div class="code-block"># Check if ROS2 is sourced
+echo $ROS_DISTRO
+
+# List running nodes
+ros2 node list
+
+# List parameters
+ros2 param list /node_name
+
+# Visualize system
+ros2 run rqt_graph rqt_graph</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2><i class="fa-solid fa-graduation-cap"></i> Summary</h2>
+                <div class="success-box">
+                    <p>In this week, you learned:</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> How to create fully parameterized ROS2 nodes</li>
+                        <li><i class="fa-solid fa-check"></i> Parameter types, declaration, and validation</li>
+                        <li><i class="fa-solid fa-check"></i> Building complex launch files with Python</li>
+                        <li><i class="fa-solid fa-check"></i> Multi-node orchestration and coordination</li>
+                        <li><i class="fa-solid fa-check"></i> Dynamic reconfiguration at runtime</li>
+                        <li><i class="fa-solid fa-check"></i> Using RQT tools for parameter management</li>
+                        <li><i class="fa-solid fa-check"></i> Creating environment-specific configurations</li>
+                    </ul>
+
+                    <p><strong>Next Week:</strong> We'll explore advanced topics including TF transformations, URDF robot descriptions, and robot state publishers!</p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p><i class="fa-solid fa-robot"></i> <strong>Robotics Programming Course - Week 6</strong></p>
+            <p>Parameters, Launch Systems, and Configuration</p>
+            <p style="margin-top: 10px; color: #666;">Happy Coding! <i class="fa-solid fa-rocket"></i></p>
+        </footer>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeWrapper = button.parentElement;
+            const codeBlock = codeWrapper.querySelector('.code-block');
+            const code = codeBlock.innerText;
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(code).then(() => {
+                // Visual feedback
+                const originalText = button.textContent;
+                button.textContent = ' Copied!';
+                button.classList.add('copied');
+
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                button.textContent = '<i class="fa-solid fa-xmark"></i> Failed';
+                setTimeout(() => {
+                    button.textContent = '<i class="fa-solid fa-clipboard-list"></i> Copy';
+                }, 2000);
+            });
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const allContents = document.querySelectorAll('.accordion-content');
+
+            // Close all other accordions
+            allContents.forEach(item => {
+                if (item !== content) {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Toggle current accordion
+            content.classList.toggle('active');
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+
+<script>
+// Theme toggle
+function toggleTheme(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+}
+(function(){
+    const saved=localStorage.getItem('theme');
+    if(saved==='light'){
+        document.body.classList.add('light-mode');
+        const icon=document.getElementById('themeIcon');
+        if(icon) icon.className='fa-solid fa-moon';
+    }
+})();
+
+// Copy code
+function copyCode(btn){
+    const code=btn.closest('pre,.code-block,.code-container').querySelector('code,pre');
+    const text=code?code.textContent:btn.parentElement.textContent;
+    navigator.clipboard.writeText(text.replace(/^Copy\s*/,''));
+    btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+    setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
+}
+
+// Add copy buttons to all code blocks
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
+        if(pre.querySelector('.copy-btn')) return;
+        pre.classList.add('has-copy');
+        pre.style.position='relative';
+        var btn=document.createElement('button');
+        btn.className='copy-btn';
+        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
+        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5;transition:all .2s';
+        btn.onmouseover=function(){this.style.borderColor='#3b82f6';this.style.color='#3b82f6'};
+        btn.onmouseout=function(){this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'};
+        btn.onclick=function(e){
+            e.stopPropagation();
+            var code=pre.querySelector('code')||pre;
+            navigator.clipboard.writeText(code.textContent.replace(/^Copy\s*/,''));
+            this.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+            var b=this;
+            setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);
+        };
+        pre.appendChild(btn);
+    });
+
+    // Scroll to top button
+    var st=document.createElement('button');
+    st.id='scrollTopBtn';
+    st.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
+    st.style.cssText='position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface,#111827);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;opacity:0;pointer-events:none;z-index:900;transition:all .2s';
+    st.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+    document.body.appendChild(st);
+    window.addEventListener('scroll',function(){
+        st.style.opacity=window.scrollY>500?'1':'0';
+        st.style.pointerEvents=window.scrollY>500?'auto':'none';
+    });
+});
+</script>
+</body>
+</html>

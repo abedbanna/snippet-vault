@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.2: Data Cleaning and Standardization | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="../index.html#block1">Block 1</a>
+            <a href="../index.html#block2">Block 2</a>
+            <a href="../index.html#block3">Block 3</a>
+            <a href="../index.html#block4">Block 4</a>
+            <a href="../index.html#block5">Block 5</a>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../index.html#block1" onclick="this.parentElement.classList.remove('open')">Block 1</a>
+        <a href="../index.html#block2" onclick="this.parentElement.classList.remove('open')">Block 2</a>
+        <a href="../index.html#block3" onclick="this.parentElement.classList.remove('open')">Block 3</a>
+        <a href="../index.html#block4" onclick="this.parentElement.classList.remove('open')">Block 4</a>
+        <a href="../index.html#block5" onclick="this.parentElement.classList.remove('open')">Block 5</a>
+    </div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Data Cleaning and Standardization</h1>
+        <p class="hero-sub">Block 1: Data Acquisition and Pre-Processing</p>
+        <p class="hero-sub" style="font-size:1.05rem;">Topic 1.2 &middot; 4 Objectives</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- ========== SECTION 1.2.1 ========== -->
+        <div class="section fade-up" id="section1">
+            <h2 class="section-title"><i class="fa-solid fa-database"></i> 1.2.1 Structured and Unstructured Data</h2>
+            <p class="section-desc">Understand the difference between structured and unstructured data and how data structure impacts storage, retrieval, and analysis.</p>
+
+            <h3>What Is Structured Data?</h3>
+            <p><strong>Structured data</strong> is data that conforms to a predefined schema with rows and columns. Every record follows the same format, making it easy to store in relational databases and spreadsheets and straightforward to query with SQL or pandas.</p>
+            <ul>
+                <li><strong>Relational databases</strong> &mdash; MySQL, PostgreSQL, SQLite tables with fixed columns and data types.</li>
+                <li><strong>Spreadsheets</strong> &mdash; Excel / Google Sheets files with labelled columns.</li>
+                <li><strong>CSV / TSV files</strong> &mdash; delimited text files where each row maps to a record and each column to a field.</li>
+            </ul>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>Exam Tip:</strong> Structured data is the easiest to analyze programmatically because its schema enforces consistency. Most exam questions focus on structured tabular data handled via pandas DataFrames.
+            </div>
+
+            <h3>Characteristics of Structured Data</h3>
+            <table class="dark-table">
+                <tr><th>Characteristic</th><th>Description</th></tr>
+                <tr><td>Fixed schema</td><td>Column names, data types, and constraints are defined in advance.</td></tr>
+                <tr><td>Easy querying</td><td>SQL or pandas can filter, aggregate, and join data efficiently.</td></tr>
+                <tr><td>Low storage overhead</td><td>Columnar formats (e.g., Parquet) compress well because data is homogeneous.</td></tr>
+                <tr><td>High searchability</td><td>Indexing on columns enables fast lookups.</td></tr>
+            </table>
+
+            <h3>What Is Unstructured Data?</h3>
+            <p><strong>Unstructured data</strong> has no predefined format or model. It includes free-form text, images, audio, and video. Because there is no schema, traditional relational queries do not work directly on it.</p>
+            <ul>
+                <li><strong>Text</strong> &mdash; emails, social-media posts, PDF documents, log files.</li>
+                <li><strong>Images</strong> &mdash; photographs, medical scans, satellite imagery.</li>
+                <li><strong>Audio / Video</strong> &mdash; call-center recordings, surveillance footage.</li>
+                <li><strong>Semi-structured</strong> &mdash; JSON, XML, and HTML sit between structured and unstructured; they have tags or keys but no rigid tabular schema.</li>
+            </ul>
+
+            <h3>Processing Needs for Unstructured Data</h3>
+            <p>Before analysis, unstructured data typically requires <strong>feature extraction</strong> or <strong>transformation</strong> to convert it into a structured format:</p>
+            <ul>
+                <li><strong>Natural Language Processing (NLP)</strong> &mdash; tokenization, TF-IDF, sentiment scores for text.</li>
+                <li><strong>Computer Vision</strong> &mdash; pixel arrays, edge detection, CNN-based feature extraction for images.</li>
+                <li><strong>Signal Processing</strong> &mdash; spectrograms, Mel-frequency cepstral coefficients (MFCCs) for audio.</li>
+            </ul>
+
+            <h3>How Data Structure Impacts Storage, Retrieval, and Analysis</h3>
+            <table class="dark-table">
+                <tr><th>Aspect</th><th>Structured</th><th>Unstructured</th></tr>
+                <tr><td>Storage</td><td>RDBMS, columnar stores (Parquet, Feather)</td><td>Object storage (S3), NoSQL (MongoDB), file systems</td></tr>
+                <tr><td>Retrieval</td><td>SQL queries, pandas indexing &mdash; fast and precise</td><td>Full-text search engines (Elasticsearch), specialized APIs</td></tr>
+                <tr><td>Analysis</td><td>Direct aggregation, statistical analysis, ML on tabular data</td><td>Requires pre-processing pipeline to extract features first</td></tr>
+                <tr><td>Scalability</td><td>Scales well with indexing and partitioning</td><td>Requires distributed storage (Hadoop HDFS, cloud lakes)</td></tr>
+            </table>
+
+            <div class="info-box"><i class="fa-solid fa-circle-info"></i>
+                <strong>Key Takeaway:</strong> In practice, most data analysis projects begin by converting or extracting structured features from unstructured sources so that standard tools (pandas, SQL) can be used downstream.
+            </div>
+        </div>
+
+        <!-- ========== SECTION 1.2.2 ========== -->
+        <div class="section fade-up" id="section2">
+            <h2 class="section-title"><i class="fa-solid fa-triangle-exclamation"></i> 1.2.2 Erroneous Data</h2>
+            <p class="section-desc">Identify data errors and inconsistencies, understand types of missingness, and learn imputation and deduplication strategies.</p>
+
+            <h3>Identifying Data Errors and Inconsistencies</h3>
+            <p>Erroneous data is any value that does not accurately represent the real-world entity it is supposed to describe. Common categories include:</p>
+            <ul>
+                <li><strong>Missing values</strong> &mdash; cells that contain <code>NaN</code>, <code>None</code>, or empty strings.</li>
+                <li><strong>Inaccurate values</strong> &mdash; a person's age recorded as 250, or a negative price.</li>
+                <li><strong>Misleading information</strong> &mdash; data that is technically valid but contextually wrong (e.g., recording height in inches when the column expects centimeters).</li>
+                <li><strong>Duplicate records</strong> &mdash; the same observation entered more than once.</li>
+                <li><strong>Invalid entries</strong> &mdash; text in a numeric column, impossible dates (Feb 30), or codes outside the defined set.</li>
+                <li><strong>Numerical data problems</strong> &mdash; overflow, rounding errors, or mixed units within the same column.</li>
+            </ul>
+
+            <h4>Detecting Errors with pandas</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Sample dataset</span>
+df = pd.DataFrame({
+    <span class="str">'name'</span>:   [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>, <span class="str">'Alice'</span>, <span class="str">'Eve'</span>],
+    <span class="str">'age'</span>:    [<span class="num">28</span>, np.nan, <span class="num">-5</span>, <span class="num">28</span>, <span class="num">300</span>],
+    <span class="str">'salary'</span>: [<span class="num">50000</span>, <span class="num">60000</span>, <span class="num">55000</span>, <span class="num">50000</span>, np.nan]
+})
+
+<span class="cm"># 1. Check for missing values</span>
+<span class="fn">print</span>(df.isnull().sum())
+<span class="cm"># name      0
+# age       1
+# salary    1</span>
+
+<span class="cm"># 2. Detailed info (non-null counts and dtypes)</span>
+df.info()
+
+<span class="cm"># 3. Detect duplicates</span>
+<span class="fn">print</span>(df.duplicated().sum())   <span class="cm"># 1 duplicate row (index 3)</span>
+
+<span class="cm"># 4. Quick statistical sanity check</span>
+<span class="fn">print</span>(df.describe())
+<span class="cm"># min age = -5, max age = 300 &mdash; clearly invalid</span></div>
+
+            <h3>Types of Missingness</h3>
+            <p>Understanding <em>why</em> data is missing is critical because the mechanism determines which imputation strategy is appropriate.</p>
+
+            <table class="dark-table">
+                <tr><th>Type</th><th>Definition</th><th>Example</th><th>Implication</th></tr>
+                <tr>
+                    <td><strong>MCAR</strong><br>(Missing Completely At Random)</td>
+                    <td>The probability of being missing is the same for all observations &mdash; missingness is unrelated to any variable.</td>
+                    <td>A lab sample is accidentally dropped.</td>
+                    <td>Safe to drop or impute without introducing bias.</td>
+                </tr>
+                <tr>
+                    <td><strong>MAR</strong><br>(Missing At Random)</td>
+                    <td>Missingness depends on <em>observed</em> variables but not on the missing value itself.</td>
+                    <td>Males are less likely to report their weight, but the actual weight does not determine missingness.</td>
+                    <td>Can be addressed with model-based imputation that conditions on the observed variable.</td>
+                </tr>
+                <tr>
+                    <td><strong>MNAR</strong><br>(Missing Not At Random)</td>
+                    <td>Missingness depends on the <em>unobserved</em> (missing) value itself.</td>
+                    <td>People with very high income are less likely to report it.</td>
+                    <td>Most problematic. Imputation may be biased; requires domain knowledge or sensitivity analysis.</td>
+                </tr>
+            </table>
+
+            <div class="info-box"><i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>Exam Warning:</strong> Know the three types of missingness and be able to match each to an example. This course frequently tests whether a described scenario is MCAR, MAR, or MNAR.
+            </div>
+
+            <h3>Data Imputation Methods</h3>
+            <p><strong>Imputation</strong> replaces missing values with estimated substitutes so that records are not lost. The correct method depends on the data distribution, the type of variable, and the missingness mechanism.</p>
+
+            <table class="dark-table">
+                <tr><th>Method</th><th>When to Use</th><th>pandas Syntax</th></tr>
+                <tr><td>Mean</td><td>Numerical columns with roughly symmetric distribution (sensitive to outliers).</td><td><code>df['col'].fillna(df['col'].mean())</code></td></tr>
+                <tr><td>Median</td><td>Numerical columns with skewed distribution or outliers.</td><td><code>df['col'].fillna(df['col'].median())</code></td></tr>
+                <tr><td>Mode</td><td>Categorical columns or any column where the most frequent value is a reasonable substitute.</td><td><code>df['col'].fillna(df['col'].mode()[0])</code></td></tr>
+                <tr><td>Forward Fill (ffill)</td><td>Time-series data where the last observed value is a good proxy.</td><td><code>df['col'].ffill()</code></td></tr>
+                <tr><td>Backward Fill (bfill)</td><td>Time-series data where the next observed value is a better proxy.</td><td><code>df['col'].bfill()</code></td></tr>
+            </table>
+
+            <h4>Imputation Examples</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.DataFrame({
+    <span class="str">'temperature'</span>: [<span class="num">22.1</span>, np.nan, <span class="num">23.4</span>, np.nan, <span class="num">21.8</span>],
+    <span class="str">'city'</span>:        [<span class="str">'NYC'</span>, <span class="str">'LA'</span>, np.nan, <span class="str">'NYC'</span>, <span class="str">'LA'</span>]
+})
+
+<span class="cm"># Mean imputation (numerical)</span>
+df[<span class="str">'temperature'</span>] = df[<span class="str">'temperature'</span>].fillna(df[<span class="str">'temperature'</span>].mean())
+
+<span class="cm"># Mode imputation (categorical)</span>
+df[<span class="str">'city'</span>] = df[<span class="str">'city'</span>].fillna(df[<span class="str">'city'</span>].mode()[<span class="num">0</span>])
+
+<span class="cm"># Forward fill (time-series friendly)</span>
+ts = pd.Series([<span class="num">10</span>, np.nan, np.nan, <span class="num">20</span>, np.nan, <span class="num">30</span>])
+<span class="fn">print</span>(ts.ffill())
+<span class="cm"># 0    10.0
+# 1    10.0
+# 2    10.0
+# 3    20.0
+# 4    20.0
+# 5    30.0</span>
+
+<span class="cm"># Backward fill</span>
+<span class="fn">print</span>(ts.bfill())
+<span class="cm"># 0    10.0
+# 1    20.0
+# 2    20.0
+# 3    20.0
+# 4    30.0
+# 5    30.0</span></div>
+
+            <h3>Dropping Duplicates</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Remove exact duplicate rows</span>
+df_clean = df.drop_duplicates()
+
+<span class="cm"># Remove duplicates based on specific columns</span>
+df_clean = df.drop_duplicates(subset=[<span class="str">'name'</span>, <span class="str">'age'</span>], keep=<span class="str">'first'</span>)
+
+<span class="cm"># keep='first'  &mdash; keep the first occurrence (default)</span>
+<span class="cm"># keep='last'   &mdash; keep the last occurrence</span>
+<span class="cm"># keep=False    &mdash; drop ALL duplicates (including the first)</span></div>
+
+            <h3>Implications of Data Correction and Removal</h3>
+            <p>Every decision to correct or remove data affects <strong>data integrity</strong>:</p>
+            <ul>
+                <li><strong>Removing rows</strong> reduces sample size, potentially introducing selection bias if missingness is not MCAR.</li>
+                <li><strong>Imputing values</strong> preserves sample size but may introduce artificial patterns or reduce variance.</li>
+                <li><strong>Capping outliers</strong> prevents extreme values from distorting statistics but alters the true distribution.</li>
+                <li><strong>Correcting errors</strong> (e.g., fixing typos) improves accuracy but must be documented for reproducibility.</li>
+            </ul>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>Best Practice:</strong> Always document every cleaning step you perform. Keep a copy of the raw data so that any transformation can be audited or reversed.
+            </div>
+
+            <h3>Data Collection Importance for Outlier Detection</h3>
+            <p>Outlier detection is only as good as the data that feeds it. Understanding <em>how</em> the data was collected helps determine whether an extreme value is a genuine rare event or a data-entry error.</p>
+            <ul>
+                <li><strong>Sensor data</strong> may contain spikes from calibration errors &mdash; domain knowledge tells you to discard them.</li>
+                <li><strong>Survey data</strong> may have outliers due to misunderstanding the scale (e.g., answering "100" on a 1&ndash;10 scale).</li>
+                <li><strong>Financial data</strong> often has legitimate outliers (market crashes) that should be kept.</li>
+            </ul>
+
+            <h3>High-Quality Data for Accurate Outlier Detection</h3>
+            <p>Dirty data can mask real outliers or create false ones. Before running outlier detection:</p>
+            <ul>
+                <li>Fix data-type issues (strings in numeric columns).</li>
+                <li>Handle missing values (NaN can skew mean/std calculations).</li>
+                <li>Standardize units (mixing kg and lbs will create phantom outliers).</li>
+            </ul>
+
+            <h3>How Data Types Influence Outlier Detection Strategies</h3>
+            <table class="dark-table">
+                <tr><th>Data Type</th><th>Outlier Detection Approach</th></tr>
+                <tr><td>Continuous numerical</td><td>IQR method, Z-score, modified Z-score, box plots</td></tr>
+                <tr><td>Categorical / ordinal</td><td>Frequency analysis &mdash; values with extremely low frequency may be errors</td></tr>
+                <tr><td>Date/time</td><td>Range checks (future dates, dates before system launch) and gap analysis</td></tr>
+                <tr><td>Text</td><td>Length distribution, unexpected characters, regex validation</td></tr>
+            </table>
+        </div>
+
+        <!-- ========== SECTION 1.2.3 ========== -->
+        <div class="section fade-up" id="section3">
+            <h2 class="section-title"><i class="fa-solid fa-scale-balanced"></i> 1.2.3 Data Normalization and Scaling</h2>
+            <p class="section-desc">Learn Min-Max scaling, Z-score normalization, encoding methods, data reduction, and outlier handling techniques.</p>
+
+            <h3>Why Normalization Is Needed</h3>
+            <p>Features measured on different scales (e.g., income in thousands vs. age in decades) can distort distance-based algorithms (k-NN, k-Means, SVM) and slow gradient-descent convergence. Normalization puts all features on a comparable scale.</p>
+
+            <div class="info-box"><i class="fa-solid fa-circle-info"></i>
+                <strong>Key Insight:</strong> Normalization does not change the underlying relationships in the data &mdash; it only rescales values so that no single feature dominates due to its magnitude.
+            </div>
+
+            <h3>Min-Max Scaling</h3>
+            <p>Rescales values to the range [0, 1] (or any [a, b]).</p>
+            <p><strong>Formula:</strong></p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>X_scaled = (X - X_min) / (X_max - X_min)</div>
+            <ul>
+                <li>Preserves the original distribution shape.</li>
+                <li>Sensitive to outliers (a single extreme value stretches the range).</li>
+            </ul>
+
+            <h4>Min-Max Scaling Example</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'income'</span>: [<span class="num">30000</span>, <span class="num">50000</span>, <span class="num">80000</span>, <span class="num">120000</span>],
+    <span class="str">'age'</span>:    [<span class="num">22</span>, <span class="num">35</span>, <span class="num">45</span>, <span class="num">60</span>]
+})
+
+<span class="cm"># Manual Min-Max scaling</span>
+<span class="kw">for</span> col <span class="kw">in</span> [<span class="str">'income'</span>, <span class="str">'age'</span>]:
+    df[col + <span class="str">'_scaled'</span>] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
+
+<span class="fn">print</span>(df)
+<span class="cm">#    income  age  income_scaled  age_scaled
+# 0   30000   22       0.000000    0.000000
+# 1   50000   35       0.222222    0.342105
+# 2   80000   45       0.555556    0.605263
+# 3  120000   60       1.000000    1.000000</span></div>
+
+            <h3>Z-Score Normalization (Standardization)</h3>
+            <p>Transforms values so they have a mean of 0 and a standard deviation of 1.</p>
+            <p><strong>Formula:</strong></p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>Z = (X - mean) / std</div>
+            <ul>
+                <li>Not bounded to a specific range.</li>
+                <li>Less sensitive to outliers than Min-Max.</li>
+                <li>Ideal when the feature approximately follows a normal distribution.</li>
+            </ul>
+
+            <h4>Z-Score Normalization Example</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({<span class="str">'score'</span>: [<span class="num">70</span>, <span class="num">80</span>, <span class="num">90</span>, <span class="num">100</span>, <span class="num">60</span>]})
+
+<span class="cm"># Z-score normalization</span>
+df[<span class="str">'score_z'</span>] = (df[<span class="str">'score'</span>] - df[<span class="str">'score'</span>].mean()) / df[<span class="str">'score'</span>].std()
+
+<span class="fn">print</span>(df)
+<span class="cm">#    score   score_z
+# 0     70 -0.632456
+# 1     80  0.000000
+# 2     90  0.632456
+# 3    100  1.264911
+# 4     60 -1.264911</span></div>
+
+            <h3>Comparison: Min-Max vs Z-Score</h3>
+            <table class="dark-table">
+                <tr><th>Feature</th><th>Min-Max Scaling</th><th>Z-Score (Standardization)</th></tr>
+                <tr><td>Output range</td><td>[0, 1]</td><td>Unbounded (centered at 0)</td></tr>
+                <tr><td>Outlier sensitivity</td><td>High</td><td>Moderate</td></tr>
+                <tr><td>Preserves distribution</td><td>Yes (same shape)</td><td>Yes (same shape)</td></tr>
+                <tr><td>Best for</td><td>Neural networks, image pixels</td><td>Linear regression, PCA, SVMs</td></tr>
+            </table>
+
+            <h3>Encoding Categorical Variables</h3>
+
+            <h4>One-Hot Encoding</h4>
+            <p>Creates a new binary (0/1) column for each unique category value. Use when there is <strong>no ordinal relationship</strong> between categories.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({<span class="str">'color'</span>: [<span class="str">'red'</span>, <span class="str">'blue'</span>, <span class="str">'green'</span>, <span class="str">'blue'</span>, <span class="str">'red'</span>]})
+
+<span class="cm"># One-hot encoding with pd.get_dummies()</span>
+df_encoded = pd.get_dummies(df, columns=[<span class="str">'color'</span>], dtype=<span class="type">int</span>)
+<span class="fn">print</span>(df_encoded)
+<span class="cm">#    color_blue  color_green  color_red
+# 0           0            0          1
+# 1           1            0          0
+# 2           0            1          0
+# 3           1            0          0
+# 4           0            0          1</span></div>
+
+            <div class="info-box"><i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>Watch Out: The Dummy Variable Trap</strong> &mdash; When using one-hot encoding in regression models, drop one column (e.g., <code>drop_first=True</code>) to avoid perfect multicollinearity. In tree-based models this is generally not necessary.
+            </div>
+
+            <h4>Label Encoding</h4>
+            <p>Maps each category to a unique integer. Use for <strong>ordinal</strong> variables where the order matters (e.g., low &lt; medium &lt; high).</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+
+le = LabelEncoder()
+df = pd.DataFrame({<span class="str">'size'</span>: [<span class="str">'small'</span>, <span class="str">'medium'</span>, <span class="str">'large'</span>, <span class="str">'medium'</span>, <span class="str">'small'</span>]})
+
+df[<span class="str">'size_encoded'</span>] = le.fit_transform(df[<span class="str">'size'</span>])
+<span class="fn">print</span>(df)
+<span class="cm">#      size  size_encoded
+# 0   small             2
+# 1  medium             1
+# 2   large             0
+# 3  medium             1
+# 4   small             2</span>
+
+<span class="cm"># To see the mapping:</span>
+<span class="fn">print</span>(<span class="fn">dict</span>(<span class="fn">zip</span>(le.classes_, le.transform(le.classes_))))
+<span class="cm"># {'large': 0, 'medium': 1, 'small': 2}</span></div>
+
+            <div class="info-box"><i class="fa-solid fa-circle-info"></i>
+                <strong>Note:</strong> <code>LabelEncoder</code> assigns integers alphabetically, not by semantic order. For truly ordinal encoding where you control the order, use a manual mapping: <code>df['size'].map({'small': 0, 'medium': 1, 'large': 2})</code>.
+            </div>
+
+            <h3>Data Reduction: Pros and Cons</h3>
+            <p><strong>Data reduction</strong> decreases the volume of data while retaining meaningful information. Common techniques include dimensionality reduction (PCA), feature selection, and aggregation.</p>
+            <table class="dark-table">
+                <tr><th>Pros</th><th>Cons</th></tr>
+                <tr><td>Faster computation and model training</td><td>Risk of losing important information</td></tr>
+                <tr><td>Reduced storage and memory requirements</td><td>May oversimplify complex relationships</td></tr>
+                <tr><td>Mitigates the curse of dimensionality</td><td>Reduced components can be hard to interpret</td></tr>
+                <tr><td>Can reduce noise and improve model performance</td><td>Requires careful tuning (e.g., choosing the number of components)</td></tr>
+            </table>
+
+            <h3>Outlier Handling</h3>
+
+            <h4>Detection with the IQR Method</h4>
+            <p>The <strong>Interquartile Range (IQR)</strong> method defines outliers as values below Q1 &minus; 1.5&times;IQR or above Q3 + 1.5&times;IQR.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+data = pd.Series([<span class="num">10</span>, <span class="num">12</span>, <span class="num">14</span>, <span class="num">15</span>, <span class="num">15</span>, <span class="num">16</span>, <span class="num">18</span>, <span class="num">19</span>, <span class="num">20</span>, <span class="num">100</span>])
+
+Q1 = data.quantile(<span class="num">0.25</span>)
+Q3 = data.quantile(<span class="num">0.75</span>)
+IQR = Q3 - Q1
+
+lower_bound = Q1 - <span class="num">1.5</span> * IQR
+upper_bound = Q3 + <span class="num">1.5</span> * IQR
+
+outliers = data[(data &lt; lower_bound) | (data &gt; upper_bound)]
+<span class="fn">print</span>(<span class="str">f"IQR: {IQR}"</span>)
+<span class="fn">print</span>(<span class="str">f"Bounds: [{lower_bound}, {upper_bound}]"</span>)
+<span class="fn">print</span>(<span class="str">f"Outliers: {outliers.tolist()}"</span>)
+<span class="cm"># IQR: 5.25
+# Bounds: [5.875, 27.125]
+# Outliers: [100]</span></div>
+
+            <h4>Detection with the Z-Score Method</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+data = pd.Series([<span class="num">10</span>, <span class="num">12</span>, <span class="num">14</span>, <span class="num">15</span>, <span class="num">15</span>, <span class="num">16</span>, <span class="num">18</span>, <span class="num">19</span>, <span class="num">20</span>, <span class="num">100</span>])
+
+z_scores = (data - data.mean()) / data.std()
+outliers = data[z_scores.abs() &gt; <span class="num">3</span>]
+<span class="fn">print</span>(<span class="str">f"Outliers (|Z| > 3): {outliers.tolist()}"</span>)
+<span class="cm"># Outliers (|Z| > 3): [100]</span></div>
+
+            <h4>Outlier Treatment Techniques</h4>
+            <table class="dark-table">
+                <tr><th>Technique</th><th>Description</th><th>When to Use</th></tr>
+                <tr><td>Remove</td><td>Delete the outlier rows.</td><td>When you are confident the values are errors.</td></tr>
+                <tr><td>Cap / Winsorize</td><td>Replace outliers with the nearest non-outlier value (e.g., the upper/lower bound).</td><td>When you want to keep the row but limit extreme influence.</td></tr>
+                <tr><td>Transform</td><td>Apply log, sqrt, or Box-Cox to compress the range.</td><td>When the data is right-skewed and outliers are legitimate.</td></tr>
+                <tr><td>Impute</td><td>Replace with mean/median.</td><td>When the value is clearly an error but removal would lose other column data.</td></tr>
+                <tr><td>Keep</td><td>Leave as-is and use robust methods (e.g., median instead of mean).</td><td>When outliers are genuine and informative.</td></tr>
+            </table>
+
+            <h3>Data Format Standardization</h3>
+            <p>Ensuring consistent formats is essential for joining datasets and running comparisons.</p>
+            <ul>
+                <li><strong>Date-time</strong> &mdash; parse to a consistent <code>datetime</code> type and use a single format (e.g., ISO 8601: <code>YYYY-MM-DD</code>).</li>
+                <li><strong>Numerical values</strong> &mdash; ensure consistent decimal separators (comma vs. period), remove currency symbols, and standardize units.</li>
+            </ul>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Standardize mixed date formats</span>
+dates = pd.Series([<span class="str">'2024-01-15'</span>, <span class="str">'01/20/2024'</span>, <span class="str">'March 5, 2024'</span>])
+dates_clean = pd.to_datetime(dates)
+<span class="fn">print</span>(dates_clean)
+<span class="cm"># 0   2024-01-15
+# 1   2024-01-20
+# 2   2024-03-05
+# dtype: datetime64[ns]</span>
+
+<span class="cm"># Standardize numerical strings with currency symbols</span>
+prices = pd.Series([<span class="str">'$1,200.50'</span>, <span class="str">'$850.00'</span>, <span class="str">'$3,100.75'</span>])
+prices_clean = prices.str.replace(<span class="str">'[$,]'</span>, <span class="str">''</span>, regex=<span class="kw">True</span>).astype(<span class="type">float</span>)
+<span class="fn">print</span>(prices_clean)
+<span class="cm"># 0    1200.50
+# 1     850.00
+# 2    3100.75
+# dtype: float64</span></div>
+        </div>
+
+        <!-- ========== SECTION 1.2.4 ========== -->
+        <div class="section fade-up" id="section4">
+            <h2 class="section-title"><i class="fa-solid fa-broom"></i> 1.2.4 Applying Cleaning Techniques</h2>
+            <p class="section-desc">Apply string manipulation, boolean normalization, type conversions, encoding, and binning in end-to-end cleaning pipelines.</p>
+
+            <h3>String Manipulation and Cleaning</h3>
+            <p>Text data is often messy. Common string cleaning operations include trimming whitespace, normalizing case, removing special characters, and extracting patterns with regex.</p>
+
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'name'</span>:  [<span class="str">'  Alice '</span>, <span class="str">'BOB'</span>, <span class="str">'charlie'</span>, <span class="str">'  Dave  '</span>],
+    <span class="str">'email'</span>: [<span class="str">'ALICE@MAIL.COM'</span>, <span class="str">'bob@mail.com'</span>, <span class="str">'Charlie@Mail.Com'</span>, <span class="str">'dave@MAIL.com'</span>],
+    <span class="str">'phone'</span>: [<span class="str">'(555) 123-4567'</span>, <span class="str">'555.234.5678'</span>, <span class="str">'555-345-6789'</span>, <span class="str">'5554567890'</span>]
+})
+
+<span class="cm"># Strip leading/trailing whitespace</span>
+df[<span class="str">'name'</span>] = df[<span class="str">'name'</span>].str.strip()
+
+<span class="cm"># Normalize case &mdash; title case for names, lower for emails</span>
+df[<span class="str">'name'</span>]  = df[<span class="str">'name'</span>].str.title()
+df[<span class="str">'email'</span>] = df[<span class="str">'email'</span>].str.lower()
+
+<span class="cm"># Remove non-digit characters from phone numbers</span>
+df[<span class="str">'phone'</span>] = df[<span class="str">'phone'</span>].str.replace(<span class="str">r'\D'</span>, <span class="str">''</span>, regex=<span class="kw">True</span>)
+
+<span class="fn">print</span>(df)
+<span class="cm">#       name             email       phone
+# 0    Alice    alice@mail.com  5551234567
+# 1      Bob      bob@mail.com  5552345678
+# 2  Charlie  charlie@mail.com  5553456789
+# 3     Dave     dave@mail.com  5554567890</span></div>
+
+            <h3>Boolean Normalization</h3>
+            <p>Datasets may encode boolean values inconsistently: <code>"Yes"</code>, <code>"yes"</code>, <code>"Y"</code>, <code>1</code>, <code>"true"</code>, etc. Normalize them to a single Python <code>bool</code> type.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'subscribed'</span>: [<span class="str">'Yes'</span>, <span class="str">'no'</span>, <span class="str">'Y'</span>, <span class="str">'TRUE'</span>, <span class="str">'false'</span>, <span class="str">'1'</span>, <span class="str">'0'</span>]
+})
+
+<span class="cm"># Map various representations to True/False</span>
+true_values = {<span class="str">'yes'</span>, <span class="str">'y'</span>, <span class="str">'true'</span>, <span class="str">'1'</span>}
+df[<span class="str">'subscribed_clean'</span>] = df[<span class="str">'subscribed'</span>].str.lower().isin(true_values)
+
+<span class="fn">print</span>(df)
+<span class="cm">#   subscribed  subscribed_clean
+# 0        Yes              True
+# 1         no             False
+# 2          Y              True
+# 3       TRUE              True
+# 4      false             False
+# 5          1              True
+# 6          0             False</span></div>
+
+            <h3>String Case Normalization</h3>
+            <p>pandas provides several case-conversion methods via the <code>.str</code> accessor:</p>
+            <table class="dark-table">
+                <tr><th>Method</th><th>Result</th><th>Use Case</th></tr>
+                <tr><td><code>.str.lower()</code></td><td><code>'hello world'</code></td><td>Email addresses, case-insensitive matching</td></tr>
+                <tr><td><code>.str.upper()</code></td><td><code>'HELLO WORLD'</code></td><td>Country codes, acronyms</td></tr>
+                <tr><td><code>.str.title()</code></td><td><code>'Hello World'</code></td><td>People's names, place names</td></tr>
+                <tr><td><code>.str.capitalize()</code></td><td><code>'Hello world'</code></td><td>Sentence starts</td></tr>
+            </table>
+
+            <h3>String-to-Number Conversions</h3>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'value'</span>: [<span class="str">'42'</span>, <span class="str">'3.14'</span>, <span class="str">'N/A'</span>, <span class="str">'100'</span>, <span class="str">'abc'</span>]
+})
+
+<span class="cm"># pd.to_numeric with errors='coerce' turns non-parseable strings to NaN</span>
+df[<span class="str">'value_num'</span>] = pd.to_numeric(df[<span class="str">'value'</span>], errors=<span class="str">'coerce'</span>)
+
+<span class="fn">print</span>(df)
+<span class="cm">#   value  value_num
+# 0    42      42.00
+# 1  3.14       3.14
+# 2   N/A        NaN
+# 3   100     100.00
+# 4   abc        NaN</span></div>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>Exam Tip:</strong> <code>pd.to_numeric(series, errors='coerce')</code> is the safest way to convert a column that might contain non-numeric strings. The <code>errors='coerce'</code> parameter turns unparseable values into <code>NaN</code> instead of raising an error.
+            </div>
+
+            <h3>Imputation vs. Exclusion: Pros and Cons</h3>
+            <table class="dark-table">
+                <tr><th>Strategy</th><th>Pros</th><th>Cons</th></tr>
+                <tr>
+                    <td><strong>Imputation</strong></td>
+                    <td>
+                        <ul>
+                            <li>Preserves sample size</li>
+                            <li>Utilizes available partial data</li>
+                            <li>Maintains statistical power</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Introduces artificial values</li>
+                            <li>Can reduce variance</li>
+                            <li>May mask underlying patterns</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Exclusion (Dropping)</strong></td>
+                    <td>
+                        <ul>
+                            <li>Simple to implement</li>
+                            <li>No artificial data introduced</li>
+                            <li>Maintains data authenticity</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Reduces sample size</li>
+                            <li>Can introduce selection bias (if not MCAR)</li>
+                            <li>Loss of information</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="info-box"><i class="fa-solid fa-circle-info"></i>
+                <strong>Rule of Thumb:</strong> If a column has more than 40&ndash;50% missing values, consider dropping the entire column rather than imputing. If a row has most of its values missing, consider dropping the row. For smaller amounts of missingness, imputation is usually preferred.
+            </div>
+
+            <h3>One-Hot Encoding for Categorical Variables</h3>
+            <p>One-hot encoding converts each category level into a separate binary column. This is the standard approach for nominal (unordered) categories in most machine learning pipelines.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'city'</span>:  [<span class="str">'NYC'</span>, <span class="str">'LA'</span>, <span class="str">'Chicago'</span>, <span class="str">'NYC'</span>, <span class="str">'LA'</span>],
+    <span class="str">'sales'</span>: [<span class="num">200</span>, <span class="num">150</span>, <span class="num">300</span>, <span class="num">250</span>, <span class="num">180</span>]
+})
+
+<span class="cm"># One-hot encode 'city'</span>
+df_encoded = pd.get_dummies(df, columns=[<span class="str">'city'</span>], dtype=<span class="type">int</span>)
+<span class="fn">print</span>(df_encoded)
+<span class="cm">#    sales  city_Chicago  city_LA  city_NYC
+# 0    200             0        0         1
+# 1    150             0        1         0
+# 2    300             1        0         0
+# 3    250             0        0         1
+# 4    180             0        1         0</span>
+
+<span class="cm"># With drop_first=True to avoid multicollinearity</span>
+df_encoded2 = pd.get_dummies(df, columns=[<span class="str">'city'</span>], drop_first=<span class="kw">True</span>, dtype=<span class="type">int</span>)
+<span class="fn">print</span>(df_encoded2)
+<span class="cm">#    sales  city_LA  city_NYC
+# 0    200        0         1
+# 1    150        1         0
+# 2    300        0         0
+# 3    250        0         1
+# 4    180        1         0</span></div>
+
+            <h3>Bucketization (Binning) of Continuous Variables</h3>
+            <p><strong>Bucketization</strong> (also called binning or discretization) converts continuous numerical values into categorical groups (bins). This is useful when:</p>
+            <ul>
+                <li>You want to reduce the effect of minor observation errors.</li>
+                <li>The relationship between the variable and the target is non-linear and step-like.</li>
+                <li>You need categorical features for certain algorithms (e.g., decision trees may benefit from pre-binned features).</li>
+            </ul>
+
+            <h4>Using pd.cut() for Equal-Width Bins</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">'age'</span>: [<span class="num">5</span>, <span class="num">17</span>, <span class="num">22</span>, <span class="num">35</span>, <span class="num">45</span>, <span class="num">55</span>, <span class="num">67</span>, <span class="num">78</span>, <span class="num">85</span>]
+})
+
+<span class="cm"># Define custom bin edges and labels</span>
+bins   = [<span class="num">0</span>, <span class="num">18</span>, <span class="num">35</span>, <span class="num">50</span>, <span class="num">65</span>, <span class="num">100</span>]
+labels = [<span class="str">'Child'</span>, <span class="str">'Young Adult'</span>, <span class="str">'Middle Age'</span>, <span class="str">'Senior'</span>, <span class="str">'Elderly'</span>]
+
+df[<span class="str">'age_group'</span>] = pd.cut(df[<span class="str">'age'</span>], bins=bins, labels=labels)
+
+<span class="fn">print</span>(df)
+<span class="cm">#    age    age_group
+# 0    5        Child
+# 1   17        Child
+# 2   22  Young Adult
+# 3   35  Young Adult
+# 4   45   Middle Age
+# 5   55       Senior
+# 6   67      Elderly
+# 7   78      Elderly
+# 8   85      Elderly</span></div>
+
+            <h4>Using pd.qcut() for Equal-Frequency Bins</h4>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># pd.qcut() creates bins with approximately equal numbers of observations</span>
+df[<span class="str">'age_quartile'</span>] = pd.qcut(df[<span class="str">'age'</span>], q=<span class="num">4</span>, labels=[<span class="str">'Q1'</span>, <span class="str">'Q2'</span>, <span class="str">'Q3'</span>, <span class="str">'Q4'</span>])
+
+<span class="fn">print</span>(df[[<span class="str">'age'</span>, <span class="str">'age_quartile'</span>]])
+<span class="cm">#    age age_quartile
+# 0    5           Q1
+# 1   17           Q1
+# 2   22           Q2
+# 3   35           Q2
+# 4   45           Q3
+# 5   55           Q3
+# 6   67           Q4
+# 7   78           Q4
+# 8   85           Q4</span></div>
+
+            <div class="info-box"><i class="fa-solid fa-lightbulb"></i>
+                <strong>pd.cut() vs pd.qcut():</strong> <code>pd.cut()</code> divides the value range into equal-width intervals. <code>pd.qcut()</code> divides the data into intervals with roughly equal numbers of observations. Use <code>qcut</code> when you want balanced groups regardless of value distribution.
+            </div>
+
+            <h3>Comprehensive Cleaning Pipeline Example</h3>
+            <p>Below is a realistic end-to-end cleaning pipeline that combines multiple techniques covered in this topic.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ---- 1. Load raw data ----</span>
+df = pd.DataFrame({
+    <span class="str">'name'</span>:     [<span class="str">'  alice '</span>, <span class="str">'BOB'</span>, <span class="str">'Charlie'</span>, <span class="str">'  alice '</span>, <span class="str">'eve'</span>, <span class="str">'Frank'</span>],
+    <span class="str">'age'</span>:      [<span class="num">28</span>, np.nan, <span class="num">-5</span>, <span class="num">28</span>, <span class="num">300</span>, <span class="num">42</span>],
+    <span class="str">'salary'</span>:   [<span class="str">'$50,000'</span>, <span class="str">'$60,000'</span>, <span class="str">'$55,000'</span>, <span class="str">'$50,000'</span>, np.nan, <span class="str">'$70,000'</span>],
+    <span class="str">'dept'</span>:     [<span class="str">'Sales'</span>, <span class="str">'IT'</span>, <span class="str">'Sales'</span>, <span class="str">'Sales'</span>, <span class="str">'HR'</span>, <span class="str">'IT'</span>],
+    <span class="str">'active'</span>:   [<span class="str">'Yes'</span>, <span class="str">'true'</span>, <span class="str">'1'</span>, <span class="str">'Yes'</span>, <span class="str">'no'</span>, <span class="str">'FALSE'</span>]
+})
+
+<span class="cm"># ---- 2. String cleaning ----</span>
+df[<span class="str">'name'</span>] = df[<span class="str">'name'</span>].str.strip().str.title()
+
+<span class="cm"># ---- 3. Boolean normalization ----</span>
+true_vals = {<span class="str">'yes'</span>, <span class="str">'true'</span>, <span class="str">'1'</span>}
+df[<span class="str">'active'</span>] = df[<span class="str">'active'</span>].str.lower().isin(true_vals)
+
+<span class="cm"># ---- 4. Numeric standardization ----</span>
+df[<span class="str">'salary'</span>] = df[<span class="str">'salary'</span>].str.replace(<span class="str">r'[$,]'</span>, <span class="str">''</span>, regex=<span class="kw">True</span>).astype(<span class="type">float</span>)
+
+<span class="cm"># ---- 5. Remove duplicates ----</span>
+df = df.drop_duplicates(subset=[<span class="str">'name'</span>, <span class="str">'age'</span>], keep=<span class="str">'first'</span>)
+
+<span class="cm"># ---- 6. Handle invalid ages ----</span>
+df.loc[~df[<span class="str">'age'</span>].between(<span class="num">0</span>, <span class="num">120</span>), <span class="str">'age'</span>] = np.nan
+
+<span class="cm"># ---- 7. Impute missing values ----</span>
+df[<span class="str">'age'</span>]    = df[<span class="str">'age'</span>].fillna(df[<span class="str">'age'</span>].median())
+df[<span class="str">'salary'</span>] = df[<span class="str">'salary'</span>].fillna(df[<span class="str">'salary'</span>].median())
+
+<span class="cm"># ---- 8. One-hot encode department ----</span>
+df = pd.get_dummies(df, columns=[<span class="str">'dept'</span>], dtype=<span class="type">int</span>)
+
+<span class="cm"># ---- 9. Min-Max scale salary ----</span>
+df[<span class="str">'salary_scaled'</span>] = (
+    (df[<span class="str">'salary'</span>] - df[<span class="str">'salary'</span>].min())
+    / (df[<span class="str">'salary'</span>].max() - df[<span class="str">'salary'</span>].min())
+)
+
+<span class="fn">print</span>(df)
+<span class="cm"># Clean, encoded, and scaled DataFrame ready for analysis</span></div>
+        </div>
+
+        <!-- ========== QUIZ ========== -->
+        <div class="section fade-up" id="quiz">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> Practice Quiz &mdash; Topic 1.2</h2>
+            <p class="section-desc">Test your understanding with 10 multiple-choice questions. Click an option to see the answer and explanation.</p>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q1. Which type of data has a predefined schema with rows and columns?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) Unstructured data</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">B) Structured data</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) Semi-structured data</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Raw binary data</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> Structured data is organized in a tabular format with a fixed schema (predefined columns with data types). Relational databases and CSV files are common examples. Unstructured data (A) lacks a schema, semi-structured data (C) has tags/keys but no rigid tabular layout, and raw binary (D) is not a standard data classification category.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q2. A survey records weight for most participants, but males are less likely to fill in the weight field. The actual weight does not influence whether the field is left blank. What type of missingness is this?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) MCAR (Missing Completely At Random)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">B) MAR (Missing At Random)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) MNAR (Missing Not At Random)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Systematic missingness</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> The missingness depends on an observed variable (gender) but not on the missing value itself (weight). This matches the definition of MAR. If the actual weight determined whether it was reported (e.g., heavier people avoid reporting), it would be MNAR.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q3. Which imputation method is MOST appropriate for a numerical column with a highly skewed distribution?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) Mean imputation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">B) Median imputation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) Mode imputation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Forward fill</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> The median is robust to outliers and skewness, making it the best central-tendency imputer for skewed numerical data. Mean imputation (A) is sensitive to outliers and would be pulled toward the tail. Mode (C) is typically used for categorical data. Forward fill (D) is for time-series data.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q4. What is the result of applying Min-Max scaling to a value that equals the column minimum?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">A) 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">B) 1</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) -1</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) 0.5</div>
+                <div class="quiz-explanation"><strong>Correct: A)</strong> The Min-Max formula is (X - X_min) / (X_max - X_min). When X equals X_min, the numerator is 0, so the result is 0. The maximum value maps to 1.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q5. After Z-score normalization, what are the mean and standard deviation of the transformed feature?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) Mean = 0, Std = 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">B) Mean = 0, Std = 1</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) Mean = 1, Std = 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Mean = 0.5, Std = 0.5</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> Z-score normalization (standardization) transforms data so that the mean is 0 and the standard deviation is 1. The formula Z = (X - mean) / std achieves this by centering on the mean and scaling by the standard deviation.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q6. Which encoding method should you use for a nominal categorical variable with no inherent order (e.g., color: red, blue, green)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">A) One-hot encoding</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">B) Label encoding</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) Ordinal encoding</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Binary encoding</div>
+                <div class="quiz-explanation"><strong>Correct: A)</strong> One-hot encoding creates a separate binary column for each category and does not imply any ordinal relationship. Label encoding (B) assigns integers that a model might misinterpret as having an order (e.g., 0 &lt; 1 &lt; 2), which is incorrect for nominal data.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q7. Using the IQR method, a data point is considered an outlier if it falls:</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) Below Q1 or above Q3</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">B) Below Q1 - 1.0*IQR or above Q3 + 1.0*IQR</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">C) Below Q1 - 1.5*IQR or above Q3 + 1.5*IQR</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Below Q1 - 2.0*IQR or above Q3 + 2.0*IQR</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> The standard IQR rule defines outliers as observations below Q1 - 1.5 * IQR or above Q3 + 1.5 * IQR. Values beyond Q1 - 3 * IQR or Q3 + 3 * IQR are sometimes called "extreme outliers."</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q8. What does <code>pd.to_numeric(series, errors='coerce')</code> do when it encounters a non-numeric string?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) Raises a ValueError</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">B) Converts it to 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">C) Converts it to NaN</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Skips the value and leaves the original string</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> The <code>errors='coerce'</code> parameter tells pandas to convert any value that cannot be parsed as a number into <code>NaN</code> rather than raising an error (<code>errors='raise'</code>, the default) or leaving it as-is (<code>errors='ignore'</code>).</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q9. What is the main difference between <code>pd.cut()</code> and <code>pd.qcut()</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) <code>pd.cut()</code> is for categorical data; <code>pd.qcut()</code> is for numerical data</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">B) <code>pd.cut()</code> creates equal-width bins; <code>pd.qcut()</code> creates equal-frequency bins</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) <code>pd.cut()</code> is deprecated in favor of <code>pd.qcut()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) <code>pd.qcut()</code> creates equal-width bins; <code>pd.cut()</code> creates equal-frequency bins</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> <code>pd.cut()</code> divides the value range into intervals of equal width (e.g., 0-10, 10-20, 20-30). <code>pd.qcut()</code> divides the data into intervals that each contain approximately the same number of observations (quantile-based). Both are used for numerical data.</div>
+            </div>
+
+            <div class="quiz-box" data-section="q12">
+                <div class="quiz-question">Q10. A dataset has 10% missing values in a column and the data is MCAR. Which approach is MOST appropriate?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">A) Drop the entire column</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q12')">B) Impute with mean or median</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">C) Drop all rows with any missing values in the dataset</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q12')">D) Replace with a constant value of 0</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> With only 10% missing and MCAR mechanism, imputation (mean for symmetric, median for skewed) is the most appropriate strategy. It preserves sample size without introducing bias (since MCAR means missingness is random). Dropping the column (A) is wasteful for 10% missingness. Dropping all rows (C) reduces data unnecessarily. Replacing with 0 (D) would introduce bias unless 0 is actually a meaningful value.</div>
+            </div>
+
+            <div id="score-q12" class="score-box"></div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic1-1.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous Topic</a>
+            <a href="topic1-3.html" class="nav-btn next">Next Topic <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a href="#section1" class="toc-item">1.2.1 Structured &amp; Unstructured Data</a>
+        <a href="#section2" class="toc-item">1.2.2 Erroneous Data</a>
+        <a href="#section3" class="toc-item">1.2.3 Normalization &amp; Scaling</a>
+        <a href="#section4" class="toc-item">1.2.4 Applying Cleaning Techniques</a>
+        <a href="#quiz" class="toc-item">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

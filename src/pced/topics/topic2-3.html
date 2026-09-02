@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 2.3: Object-Oriented Programming for Data Modeling | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Object-Oriented Programming for Data Modeling</h1>
+        <p class="hero-sub">Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">Topic 2.3 &middot; 3 Objectives</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.3.1: Basic OOP for Data Modeling -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="oop-basics">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-cube"></i> 2.3.1 Basic OOP for Data Modeling</h2>
+
+                <p>Object-Oriented Programming (OOP) lets you bundle related data and behavior into <strong>classes</strong>. In data analysis workflows, classes model real-world entities such as records, responses, configurations, and exporters. Understanding how to define and use classes is essential for the exam.</p>
+
+                <!-- Defining Classes -->
+                <h3><i class="fa-solid fa-code"></i> Defining Classes with the <code>class</code> Keyword</h3>
+                <p>A class is a blueprint for creating objects. You define a class using the <code>class</code> keyword, followed by a name (conventionally in <strong>PascalCase</strong>) and a colon:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">DataRecord</span>:
+    <span class="str">"""Represents a single data record from a survey."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, record_id, values):
+        <span class="cm"># Constructor: called automatically when an object is created</span>
+        self.record_id = record_id    <span class="cm"># instance variable</span>
+        self.values = values          <span class="cm"># instance variable (a dict)</span>
+        self.is_valid = <span class="kw">True</span>         <span class="cm"># default attribute</span>
+
+    <span class="kw">def</span> <span class="fn">field_count</span>(self):
+        <span class="str">"""Return the number of fields in this record."""</span>
+        <span class="kw">return</span> len(self.values)
+
+    <span class="kw">def</span> <span class="fn">get_field</span>(self, name, default=<span class="kw">None</span>):
+        <span class="str">"""Safely retrieve a field value."""</span>
+        <span class="kw">return</span> self.values.get(name, default)
+
+    <span class="kw">def</span> <span class="fn">invalidate</span>(self, reason):
+        <span class="str">"""Mark the record as invalid."""</span>
+        self.is_valid = <span class="kw">False</span>
+        self.invalid_reason = reason
+
+<span class="cm"># Creating instances</span>
+rec = DataRecord(<span class="num">101</span>, {<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"score"</span>: <span class="num">87</span>})
+print(rec.record_id)          <span class="cm"># 101</span>
+print(rec.field_count())      <span class="cm"># 2</span>
+print(rec.get_field(<span class="str">"score"</span>)) <span class="cm"># 87</span></div>
+
+                <div class="info-box">
+                    <strong>Key Points for the Exam:</strong>
+                    <code>__init__</code> is the constructor &mdash; it runs automatically when you create an object. The first parameter is always <code>self</code>, which refers to the instance being created. Every attribute assigned to <code>self</code> becomes an <strong>instance variable</strong> unique to that object.
+                </div>
+
+                <!-- Instance Methods -->
+                <h3><i class="fa-solid fa-gears"></i> Instance Methods</h3>
+                <p>Instance methods are functions defined inside a class that operate on a specific object. They always take <code>self</code> as their first parameter, giving them access to the object's attributes and other methods:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">DataRecord</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, record_id, values):
+        self.record_id = record_id
+        self.values = values
+
+    <span class="kw">def</span> <span class="fn">summary</span>(self):
+        <span class="str">"""Return a summary string for this record."""</span>
+        fields = <span class="str">", "</span>.join(self.values.keys())
+        <span class="kw">return</span> <span class="str">f"Record </span>{self.record_id}<span class="str">: [</span>{fields}<span class="str">]"</span>
+
+    <span class="kw">def</span> <span class="fn">merge</span>(self, other_values):
+        <span class="str">"""Merge additional fields into the record."""</span>
+        self.values.update(other_values)
+
+rec = DataRecord(<span class="num">1</span>, {<span class="str">"age"</span>: <span class="num">30</span>})
+rec.merge({<span class="str">"city"</span>: <span class="str">"Amman"</span>})
+print(rec.summary())  <span class="cm"># Record 1: [age, city]</span></div>
+
+                <!-- Encapsulation -->
+                <h3><i class="fa-solid fa-lock"></i> Encapsulation: <code>_protected</code> and <code>__private</code></h3>
+                <p>Python uses <strong>naming conventions</strong> rather than strict access modifiers to signal how attributes should be used:</p>
+
+                <table class="dark-table">
+                    <tr><th>Convention</th><th>Example</th><th>Meaning</th></tr>
+                    <tr><td>No prefix</td><td><code>self.name</code></td><td>Public &mdash; part of the class's external API</td></tr>
+                    <tr><td>Single underscore</td><td><code>self._cache</code></td><td>Protected &mdash; "internal, don't touch" (not enforced)</td></tr>
+                    <tr><td>Double underscore</td><td><code>self.__secret</code></td><td>Private &mdash; triggers <strong>name mangling</strong> (<code>_ClassName__secret</code>)</td></tr>
+                </table>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">SensitiveRecord</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patient_id, diagnosis):
+        self.patient_id = patient_id      <span class="cm"># public</span>
+        self._diagnosis = diagnosis        <span class="cm"># protected (convention only)</span>
+        self.__ssn = <span class="kw">None</span>                  <span class="cm"># private (name-mangled)</span>
+
+    <span class="kw">def</span> <span class="fn">set_ssn</span>(self, ssn):
+        <span class="kw">if</span> len(ssn) == <span class="num">9</span> <span class="kw">and</span> ssn.isdigit():
+            self.__ssn = ssn
+        <span class="kw">else</span>:
+            <span class="kw">raise</span> ValueError(<span class="str">"Invalid SSN format"</span>)
+
+    <span class="kw">def</span> <span class="fn">get_masked_ssn</span>(self):
+        <span class="kw">if</span> self.__ssn:
+            <span class="kw">return</span> <span class="str">"***-**-"</span> + self.__ssn[<span class="num">-4</span>:]
+        <span class="kw">return</span> <span class="kw">None</span>
+
+rec = SensitiveRecord(<span class="str">"P100"</span>, <span class="str">"Flu"</span>)
+rec.set_ssn(<span class="str">"123456789"</span>)
+print(rec.get_masked_ssn())  <span class="cm"># ***-**-6789</span>
+
+<span class="cm"># Direct access to __ssn fails:</span>
+<span class="cm"># print(rec.__ssn)  -> AttributeError</span>
+
+<span class="cm"># But name-mangled version still accessible (not truly private):</span>
+print(rec._SensitiveRecord__ssn)  <span class="cm"># 123456789</span></div>
+
+                <div class="info-box" style="border-left-color:#f59e0b;">
+                    <strong>Exam Watch:</strong>
+                    Name mangling with <code>__</code> double underscores does NOT make an attribute truly private. Python rewrites <code>self.__attr</code> to <code>self._ClassName__attr</code>. This is designed to avoid accidental name collisions in inheritance, not for security.
+                </div>
+
+                <!-- @property -->
+                <h3><i class="fa-solid fa-sliders"></i> Getters and Setters with <code>@property</code></h3>
+                <p>The <code>@property</code> decorator lets you expose computed or validated attributes that look like simple attribute access from the outside:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">TemperatureReading</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, celsius):
+        self._celsius = celsius  <span class="cm"># store internally</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(self):
+        <span class="str">"""Getter: return the temperature in Celsius."""</span>
+        <span class="kw">return</span> self._celsius
+
+    <span class="kw">@celsius</span>.setter
+    <span class="kw">def</span> <span class="fn">celsius</span>(self, value):
+        <span class="str">"""Setter: validate before storing."""</span>
+        <span class="kw">if</span> value &lt; <span class="num">-273.15</span>:
+            <span class="kw">raise</span> ValueError(<span class="str">"Temperature below absolute zero is impossible"</span>)
+        self._celsius = value
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">fahrenheit</span>(self):
+        <span class="str">"""Read-only computed property."""</span>
+        <span class="kw">return</span> self._celsius * <span class="num">9</span> / <span class="num">5</span> + <span class="num">32</span>
+
+t = TemperatureReading(<span class="num">25</span>)
+print(t.celsius)      <span class="cm"># 25   (uses the getter)</span>
+print(t.fahrenheit)   <span class="cm"># 77.0 (computed property)</span>
+
+t.celsius = <span class="num">30</span>        <span class="cm"># uses the setter with validation</span>
+print(t.fahrenheit)   <span class="cm"># 86.0</span>
+
+<span class="cm"># t.celsius = -300  -> ValueError</span>
+<span class="cm"># t.fahrenheit = 50 -> AttributeError (read-only)</span></div>
+
+                <div class="info-box">
+                    <strong>Why Use @property?</strong>
+                    Properties let you add validation, computation, or logging to attribute access <em>without changing the caller's code</em>. Code that used <code>obj.celsius</code> before the property was added continues to work unchanged.
+                </div>
+
+                <!-- Managing Internal State -->
+                <h3><i class="fa-solid fa-diagram-project"></i> Managing Internal Object State</h3>
+                <p>Objects maintain their own internal state, which methods can modify over time. This pattern is common in data pipelines where records pass through processing stages:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">PipelineRecord</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, raw_data):
+        self.raw_data = raw_data
+        self._cleaned = <span class="kw">False</span>
+        self._validated = <span class="kw">False</span>
+        self._errors = []
+
+    <span class="kw">def</span> <span class="fn">clean</span>(self):
+        <span class="cm"># Strip whitespace from string values</span>
+        self.raw_data = {
+            k: v.strip() <span class="kw">if</span> isinstance(v, str) <span class="kw">else</span> v
+            <span class="kw">for</span> k, v <span class="kw">in</span> self.raw_data.items()
+        }
+        self._cleaned = <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">validate</span>(self, required_fields):
+        <span class="kw">for</span> field <span class="kw">in</span> required_fields:
+            <span class="kw">if</span> field <span class="kw">not in</span> self.raw_data:
+                self._errors.append(<span class="str">f"Missing: </span>{field}<span class="str">"</span>)
+        self._validated = <span class="kw">True</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">is_ready</span>(self):
+        <span class="kw">return</span> self._cleaned <span class="kw">and</span> self._validated <span class="kw">and</span> <span class="kw">not</span> self._errors
+
+rec = PipelineRecord({<span class="str">"name"</span>: <span class="str">"  Alice  "</span>, <span class="str">"score"</span>: <span class="num">92</span>})
+rec.clean()
+rec.validate([<span class="str">"name"</span>, <span class="str">"score"</span>])
+print(rec.is_ready)   <span class="cm"># True</span>
+print(rec.raw_data)   <span class="cm"># {'name': 'Alice', 'score': 92}</span></div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.3.2: OOP Patterns for Analysis Workflows -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="oop-patterns">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-sitemap"></i> 2.3.2 OOP Patterns for Analysis Workflows</h2>
+
+                <p>Real data projects often combine multiple classes. Three key OOP patterns appear in this course: <strong>composition</strong>, <strong>inheritance</strong>, and <strong>polymorphism</strong>.</p>
+
+                <!-- Composition -->
+                <h3><i class="fa-solid fa-cubes"></i> Composition: Nesting Objects Inside Objects</h3>
+                <p>Composition means one class contains instances of another class as attributes. This is a <strong>"has-a"</strong> relationship. For example, a <code>Survey</code> <em>has</em> multiple <code>Question</code> objects:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Question</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, text, question_type=<span class="str">"text"</span>):
+        self.text = text
+        self.question_type = question_type
+        self.responses = []
+
+    <span class="kw">def</span> <span class="fn">add_response</span>(self, response):
+        self.responses.append(response)
+
+    <span class="kw">def</span> <span class="fn">response_count</span>(self):
+        <span class="kw">return</span> len(self.responses)
+
+
+<span class="kw">class</span> <span class="fn">Survey</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, title):
+        self.title = title
+        self.questions = []   <span class="cm"># will hold Question objects</span>
+
+    <span class="kw">def</span> <span class="fn">add_question</span>(self, text, question_type=<span class="str">"text"</span>):
+        q = Question(text, question_type)
+        self.questions.append(q)
+        <span class="kw">return</span> q
+
+    <span class="kw">def</span> <span class="fn">total_responses</span>(self):
+        <span class="kw">return</span> sum(q.response_count() <span class="kw">for</span> q <span class="kw">in</span> self.questions)
+
+    <span class="kw">def</span> <span class="fn">summary</span>(self):
+        <span class="kw">return</span> {
+            <span class="str">"title"</span>: self.title,
+            <span class="str">"num_questions"</span>: len(self.questions),
+            <span class="str">"total_responses"</span>: self.total_responses()
+        }
+
+
+<span class="cm"># Usage</span>
+survey = Survey(<span class="str">"Customer Satisfaction"</span>)
+q1 = survey.add_question(<span class="str">"How would you rate our service?"</span>, <span class="str">"rating"</span>)
+q2 = survey.add_question(<span class="str">"Any additional comments?"</span>, <span class="str">"text"</span>)
+
+q1.add_response(<span class="num">5</span>)
+q1.add_response(<span class="num">4</span>)
+q2.add_response(<span class="str">"Great experience!"</span>)
+
+print(survey.summary())
+<span class="cm"># {'title': 'Customer Satisfaction', 'num_questions': 2, 'total_responses': 3}</span></div>
+
+                <div class="info-box">
+                    <strong>Composition vs Inheritance:</strong>
+                    Use <strong>composition</strong> when one object <em>contains</em> another (Survey <em>has</em> Questions). Use <strong>inheritance</strong> when one object <em>is a specialized version</em> of another (CSVExporter <em>is a</em> DataExporter). The course exam tests both patterns.
+                </div>
+
+                <!-- Inheritance -->
+                <h3><i class="fa-solid fa-layer-group"></i> Inheritance: Base Classes and Subclasses</h3>
+                <p>Inheritance creates an <strong>"is-a"</strong> relationship. A subclass inherits all methods and attributes from its parent and can <strong>override</strong> or <strong>extend</strong> them:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">BaseExporter</span>:
+    <span class="str">"""Base class for all data exporters."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data):
+        self.data = data        <span class="cm"># list of dicts</span>
+        self._exported = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">validate</span>(self):
+        <span class="str">"""Check that data is non-empty."""</span>
+        <span class="kw">if not</span> self.data:
+            <span class="kw">raise</span> ValueError(<span class="str">"No data to export"</span>)
+        <span class="kw">return</span> <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">export</span>(self):
+        <span class="str">"""Subclasses must override this method."""</span>
+        <span class="kw">raise</span> NotImplementedError(<span class="str">"Subclasses must implement export()"</span>)
+
+    <span class="kw">def</span> <span class="fn">log_export</span>(self, format_name):
+        self._exported = <span class="kw">True</span>
+        print(<span class="str">f"Exported </span>{len(self.data)}<span class="str"> records as </span>{format_name}<span class="str">"</span>)
+
+
+<span class="kw">class</span> <span class="fn">CSVExporter</span>(BaseExporter):
+    <span class="str">"""Exports data as CSV text."""</span>
+
+    <span class="kw">def</span> <span class="fn">export</span>(self):
+        self.validate()
+        headers = <span class="str">","</span>.join(self.data[<span class="num">0</span>].keys())
+        rows = [<span class="str">","</span>.join(str(v) <span class="kw">for</span> v <span class="kw">in</span> row.values()) <span class="kw">for</span> row <span class="kw">in</span> self.data]
+        result = headers + <span class="str">"\n"</span> + <span class="str">"\n"</span>.join(rows)
+        self.log_export(<span class="str">"CSV"</span>)
+        <span class="kw">return</span> result
+
+
+<span class="kw">class</span> <span class="fn">JSONExporter</span>(BaseExporter):
+    <span class="str">"""Exports data as a JSON string."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data, indent=<span class="num">2</span>):
+        <span class="fn">super</span>().__init__(data)  <span class="cm"># call parent constructor</span>
+        self.indent = indent
+
+    <span class="kw">def</span> <span class="fn">export</span>(self):
+        <span class="kw">import</span> json
+        self.validate()
+        result = json.dumps(self.data, indent=self.indent)
+        self.log_export(<span class="str">"JSON"</span>)
+        <span class="kw">return</span> result
+
+
+<span class="cm"># Usage</span>
+data = [{<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"score"</span>: <span class="num">87</span>}, {<span class="str">"name"</span>: <span class="str">"Bob"</span>, <span class="str">"score"</span>: <span class="num">92</span>}]
+
+csv_out = CSVExporter(data)
+print(csv_out.export())
+<span class="cm"># Exported 2 records as CSV</span>
+<span class="cm"># name,score</span>
+<span class="cm"># Alice,87</span>
+<span class="cm"># Bob,92</span>
+
+json_out = JSONExporter(data, indent=<span class="num">4</span>)
+print(json_out.export())
+<span class="cm"># Exported 2 records as JSON</span>
+<span class="cm"># [</span>
+<span class="cm">#     {"name": "Alice", "score": 87},</span>
+<span class="cm">#     ...</span>
+<span class="cm"># ]</span></div>
+
+                <!-- Method Overriding -->
+                <h3><i class="fa-solid fa-arrows-rotate"></i> Method Overriding</h3>
+                <p>When a subclass defines a method with the <strong>same name</strong> as one in the parent class, the subclass version <em>overrides</em> the parent. Use <code>super()</code> when you still need to call the parent's version:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">MarkdownExporter</span>(BaseExporter):
+    <span class="kw">def</span> <span class="fn">validate</span>(self):
+        <span class="cm"># Override: add extra validation, then call parent</span>
+        <span class="fn">super</span>().validate()
+        <span class="kw">for</span> row <span class="kw">in</span> self.data:
+            <span class="kw">if not</span> isinstance(row, dict):
+                <span class="kw">raise</span> TypeError(<span class="str">"Each row must be a dict"</span>)
+        <span class="kw">return</span> <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">export</span>(self):
+        self.validate()
+        headers = list(self.data[<span class="num">0</span>].keys())
+        lines = [<span class="str">"| "</span> + <span class="str">" | "</span>.join(headers) + <span class="str">" |"</span>]
+        lines.append(<span class="str">"| "</span> + <span class="str">" | "</span>.join([<span class="str">"---"</span>] * len(headers)) + <span class="str">" |"</span>)
+        <span class="kw">for</span> row <span class="kw">in</span> self.data:
+            lines.append(<span class="str">"| "</span> + <span class="str">" | "</span>.join(str(v) <span class="kw">for</span> v <span class="kw">in</span> row.values()) + <span class="str">" |"</span>)
+        self.log_export(<span class="str">"Markdown"</span>)
+        <span class="kw">return</span> <span class="str">"\n"</span>.join(lines)</div>
+
+                <!-- Polymorphism -->
+                <h3><i class="fa-solid fa-shapes"></i> Polymorphism: Same Interface, Different Behavior</h3>
+                <p>Polymorphism means calling the <strong>same method name</strong> on different objects and getting behavior specific to each object's class. This is powerful in data pipelines where you process items uniformly without knowing their exact type:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">run_export_pipeline</span>(exporters):
+    <span class="str">"""Process any list of exporters - polymorphism in action."""</span>
+    results = {}
+    <span class="kw">for</span> exporter <span class="kw">in</span> exporters:
+        <span class="cm"># Each exporter has .export() but implements it differently</span>
+        class_name = type(exporter).__name__
+        results[class_name] = exporter.export()
+    <span class="kw">return</span> results
+
+
+data = [{<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"score"</span>: <span class="num">87</span>}, {<span class="str">"name"</span>: <span class="str">"Bob"</span>, <span class="str">"score"</span>: <span class="num">92</span>}]
+
+exporters = [
+    CSVExporter(data),
+    JSONExporter(data),
+    MarkdownExporter(data),
+]
+
+<span class="cm"># Polymorphic call: same .export() method, different output formats</span>
+all_results = run_export_pipeline(exporters)
+<span class="kw">for</span> fmt, output <span class="kw">in</span> all_results.items():
+    print(<span class="str">f"\n--- </span>{fmt}<span class="str"> ---"</span>)
+    print(output)</div>
+
+                <div class="info-box">
+                    <strong>Polymorphism in Practice:</strong>
+                    In the example above, <code>run_export_pipeline</code> does not need to check the type of each exporter. It simply calls <code>.export()</code>, and each subclass provides its own implementation. This is the core idea behind polymorphism and a common exam topic.
+                </div>
+
+                <!-- Real-world workflow -->
+                <h3><i class="fa-solid fa-industry"></i> Real-World Data Workflow Example</h3>
+                <p>Combining composition, inheritance, and polymorphism in a single data pipeline:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">DataProcessor</span>:
+    <span class="str">"""Base processor - defines the pipeline interface."""</span>
+
+    <span class="kw">def</span> <span class="fn">process</span>(self, value):
+        <span class="kw">raise</span> NotImplementedError
+
+
+<span class="kw">class</span> <span class="fn">Trimmer</span>(DataProcessor):
+    <span class="kw">def</span> <span class="fn">process</span>(self, value):
+        <span class="kw">return</span> value.strip() <span class="kw">if</span> isinstance(value, str) <span class="kw">else</span> value
+
+
+<span class="kw">class</span> <span class="fn">UpperCaser</span>(DataProcessor):
+    <span class="kw">def</span> <span class="fn">process</span>(self, value):
+        <span class="kw">return</span> value.upper() <span class="kw">if</span> isinstance(value, str) <span class="kw">else</span> value
+
+
+<span class="kw">class</span> <span class="fn">Pipeline</span>:
+    <span class="str">"""Composition: a Pipeline HAS processors."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, processors):
+        self.processors = processors  <span class="cm"># list of DataProcessor objects</span>
+
+    <span class="kw">def</span> <span class="fn">run</span>(self, value):
+        <span class="kw">for</span> proc <span class="kw">in</span> self.processors:
+            value = proc.process(value)  <span class="cm"># polymorphic call</span>
+        <span class="kw">return</span> value
+
+
+pipe = Pipeline([Trimmer(), UpperCaser()])
+print(pipe.run(<span class="str">"  hello world  "</span>))  <span class="cm"># HELLO WORLD</span></div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2.3.3: Object Identity and Comparisons -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="object-identity">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-equals"></i> 2.3.3 Object Identity and Comparisons</h2>
+
+                <p>Understanding the difference between object <strong>identity</strong> and <strong>equality</strong> is crucial for avoiding subtle bugs and is a frequent exam topic.</p>
+
+                <!-- References and Shared State -->
+                <h3><i class="fa-solid fa-link"></i> Reference Variables: Shared vs Independent Objects</h3>
+                <p>When you assign an object to a new variable, you create a new <strong>reference</strong> to the <em>same</em> object in memory, not a copy:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Bucket</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, items):
+        self.items = items
+
+<span class="cm"># Both variables point to the SAME object</span>
+a = Bucket([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+b = a                      <span class="cm"># b is an alias for a</span>
+
+b.items.append(<span class="num">4</span>)
+print(a.items)             <span class="cm"># [1, 2, 3, 4]  - a is also affected!</span>
+print(a <span class="kw">is</span> b)             <span class="cm"># True  - same object in memory</span>
+
+<span class="cm"># To make an independent copy:</span>
+<span class="kw">import</span> copy
+c = copy.copy(a)           <span class="cm"># shallow copy</span>
+c.items.append(<span class="num">5</span>)
+print(a.items)             <span class="cm"># [1, 2, 3, 4, 5]  - still shared list! (shallow)</span>
+
+d = copy.deepcopy(a)       <span class="cm"># deep copy - fully independent</span>
+d.items.append(<span class="num">6</span>)
+print(a.items)             <span class="cm"># [1, 2, 3, 4, 5] - a is NOT affected</span>
+print(d.items)             <span class="cm"># [1, 2, 3, 4, 5, 6]</span></div>
+
+                <div class="info-box" style="border-left-color:#ef4444;">
+                    <strong>Aliasing Pitfall:</strong>
+                    When objects contain <strong>mutable attributes</strong> (lists, dicts), assigning one variable to another creates a shared reference. Modifying through one reference affects all aliases. This is one of the most common sources of bugs in data pipelines.
+                </div>
+
+                <!-- Mutable Aliasing -->
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Mutation of Lists Inside Objects (Aliasing)</h3>
+                <p>A particularly tricky case occurs when a mutable list is passed into an object's constructor:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>shared_list = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+
+<span class="kw">class</span> <span class="fn">Container</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data):
+        self.data = data  <span class="cm"># stores a REFERENCE, not a copy</span>
+
+c1 = Container(shared_list)
+c2 = Container(shared_list)
+
+c1.data.append(<span class="num">99</span>)
+
+print(c2.data)         <span class="cm"># [1, 2, 3, 99]  - c2 is also affected!</span>
+print(shared_list)     <span class="cm"># [1, 2, 3, 99]  - original list too!</span>
+
+<span class="cm"># Fix: copy the list in the constructor</span>
+<span class="kw">class</span> <span class="fn">SafeContainer</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data):
+        self.data = list(data)  <span class="cm"># make a copy!</span>
+
+s1 = SafeContainer([<span class="num">10</span>, <span class="num">20</span>])
+s2 = SafeContainer([<span class="num">10</span>, <span class="num">20</span>])
+s1.data.append(<span class="num">30</span>)
+print(s2.data)         <span class="cm"># [10, 20]  - unaffected</span></div>
+
+                <!-- == vs is -->
+                <h3><i class="fa-solid fa-not-equal"></i> Comparing with <code>==</code> vs <code>is</code></h3>
+                <p>Python provides two distinct comparison operators:</p>
+
+                <table class="dark-table">
+                    <tr><th>Operator</th><th>Checks</th><th>Question It Answers</th></tr>
+                    <tr><td><code>==</code></td><td>Equality (value)</td><td>"Do these have the same content?"</td></tr>
+                    <tr><td><code>is</code></td><td>Identity (memory address)</td><td>"Are these the exact same object?"</td></tr>
+                </table>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+b = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+c = a
+
+print(a == b)    <span class="cm"># True  - same values</span>
+print(a <span class="kw">is</span> b)    <span class="cm"># False - different objects in memory</span>
+print(a <span class="kw">is</span> c)    <span class="cm"># True  - same object (c is an alias for a)</span>
+
+<span class="cm"># Special case: None should always be checked with 'is'</span>
+x = <span class="kw">None</span>
+print(x <span class="kw">is</span> <span class="kw">None</span>)    <span class="cm"># True  (preferred)</span>
+print(x == <span class="kw">None</span>)   <span class="cm"># True  (works but not Pythonic)</span>
+
+<span class="cm"># Small integers are cached by Python (implementation detail):</span>
+a = <span class="num">256</span>
+b = <span class="num">256</span>
+print(a <span class="kw">is</span> b)    <span class="cm"># True  (cached)</span>
+
+a = <span class="num">257</span>
+b = <span class="num">257</span>
+print(a <span class="kw">is</span> b)    <span class="cm"># May be False (not guaranteed to be cached)</span></div>
+
+                <div class="info-box" style="border-left-color:#f59e0b;">
+                    <strong>Exam Rule of Thumb:</strong>
+                    Use <code>is</code> only for <code>None</code> checks (<code>if x is None</code>) and when you specifically need identity. Use <code>==</code> for all value comparisons. Never rely on <code>is</code> for integer or string comparison in production code.
+                </div>
+
+                <!-- __eq__ -->
+                <h3><i class="fa-solid fa-scale-balanced"></i> Custom Equality with <code>__eq__()</code></h3>
+                <p>By default, <code>==</code> on custom objects checks identity (same as <code>is</code>). You can override this by implementing the <code>__eq__</code> dunder method:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">DataPoint</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, x, y, label=<span class="str">""</span>):
+        self.x = x
+        self.y = y
+        self.label = label
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other):
+        <span class="str">"""Two DataPoints are equal if they have the same coordinates."""</span>
+        <span class="kw">if not</span> isinstance(other, DataPoint):
+            <span class="kw">return</span> NotImplemented
+        <span class="kw">return</span> self.x == other.x <span class="kw">and</span> self.y == other.y
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):
+        <span class="kw">return</span> <span class="str">f"DataPoint(x=</span>{self.x}<span class="str">, y=</span>{self.y}<span class="str">, label='</span>{self.label}<span class="str">')"</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="str">f"(</span>{self.x}<span class="str">, </span>{self.y}<span class="str">)"</span>
+
+
+p1 = DataPoint(<span class="num">3</span>, <span class="num">5</span>, <span class="str">"origin"</span>)
+p2 = DataPoint(<span class="num">3</span>, <span class="num">5</span>, <span class="str">"copy"</span>)
+p3 = DataPoint(<span class="num">1</span>, <span class="num">2</span>)
+
+<span class="cm"># __eq__ compares x and y only (not label)</span>
+print(p1 == p2)    <span class="cm"># True   (same coordinates)</span>
+print(p1 == p3)    <span class="cm"># False  (different coordinates)</span>
+print(p1 <span class="kw">is</span> p2)    <span class="cm"># False  (different objects in memory)</span>
+
+<span class="cm"># __repr__ vs __str__</span>
+print(repr(p1))    <span class="cm"># DataPoint(x=3, y=5, label='origin')</span>
+print(str(p1))     <span class="cm"># (3, 5)</span>
+print(p1)          <span class="cm"># (3, 5)  - print() calls __str__</span>
+
+<span class="cm"># __repr__ is used in lists and debugging</span>
+print([p1, p3])    <span class="cm"># [DataPoint(x=3, y=5, label='origin'), DataPoint(x=1, y=2, label='')]</span></div>
+
+                <!-- __repr__ and __str__ -->
+                <h3><i class="fa-solid fa-display"></i> <code>__repr__</code> and <code>__str__</code> Methods</h3>
+
+                <table class="dark-table">
+                    <tr><th>Method</th><th>Purpose</th><th>Called By</th></tr>
+                    <tr><td><code>__repr__</code></td><td>Unambiguous, developer-facing representation</td><td><code>repr()</code>, interactive shell, lists</td></tr>
+                    <tr><td><code>__str__</code></td><td>Readable, user-facing representation</td><td><code>str()</code>, <code>print()</code></td></tr>
+                </table>
+
+                <div class="info-box">
+                    <strong>__repr__ vs __str__:</strong>
+                    If only one is defined, implement <code>__repr__</code>. Python falls back to <code>__repr__</code> when <code>__str__</code> is not available, but not the other way around. The <code>__repr__</code> output should ideally be valid Python that could recreate the object.
+                </div>
+
+                <p>A complete example putting identity and comparison together:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">SurveyResponse</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, respondent_id, answers):
+        self.respondent_id = respondent_id
+        self.answers = dict(answers)  <span class="cm"># defensive copy</span>
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other):
+        <span class="kw">if not</span> isinstance(other, SurveyResponse):
+            <span class="kw">return</span> NotImplemented
+        <span class="kw">return</span> self.respondent_id == other.respondent_id
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):
+        <span class="kw">return</span> <span class="str">f"SurveyResponse(</span>{self.respondent_id!r}<span class="str">, </span>{self.answers!r}<span class="str">)"</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="str">f"Response from </span>{self.respondent_id}<span class="str"> ({len(self.answers)} answers)"</span>
+
+
+r1 = SurveyResponse(<span class="str">"U100"</span>, {<span class="str">"q1"</span>: <span class="num">5</span>, <span class="str">"q2"</span>: <span class="num">3</span>})
+r2 = SurveyResponse(<span class="str">"U100"</span>, {<span class="str">"q1"</span>: <span class="num">4</span>, <span class="str">"q2"</span>: <span class="num">2</span>})
+
+print(r1 == r2)    <span class="cm"># True  (same respondent_id)</span>
+print(r1 <span class="kw">is</span> r2)    <span class="cm"># False (different objects)</span>
+print(r1)          <span class="cm"># Response from U100 (2 answers)</span>
+print(repr(r1))    <span class="cm"># SurveyResponse('U100', {'q1': 5, 'q2': 3})</span></div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUIZ SECTION -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-circle-question"></i> Practice Quiz: OOP for Data Modeling</h2>
+
+                <!-- Q1 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q1. What is the purpose of the <code>__init__</code> method in a Python class?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) It deletes the object from memory when it is no longer needed</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) It is the constructor that initializes instance attributes when an object is created</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) It is a static method that creates the class itself</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) It defines class-level variables shared by all instances</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> <code>__init__</code> is the constructor method. It is automatically called when a new instance is created and is used to set up the object's initial state through <code>self.attribute = value</code> assignments.</div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q2. What happens when you access <code>self.__secret</code> from outside the class <code>MyClass</code>?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) It returns <code>None</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) It raises an <code>AttributeError</code> because of name mangling</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) It works perfectly since Python has no private attributes</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) It raises a <code>PermissionError</code></div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> Double-underscore attributes trigger <strong>name mangling</strong>. Python renames <code>__secret</code> to <code>_MyClass__secret</code> internally, so accessing <code>obj.__secret</code> directly raises <code>AttributeError</code>. The attribute still exists as <code>obj._MyClass__secret</code>.</div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q3. Which decorator turns a method into a property that can be accessed like an attribute?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) <code>@staticmethod</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">B) <code>@classmethod</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">C) <code>@property</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) <code>@attribute</code></div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> The <code>@property</code> decorator defines a getter that allows a method to be accessed using attribute syntax (e.g., <code>obj.name</code> instead of <code>obj.name()</code>). You can also define a setter with <code>@name.setter</code>.</div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q4. Consider the code below. What does it print?</h4>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Box</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, items):
+        self.items = items
+
+a = Box([<span class="num">1</span>, <span class="num">2</span>])
+b = a
+b.items.append(<span class="num">3</span>)
+print(a.items)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) <code>[1, 2]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) <code>[1, 2, 3]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) <code>[3]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) An error is raised</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> <code>b = a</code> does not create a copy; it creates an <strong>alias</strong>. Both <code>a</code> and <code>b</code> reference the same object in memory. When <code>b.items.append(3)</code> modifies the list, the change is visible through <code>a</code> as well.</div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q5. Which OOP concept is demonstrated when a <code>Survey</code> class contains a list of <code>Question</code> objects?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) Inheritance</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) Composition</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) Polymorphism</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) Encapsulation</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> Composition is a "has-a" relationship where one class contains instances of another class as attributes. A <code>Survey</code> <em>has</em> <code>Question</code> objects. This is different from inheritance, which is an "is-a" relationship.</div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q6. What is the output of the following code?</h4>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Animal</span>:
+    <span class="kw">def</span> <span class="fn">speak</span>(self):
+        <span class="kw">return</span> <span class="str">"..."</span>
+
+<span class="kw">class</span> <span class="fn">Dog</span>(Animal):
+    <span class="kw">def</span> <span class="fn">speak</span>(self):
+        <span class="kw">return</span> <span class="str">"Woof"</span>
+
+<span class="kw">class</span> <span class="fn">Cat</span>(Animal):
+    <span class="kw">def</span> <span class="fn">speak</span>(self):
+        <span class="kw">return</span> <span class="str">"Meow"</span>
+
+animals = [Dog(), Cat(), Dog()]
+print([a.speak() <span class="kw">for</span> a <span class="kw">in</span> animals])</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) <code>["...", "...", "..."]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) <code>["Woof", "Meow", "Woof"]</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) An error because <code>Animal.speak()</code> is overridden</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) <code>["Woof", "Woof", "Meow"]</code></div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> This is <strong>polymorphism</strong>. Each object in the list calls its own class's version of <code>speak()</code>. The <code>Dog</code> objects return <code>"Woof"</code> and the <code>Cat</code> object returns <code>"Meow"</code>. The base class method is overridden by each subclass.</div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q7. What is the difference between <code>==</code> and <code>is</code> in Python?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) They are identical and can always be used interchangeably</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">B) <code>==</code> checks identity while <code>is</code> checks equality</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">C) <code>==</code> checks value equality while <code>is</code> checks if two references point to the same object</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) <code>is</code> only works with numbers and strings</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> The <code>==</code> operator compares <strong>values</strong> (calling <code>__eq__</code>). The <code>is</code> operator compares <strong>identity</strong> &mdash; whether two variables reference the exact same object in memory. Use <code>is</code> primarily for <code>None</code> checks.</div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q8. What does <code>super().__init__(data)</code> do inside a subclass constructor?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) It creates a new parent class object</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) It calls the parent class's <code>__init__</code> method to initialize inherited attributes</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) It copies all methods from the parent class</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) It makes the subclass a static class</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> <code>super()</code> returns a proxy object for the parent class. Calling <code>super().__init__(data)</code> invokes the parent's constructor so that any attributes or setup logic defined in the parent class are properly initialized in the subclass instance.</div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q9. If a class defines <code>__repr__</code> but NOT <code>__str__</code>, what does <code>print(obj)</code> use?</h4>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) It raises an <code>AttributeError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">B) It prints the memory address only</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">C) It falls back to <code>__repr__</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) It prints an empty string</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> When <code>__str__</code> is not defined, Python falls back to <code>__repr__</code> for <code>print()</code> and <code>str()</code> calls. The reverse is not true &mdash; <code>repr()</code> will never fall back to <code>__str__</code>. This is why <code>__repr__</code> is the more important method to implement.</div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="quiz-box" data-section="oop">
+                    <h4>Q10. Consider the following code. What does <code>p1 == p2</code> evaluate to?</h4>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">class</span> <span class="fn">Point</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, x, y):
+        self.x = x
+        self.y = y
+
+p1 = Point(<span class="num">3</span>, <span class="num">4</span>)
+p2 = Point(<span class="num">3</span>, <span class="num">4</span>)
+print(p1 == p2)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">A) <code>True</code> &mdash; because they have the same x and y values</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'oop')">B) <code>False</code> &mdash; because <code>__eq__</code> is not defined, so it defaults to identity comparison</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">C) An error is raised because <code>__eq__</code> is not defined</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'oop')">D) <code>True</code> &mdash; because Python compares all attributes automatically</div>
+                    <div class="quiz-explanation"><strong>Explanation:</strong> Without a custom <code>__eq__</code> method, Python's default <code>==</code> falls back to <strong>identity comparison</strong> (same as <code>is</code>). Since <code>p1</code> and <code>p2</code> are two different objects in memory, <code>p1 == p2</code> returns <code>False</code>. You must implement <code>__eq__</code> for value-based equality.</div>
+                </div>
+
+                <div id="score-oop"></div>
+            </div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic2-2.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 2.2 Module Management &amp; Exception Handling</a>
+            <a href="topic2-4.html" class="nav-btn next">Next: 2.4 SQL for Data Analysts <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#oop-basics">2.3.1 Basic OOP for Data Modeling</a>
+        <a class="toc-item" href="#oop-patterns">2.3.2 OOP Patterns for Analysis Workflows</a>
+        <a class="toc-item" href="#object-identity">2.3.3 Object Identity and Comparisons</a>
+        <a class="toc-item" href="#quiz">Practice Quiz (10 Questions)</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

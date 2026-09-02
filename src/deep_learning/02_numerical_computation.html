@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Computation for Deep Learning - Deep Learning</title>
+    <meta name="description" content="Gradient descent, curvature and the Hessian, condition number, saddle points, floating-point overflow and underflow, and the log-sum-exp trick for a numerically stable softmax. Module 2 of the Deep Learning course by Dr. Abdulkarim Albanna.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#059669;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#065f46);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#059669}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#059669;border-left-color:#059669;background:rgba(16,185,129,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#059669}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#34d399}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#34d399}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(16,185,129,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+    <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]}};</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> Deep Learning</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#gd">Gradient Descent</a>
+                <a href="#curvature">Curvature</a>
+                <a href="#floats">Numerical Precision</a>
+                <a href="#lab">Exercises</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#gd" onclick="this.parentElement.classList.remove('open')">Gradient Descent</a>
+        <a href="#curvature" onclick="this.parentElement.classList.remove('open')">Curvature</a>
+        <a href="#floats" onclick="this.parentElement.classList.remove('open')">Numerical Precision</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercises</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Numerical Computation for Deep Learning</h1>
+            <p class="hero-sub">Gradient descent, curvature, conditioning, and the floating-point traps that break training.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 2 &middot; Lecture notes by Dr. Abdulkarim Albanna</p>
+            <span class="diff-badge" style="background:#10b981">Foundations</span>
+            <span class="cat-badge"><i class="fa-solid fa-square-root-variable" style="margin-right:6px"></i>Optimization</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~55 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Run <strong>gradient descent</strong> and read the <strong>stability condition</strong> \(\eta &lt; 2/\lambda_{\max}\) that keeps it from diverging</li>
+                    <li>Classify <strong>critical points</strong> (minimum, maximum, saddle) with the <strong>Hessian</strong>, its eigenvalues, and the determinant / Sylvester tests</li>
+                    <li>Understand <strong>curvature</strong>, the directional second derivative \(d^\top H d\), and the <strong>optimal step size</strong> \(\eta^\ast = g^\top g / g^\top H g\)</li>
+                    <li>See why the <strong>condition number</strong> creates ill-conditioned ravines, how <strong>Newton's method</strong> helps and why it is attracted to saddles</li>
+                    <li>Handle <strong>constrained optimization</strong> (Lagrangian &amp; KKT), <strong>floating-point</strong> overflow / underflow, catastrophic cancellation, and the <strong>log-sum-exp</strong> trick for a stable softmax, sigmoid, and cross-entropy</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 1 (Linear Algebra). You should be comfortable with vectors, matrices, eigenvalues and quadratic forms before starting.</p>
+        </div>
+
+        <!-- Intro / Why -->
+        <div class="section fade-up" id="why">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> Why Numerical Computation?</h2>
+            <p class="section-desc">Algorithms are specified in terms of <strong>real numbers</strong>, but real numbers <em>cannot be represented in a finite computer</em>. This raises questions that pure mathematics never asks: whether an algorithm still works when implemented with a finite number of bits, whether small changes in the input produce large changes in the output, and whether rounding errors, noise, or measurement errors can accumulate into a wrong answer. Alongside these sits a difficulty that is not about bits at all &mdash; iteratively searching for the best input is genuinely hard even in exact arithmetic.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Two ways of stating the goal</h3>
+                <ul>
+                    <li><strong>Pure mathematics:</strong> find the smallest value of \(f(x)\), or a critical point where the value is locally smallest.</li>
+                    <li><strong>Deep learning:</strong> decrease the value of \(f(x)\) a lot, without the numbers exploding.</li>
+                </ul>
+            </div>
+            <p class="section-desc">The second framing is the practical one, for two reasons. A local minimum that performs nearly as well as the global one is an acceptable stopping point. And in practice we usually do not reach a critical point of any kind: in a typical convolutional network the <strong>gradient norm increases</strong> throughout training <em>while the classification error falls steadily</em>.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-image"></i> Figure 1 &mdash; accepting good-enough minima</h3>
+                <p>Picture the loss curve \(f(x)\) with several dips: a shallow <em>global</em> minimum, a nearby <em>acceptable</em> local minimum of almost the same depth, and a <em>poor</em> minimum to avoid. Optimization may fail to find the global minimum when multiple local minima or plateaus are present. In deep learning we generally accept such solutions, provided they correspond to a sufficiently low value of the loss.</p>
+            </div>
+            <p class="section-desc">The material divides into two parts: <strong>iterative optimization</strong> (Sections 1&ndash;6) and <strong>rounding error, underflow, and overflow</strong> (Sections 7&ndash;13).</p>
+        </div>
+
+        <!-- 1. Gradient descent -->
+        <div class="section fade-up" id="gd">
+            <h2 class="section-title"><i class="fa-solid fa-arrow-trend-down"></i> 1. Gradient Descent</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 1.1 &mdash; Gradient descent</h3>
+                <p>Given a differentiable \(f\), a starting point \(x^{(0)}\) and a learning rate \(\eta &gt; 0\), the gradient descent iteration is</p>
+                <p style="text-align:center">\[ x^{(k+1)} = x^{(k)} - \eta \, \nabla f\!\left(x^{(k)}\right). \]</p>
+                <p>The gradient points in the direction of steepest increase, so moving against it decreases \(f\). The scalar \(\eta\) is also called the <em>step size</em>; some texts write it as \(\epsilon\), and most libraries call it <code>lr</code>.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/num_gradient_descent.png" alt="A one-dimensional function with the derivative used to step downhill toward the minimum" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><strong>Figure 2.</strong> Gradient descent uses the derivative to follow the function downhill. For \(x &lt; 0\) we have \(f'(x) &lt; 0\), so \(f\) decreases by moving rightward; for \(x &gt; 0\) we have \(f'(x) &gt; 0\), so \(f\) decreases by moving leftward. At \(x = 0\) the derivative vanishes and the iteration halts. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 1.1 &mdash; The learning rate decides everything</h3>
+                <p class="section-desc">Take \(f(x) = \tfrac{1}{2}x^2\), so \(f'(x) = x\) and the update collapses to a single multiplication:</p>
+                <p class="section-desc" style="text-align:center">\[ x \leftarrow x - \eta x = (1-\eta)\,x. \]</p>
+                <p class="section-desc">Starting from \(x_0 = 1\), four values of \(\eta\) give four qualitatively different behaviours:</p>
+                <table class="dark-table">
+                    <thead><tr><th></th><th>\(\eta = 0.1\)</th><th>\(\eta = 1.0\)</th><th>\(\eta = 1.5\)</th><th>\(\eta = 2.5\)</th></tr></thead>
+                    <tbody>
+                        <tr><td>\(x_0\)</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                        <tr><td>\(x_1\)</td><td>0.9</td><td>0</td><td>&minus;0.5</td><td>&minus;1.5</td></tr>
+                        <tr><td>\(x_2\)</td><td>0.81</td><td>0</td><td>0.25</td><td>2.25</td></tr>
+                        <tr><td>\(x_3\)</td><td>0.729</td><td>0</td><td>&minus;0.125</td><td>&minus;3.375</td></tr>
+                        <tr><td>\(x_4\)</td><td>0.6561</td><td>0</td><td>0.0625</td><td>5.0625</td></tr>
+                        <tr><td><strong>behaviour</strong></td><td>slow, monotone</td><td>one step</td><td>oscillating</td><td>diverges</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">The iteration diverges when \(|1-\eta| &gt; 1\), that is when \(\eta &gt; 2\). At \(\eta = 2\) exactly, the factor is \(-1\) and the iterates alternate \(1, -1, 1, -1\) forever &mdash; neither converging nor diverging.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 1.2 &mdash; Stability condition</h3>
+                <p>For a quadratic with Hessian \(H\), gradient descent converges only when</p>
+                <p style="text-align:center">\[ \eta &lt; \frac{2}{\lambda_{\max}}, \]</p>
+                <p>where \(\lambda_{\max}\) is the largest eigenvalue of \(H\). In the example above \(f''(x) = 1\), so \(\lambda_{\max} = 1\) and the boundary is \(\eta = 2\).</p>
+            </div>
+            <p class="section-desc">The single largest curvature in a network &mdash; one eigenvalue out of millions &mdash; sets the legal learning rate for every parameter. A loss that becomes <code>NaN</code> in the first few iterations is usually a violation of this inequality.</p>
+        </div>
+
+        <!-- 2. Critical points -->
+        <div class="section fade-up" id="critical">
+            <h2 class="section-title"><i class="fa-solid fa-crosshairs"></i> 2. Critical Points</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 2.1 &mdash; Critical point</h3>
+                <p>A point where the gradient vanishes, \(\nabla f = 0\). In one dimension a critical point is a local minimum, a local maximum, or a saddle point (an inflection with zero slope); the second derivative distinguishes them:</p>
+                <p style="text-align:center">\[ f''(x) &gt; 0 \rightarrow \text{minimum}, \qquad f''(x) &lt; 0 \rightarrow \text{maximum}, \qquad f''(x) = 0 \rightarrow \text{inconclusive}. \]</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-image"></i> Figure 3 &mdash; the three types of critical point</h3>
+                <p>Picture three one-dimensional curves with a flat spot: a <strong>minimum</strong> (a valley that curves upward), a <strong>maximum</strong> (a peak that curves downward), and a <strong>saddle</strong> / inflection (flat, then continuing in the same direction). A critical point is any point with zero slope; it can be a local minimum, a local maximum, or a saddle point.</p>
+            </div>
+            <p class="section-desc">The first derivative locates <em>where</em> the surface is flat. The second derivative determines <em>what shape</em> that flat place has.</p>
+        </div>
+
+        <!-- 3. The Hessian -->
+        <div class="section fade-up" id="hessian">
+            <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> 3. The Hessian Matrix</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 3.1 &mdash; Hessian</h3>
+                <p>For \(f(x_1, \ldots, x_n)\), the Hessian is the \(n \times n\) matrix of all second-order partial derivatives:</p>
+                <p style="text-align:center">\[ H_f = \begin{bmatrix}
+                \dfrac{\partial^2 f}{\partial x_1^2} & \dfrac{\partial^2 f}{\partial x_1 \partial x_2} & \cdots & \dfrac{\partial^2 f}{\partial x_1 \partial x_n} \\[6pt]
+                \dfrac{\partial^2 f}{\partial x_2 \partial x_1} & \dfrac{\partial^2 f}{\partial x_2^2} & \cdots & \dfrac{\partial^2 f}{\partial x_2 \partial x_n} \\[6pt]
+                \vdots & \vdots & \ddots & \vdots \\[4pt]
+                \dfrac{\partial^2 f}{\partial x_n \partial x_1} & \dfrac{\partial^2 f}{\partial x_n \partial x_2} & \cdots & \dfrac{\partial^2 f}{\partial x_n^2}
+                \end{bmatrix} \]</p>
+                <p>Because mixed partials commute for continuous second derivatives, \(H\) is <strong>symmetric</strong>. It is a different matrix at every point of the domain, so it must be evaluated at the point of interest. Since \(H\) is symmetric, the spectral theorem applies: its eigenvalues are real and its eigenvectors orthogonal.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 3.2 &mdash; Classification by eigenvalues</h3>
+                <p>At a critical point, the signs of the eigenvalues of \(H\) classify the point:</p>
+                <ul>
+                    <li>all \(\lambda_i &gt; 0\) &mdash; local minimum (positive definite)</li>
+                    <li>all \(\lambda_i &lt; 0\) &mdash; local maximum (negative definite)</li>
+                    <li>mixed signs &mdash; saddle point (indefinite)</li>
+                    <li>some \(\lambda_i = 0\) &mdash; inconclusive</li>
+                </ul>
+            </div>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Saddles dominate deep networks</h3>
+                <p>A critical point in \(n\) dimensions is a minimum only if <em>all</em> \(n\) eigenvalues are positive. For a network with a million parameters this is vanishingly unlikely, so almost every critical point encountered in a deep network is a <strong>saddle point</strong>. The obstacle to training is not being trapped in a bad local minimum, but crawling across the plateaus that surround saddles.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-square-root-variable"></i> 3.1 The determinant test for two variables</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 3.3 &mdash; Leading principal minors</h3>
+                    <p>For \(z = f(x,y)\) with \(H = \begin{bmatrix} f_{xx} & f_{xy} \\ f_{yx} & f_{yy} \end{bmatrix}\), the leading principal minors are</p>
+                    <p style="text-align:center">\[ |H_1| = f_{xx}, \qquad |H_2| = f_{xx}f_{yy} - f_{xy}f_{yx}. \]</p>
+                </div>
+                <table class="dark-table">
+                    <thead><tr><th>Condition</th><th>Conclusion</th></tr></thead>
+                    <tbody>
+                        <tr><td>\(|H_2| &gt; 0\) and \(f_{xx} &gt; 0\)</td><td>local minimum</td></tr>
+                        <tr><td>\(|H_2| &gt; 0\) and \(f_{xx} &lt; 0\)</td><td>local maximum</td></tr>
+                        <tr><td>\(|H_2| &lt; 0\)</td><td>saddle point</td></tr>
+                        <tr><td>\(|H_2| = 0\)</td><td>test fails</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">The rule reads in two stages. First, \(|H_2|\) decides whether the point is a saddle: a negative determinant settles the matter and the sign of \(f_{xx}\) is irrelevant. Only when \(|H_2| &gt; 0\) does \(f_{xx}\) choose between minimum and maximum. The reason is the connection to eigenvalues:</p>
+                <p class="section-desc" style="text-align:center">\[ |H_2| = \det H = \lambda_1 \lambda_2, \qquad f_{xx} + f_{yy} = \operatorname{tr} H = \lambda_1 + \lambda_2. \]</p>
+                <p class="section-desc">A negative determinant means the eigenvalues have opposite signs &mdash; the surface curves up along one eigenvector and down along the other, which is exactly a saddle. A determinant of zero means some eigenvalue is zero: a direction with no curvature, about which the second-order approximation carries no information.</p>
+
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 3.1 &mdash; A local minimum</h3>
+                <p class="section-desc">\[ Z = 3X^2 - XY + 2Y^2 - 4X - 7Y + 12 \]</p>
+                <p class="section-desc">\[ f_X = 6X - Y - 4, \qquad f_Y = -X + 4Y - 7 \]</p>
+                <p class="section-desc">Setting both to zero: from the first, \(Y = 6X - 4\). Substituting into the second,</p>
+                <p class="section-desc">\[ -X + 24X - 16 - 7 = 0 \;\Longrightarrow\; 23X = 23 \;\Longrightarrow\; X = 1, \; Y = 2. \]</p>
+                <p class="section-desc">The second partials are constants, \(f_{XX} = 6\), \(f_{YY} = 4\), \(f_{XY} = f_{YX} = -1\):</p>
+                <p class="section-desc">\[ H = \begin{bmatrix} 6 & -1 \\ -1 & 4 \end{bmatrix}, \qquad |H_2| = (6)(4) - (-1)(-1) = 23 &gt; 0, \qquad f_{XX} = 6 &gt; 0. \]</p>
+                <p class="section-desc">So \((1, 2)\) is a <strong>local minimum</strong>, with \(Z(1,2) = 3\).</p>
+                <p class="section-desc">Note that \((-1)(-1) = +1\) is <em>subtracted</em>. For a symmetric Hessian the product \(f_{xy}f_{yx}\) is always non-negative, so off-diagonal terms always reduce the determinant &mdash; they always push a critical point toward being a saddle. The eigenvalues confirm the result: \(\lambda^2 - 10\lambda + 23 = 0\) gives \(\lambda = 5 \pm \sqrt{2} \approx 6.41\) and \(3.59\), both positive. Their product is \(23 = |H_2|\) and their sum is \(10 = 6 + 4\).</p>
+
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 3.2 &mdash; A local maximum</h3>
+                <p class="section-desc">\[ Z = -X^2 - 2Y^2 + 5X + 4Y \]</p>
+                <p class="section-desc">The variables separate:</p>
+                <p class="section-desc">\[ Z_X = -2X + 5 = 0 \Rightarrow X = 2.5, \qquad Z_Y = -4Y + 4 = 0 \Rightarrow Y = 1. \]</p>
+                <p class="section-desc">\[ H = \begin{bmatrix} -2 & 0 \\ 0 & -4 \end{bmatrix}, \qquad |H_2| = 8 &gt; 0, \qquad Z_{XX} = -2 &lt; 0. \]</p>
+                <p class="section-desc">So \((2.5, 1)\) is a <strong>local maximum</strong>, with \(Z = 8.25\). The determinant is positive at a maximum because \(|H_2|\) is the product of the two curvatures, and two negatives multiply to a positive. A positive determinant means the curvatures <em>agree</em> in sign, not that they are positive.</p>
+
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 3.3 &mdash; Two critical points in one function</h3>
+                <p class="section-desc">\[ f(x, y) = x^3 + y^3 - 3xy \]</p>
+                <p class="section-desc">\[ f_x = 3x^2 - 3y = 0 \Rightarrow y = x^2, \qquad f_y = 3y^2 - 3x = 0 \Rightarrow x = y^2. \]</p>
+                <p class="section-desc">Substituting one into the other, \(x = x^4\), so \(x(x^3 - 1) = 0\) and \(x = 0\) or \(x = 1\). The critical points are \((0, 0)\) and \((1, 1)\).</p>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-image"></i> Figure 4 &mdash; intersections give the critical points</h3>
+                    <p>The critical points are the intersections of the two parabolas \(y = x^2\) and \(x = y^2\): they cross at the origin \((0,0)\), which turns out to be a saddle, and at \((1,1)\), which is a local minimum.</p>
+                </div>
+                <p class="section-desc">Here the second partials are not constants:</p>
+                <p class="section-desc">\[ f_{xx} = 6x, \quad f_{yy} = 6y, \quad f_{xy} = -3 \;\Longrightarrow\; H(x,y) = \begin{bmatrix} 6x & -3 \\ -3 & 6y \end{bmatrix}. \]</p>
+                <p class="section-desc"><strong>At \((0,0)\):</strong></p>
+                <p class="section-desc">\[ H = \begin{bmatrix} 0 & -3 \\ -3 & 0 \end{bmatrix}, \qquad |H_2| = 0 - 9 = -9 &lt; 0 \;\Rightarrow\; \text{saddle point.} \]</p>
+                <p class="section-desc">Its eigenvalues are \(+3\) and \(-3\).</p>
+                <p class="section-desc"><strong>At \((1,1)\):</strong></p>
+                <p class="section-desc">\[ H = \begin{bmatrix} 6 & -3 \\ -3 & 6 \end{bmatrix}, \qquad |H_2| = 36 - 9 = 27 &gt; 0 \text{ and } f_{xx} = 6 &gt; 0 \;\Rightarrow\; \text{local minimum,} \]</p>
+                <p class="section-desc">\(f = -1\). Its eigenvalues are \(3\) and \(9\). The same algebraic expression for \(H\) gives opposite conclusions at the two points, which is why the Hessian must be re-evaluated at each critical point.</p>
+
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 3.4 &mdash; Three variables</h3>
+                <p class="section-desc">\[ f(x, y, z) = x^3 + y^3 + z^3 - 9xy - 9xz + 27x \]</p>
+                <p class="section-desc">\[ f_x = 3x^2 - 9y - 9z + 27, \qquad f_y = 3y^2 - 9x, \qquad f_z = 3z^2 - 9x. \]</p>
+                <p class="section-desc">Dividing each by 3: \(\;x^2 - 3y - 3z + 9 = 0,\; y^2 = 3x,\; z^2 = 3x.\) The last two give \(y^2 = z^2\); taking \(y = z\) and \(x = y^2/3\),</p>
+                <p class="section-desc">\[ \frac{y^4}{9} - 6y + 9 = 0 \;\Longrightarrow\; y^4 + 81 = 54y \;\Longrightarrow\; y = 3 \]</p>
+                <p class="section-desc">(since \(81 + 81 = 162 = 54 \cdot 3\)). So \(x = 3\), \(z = 3\), and the critical point is \((3, 3, 3)\).</p>
+                <p class="section-desc">\[ H = \begin{bmatrix} 18 & -9 & -9 \\ -9 & 18 & 0 \\ -9 & 0 & 18 \end{bmatrix} \]</p>
+                <p class="section-desc">\[ |H_1| = 18 &gt; 0, \qquad |H_2| = 324 - 81 = 243 &gt; 0, \]</p>
+                <p class="section-desc">\[ |H_3| = 18(324) + 9(-162) - 9(162) = 5832 - 1458 - 1458 = 2916 &gt; 0. \]</p>
+                <p class="section-desc">All three leading principal minors are positive, so \(H\) is positive definite and \((3,3,3)\) is a <strong>local minimum</strong>, with \(f(3,3,3) = 0\).</p>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 3.4 &mdash; Sylvester's criterion</h3>
+                    <p>Let \(|H_1|, |H_2|, \ldots, |H_n|\) be the leading principal minors.</p>
+                    <ul>
+                        <li><strong>all positive</strong> &mdash; positive definite \(\Rightarrow\) minimum</li>
+                        <li><strong>alternating from negative</strong> (\(|H_1| &lt; 0,\, |H_2| &gt; 0, \ldots\)) &mdash; negative definite \(\Rightarrow\) maximum</li>
+                        <li><strong>any other pattern, all \(|H_i| \neq 0\)</strong> &mdash; indefinite \(\Rightarrow\) saddle</li>
+                        <li><strong>some \(|H_i| = 0\)</strong> &mdash; inconclusive</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-xmark"></i> 3.2 When the test fails</h3>
+                <p class="section-desc">If \(|H_2| = 0\) the test gives no answer, and this is genuine ignorance rather than a technicality. Compare</p>
+                <p class="section-desc">\[ f(x, y) = x^4 + y^4 \qquad \text{and} \qquad g(x, y) = x^4 - y^4 \]</p>
+                <p class="section-desc">at the origin. Both have zero gradient and zero Hessian there, so \(|H_2| = 0\) for both. But \(f\) has a genuine minimum &mdash; every nearby value is positive &mdash; while \(g\) has a saddle, positive along the \(x\)-axis and negative along the \(y\)-axis. Identical Hessians, opposite answers: the behaviour is governed by fourth-order terms that second derivatives cannot see.</p>
+            </div>
+        </div>
+
+        <!-- 4. Curvature -->
+        <div class="section fade-up" id="curvature">
+            <h2 class="section-title"><i class="fa-solid fa-wave-square"></i> 4. Curvature</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 4.1 &mdash; Curvature</h3>
+                <p>The second derivative determines the <strong>curvature</strong> of a function &mdash; the extent to which the function deviates from the straight line predicted by the gradient alone.</p>
+                <ul>
+                    <li>\(f'' &lt; 0\) &mdash; negative curvature: \(f\) falls <em>faster</em> than the gradient predicts</li>
+                    <li>\(f'' = 0\) &mdash; no curvature: \(f\) falls <em>exactly</em> as predicted</li>
+                    <li>\(f'' &gt; 0\) &mdash; positive curvature: \(f\) falls <em>slower</em> than predicted</li>
+                </ul>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/num_curvature.png" alt="A curved function compared against the straight-line prediction of the gradient, showing how positive curvature causes a gradient step to overshoot" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><strong>Figure 5.</strong> Quadratic functions with various curvature (negative, none, positive). The dashed line indicates the value of the function we would expect based on the gradient information alone as we make a gradient step. <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <p class="section-desc">With <strong>strong positive curvature</strong>, a step taken on the promise of the gradient can <em>overshoot</em> the minimum and land higher than where it started.</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-compass-drafting"></i> 4.1 Directional second derivatives</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 4.2 &mdash; Eigendecomposition of the Hessian</h3>
+                    <p>Because \(H\) is symmetric it decomposes as</p>
+                    <p style="text-align:center">\[ H = Q \Lambda Q^\top, \qquad Q = [\, v_1, v_2, \ldots, v_n \,] \]</p>
+                    <p>with orthonormal eigenvectors \(v_i\) in the columns of \(Q\) and eigenvalues \(\lambda_i\) on the diagonal of \(\Lambda\).</p>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-image"></i> Figure 6 &mdash; eigenvectors and eigenvalues</h3>
+                    <p>A unit circle of vectors is multiplied by \(H\); each eigenvector keeps its direction and is scaled by its eigenvalue (\(v^{(1)} \to \lambda_1 v^{(1)}\), \(v^{(2)} \to \lambda_2 v^{(2)}\)), so the circle becomes an ellipse with axes along the eigenvectors.</p>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 4.3 &mdash; Directional second derivative</h3>
+                    <p>The curvature of \(f\) in a unit direction \(d\) is</p>
+                    <p style="text-align:center">\[ d^\top H d = \sum_i \lambda_i \cos^2 \angle(v_i, d), \]</p>
+                    <p>a weighted average of the eigenvalues, weighted by how much of \(d\) points along each eigenvector. The weights are non-negative and sum to 1, so the directional curvature always lies between \(\lambda_{\min}\) and \(\lambda_{\max}\).</p>
+                </div>
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 4.1 &mdash; Curvature in a diagonal direction</h3>
+                <p class="section-desc">Let \(H = \operatorname{diag}(1, 3)\) and \(d = \tfrac{1}{\sqrt{2}}(1, 1)\). The direction makes equal angles with both eigenvectors, so \(\cos^2\) is \(\tfrac{1}{2}\) for each:</p>
+                <p class="section-desc">\[ d^\top H d = \tfrac{1}{2}(1) + \tfrac{1}{2}(3) = 2, \]</p>
+                <p class="section-desc">which lies between \(\lambda_{\min} = 1\) and \(\lambda_{\max} = 3\), as it must.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-mountain-sun"></i> 4.2 Saddle points</h3>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/num_saddle.png" alt="Surface plot of a saddle point where the function curves up in one direction and down in another" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><strong>Figure 7.</strong> A saddle point containing both positive and negative curvature, for \(f(x) = x_1^2 - x_2^2\). Along the axis corresponding to \(x_1\) the function curves upward: this axis is an eigenvector of the Hessian with a positive eigenvalue (\(\lambda_1 = +2\)). Along the axis corresponding to \(x_2\) the function curves downward, and that direction is an eigenvector with a negative eigenvalue (\(\lambda_2 = -2\)). <em>(From the course notes.)</em></figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <!-- 5. Optimal step size -->
+        <div class="section fade-up" id="step">
+            <h2 class="section-title"><i class="fa-solid fa-gauge-high"></i> 5. Predicting the Optimal Step Size</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 5.1 &mdash; Second-order Taylor approximation of a gradient step</h3>
+                <p>Expanding \(f\) about the current point \(x^{(0)}\) and substituting the step \(x = x^{(0)} - \eta g\) gives</p>
+                <p style="text-align:center">\[ f\!\left(x^{(0)} - \eta g\right) \approx \underbrace{f\!\left(x^{(0)}\right)}_{\text{original value}} - \underbrace{\eta\, g^\top g}_{\text{expected improvement from the slope}} + \underbrace{\tfrac{1}{2}\eta^2 g^\top H g}_{\text{correction for the curvature}} \]</p>
+                <p>where \(g\) is the gradient and \(H\) the Hessian at \(x^{(0)}\). When the last term is too large, the gradient descent step moves uphill.</p>
+            </div>
+            <p class="section-desc">Big gradients speed you up; big eigenvalues slow you down if you align with their eigenvectors.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 5.2 &mdash; Optimal step size</h3>
+                <p>Differentiating the approximation with respect to \(\eta\) and setting the result to zero gives</p>
+                <p style="text-align:center">\[ -g^\top g + \eta\, g^\top H g = 0 \;\Longrightarrow\; \eta^\ast = \frac{g^\top g}{g^\top H g}. \]</p>
+                <p>This holds when \(g^\top H g &gt; 0\). When \(g^\top H g\) is zero or negative the approximation predicts that increasing \(\eta\) forever will keep decreasing \(f\); since the Taylor series is unlikely to remain accurate for large \(\eta\), one resorts to a heuristic choice in that case.</p>
+            </div>
+            <p class="section-desc">If \(g\) aligns with the eigenvector of \(H\) corresponding to \(\lambda\), then \(g^\top H g = \lambda\, g^\top g\) and \(\eta^\ast = 1/\lambda\); for the largest eigenvalue this is \(1/\lambda_{\max}\). The eigenvalues of the Hessian thus determine the scale of the learning rate.</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 5.1 &mdash; The optimal step, verified exactly</h3>
+                <p class="section-desc">Take</p>
+                <p class="section-desc">\[ f(x_1, x_2) = \tfrac{1}{2}x_1^2 + \tfrac{3}{2}x_2^2, \qquad \nabla f = (x_1,\, 3x_2), \qquad H = \operatorname{diag}(1, 3), \]</p>
+                <p class="section-desc">at the point \(x^{(0)} = \left(1, \tfrac{1}{3}\right)\), chosen so that \(g = (1, 1)\).</p>
+                <p class="section-desc">\[ g^\top g = 2, \qquad g^\top H g = 1 + 3 = 4, \qquad \eta^\ast = \frac{2}{4} = \frac{1}{2}. \]</p>
+                <p class="section-desc">Since \(f\) is exactly quadratic, the Taylor approximation is exact and the prediction must match the true value:</p>
+                <p class="section-desc">\[ f\!\left(x^{(0)}\right) = \tfrac{1}{2} + \tfrac{1}{6} = \tfrac{2}{3}, \qquad x^{(1)} = \left(1, \tfrac{1}{3}\right) - \tfrac{1}{2}(1, 1) = \left(\tfrac{1}{2}, -\tfrac{1}{6}\right), \]</p>
+                <p class="section-desc">\[ f\!\left(x^{(1)}\right) = \tfrac{1}{8} + \tfrac{1}{24} = \tfrac{1}{6}, \qquad \text{predicted: } \tfrac{2}{3} - \tfrac{1}{2}(2) + \tfrac{1}{2}\left(\tfrac{1}{4}\right)(4) = \tfrac{1}{6}. \;\checkmark \]</p>
+                <p class="section-desc">Sweeping \(\eta\), with \(f(\eta) = \tfrac{2}{3} - 2\eta + 2\eta^2\):</p>
+                <table class="dark-table">
+                    <thead><tr><th>\(\eta\)</th><th>value of \(f\)</th><th>comment</th></tr></thead>
+                    <tbody>
+                        <tr><td>\(1/3 = 1/\lambda_{\max}\)</td><td>\(2/9 \approx 0.222\)</td><td>conservative</td></tr>
+                        <tr><td>\(1/2 = \eta^\ast\)</td><td>\(1/6 \approx 0.167\)</td><td>best possible single step</td></tr>
+                        <tr><td>\(2/3\)</td><td>\(2/9 \approx 0.222\)</td><td>past optimal, still improving</td></tr>
+                        <tr><td>\(1\)</td><td>\(2/3 \approx 0.667\)</td><td>zero net progress</td></tr>
+                        <tr><td>\(1.2\)</td><td>\(1.147\)</td><td>worse than the start: the step went uphill</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-image"></i> Figure 8 &mdash; the predicted loss is a parabola in \(\eta\)</h3>
+                    <p>The predicted loss is itself a parabola in \(\eta\), minimized at \(\eta^\ast = \tfrac{1}{2}\). Zero net progress occurs at exactly \(2\eta^\ast\) (back to the starting value), and beyond that the step increases the loss &mdash; the same factor of two that appears in the stability condition \(\eta &lt; 2/\lambda_{\max}\).</p>
+                </div>
+                <p class="section-desc">Since \(g^\top H g / g^\top g = 4/2 = 2\) is the directional curvature along \(g\), the result can be stated in one line:</p>
+                <p class="section-desc">\[ \eta^\ast = \frac{1}{\text{curvature along the direction of travel}}. \]</p>
+            </div>
+        </div>
+
+        <!-- 6. Condition number -->
+        <div class="section fade-up" id="conditioning">
+            <h2 class="section-title"><i class="fa-solid fa-scale-unbalanced"></i> 6. Condition Number</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 6.1 &mdash; Condition number</h3>
+                <p>For a matrix \(A \in \mathbb{R}^{n \times n}\) with eigenvalues \(\lambda_i\),</p>
+                <p style="text-align:center">\[ \kappa = \max_{i,j} \left| \frac{\lambda_i}{\lambda_j} \right|, \]</p>
+                <p>the ratio of the magnitudes of the largest and smallest eigenvalue. When this number is large, matrix inversion is particularly sensitive to error in the input. It is an intrinsic property of the matrix itself, not a result of rounding during inversion: poorly conditioned matrices amplify pre-existing errors even when multiplied by the true inverse.</p>
+            </div>
+            <p class="section-desc">When the condition number of the Hessian is large, some directions have large eigenvalues and some have small ones. The large ones force the learning rate to stay small, so we lose the ability to move quickly along the small-eigenvalue directions.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/num_ravine.png" alt="Contour plot of an ill-conditioned ravine, steep across and shallow along, with gradient descent zig-zagging slowly" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><strong>Figure 9.</strong> Gradient descent fails to exploit the curvature information contained in the Hessian. The contours of an ill-conditioned quadratic are stretched, and the steps zigzag across the narrow valley instead of advancing along it (steep across the valley, shallow along it: \(\kappa\) large). <em>(From the course notes.)</em></figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 6.1 &mdash; The ravine</h3>
+                <p class="section-desc">\[ f(x_1, x_2) = \tfrac{1}{2}x_1^2 + 10x_2^2, \qquad H = \operatorname{diag}(1, 20), \qquad \kappa = 20. \]</p>
+                <p class="section-desc">At the point \(x^{(0)} = (10, 1)\) the gradient is \(g = (10, 20)\). We are 10 units from the minimum in \(x_1\) and only 1 unit away in \(x_2\), yet the gradient pulls twice as strongly toward \(x_2\) &mdash; the direction already almost finished. The gradient points along steepest descent, not toward the minimum. Each axis updates independently as \(x_i \leftarrow (1 - \eta\lambda_i)\,x_i\):</p>
+                <table class="dark-table">
+                    <thead><tr><th>\(\eta\)</th><th>factor on \(x_1\) (\(\lambda = 1\))</th><th>factor on \(x_2\) (\(\lambda = 20\))</th><th>outcome</th></tr></thead>
+                    <tbody>
+                        <tr><td>0.2</td><td>0.8</td><td>&minus;3.0</td><td>\(x_2\) explodes</td></tr>
+                        <tr><td>0.1</td><td>0.9</td><td>&minus;1.0</td><td>\(x_2\) bounces forever</td></tr>
+                        <tr><td>0.0952</td><td>0.905</td><td>&minus;0.905</td><td>best possible</td></tr>
+                        <tr><td>0.01</td><td>0.99</td><td>0.8</td><td>stable, but \(x_1\) crawls</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">The optimal rate balances the two ends of the spectrum:</p>
+                <p class="section-desc">\[ \eta_{\text{opt}} = \frac{2}{\lambda_{\min} + \lambda_{\max}} = \frac{2}{21} \approx 0.0952, \qquad \text{both factors} = \frac{\kappa - 1}{\kappa + 1} = \frac{19}{21} \approx 0.905. \]</p>
+                <p class="section-desc">Reducing the error by a factor of ten requires \(\log(0.1)/\log(0.905) \approx 23\) iterations; with \(\kappa = 1\) it would take one. Batch and layer normalization, adaptive optimizers such as Adam, and careful initialization all reduce \(\kappa\).</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-forward-fast"></i> 6.1 Newton's method and saddle points</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 6.2 &mdash; Newton step</h3>
+                    <p style="text-align:center">\[ \Delta x = -H^{-1} g \]</p>
+                    <p>Newton's method rescales each eigendirection by \(1/\lambda_i\), making the effective condition number 1 and solving a quadratic in a single step.</p>
+                </div>
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 6.2 &mdash; Newton on the ravine, and Newton at a saddle</h3>
+                <p class="section-desc">On the ravine above, at \((10, 1)\) with \(g = (10, 20)\) and \(H = \operatorname{diag}(1, 20)\):</p>
+                <p class="section-desc">\[ -H^{-1}g = -\left(\frac{10}{1},\, \frac{20}{20}\right) = -(10, 1) \;\Longrightarrow\; \text{lands exactly on the origin.} \]</p>
+                <p class="section-desc">Now take the saddle \(f = x_1^2 - x_2^2\), with \(H = \operatorname{diag}(2, -2)\), at the point \((0.1, 0.1)\) where \(g = (0.2, -0.2)\):</p>
+                <p class="section-desc">\[ \textbf{Newton: } -H^{-1}g = -\left(\frac{0.2}{2},\, \frac{-0.2}{-2}\right) = -(0.1, 0.1) \;\Longrightarrow\; \text{moves to } (0, 0), \]</p>
+                <p class="section-desc">\[ \textbf{Gradient descent } (\eta = 0.1)\text{: } (0.1, 0.1) - 0.1(0.2, -0.2) = (0.08, 0.12) \;\Longrightarrow\; x_2 \text{ grows.} \]</p>
+                <div class="info-box warning">
+                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Newton lands on the saddle; gradient descent escapes</h3>
+                    <p>Dividing by a negative eigenvalue converts a descent direction into an ascent direction, and Newton's method seeks any point where \(\nabla f = 0\) without asking what kind of point it is. Since almost all critical points in high dimensions are saddles, this is the normal case rather than an exception. Two further obstacles: the Hessian of a billion-parameter model has \(10^{18}\) entries and cannot be stored, and at the end of learning in a real network the gradient is still large while the curvature is huge.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Constrained optimization -->
+        <div class="section fade-up" id="constrained">
+            <h2 class="section-title"><i class="fa-solid fa-lock"></i> 7. Constrained Optimization</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 7.1 &mdash; Generalized Lagrangian and KKT conditions</h3>
+                <p>To minimise \(f(x)\) subject to \(g^{(i)}(x) = 0\) and \(h^{(j)}(x) \le 0\), form</p>
+                <p style="text-align:center">\[ L(x, \lambda, \alpha) = f(x) + \sum_i \lambda_i\, g^{(i)}(x) + \sum_j \alpha_j\, h^{(j)}(x), \qquad \alpha \ge 0, \]</p>
+                <p>and solve \(\min_x \max_\lambda \max_{\alpha,\, \alpha \ge 0} L\). The Karush&ndash;Kuhn&ndash;Tucker conditions at an optimum are:</p>
+                <ul>
+                    <li><strong>Stationarity:</strong> \(\nabla_x L = 0\);</li>
+                    <li><strong>Feasibility:</strong> all constraints hold;</li>
+                    <li><strong>Dual feasibility:</strong> \(\alpha \ge 0\);</li>
+                    <li><strong>Complementary slackness:</strong> \(\alpha_j h^{(j)}(x) = 0\).</li>
+                </ul>
+                <p>These properties guarantee that no infeasible point can be optimal and that the optimum within the feasible set is unchanged. The sign of the equality term does not matter, since the optimization is free to choose the sign of each \(\lambda_i\).</p>
+            </div>
+            <p class="section-desc">In deep learning, KKT is used mostly for theory &mdash; for instance to show that the Gaussian is the maximum-entropy distribution for a given variance. In practice one usually takes an unconstrained step and then projects back into the constraint region.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 7.1 &mdash; Projection onto a norm ball</h3>
+                <p class="section-desc">Under the constraint \(\|w\|_2 \le 1\), a step landing at \(w = (3, 4)\) is projected as</p>
+                <p class="section-desc">\[ \|w\| = \sqrt{9 + 16} = 5 &gt; 1 \;\Longrightarrow\; w \leftarrow w \cdot \min\!\left(1, \frac{1}{\|w\|}\right) = \frac{(3, 4)}{5} = (0.6, 0.8). \]</p>
+                <p class="section-desc">This is <strong>gradient clipping</strong>; the same operation appears in weight-norm constraints and in spectral normalization.</p>
+            </div>
+        </div>
+
+        <!-- 8. Numerical precision -->
+        <div class="section fade-up" id="floats">
+            <h2 class="section-title"><i class="fa-solid fa-microchip"></i> 8. Numerical Precision</h2>
+            <p class="section-desc">Deep learning algorithms often &ldquo;sort of work&rdquo;: the loss goes down and accuracy gets within a few percentage points of the state of the art, with no bugs as such. They also often explode into <code>NaN</code>s or very large values. In both cases the culprit is frequently loss of numerical precision.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 8.1 &mdash; float32, rounding, overflow, underflow</h3>
+                <p>In a digital computer we represent real numbers with schemes such as <strong>float32</strong>: one sign bit, eight exponent bits, and a 24-bit effective significand. A real number \(x\) is stored as \(x + \delta\) for some small \(\delta\).</p>
+                <ul>
+                    <li><strong>machine epsilon:</strong> \(2^{-23} \approx 1.19 \times 10^{-7}\) (\(\approx\) 7 decimal digits)</li>
+                    <li><strong>largest finite:</strong> \(\approx 3.4 \times 10^{38}\) (overflow: larger \(x\) becomes <code>inf</code>)</li>
+                    <li><strong>smallest normal:</strong> \(\approx 1.18 \times 10^{-38}\) (underflow: smaller \(x\) becomes <code>0</code>)</li>
+                </ul>
+                <p>The essential property is that spacing is <em>relative, not absolute</em>: the gap between representable neighbours grows with magnitude.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-image"></i> Figure 10 &mdash; the grid gets coarser as magnitude grows</h3>
+                <p>Representable float32 values do not form an evenly spaced grid. Near 1 the gap is about \(10^{-7}\); near \(10^6\) the gap is about \(0.06\); near \(10^8\) consecutive values are \(8\) apart. Precision is relative.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 8.1 &mdash; Adding a small number to a larger one</h3>
+                <div class="code-block"><span class="op">&gt;&gt;&gt;</span> a = np.array([<span class="num">0.</span>, <span class="num">1e-8</span>]).astype(<span class="str">'float32'</span>)
+<span class="op">&gt;&gt;&gt;</span> a.argmax()
+<span class="num">1</span>
+<span class="op">&gt;&gt;&gt;</span> (a <span class="op">+</span> <span class="num">1</span>).argmax()
+<span class="num">0</span></div>
+                <p class="section-desc">The result \(1 + 10^{-8}\) must be stored in \([1, 2)\), where the spacing is \(2^{-23} \approx 1.19 \times 10^{-7}\) and the rounding threshold is half of that, \(\approx 5.96 \times 10^{-8}\). Since \(10^{-8}\) falls below the threshold, the sum rounds to exactly \(1.0\). The array becomes \([1.0, 1.0]\), the tie is broken by index, and <code>argmax</code> returns 0. Adding a small number to a larger one may have no effect at all, and if the small number carried the information of interest, that information is lost with no error raised.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-diagram-project"></i> 8.1 Secondary effects</h3>
+                <p class="section-desc">Suppose code computes \(x - y\), and both \(x\) and \(y\) overflow:</p>
+                <p class="section-desc">\[ x - y = \infty - \infty = \text{NaN}. \]</p>
+                <p class="section-desc"><code>NaN</code> propagates through every subsequent operation, through the backward pass, and into every weight &mdash; so the <code>NaN</code> that appears in the loss is rarely where the problem began.</p>
+            </div>
+        </div>
+
+        <!-- 9. Dangerous functions -->
+        <div class="section fade-up" id="dangerous">
+            <h2 class="section-title"><i class="fa-solid fa-skull"></i> 9. Dangerous Functions</h2>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-e"></i> 9.1 exp</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 9.1 &mdash; Overflow and underflow thresholds for exp</h3>
+                    <p>In float32,</p>
+                    <p style="text-align:center">\[ \exp(x) \to \infty \text{ for } x &gt; 88.7, \qquad \exp(x) \to 0 \text{ for } x &lt; -103.3. \]</p>
+                </div>
+                <p class="section-desc">The overflow threshold is not a large number &mdash; a logit of 89 is ordinary in an untrained network. <strong>Overflow is loud</strong> and quickly noticed. <strong>Underflow is silent</strong> and often worse, because <code>exp</code> appears in places where zero is catastrophic: as a denominator (division by zero), as the argument to a logarithm (\(\log 0 = -\infty\)), or inside a normalization (\(0/0 = \text{NaN}\)).</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-square-root-variable"></i> 9.2 log and sqrt</h3>
+                <p class="section-desc">\[ \log(0) = -\infty, \qquad \log(\text{negative}) \text{ is imaginary } \text{—} \text{ usually NaN in software}, \]</p>
+                <p class="section-desc">\[ \sqrt{0} = 0 \qquad \text{but} \qquad \frac{d}{dx}\sqrt{x} = \frac{1}{2\sqrt{x}} \to \infty \text{ at } x = 0. \]</p>
+                <p class="section-desc">The value of \(\sqrt{0}\) is fine; its derivative divides by zero, so the forward pass looks healthy while the backward pass produces <code>inf</code>. The common case is <code>standard dev = sqrt(variance)</code>.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-equals"></i> 9.3 log exp</h3>
+                <p class="section-desc">The pattern \(\log(\exp(x))\) should always be simplified to \(x\). Doing so avoids overflow in the <code>exp</code> for large \(x\), and avoids underflow producing \(-\infty\) in the <code>log</code> for very negative \(x\).</p>
+            </div>
+        </div>
+
+        <!-- 10. Catastrophic cancellation -->
+        <div class="section fade-up" id="cancellation">
+            <h2 class="section-title"><i class="fa-solid fa-minus"></i> 10. Subtraction and Catastrophic Cancellation</h2>
+            <p class="section-desc">If \(x\) and \(y\) have similar magnitude and \(x\) is always mathematically greater than \(y\), the computed \(x - y\) may nevertheless come out negative due to rounding error.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 10.1 &mdash; Catastrophic cancellation</h3>
+                <p>Subtracting two numbers of similar magnitude destroys precision in proportion to how close they are: the leading digits cancel, and what remains is dominated by rounding error.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 10.1 &mdash; The variance formula</h3>
+                <p class="section-desc">The two standard formulas are algebraically identical:</p>
+                <p class="section-desc">\[ \textbf{(A) safe: } \operatorname{Var}(x) = \mathbb{E}\!\left[(x - \mathbb{E}[x])^2\right], \qquad \textbf{(B) dangerous: } \operatorname{Var}(x) = \mathbb{E}[x^2] - \big(\mathbb{E}[x]\big)^2. \]</p>
+                <p class="section-desc">Formula (B) is attractive because it needs only running sums and a single pass. Take the dataset \(x = \{10000, 10001, 10002\}\). By formula (A), the mean is 10001, the deviations are \((-1, 0, 1)\), and \(\operatorname{Var} = 2/3 \approx 0.6667\). By formula (B), in exact arithmetic:</p>
+                <p class="section-desc">\[ 10000^2 + 10001^2 + 10002^2 = 300\,060\,005, \]</p>
+                <p class="section-desc">\[ \mathbb{E}[x^2] = 100\,020\,001.667, \qquad \big(\mathbb{E}[x]\big)^2 = 100\,020\,001, \qquad \operatorname{Var} = 0.667. \;\checkmark \]</p>
+                <p class="section-desc">In float32, however, both quantities lie near \(10^8\), where the spacing between representable values is 8:</p>
+                <p class="section-desc">\[ 100\,020\,001.667 \longrightarrow 100\,020\,000, \qquad 100\,020\,001 \longrightarrow 100\,020\,000, \]</p>
+                <p class="section-desc">\[ \operatorname{Var} = 100020000 - 100020000 = 0. \]</p>
+                <p class="section-desc">The variance evaluates to exactly zero. Then \(\text{std} = \sqrt{0} = 0\), and dividing by it produces <code>inf</code> or <code>NaN</code>. Both inputs were correct to nine significant figures, and all nine cancelled.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-location-dot"></i> 10.1 Where to place epsilon</h3>
+                <p class="section-desc">Given normalized <code>x = x / st_dev</code> and <code>eps = 1e-7</code>, two guards are possible. Note that this <code>eps</code> is a small guard constant and has nothing to do with the learning rate \(\eta\), nor with machine epsilon \(2^{-23}\) from Section 8.</p>
+                <div class="code-block"><span class="cm"># Option (1): eps inside the square root</span>
+st_dev = sqrt(eps <span class="op">+</span> variance)
+
+<span class="cm"># Option (2): eps added after the square root</span>
+st_dev = eps <span class="op">+</span> sqrt(variance)</div>
+                <table class="dark-table">
+                    <thead><tr><th></th><th>value at \(\text{var} = 0\)</th><th>derivative w.r.t. variance at \(\text{var} = 0\)</th></tr></thead>
+                    <tbody>
+                        <tr><td>(1) \(\sqrt{\text{eps} + \text{var}}\)</td><td>\(\approx 3.16 \times 10^{-4}\)</td><td>\(1/(2\sqrt{\text{eps}}) \approx 1581\) &mdash; large but finite</td></tr>
+                        <tr><td>(2) \(\text{eps} + \sqrt{\text{var}}\)</td><td>\(10^{-7}\)</td><td>\(1/(2\sqrt{0}) = \infty\)</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc"><strong>Option (1) is safer:</strong> <code>eps</code> sits inside the square root, so it bounds the derivative as well as the value. Option (1) is also more biased, reporting a standard deviation three thousand times larger than <code>eps</code> when the true value is zero. The deciding question is whether variance is implemented safely and can never round to negative. If it is computed by formula (A), option (2) is acceptable and less biased. If it comes from formula (B), option (1) is required.</p>
+            </div>
+        </div>
+
+        <!-- 11. log-sum-exp -->
+        <div class="section fade-up" id="logsumexp">
+            <h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> 11. The log-sum-exp Trick</h2>
+            <p class="section-desc">The naive implementation</p>
+            <div class="code-block">tf.log(tf.reduce_sum(tf.exp(array)))</div>
+            <p class="section-desc">has two failure modes: if any entry is very large its <code>exp</code> overflows and the answer is <code>inf</code>; if all entries are very negative every <code>exp</code> underflows, the sum is 0, and the <code>log</code> is \(-\infty\). In both cases the true answer is an ordinary number.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-book"></i> Definition 11.1 &mdash; Stable log-sum-exp</h3>
+                <p>With \(m = \max_i a_i\),</p>
+                <p style="text-align:center">\[ \log \sum_i \exp(a_i) = m + \log \sum_i \exp(a_i - m). \]</p>
+            </div>
+            <div class="code-block">mx          = tf.reduce_max(array)
+safe_array  = array <span class="op">-</span> mx
+log_sum_exp = mx <span class="op">+</span> tf.log(tf.reduce_sum(tf.exp(safe_array)))</div>
+            <p class="section-desc"><strong>Algebraic equivalence.</strong></p>
+            <p class="section-desc">\[ m + \log \sum_i \exp(a_i - m) = m + \log \sum_i \frac{\exp(a_i)}{\exp(m)} = m + \log\!\left[\frac{1}{\exp(m)} \sum_i \exp(a_i)\right] \]</p>
+            <p class="section-desc">\[ = m - \log \exp(m) + \log \sum_i \exp(a_i) = \log \sum_i \exp(a_i). \]</p>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> Why it is safe &mdash; two guarantees, one per failure mode</h3>
+                <ul>
+                    <li><strong>No overflow.</strong> The entries of <code>safe_array</code> are at most 0, so every <code>exp</code> term is at most 1 and the sum is at most \(n\).</li>
+                    <li><strong>No log(0).</strong> At least one entry of <code>safe_array</code> is exactly 0, so its <code>exp</code> term is exactly 1. Some of the <code>exp</code> terms underflow, but not all of them, and the sum is at least 1 &mdash; safe to pass to the logarithm.</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> Example 11.1 &mdash; Overflow and underflow, both handled</h3>
+                <p class="section-desc">For \(a = [1000, 1001, 1002]\) the naive form gives <code>inf</code>. With \(m = 1002\) and \(a - m = [-2, -1, 0]\):</p>
+                <p class="section-desc">\[ 0.1353 + 0.3679 + 1.0000 = 1.5032, \quad \log(1.5032) = 0.4076, \quad \text{answer} = 1002 + 0.4076 = 1002.4076. \]</p>
+                <p class="section-desc">For \(a = [-1000, -1001, -1002]\) the naive form gives \(-\infty\). With \(m = -1000\) and \(a - m = [0, -1, -2]\) &mdash; the same shifted values and the same sum:</p>
+                <p class="section-desc">\[ \text{answer} = -1000 + 0.4076 = -999.5924. \]</p>
+                <p class="section-desc">The shift separates the <em>scale</em> of the problem, carried by \(m\) in ordinary linear arithmetic, from its <em>shape</em>, the shifted sum. Only the shape ever passes through an <code>exp</code>. The built-in version is <code>tf.reduce_logsumexp</code>.</p>
+            </div>
+        </div>
+
+        <!-- 12. Softmax, sigmoid, cross-entropy -->
+        <div class="section fade-up" id="stable-softmax">
+            <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> 12. Softmax, Sigmoid, and Cross-Entropy</h2>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-percent"></i> 12.1 Softmax</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 12.1 &mdash; Softmax and its shift-invariance</h3>
+                    <p style="text-align:center">\[ \operatorname{softmax}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)} \]</p>
+                    <p>For any scalar \(c\), \(\operatorname{softmax}(z + c) = \operatorname{softmax}(z)\), since the factor \(\exp(c)\) cancels between numerator and denominator. This licenses subtracting the maximum before exponentiating.</p>
+                </div>
+                <div class="code-block">safe_logits = logits <span class="op">-</span> tf.reduce_max(logits)
+softmax     = tf.nn.softmax(safe_logits)</div>
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 12.1 &mdash; Softmax of large logits</h3>
+                <p class="section-desc">With \(z = [1000, 1001, 1002]\) the naive computation gives \(\text{inf}/\text{inf} = \text{NaN}\). Subtracting the maximum gives \(z - \max(z) = [-2, -1, 0]\), so</p>
+                <p class="section-desc">\[ \exp : [0.1353, 0.3679, 1.0000], \qquad \text{sum} = 1.5032, \]</p>
+                <p class="section-desc">\[ \operatorname{softmax} = [\, 0.0900,\ 0.2447,\ 0.6652 \,], \]</p>
+                <p class="section-desc">which sums to 1 and preserves the ordering.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-s"></i> 12.2 Sigmoid</h3>
+                <p class="section-desc">Sigmoid is softmax with one of the logits hard-coded to 0, so it inherits the same problem and the same fix. The stable form takes <code>exp</code> only of non-positive arguments:</p>
+                <p class="section-desc">\[ x \ge 0 : \; \sigma(x) = \frac{1}{1 + \exp(-x)}, \qquad x &lt; 0 : \; \sigma(x) = \frac{\exp(x)}{1 + \exp(x)}. \]</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-arrow-right-arrow-left"></i> 12.3 Cross-entropy</h3>
+                <p class="section-desc">Cross-entropy loss for softmax &mdash; and for sigmoid &mdash; contains both a softmax and a log-sum-exp, so both stabilizations are needed. Both come free when the loss is written in terms of the logits:</p>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-book"></i> Definition 12.2 &mdash; Cross-entropy from logits</h3>
+                    <p style="text-align:center">\[ L = -\log \operatorname{softmax}(z)_y = \operatorname{logsumexp}(z) - z_y \]</p>
+                    <p>The right-hand side never forms a probability, and its gradient is \(p - y\), which always lies in \([-1, 1]\).</p>
+                </div>
+                <h3 style="margin-top:24px"><i class="fa-solid fa-pen-nib"></i> Example 12.2 &mdash; Why the route matters</h3>
+                <p class="section-desc">Take \(z = [100, 0]\) with true class \(y = 1\). Computing through probabilities, \(p_1 = \exp(-100)/(1 + \exp(-100)) \approx 3.8 \times 10^{-44}\). This is subnormal in float32, so few bits of precision survive; in float16 it is flat 0 and \(-\log(0) = \text{inf}\). The backward pass through \(\log(p)\) multiplies by \(1/p \approx 2.6 \times 10^{43}\), which overflows.</p>
+                <p class="section-desc">Computing from the logits, \(\operatorname{logsumexp}([100, 0]) = 100 + \log(1 + e^{-100}) = 100\), so \(L = 100 - 0 = 100\) exactly.</p>
+                <p class="section-desc">The loss is 100 either way; the difference is the gradient. Probabilities lose gradient to rounding error exactly where the softmax saturates &mdash; which is where the model is most wrong and the gradient is most needed. Use <code>tf.nn.softmax_cross_entropy_with_logits</code> or <code>torch.nn.CrossEntropyLoss</code>, which take logits rather than probabilities.</p>
+            </div>
+        </div>
+
+        <!-- 13. Bug-hunting reference -->
+        <div class="section fade-up" id="bughunting">
+            <h2 class="section-title"><i class="fa-solid fa-bug"></i> 13. Bug-Hunting Reference</h2>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-stethoscope"></i> 13.1 The learning-rate diagnostic</h3>
+                <table class="dark-table">
+                    <thead><tr><th>After raising the learning rate</th><th>Interpretation</th></tr></thead>
+                    <tbody>
+                        <tr><td>loss explodes (<code>NaN</code>, large values)</td><td>normal for a correctly implemented loss</td></tr>
+                        <tr><td>loss gets stuck</td><td>the gradient is rounding to zero somewhere</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">A correctly implemented loss with too high a learning rate should <strong>explode</strong> &mdash; this is the stability condition \(\eta &lt; 2/\lambda_{\max}\). A loss that stalls instead indicates that the gradient reaching the parameters is already zero; the most common cause is computing cross-entropy from probabilities instead of logits.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list-check"></i> 13.2 Explosion checklist</h3>
+                <p class="section-desc">When <code>NaN</code>s or very large values appear, the usual sources, in order:</p>
+                <table class="dark-table">
+                    <thead><tr><th>#</th><th>Source</th><th>Failure</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td><code>exp</code></td><td>overflow</td></tr>
+                        <tr><td>2</td><td><code>log</code></td><td>argument reached 0 or went negative</td></tr>
+                        <tr><td>3</td><td><code>sqrt</code></td><td>argument rounded negative, or derivative evaluated at 0</td></tr>
+                        <tr><td>4</td><td>division</td><td>denominator underflowed</td></tr>
+                        <tr><td>5</td><td>the code that changed most recently</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-lightbulb"></i> 13.3 The underlying principle</h3>
+                <div class="info-box success">
+                    <p>If a mathematically valid expression can be rearranged so that <strong>no intermediate value is ever much larger or much smaller than the final answer</strong>, rearrange it.</p>
+                </div>
+                <p class="section-desc">Every technique in Sections 8&ndash;12 is an instance of this rule: the log-sum-exp shift, the softmax shift, the two-pass variance formula, cross-entropy from logits, and the simplification of \(\log(\exp(x))\) to \(x\).</p>
+            </div>
+        </div>
+
+        <!-- Exercises -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercises</h2>
+            <p class="section-desc">Three problems covering the whole module. Work each one on paper <em>before</em> opening the solution.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Classify a critical point via the Hessian</h3>
+                    <p class="section-desc">Find the critical point of \(f = x^2 + y^2 - 4x\) and use the Hessian to classify it.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Set the gradient to zero: \(f_x = 2x - 4 = 0 \Rightarrow x = 2\), and \(f_y = 2y = 0 \Rightarrow y = 0\). The Hessian is</p>
+                        <p class="section-desc">\[ H = \begin{bmatrix} f_{xx} & f_{xy} \\ f_{yx} & f_{yy} \end{bmatrix} = \begin{bmatrix} 2 & 0 \\ 0 & 2 \end{bmatrix} = \operatorname{diag}(2, 2). \]</p>
+                        <p class="section-desc">Here \(|H_2| = 4 &gt; 0\) and \(f_{xx} = 2 &gt; 0\); both eigenvalues are \(2\), positive. So the critical point <strong>\((2, 0)\) is a local minimum</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Numerically stable softmax of [1000, 1001, 1002]</h3>
+                    <p class="section-desc">Compute the numerically stable softmax of \(z = [1000, 1001, 1002]\). Show why the naive computation fails and how subtracting the max repairs it.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Naively, \(\exp(1000), \exp(1001), \exp(1002)\) all overflow to <code>inf</code>, so softmax \(= \text{inf}/\text{inf} = \text{NaN}\). Subtract the maximum \(m = 1002\):</p>
+                        <p class="section-desc">\[ z - m = [-2, -1, 0], \quad \exp(z - m) = [0.1353, 0.3679, 1.0000], \quad \text{sum} = 1.5032, \]</p>
+                        <p class="section-desc">\[ \operatorname{softmax} = [0.0900,\ 0.2447,\ 0.6652]. \]</p>
+                        <p class="section-desc">This sums to 1 and preserves the ordering. Subtracting the max caps every exponent at 0, so the exponentials are safe (each \(\le 1\)) and the denominator is at least 1.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Why \(\exp(89)\) overflows &mdash; and how subtracting the max fixes softmax</h3>
+                    <p class="section-desc">Why does \(\exp(89)\) overflow in float32, and how does subtracting the max make a softmax safe?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">\(\exp(x)\) overflows float32 once \(x &gt; 88.7\). Since \(89 &gt; 88.7\), \(\exp(89)\) exceeds the largest representable float (\(\approx 3.4 \times 10^{38}\)) and becomes <code>inf</code>. A logit of 89 is completely ordinary in an untrained network, so this threshold is easy to hit.</p>
+                        <p class="section-desc">Subtracting the max fixes softmax because after the shift the largest logit becomes \(0\), so the biggest exponent is \(\exp(0) = 1\) and <em>every</em> other exponent is \(\le 1\). No term can overflow, and because the largest term equals 1, the denominator is at least 1 and can never underflow to 0. By the shift-invariance \(\operatorname{softmax}(z + c) = \operatorname{softmax}(z)\) (with \(c = -m\)), the answer is identical to the naive softmax &mdash; just computed safely.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; Where Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now know</h3>
+                <ul>
+                    <li><strong>Gradient descent</strong> \(x^{(k+1)} = x^{(k)} - \eta\nabla f\) converges only when \(\eta &lt; 2/\lambda_{\max}\).</li>
+                    <li><strong>Critical points</strong> are classified by the Hessian's eigenvalues (or the determinant / Sylvester tests); all positive \(\to\) minimum, all negative \(\to\) maximum, mixed \(\to\) <strong>saddle</strong>, and saddles dominate deep networks.</li>
+                    <li><strong>Curvature</strong> \(d^\top H d\) lies between \(\lambda_{\min}\) and \(\lambda_{\max}\); the optimal step is \(\eta^\ast = g^\top g / g^\top H g = 1/\text{curvature}\).</li>
+                    <li>The <strong>condition number</strong> \(\kappa\) creates ravines where descent zig-zags; <strong>Newton's method</strong> jumps to the minimum but is attracted to saddles.</li>
+                    <li><strong>Constrained optimization</strong> uses the Lagrangian and KKT (projection = gradient clipping); <strong>floating point</strong> brings overflow, silent underflow, and catastrophic cancellation.</li>
+                    <li>The <strong>log-sum-exp trick</strong> and the softmax / sigmoid / cross-entropy-from-logits stabilizations all follow one rule: keep no intermediate far larger or smaller than the final answer.</li>
+                </ul>
+            </div>
+            <p class="section-desc">With the calculus of moving downhill and the numerics of doing it safely in hand, you have the two pillars every training loop rests on. <strong>Next up: Module 3 &mdash; Neural-Net Foundations</strong>, where these gradients start flowing through layers of neurons and we build the forward and backward passes that make a network learn.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="01_linear_algebra.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 1: Linear Algebra</a>
+            <a href="03_nn_foundations.html" class="nav-btn next">Module 3: Neural-Net Foundations <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Deep Learning &middot; Course notes by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Numerical Computation</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#why">Why Numerical Computation?</a>
+        <a class="toc-item" href="#gd">1. Gradient Descent</a>
+        <a class="toc-item" href="#critical">2. Critical Points</a>
+        <a class="toc-item" href="#hessian">3. The Hessian</a>
+        <a class="toc-item" href="#curvature">4. Curvature</a>
+        <a class="toc-item" href="#step">5. Optimal Step Size</a>
+        <a class="toc-item" href="#conditioning">6. Condition Number</a>
+        <a class="toc-item" href="#constrained">7. Constrained Optimization</a>
+        <a class="toc-item" href="#floats">8. Numerical Precision</a>
+        <a class="toc-item" href="#dangerous">9. Dangerous Functions</a>
+        <a class="toc-item" href="#cancellation">10. Cancellation</a>
+        <a class="toc-item" href="#logsumexp">11. log-sum-exp</a>
+        <a class="toc-item" href="#stable-softmax">12. Softmax &amp; Cross-Entropy</a>
+        <a class="toc-item" href="#bughunting">13. Bug-Hunting</a>
+        <a class="toc-item" href="#lab">Exercises</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

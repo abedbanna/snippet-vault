@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROS2 Actions Interactive Tutorial - Week 5</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    
+    <!-- Prism.js for Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 76px;
+        }
+
+        .navbar-custom {
+            background: var(--primary-gradient);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 30px;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            border-left: 5px solid #667eea;
+            padding-left: 20px;
+            margin: 40px 0 30px 0;
+        }
+
+        .code-block {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+
+        .progress-custom {
+            height: 8px;
+            border-radius: 10px;
+        }
+
+        .animation-box {
+            min-height: 350px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drone {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            transition: all 0.5s ease-in-out;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .waypoint {
+            width: 40px;
+            height: 40px;
+            background: #38ef7d;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .feedback-item {
+            padding: 15px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            border-radius: 5px;
+            margin: 10px 0;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .quiz-option {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background-color: #f0f0f0;
+            transform: translateX(10px);
+        }
+
+        .quiz-option.correct {
+            background-color: #d4edda !important;
+            border-color: #28a745 !important;
+        }
+
+        .quiz-option.incorrect {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+        }
+
+        .tab-content {
+            padding: 25px;
+            background: white;
+            border-radius: 0 15px 15px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 15px 15px 0 0;
+            font-weight: 600;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+        }
+
+        .sticky-sidebar {
+            position: sticky;
+            top: 90px;
+        }
+
+        .topic-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .topic-card:hover {
+            border-left-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .topic-card.active {
+            border-left-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 10px;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+    
+        /* DARK THEME OVERRIDE */
+        *{box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --warning:#f59e0b;--danger:#ef4444;
+            --text:#f1f5f9;--text2:#94a3b8;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --warning:#d97706;--danger:#dc2626;
+            --text:#0f172a;--text2:#334155;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --code:#1e293b;
+        }
+        body{
+            font-family:'Inter',sans-serif !important;
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            line-height:1.7;
+        }
+        a{color:var(--primary);transition:color .2s}
+        a:hover{color:#60a5fa}
+
+        /* Bootstrap overrides */
+        .navbar{
+            background:rgba(11,15,25,.92) !important;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border) !important;
+            padding:0 24px !important;
+            box-shadow:none !important;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{
+            font-weight:700 !important;font-size:1.15rem !important;
+            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
+        }
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{
+            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
+            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
+        }
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        .navbar-collapse{background:transparent !important}
+        @media(max-width:991px){
+            .navbar-collapse{
+                background:rgba(11,15,25,.98) !important;
+                border-radius:0 0 12px 12px;padding:12px 0;
+                border:1px solid var(--border);border-top:none;
+            }
+            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
+        }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            background:none !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
+            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+            transition:all .2s;margin-left:8px;
+        }
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Hero */
+        .hero, .hero-section{
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            position:relative;overflow:hidden;
+            padding:80px 0 60px !important;
+            margin-bottom:0 !important;
+        }
+        .hero::before,.hero-section::before{
+            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
+        }
+        .hero::after,.hero-section::after{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:32px 32px;pointer-events:none;
+        }
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
+        .hero h1,.hero-section h1{
+            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
+            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
+            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+            color:transparent !important;
+        }
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
+            color:var(--text2) !important;opacity:1 !important;
+        }
+        .hero .display-4{font-size:2.8rem !important}
+
+        /* Cards */
+        .card{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:12px !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-bottom:1px solid var(--border) !important;
+            font-weight:600;
+        }
+        .card-title{color:var(--text) !important}
+        .card-text{color:var(--text2) !important}
+
+        /* Section titles */
+        .section-title, h2.section-title, h3.section-title{
+            color:var(--text) !important;
+            border-bottom-color:var(--primary) !important;
+        }
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
+        p{color:var(--text2)}
+
+        /* Info/Warning/Success boxes */
+        .info-box,.alert-info-custom,.alert-info,.key-concept{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--primary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        
+        .warning-box,.alert-warning-custom,.alert-warning{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--warning) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
+        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
+        
+        .success-box,.alert-success-custom,.alert-success{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--success) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .success-box strong{color:var(--success) !important}
+        .success-box p{color:var(--text2) !important}
+
+        .alert-tip-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--secondary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert-danger,.alert-danger-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--danger) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+
+        /* Code blocks */
+        pre, pre[class*="language-"]{
+            background:var(--code) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:8px !important;
+            color:#e6edf3 !important;
+            font-family:'JetBrains Mono',monospace !important;
+            font-size:.875rem !important;
+            line-height:1.6 !important;
+            padding:20px !important;
+        }
+        code{
+            font-family:'JetBrains Mono',monospace !important;
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            padding:2px 6px;border-radius:4px;
+            font-size:.85em !important;
+        }
+        pre code{
+            background:transparent !important;
+            color:#e6edf3 !important;
+            padding:0 !important;
+        }
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn, .copy-btn{
+            position:absolute;top:10px;right:10px;
+            background:var(--surface2) !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
+            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
+        }
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Tables */
+        .table,.dark-table,table{
+            color:var(--text) !important;
+            border-color:var(--border) !important;
+        }
+        .table th,table th{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-color:var(--border2) !important;
+            font-weight:600;
+        }
+        .table td,table td{
+            color:var(--text2) !important;
+            border-color:var(--border) !important;
+            background:transparent !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>*{
+            background:rgba(255,255,255,.02) !important;
+            color:var(--text2) !important;
+        }
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        .table-bordered{border-color:var(--border2) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
+        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
+
+        /* Sidebar / TOC */
+        .sidebar,.toc{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:10px !important;
+            padding:16px !important;
+        }
+        .sidebar a,.toc a,.toc .nav-link{
+            color:var(--text2) !important;
+            border-left-color:transparent !important;
+        }
+        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
+            color:var(--primary) !important;
+            border-left-color:var(--primary) !important;
+            background:rgba(59,130,246,.05) !important;
+        }
+        .list-group-item{
+            background:var(--surface) !important;
+            border-color:var(--border) !important;
+            color:var(--text2) !important;
+        }
+        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
+
+        /* Badges */
+        .badge,.badge-custom{
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            border:1px solid var(--border2);
+        }
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+
+        /* Buttons */
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
+        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
+
+        /* Misc Bootstrap */
+        .breadcrumb{background:var(--surface) !important}
+        .breadcrumb-item a{color:var(--primary) !important}
+        .breadcrumb-item.active{color:var(--text2) !important}
+        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
+        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
+        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
+        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
+        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .modal-header{border-bottom-color:var(--border) !important}
+        .modal-footer{border-top-color:var(--border) !important}
+        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
+        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
+        .nav-tabs{border-bottom-color:var(--border2) !important}
+        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
+        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
+        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
+        .nav-pills .nav-link{color:var(--text2) !important}
+        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
+        .progress{background:var(--surface2) !important}
+        .progress-bar{background:var(--primary) !important}
+        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}
+        .text-dark{color:var(--text) !important}
+        .bg-light{background:var(--surface2) !important}
+        .bg-white{background:var(--surface) !important}
+        .border{border-color:var(--border2) !important}
+        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
+        .lead{color:var(--text2) !important}
+        strong,b{color:var(--text) !important}
+        ::selection{background:rgba(59,130,246,.3);color:#fff}
+
+        /* Step cards / numbered steps */
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+
+        /* Scroll to top */
+        .scroll-top{
+            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
+            color:var(--text2);display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
+        }
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* Footer override */
+        footer,.footer{
+            background:var(--surface) !important;
+            border-top:1px solid var(--border) !important;
+            color:var(--text2) !important;
+        }
+        footer a{color:var(--primary) !important}
+        footer p,footer span,footer div{color:var(--text2) !important}
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-robot"></i> ROS2 Actions Tutorial
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#concepts">Concepts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#package-setup">Setup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#implementation">Implementation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#project">Project</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#quiz">Quiz</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-calendar-week"></i> Week 5: Actions for Long-Running Intelligent Tasks
+            </h1>
+
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="sticky-sidebar">
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-3">
+                                <i class="bi bi-list-check"></i> Progress
+                            </h5>
+                            <div class="progress progress-custom mb-3">
+                                <div id="progressBar" class="progress-bar bg-gradient" style="width: 0%; background: var(--primary-gradient);" role="progressbar"></div>
+                            </div>
+                            <small class="text-muted"><span id="progressText">0%</span> Complete</small>
+
+                            <hr>
+
+                            <h6 class="fw-bold mb-3">Navigation</h6>
+                            <div id="topicsList">
+                                <div class="topic-card" onclick="scrollToSection('overview')">
+                                    <i class="bi bi-book"></i> Overview
+                                </div>
+                                <div class="topic-card" onclick="scrollToSection('concepts')">
+                                    <i class="bi bi-lightbulb"></i> Core Concepts
+                                </div>
+                                <div class="topic-card" onclick="scrollToSection('architecture')">
+                                    <i class="bi bi-diagram-3"></i> Architecture
+                                </div>
+                                <div class="topic-card" onclick="scrollToSection('package-setup')">
+                                    <i class="bi bi-folder-fill"></i> Package Setup
+                                </div>
+                                <div class="topic-card" onclick="scrollToSection('implementation')">
+                                    <i class="bi bi-code-slash"></i> Implementation
+                                </div>
+                                <div class="topic-card" onclick="scrollToSection('project')">
+                                    <i class="bi bi-rocket"></i> Hands-on Project
+                                </div>
+                                <div class="topic-card" onclick="scrollToSection('quiz')">
+                                    <i class="bi bi-question-circle"></i> Knowledge Check
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+
+                <!-- Overview Section -->
+                <section id="overview" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-book"></i> Learning Overview
+                    </h2>
+
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">What You'll Learn</h4>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-primary bg-opacity-10 p-3 rounded me-3">
+                                            <i class="bi bi-gear-fill text-primary fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold">Action Concepts</h6>
+                                            <p class="text-muted small">Understanding actions for complex robotic tasks with feedback</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-success bg-opacity-10 p-3 rounded me-3">
+                                            <i class="bi bi-arrow-repeat text-success fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold">Feedback Mechanisms</h6>
+                                            <p class="text-muted small">Goal, feedback, and result patterns for monitoring</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-info bg-opacity-10 p-3 rounded me-3">
+                                            <i class="bi bi-hdd-network-fill text-info fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold">Server-Client Pattern</h6>
+                                            <p class="text-muted small">Action servers and clients architecture</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-warning bg-opacity-10 p-3 rounded me-3">
+                                            <i class="bi bi-stopwatch-fill text-warning fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold">Long-Running Tasks</h6>
+                                            <p class="text-muted small">Monitoring and canceling operations</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-3">
+                                <i class="bi bi-trophy-fill text-warning"></i> Project Deliverables
+                            </h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                    <div>
+                                        <strong>Navigation Action Server</strong>
+                                        <small class="d-block text-muted">Drone/robot compatible autonomous navigation</small>
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                    <div>
+                                        <strong>Client with Feedback Monitoring</strong>
+                                        <small class="d-block text-muted">Real-time progress tracking and telemetry</small>
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                    <div>
+                                        <strong>Demo Video</strong>
+                                        <small class="d-block text-muted">Navigation with dynamic replanning demonstration</small>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Core Concepts Section -->
+                <section id="concepts" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-lightbulb"></i> Core Concepts
+                    </h2>
+
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">What are ROS2 Actions?</h4>
+
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                <strong>Key Insight:</strong> Actions are designed for tasks that take time to complete and require feedback during execution - like navigating to a waypoint, picking up an object, or executing a trajectory.
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="bg-light p-4 rounded">
+                                        <i class="bi bi-chat-dots-fill text-primary" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold mt-3">Topics</h6>
+                                        <p class="small text-muted">One-way streaming data<br>Fire and forget</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="bg-light p-4 rounded">
+                                        <i class="bi bi-arrow-left-right text-success" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold mt-3">Services</h6>
+                                        <p class="small text-muted">Request-response<br>Quick operations</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="bg-primary bg-opacity-10 p-4 rounded border border-primary border-2">
+                                        <i class="bi bi-gear-wide-connected text-primary" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold mt-3">Actions <i class="fa-solid fa-star"></i></h6>
+                                        <p class="small text-muted">Goal-Feedback-Result<br>Long-running tasks</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="fw-bold mt-4 mb-3">Action Components</h5>
+
+                            <div class="accordion" id="actionComponents">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#goal">
+                                            <i class="bi bi-flag-fill text-success me-2"></i> <strong>Goal</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="goal" class="accordion-collapse collapse show" data-bs-parent="#actionComponents">
+                                        <div class="accordion-body">
+                                            <p><strong>What the client wants to achieve</strong></p>
+                                            <ul>
+                                                <li>Sent by the action client to the action server</li>
+                                                <li>Example: "Navigate to waypoint (x: 10.0, y: 5.0, z: 2.0)"</li>
+                                                <li>Can be accepted, rejected, or cancelled</li>
+                                            </ul>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-python"># Goal Message Example
+goal_msg = Navigate.Goal()
+goal_msg.target_pose.position.x = 10.0
+goal_msg.target_pose.position.y = 5.0
+goal_msg.target_pose.position.z = 2.0</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feedback">
+                                            <i class="bi bi-arrow-repeat text-info me-2"></i> <strong>Feedback</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="feedback" class="accordion-collapse collapse" data-bs-parent="#actionComponents">
+                                        <div class="accordion-body">
+                                            <p><strong>Periodic updates during execution</strong></p>
+                                            <ul>
+                                                <li>Sent from server to client while processing</li>
+                                                <li>Example: "Current position: (3.5, 2.1, 1.8), Distance remaining: 7.2m"</li>
+                                                <li>Allows client to monitor progress in real-time</li>
+                                            </ul>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-python"># Feedback Message Example
+feedback_msg = Navigate.Feedback()
+feedback_msg.current_pose.position.x = 3.5
+feedback_msg.current_pose.position.y = 2.1
+feedback_msg.distance_remaining = 7.2
+feedback_msg.estimated_time_remaining = 15.0</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#result">
+                                            <i class="bi bi-check-circle-fill text-primary me-2"></i> <strong>Result</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="result" class="accordion-collapse collapse" data-bs-parent="#actionComponents">
+                                        <div class="accordion-body">
+                                            <p><strong>Final outcome when task completes</strong></p>
+                                            <ul>
+                                                <li>Sent once when action finishes</li>
+                                                <li>Example: "Success! Final position: (10.0, 5.0, 2.0), Total time: 25.3s"</li>
+                                                <li>Indicates success, failure, or cancellation</li>
+                                            </ul>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-python"># Result Message Example
+result = Navigate.Result()
+result.success = True
+result.final_pose.position.x = 10.0
+result.final_pose.position.y = 5.0
+result.total_elapsed_time = 25.3
+result.message = "Navigation completed successfully"</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Visualization -->
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-3">
+                                <i class="bi bi-play-circle-fill text-danger"></i> Interactive Action Demo
+                            </h5>
+                            <p class="text-muted">Click "Start Mission" to see how actions work in real-time</p>
+
+                            <div class="animation-box" id="animationBox">
+                                <div class="drone" id="drone" style="left: 50px; top: 50px;">
+                                    <i class="bi bi-triangle-fill" style="transform: rotate(45deg);"></i>
+                                </div>
+                                <div class="waypoint" id="waypoint1" style="left: 450px; top: 50px;">1</div>
+                                <div class="waypoint" id="waypoint2" style="left: 450px; top: 200px;">2</div>
+                                <div class="waypoint" id="waypoint3" style="left: 250px; top: 200px;">3</div>
+                            </div>
+
+                            <div class="mt-3">
+                                <button class="btn btn-primary me-2" id="startBtn" onclick="startMission()">
+                                    <i class="bi bi-play-fill"></i> Start Mission
+                                </button>
+                                <button class="btn btn-warning me-2" id="cancelBtn" onclick="cancelMission()" disabled>
+                                    <i class="bi bi-stop-fill"></i> Cancel
+                                </button>
+                                <button class="btn btn-secondary" onclick="resetMission()">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                </button>
+                            </div>
+
+                            <div class="mt-4">
+                                <h6 class="fw-bold">Status:</h6>
+                                <div id="statusDisplay" class="alert alert-secondary">
+                                    <i class="bi bi-info-circle"></i> Ready to start mission
+                                </div>
+
+                                <h6 class="fw-bold">Feedback Messages:</h6>
+                                <div id="feedbackDisplay" style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                    <p class="text-muted small mb-0">Feedback will appear here...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Architecture Section -->
+                <section id="architecture" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-diagram-3"></i> Action Server-Client Architecture
+                    </h2>
+
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">Communication Flow</h4>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card bg-light border-0 h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="bi bi-server text-primary"></i> Action Server
+                                            </h5>
+                                            <p><strong>Responsibilities:</strong></p>
+                                            <ul class="small">
+                                                <li>Receives goal requests</li>
+                                                <li>Executes the long-running task</li>
+                                                <li>Publishes periodic feedback</li>
+                                                <li>Sends final result</li>
+                                                <li>Handles cancellation requests</li>
+                                            </ul>
+                                            <div class="badge bg-primary">Execute Task</div>
+                                            <div class="badge bg-info ms-2">Send Updates</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="card bg-light border-0 h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="bi bi-laptop text-success"></i> Action Client
+                                            </h5>
+                                            <p><strong>Responsibilities:</strong></p>
+                                            <ul class="small">
+                                                <li>Sends goal to server</li>
+                                                <li>Receives feedback updates</li>
+                                                <li>Monitors task progress</li>
+                                                <li>Gets final result</li>
+                                                <li>Can cancel ongoing tasks</li>
+                                            </ul>
+                                            <div class="badge bg-success">Send Goal</div>
+                                            <div class="badge bg-warning ms-2">Monitor Progress</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center my-4">
+                                <div class="border rounded p-3 bg-light" style="max-width: 700px; margin: 0 auto;">
+                                    <svg width="100%" height="280" viewBox="0 0 700 280" style="max-width: 700px;">
+                                        <!-- Client Box -->
+                                        <rect x="50" y="90" width="180" height="100" fill="#d1fae5" stroke="#10b981" stroke-width="3" rx="12"/>
+                                        <text x="140" y="125" text-anchor="middle" font-weight="bold" font-size="16" fill="#047857">Action Client</text>
+                                        <text x="140" y="148" text-anchor="middle" font-size="13" fill="#065f46">Navigation Node</text>
+
+                                        <!-- Server Box -->
+                                        <rect x="470" y="90" width="180" height="100" fill="#dbeafe" stroke="#3b82f6" stroke-width="3" rx="12"/>
+                                        <text x="560" y="125" text-anchor="middle" font-weight="bold" font-size="16" fill="#1e40af">Action Server</text>
+                                        <text x="560" y="148" text-anchor="middle" font-size="13" fill="#1e3a8a">Drone Controller</text>
+
+                                        <!-- Arrow definitions -->
+                                        <defs>
+                                            <marker id="arrowhead2" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+                                                <polygon points="0 0, 12 5, 0 10" fill="#334155" />
+                                            </marker>
+                                            <marker id="arrowRed" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+                                                <polygon points="0 0, 12 5, 0 10" fill="#dc2626" />
+                                            </marker>
+                                            <marker id="arrowOrange" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+                                                <polygon points="0 0, 12 5, 0 10" fill="#ea580c" />
+                                            </marker>
+                                            <marker id="arrowBlue" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+                                                <polygon points="0 0, 12 5, 0 10" fill="#2563eb" />
+                                            </marker>
+                                            <marker id="arrowPurple" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+                                                <polygon points="0 0, 12 5, 0 10" fill="#9333ea" />
+                                            </marker>
+                                        </defs>
+
+                                        <!-- 1. Goal Arrow -->
+                                        <line x1="230" y1="110" x2="470" y2="110" stroke="#dc2626" stroke-width="3" marker-end="url(#arrowRed)"/>
+                                        <text x="350" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#dc2626">1. Send Goal</text>
+
+                                        <!-- 2. Feedback Arrow (dashed) -->
+                                        <line x1="470" y1="140" x2="230" y2="140" stroke="#ea580c" stroke-width="3" stroke-dasharray="8,4" marker-end="url(#arrowOrange)"/>
+                                        <text x="350" y="135" text-anchor="middle" font-size="14" font-weight="600" fill="#ea580c">2. Feedback (continuous)</text>
+
+                                        <!-- 3. Result Arrow -->
+                                        <line x1="470" y1="170" x2="230" y2="170" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowBlue)"/>
+                                        <text x="350" y="165" text-anchor="middle" font-size="14" font-weight="600" fill="#2563eb">3. Result</text>
+
+                                        <!-- Cancel Arrow (dotted) -->
+                                        <line x1="230" y1="210" x2="470" y2="210" stroke="#9333ea" stroke-width="3" stroke-dasharray="3,6" marker-end="url(#arrowPurple)"/>
+                                        <text x="350" y="230" text-anchor="middle" font-size="14" font-weight="600" fill="#9333ea">Cancel (optional)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Package Setup Section -->
+                <section id="package-setup" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-folder-fill"></i> Package Setup Guide
+                    </h2>
+
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-question-circle-fill me-2"></i>
+                        <strong>Common Question:</strong> Where exactly do I put <code>custom_interfaces/action/Navigate.action</code>?
+                    </div>
+
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">
+                                <i class="bi bi-diagram-3-fill text-primary"></i> Complete Directory Structure
+                            </h4>
+
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-bash">~/ros2_ws/                              # Workspace root
+├── src/                                # Source packages
+│   ├── custom_interfaces/              # <i class="fa-solid fa-check"></i> Interface package
+│   │   ├── action/                     # <i class="fa-solid fa-check"></i> Action definitions folder
+│   │   │   └── Navigate.action         # <i class="fa-solid fa-check"></i> YOUR ACTION FILE GOES HERE
+│   │   ├── CMakeLists.txt              # Build configuration
+│   │   └── package.xml                 # Package metadata
+│   │
+│   └── drone_navigation/               # Implementation package
+│       ├── drone_navigation/           # Python module
+│       │   ├── __init__.py
+│       │   ├── navigation_server.py   # Action server
+│       │   └── navigation_client.py   # Action client
+│       ├── setup.py                    # Python setup
+│       ├── package.xml                 # Package metadata
+│       └── resource/
+│           └── drone_navigation
+│
+├── build/                              # Build artifacts (auto-generated)
+├── install/                            # Installed packages (auto-generated)
+└── log/                                # Build logs (auto-generated)</code></pre>
+                            </div>
+
+                            <div class="alert alert-success mt-4" role="alert">
+                                <h5 class="alert-heading"><i class="bi bi-check-circle-fill"></i> Critical File Location</h5>
+                                <p>The action definition file <strong>MUST</strong> be placed at:</p>
+                                <p class="mb-0"><code>custom_interfaces/action/Navigate.action</code></p>
+                                <hr>
+                                <small>
+                                    Where:
+                                    <ul class="mb-0">
+                                        <li><code>custom_interfaces/</code> is the package root directory</li>
+                                        <li><code>action/</code> is a subdirectory within the package</li>
+                                        <li><code>Navigate.action</code> is your action definition file</li>
+                                    </ul>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Setup -->
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">
+                                <i class="bi bi-list-ol text-success"></i> Step-by-Step Setup Process
+                            </h4>
+
+                            <div class="accordion" id="setupSteps">
+                                <!-- Step 1 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#step1">
+                                            <span class="badge bg-primary me-2">1</span> Create Workspace
+                                        </button>
+                                    </h2>
+                                    <div id="step1" class="accordion-collapse collapse show" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash"># Create and navigate to workspace
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step2">
+                                            <span class="badge bg-primary me-2">2</span> Create Interface Package
+                                        </button>
+                                    </h2>
+                                    <div id="step2" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <div class="alert alert-warning">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                <strong>Important:</strong> Interface packages MUST use <code>ament_cmake</code> build type!
+                                            </div>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash"># Create interface package (MUST be ament_cmake)
+ros2 pkg create --build-type ament_cmake custom_interfaces
+
+# Navigate into the package
+cd custom_interfaces
+
+# Create action directory
+mkdir action
+
+# Verify structure
+ls -la
+# You should see: action/ CMakeLists.txt package.xml</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step3">
+                                            <span class="badge bg-primary me-2">3</span> Create Action Definition File
+                                        </button>
+                                    </h2>
+                                    <div id="step3" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <p><strong>File:</strong> <code>custom_interfaces/action/Navigate.action</code></p>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash">cd ~/ros2_ws/src/custom_interfaces/action
+nano Navigate.action  # or use your favorite editor</code></pre>
+                                            </div>
+
+                                            <p class="mt-3"><strong>File Contents:</strong></p>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-python"># GOAL - What the client requests
+geometry_msgs/PoseStamped target_pose
+bool avoid_obstacles
+float32 max_speed
+---
+# RESULT - Final outcome
+bool success
+geometry_msgs/PoseStamped final_pose
+float32 total_elapsed_time
+float32 final_error
+string message
+---
+# FEEDBACK - Progress updates
+geometry_msgs/PoseStamped current_pose
+float32 distance_remaining
+float32 estimated_time_remaining
+float32 battery_percentage
+string current_status</code></pre>
+                                            </div>
+                                            <div class="alert alert-info mt-2">
+                                                <small><i class="bi bi-info-circle"></i> The three sections MUST be separated by exactly <code>---</code> on its own line</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step4">
+                                            <span class="badge bg-primary me-2">4</span> Configure CMakeLists.txt
+                                        </button>
+                                    </h2>
+                                    <div id="step4" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <p><strong>Edit:</strong> <code>custom_interfaces/CMakeLists.txt</code></p>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-cmake">cmake_minimum_required(VERSION 3.8)
+project(custom_interfaces)
+
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+
+# Generate interfaces - THIS IS THE KEY LINE
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "action/Navigate.action"
+  DEPENDENCIES geometry_msgs std_msgs
+)
+
+ament_package()</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 5 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step5">
+                                            <span class="badge bg-primary me-2">5</span> Configure package.xml
+                                        </button>
+                                    </h2>
+                                    <div id="step5" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <p><strong>Edit:</strong> <code>custom_interfaces/package.xml</code></p>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
+&lt;package format="3"&gt;
+  &lt;name&gt;custom_interfaces&lt;/name&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;description&gt;Custom action interfaces&lt;/description&gt;
+  &lt;maintainer email="you@example.com"&gt;Your Name&lt;/maintainer&gt;
+  &lt;license&gt;Apache-2.0&lt;/license&gt;
+
+  &lt;buildtool_depend&gt;ament_cmake&lt;/buildtool_depend&gt;
+
+  &lt;build_depend&gt;rosidl_default_generators&lt;/build_depend&gt;
+  &lt;build_depend&gt;geometry_msgs&lt;/build_depend&gt;
+  &lt;build_depend&gt;std_msgs&lt;/build_depend&gt;
+
+  &lt;exec_depend&gt;rosidl_default_runtime&lt;/exec_depend&gt;
+  &lt;exec_depend&gt;geometry_msgs&lt;/exec_depend&gt;
+  &lt;exec_depend&gt;std_msgs&lt;/exec_depend&gt;
+
+  &lt;member_of_group&gt;rosidl_interface_packages&lt;/member_of_group&gt;
+&lt;/package&gt;</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 6 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step6">
+                                            <span class="badge bg-success me-2">6</span> Build Interface Package
+                                        </button>
+                                    </h2>
+                                    <div id="step6" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <div class="alert alert-danger">
+                                                <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                                                <strong>Critical:</strong> Build interfaces FIRST, then source, then build implementation packages!
+                                            </div>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash"># Navigate to workspace root
+cd ~/ros2_ws
+
+# Build ONLY the interface package first
+colcon build --packages-select custom_interfaces
+
+# Source the workspace (IMPORTANT!)
+source install/setup.bash</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 7 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step7">
+                                            <span class="badge bg-success me-2">7</span> Verify Action Interface
+                                        </button>
+                                    </h2>
+                                    <div id="step7" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash"># List all action interfaces
+ros2 interface list | grep Navigate
+
+# Expected output:
+# custom_interfaces/action/Navigate
+
+# Show the complete action definition
+ros2 interface show custom_interfaces/action/Navigate
+
+# You should see your Goal, Result, and Feedback definitions</code></pre>
+                                            </div>
+                                            <div class="alert alert-success mt-2">
+                                                <i class="bi bi-check-circle-fill me-2"></i>
+                                                If you see your action definition, congratulations! The interface is ready to use.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 8 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step8">
+                                            <span class="badge bg-info me-2">8</span> Create Implementation Package
+                                        </button>
+                                    </h2>
+                                    <div id="step8" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <p>Now create the package that will use your action:</p>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash"># Navigate to src
+cd ~/ros2_ws/src
+
+# Create Python implementation package
+ros2 pkg create --build-type ament_python drone_navigation \
+    --dependencies rclpy custom_interfaces geometry_msgs
+
+# Create Python modules
+cd drone_navigation/drone_navigation
+touch __init__.py
+touch navigation_server.py
+touch navigation_client.py</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 9 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step9">
+                                            <span class="badge bg-info me-2">9</span> Configure setup.py
+                                        </button>
+                                    </h2>
+                                    <div id="step9" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <p><strong>Edit:</strong> <code>drone_navigation/setup.py</code></p>
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-python">from setuptools import setup
+
+package_name = 'drone_navigation'
+
+setup(
+    name=package_name,
+    version='1.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='Your Name',
+    maintainer_email='you@example.com',
+    description='Drone navigation using ROS2 actions',
+    license='Apache-2.0',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'navigation_server = drone_navigation.navigation_server:main',
+            'navigation_client = drone_navigation.navigation_client:main',
+        ],
+    },
+)</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 10 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step10">
+                                            <span class="badge bg-success me-2">10</span> Build Everything
+                                        </button>
+                                    </h2>
+                                    <div id="step10" class="accordion-collapse collapse" data-bs-parent="#setupSteps">
+                                        <div class="accordion-body">
+                                            <div class="code-block">
+                                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                                    <i class="bi bi-clipboard"></i> Copy
+                                                </button>
+<pre><code class="language-bash"># Navigate to workspace root
+cd ~/ros2_ws
+
+# Build all packages
+colcon build
+
+# Source the workspace
+source install/setup.bash
+
+# Verify both packages
+ros2 pkg list | grep -E "(custom_interfaces|drone_navigation)"
+
+# Expected output:
+# custom_interfaces
+# drone_navigation</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<a href="https://www.youtube.com/watch?v=S1D3rIRQzVs" target="_blank">
+  Open YouTube Video
+</a>
+                    <!-- Common Mistakes -->
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">
+                                <i class="bi bi-exclamation-triangle-fill text-danger"></i> Common Mistakes to Avoid
+                            </h4>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-danger h-100">
+                                        <div class="card-header bg-danger text-white">
+                                            <i class="bi bi-x-circle-fill"></i> Wrong
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>Wrong Package Type</h6>
+                                            <code class="d-block bg-light p-2 rounded">
+                                                ros2 pkg create --build-type ament_python custom_interfaces
+                                            </code>
+                                            <small class="text-muted d-block mt-2">
+                                                Interface packages MUST be ament_cmake!
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <i class="bi bi-check-circle-fill"></i> Correct
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>Correct Package Type</h6>
+                                            <code class="d-block bg-light p-2 rounded">
+                                                ros2 pkg create --build-type ament_cmake custom_interfaces
+                                            </code>
+                                            <small class="text-muted d-block mt-2">
+                                                Always use ament_cmake for interfaces!
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-danger h-100">
+                                        <div class="card-header bg-danger text-white">
+                                            <i class="bi bi-x-circle-fill"></i> Wrong
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>Wrong File Location</h6>
+                                            <code class="d-block bg-light p-2 rounded">
+                                                drone_navigation/action/Navigate.action
+                                            </code>
+                                            <small class="text-muted d-block mt-2">
+                                                Actions in implementation package won't work!
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <i class="bi bi-check-circle-fill"></i> Correct
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>Correct File Location</h6>
+                                            <code class="d-block bg-light p-2 rounded">
+                                                custom_interfaces/action/Navigate.action
+                                            </code>
+                                            <small class="text-muted d-block mt-2">
+                                                Separate interface package!
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-danger h-100">
+                                        <div class="card-header bg-danger text-white">
+                                            <i class="bi bi-x-circle-fill"></i> Wrong
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>Forgetting to Source</h6>
+                                            <code class="d-block bg-light p-2 rounded small">
+                                                colcon build --packages-select custom_interfaces<br>
+                                                colcon build --packages-select drone_navigation
+                                            </code>
+                                            <small class="text-danger d-block mt-2">
+                                                Missing source command causes import errors!
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <i class="bi bi-check-circle-fill"></i> Correct
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>Always Source After Building</h6>
+                                            <code class="d-block bg-light p-2 rounded small">
+                                                colcon build --packages-select custom_interfaces<br>
+                                                source install/setup.bash<br>
+                                                colcon build --packages-select drone_navigation
+                                            </code>
+                                            <small class="text-success d-block mt-2">
+                                                Source after building interfaces!
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Reference -->
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">
+                                <i class="bi bi-lightning-fill text-warning"></i> Quick Reference
+                            </h4>
+
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Location / Command</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Action File</strong></td>
+                                        <td><code>~/ros2_ws/src/custom_interfaces/action/Navigate.action</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CMakeLists.txt</strong></td>
+                                        <td><code>~/ros2_ws/src/custom_interfaces/CMakeLists.txt</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>package.xml</strong></td>
+                                        <td><code>~/ros2_ws/src/custom_interfaces/package.xml</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Build Interfaces</strong></td>
+                                        <td><code>colcon build --packages-select custom_interfaces</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Source Workspace</strong></td>
+                                        <td><code>source install/setup.bash</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Verify Action</strong></td>
+                                        <td><code>ros2 interface show custom_interfaces/action/Navigate</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Import in Python</strong></td>
+                                        <td><code>from custom_interfaces.action import Navigate</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Implementation Section -->
+                <section id="implementation" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-code-slash"></i> Implementation Guide
+                    </h2>
+
+                    <!-- Tabs for Server and Client -->
+                    <ul class="nav nav-tabs" id="implementationTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="server-tab" data-bs-toggle="tab" data-bs-target="#server" type="button">
+                                <i class="bi bi-server"></i> Action Server
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button">
+                                <i class="bi bi-laptop"></i> Action Client
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="interface-tab" data-bs-toggle="tab" data-bs-target="#interface" type="button">
+                                <i class="bi bi-file-code"></i> Action Interface
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="implementationTabContent">
+                        <!-- Server Tab -->
+                        <div class="tab-pane fade show active" id="server" role="tabpanel">
+                            <h5 class="fw-bold mb-3">Creating an Action Server</h5>
+                            <p>The action server executes long-running tasks and provides feedback to clients.</p>
+
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionServer
+from custom_interfaces.action import Navigate
+import time
+import math
+
+class NavigationActionServer(Node):
+    def __init__(self):
+        super().__init__('navigation_action_server')
+
+        self._action_server = ActionServer(
+            self,
+            Navigate,
+            'navigate_to_waypoint',
+            self.execute_callback
+        )
+
+        self.get_logger().info('Navigation Action Server Started')
+
+    def execute_callback(self, goal_handle):
+        """Execute the navigation goal"""
+        self.get_logger().info('Executing navigation goal...')
+
+
+        target_x = goal_handle.request.target_pose.pose.position.x
+        target_y = goal_handle.request.target_pose.pose.position.y
+        target_z = goal_handle.request.target_pose.pose.position.z
+
+        feedback_msg = Navigate.Feedback()
+
+        for i in range(1, 11):
+            if goal_handle.is_cancel_requested:
+                goal_handle.canceled()
+                self.get_logger().info('Goal canceled')
+                result = Navigate.Result()
+                result.success = False
+                result.message = 'Navigation cancelled by client'
+                return result
+
+
+            feedback_msg.current_pose.pose.position.x = target_x * (i / 10.0)
+            feedback_msg.current_pose.pose.position.y = target_y * (i / 10.0)
+            feedback_msg.current_pose.pose.position.z = target_z * (i / 10.0)
+
+            dx = target_x - feedback_msg.current_pose.pose.position.x
+            dy = target_y - feedback_msg.current_pose.pose.position.y
+            dz = target_z - feedback_msg.current_pose.pose.position.z
+            feedback_msg.distance_remaining = math.sqrt(dx**2 + dy**2 + dz**2)
+            feedback_msg.estimated_time_remaining = (10 - i) * 1.0
+
+            self.get_logger().info(f'Progress: {i*10}%')
+            goal_handle.publish_feedback(feedback_msg)
+
+            time.sleep(1.0)
+
+        goal_handle.succeed()
+
+        result = Navigate.Result()
+        result.success = True
+        result.final_pose = goal_handle.request.target_pose
+        result.total_elapsed_time = 10.0
+        result.message = 'Navigation completed successfully'
+
+        self.get_logger().info('Goal succeeded!')
+        return result
+
+def main(args=None):
+    rclpy.init(args=args)
+    navigation_server = NavigationActionServer()
+    rclpy.spin(navigation_server)
+    navigation_server.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+
+                            <div class="alert alert-warning mt-3">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Key Points:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Always check <code>goal_handle.is_cancel_requested</code> during execution</li>
+                                    <li>Call <code>goal_handle.succeed()</code> or <code>goal_handle.canceled()</code></li>
+                                    <li>Publish feedback regularly to keep client informed</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Client Tab -->
+                        <div class="tab-pane fade" id="client" role="tabpanel">
+                            <h5 class="fw-bold mb-3">Creating an Action Client</h5>
+                            <p>The action client sends goals and monitors progress.</p>
+
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionClient
+from custom_interfaces.action import Navigate
+
+class NavigationActionClient(Node):
+    def __init__(self):
+        super().__init__('navigation_action_client')
+
+        self._action_client = ActionClient(
+            self,
+            Navigate,
+            'navigate_to_waypoint'
+        )
+
+        self.get_logger().info('Navigation Action Client Started')
+
+    def send_goal(self, x, y, z):
+        """Send navigation goal to server"""
+        self.get_logger().info('Waiting for action server...')
+        self._action_client.wait_for_server()
+
+        goal_msg = Navigate.Goal()
+
+        goal_msg.target_pose.pose.position.x = x
+        goal_msg.target_pose.pose.position.y = y
+        goal_msg.target_pose.pose.position.z = z
+
+        goal_msg.target_pose.pose.orientation.w = 1.0
+
+        self.get_logger().info(f'Sending goal: ({x}, {y}, {z})')
+
+        self._send_goal_future = self._action_client.send_goal_async(
+            goal_msg,
+            feedback_callback=self.feedback_callback
+        )
+
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+
+        if not goal_handle.accepted:
+            self.get_logger().error('Goal rejected by server')
+            return
+
+        self.get_logger().info('Goal accepted by server')
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def feedback_callback(self, feedback_msg):
+        """Process feedback from server"""
+        feedback = feedback_msg.feedback
+
+
+        self.get_logger().info(
+            f'Feedback: Position=({feedback.current_pose.pose.position.x:.2f}, '
+            f'{feedback.current_pose.pose.position.y:.2f}, '
+            f'{feedback.current_pose.pose.position.z:.2f}), '
+            f'Distance Remaining={feedback.distance_remaining:.2f}m, '
+            f'ETA={feedback.estimated_time_remaining:.1f}s'
+        )
+
+    def get_result_callback(self, future):
+        """Process final result"""
+        result = future.result().result
+
+        if result.success:
+            self.get_logger().info(
+                f'SUCCESS! {result.message} '
+                f'(Total time: {result.total_elapsed_time:.1f}s)'
+            )
+        else:
+            self.get_logger().warn(f'FAILED: {result.message}')
+
+        rclpy.shutdown()
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    client = NavigationActionClient()
+    client.send_goal(10.0, 5.0, 2.0)
+
+    rclpy.spin(client)
+    client.destroy_node()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+
+                            <div class="alert alert-info mt-3">
+                                <i class="bi bi-lightbulb-fill me-2"></i>
+                                <strong>Pro Tips:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Use <code>wait_for_server()</code> to ensure server is ready</li>
+                                    <li>Implement all three callbacks: goal response, feedback, and result</li>
+                                    <li>Handle cancellation with <code>cancel_goal_async()</code> if needed</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Interface Tab -->
+                        <div class="tab-pane fade" id="interface" role="tabpanel">
+                            <h5 class="fw-bold mb-3">Defining Action Interfaces</h5>
+                            <p>Action interfaces define the structure of goals, feedback, and results.</p>
+
+                            <div class="alert alert-secondary">
+                                <i class="bi bi-folder-fill me-2"></i>
+                                <strong>File Location:</strong> <code>custom_interfaces/action/Navigate.action</code>
+                            </div>
+
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-python"># Goal - What we want to achieve
+geometry_msgs/PoseStamped target_pose
+bool avoid_obstacles
+float32 max_speed
+---
+# Result - Final outcome
+bool success
+geometry_msgs/PoseStamped final_pose
+float32 total_elapsed_time
+string message
+---
+# Feedback - Progress updates
+geometry_msgs/PoseStamped current_pose
+float32 distance_remaining
+float32 estimated_time_remaining
+string current_status</code></pre>
+                            </div>
+
+                            <h6 class="fw-bold mt-4">CMakeLists.txt Configuration</h6>
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-cmake">find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "action/Navigate.action"
+  DEPENDENCIES geometry_msgs
+)</code></pre>
+                            </div>
+
+                            <h6 class="fw-bold mt-4">package.xml Dependencies</h6>
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-xml">&lt;build_depend&gt;rosidl_default_generators&lt;/build_depend&gt;
+&lt;build_depend&gt;geometry_msgs&lt;/build_depend&gt;
+
+&lt;exec_depend&gt;rosidl_default_runtime&lt;/exec_depend&gt;
+&lt;exec_depend&gt;geometry_msgs&lt;/exec_depend&gt;
+
+&lt;member_of_group&gt;rosidl_interface_packages&lt;/member_of_group&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Hands-on Project Section -->
+                <section id="project" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-rocket"></i> Hands-on Project
+                    </h2>
+
+                    <div class="checkpoint">
+                        <h4 class="fw-bold mb-3">
+                            <i class="bi bi-trophy-fill"></i> Project 5.1: Intelligent Flight/Navigation Action Server
+                        </h4>
+                        <p class="mb-0">Build a complete navigation system using ROS2 actions for autonomous drone/robot control</p>
+                    </div>
+
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-4">Project Requirements</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-primary h-100">
+                                        <div class="card-header bg-primary text-white">
+                                            <i class="bi bi-1-circle-fill"></i> Action Server
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="small">
+                                                <li>Create navigation action server</li>
+                                                <li>Support ground/aerial vehicles</li>
+                                                <li>Provide real-time progress feedback</li>
+                                                <li>Implement obstacle detection simulation</li>
+                                                <li>Support goal cancellation</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <i class="bi bi-2-circle-fill"></i> Action Client
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="small">
+                                                <li>Monitor navigation progress</li>
+                                                <li>Display real-time telemetry</li>
+                                                <li>Handle dynamic goal updates</li>
+                                                <li>Support waypoint replanning</li>
+                                                <li>Implement cancellation logic</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-info h-100">
+                                        <div class="card-header bg-info text-white">
+                                            <i class="bi bi-3-circle-fill"></i> Features
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="small">
+                                                <li>Obstacle detection simulation</li>
+                                                <li>Dynamic goal cancellation</li>
+                                                <li>Waypoint navigation</li>
+                                                <li>Mission replanning</li>
+                                                <li>Battery/telemetry monitoring</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-warning h-100">
+                                        <div class="card-header bg-warning">
+                                            <i class="bi bi-4-circle-fill"></i> Deliverables
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="small">
+                                                <li>Working action server code</li>
+                                                <li>Working action client code</li>
+                                                <li>Custom action interface</li>
+                                                <li>Demo video (with replanning)</li>
+                                                <li>Documentation/README</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-3">
+                                <i class="bi bi-list-check"></i> Implementation Checklist
+                            </h5>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check1">
+                                <label class="form-check-label" for="check1">
+                                    Create ROS2 package structure with action interface
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check2">
+                                <label class="form-check-label" for="check2">
+                                    Define Navigate.action with Goal, Feedback, and Result
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check3">
+                                <label class="form-check-label" for="check3">
+                                    Implement action server with execute_callback
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check4">
+                                <label class="form-check-label" for="check4">
+                                    Add periodic feedback publishing in server
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check5">
+                                <label class="form-check-label" for="check5">
+                                    Implement obstacle detection simulation
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check6">
+                                <label class="form-check-label" for="check6">
+                                    Create action client with all callbacks
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check7">
+                                <label class="form-check-label" for="check7">
+                                    Add waypoint mission planner functionality
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check8">
+                                <label class="form-check-label" for="check8">
+                                    Test navigation with dynamic replanning
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check9">
+                                <label class="form-check-label" for="check9">
+                                    Record demo video showing all features
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="check10">
+                                <label class="form-check-label" for="check10">
+                                    Write README with setup and usage instructions
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-custom mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-3">
+                                <i class="bi bi-terminal-fill"></i> Quick Start Commands
+                            </h5>
+
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-secondary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+<pre><code class="language-bash"># Create workspace and package
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python drone_navigation
+
+# Create action interface package
+ros2 pkg create --build-type ament_cmake custom_interfaces
+
+# Build workspace
+cd ~/ros2_ws
+colcon build
+source install/setup.bash
+
+# Run action server (Terminal 1)
+ros2 run drone_navigation navigation_server
+
+# Run action client (Terminal 2)
+ros2 run drone_navigation navigation_client
+
+# Monitor actions
+ros2 action list
+ros2 action info /navigate_to_waypoint</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quiz Section -->
+                <section id="quiz" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-question-circle"></i> Knowledge Check
+                    </h2>
+
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-4">Test Your Understanding</h5>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold">Question 1: When should you use ROS2 Actions instead of Services?</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item quiz-option" data-answer="correct" onclick="checkAnswer(this, 1)">
+                                        <i class="bi bi-circle me-2"></i> When you need to execute long-running tasks with periodic feedback
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 1)">
+                                        <i class="bi bi-circle me-2"></i> For quick request-response operations
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 1)">
+                                        <i class="bi bi-circle me-2"></i> For streaming sensor data continuously
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 1)">
+                                        <i class="bi bi-circle me-2"></i> For publishing static parameters
+                                    </div>
+                                </div>
+                                <div id="feedback1" class="mt-2"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold">Question 2: What are the three main components of a ROS2 Action?</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 2)">
+                                        <i class="bi bi-circle me-2"></i> Request, Response, Status
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="correct" onclick="checkAnswer(this, 2)">
+                                        <i class="bi bi-circle me-2"></i> Goal, Feedback, Result
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 2)">
+                                        <i class="bi bi-circle me-2"></i> Start, Update, End
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 2)">
+                                        <i class="bi bi-circle me-2"></i> Input, Process, Output
+                                    </div>
+                                </div>
+                                <div id="feedback2" class="mt-2"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold">Question 3: What should the action server check during execution to handle cancellation?</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 3)">
+                                        <i class="bi bi-circle me-2"></i> goal_handle.is_active
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="correct" onclick="checkAnswer(this, 3)">
+                                        <i class="bi bi-circle me-2"></i> goal_handle.is_cancel_requested
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 3)">
+                                        <i class="bi bi-circle me-2"></i> goal_handle.is_completed
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 3)">
+                                        <i class="bi bi-circle me-2"></i> goal_handle.cancel_status
+                                    </div>
+                                </div>
+                                <div id="feedback3" class="mt-2"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold">Question 4: How does the client receive progress updates from the server?</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 4)">
+                                        <i class="bi bi-circle me-2"></i> By polling the server periodically
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="correct" onclick="checkAnswer(this, 4)">
+                                        <i class="bi bi-circle me-2"></i> Through the feedback_callback function
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 4)">
+                                        <i class="bi bi-circle me-2"></i> Via service calls
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 4)">
+                                        <i class="bi bi-circle me-2"></i> Through parameter updates
+                                    </div>
+                                </div>
+                                <div id="feedback4" class="mt-2"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold">Question 5: In the project, what feature allows the drone to handle unexpected obstacles?</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 5)">
+                                        <i class="bi bi-circle me-2"></i> Emergency stop service
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 5)">
+                                        <i class="bi bi-circle me-2"></i> Automatic shutdown
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="correct" onclick="checkAnswer(this, 5)">
+                                        <i class="bi bi-circle me-2"></i> Dynamic goal cancellation and replanning
+                                    </div>
+                                    <div class="list-group-item quiz-option" data-answer="wrong" onclick="checkAnswer(this, 5)">
+                                        <i class="bi bi-circle me-2"></i> Speed reduction only
+                                    </div>
+                                </div>
+                                <div id="feedback5" class="mt-2"></div>
+                            </div>
+
+                            <div class="text-center">
+                                <button class="btn btn-primary btn-lg" onclick="calculateScore()">
+                                    <i class="bi bi-calculator"></i> Calculate Score
+                                </button>
+                            </div>
+                            <div id="finalScore" class="text-center mt-3"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Resources Section -->
+                <section id="resources" class="mb-5">
+                    <h2 class="section-header">
+                        <i class="bi bi-book"></i> Additional Resources
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card card-custom h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-file-text text-primary"></i> Documentation
+                                    </h5>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <a href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Writing-an-Action-Server-Client/Py.html" target="_blank" class="text-decoration-none">
+                                                <i class="bi bi-arrow-right-circle"></i> ROS2 Actions Tutorial
+                                            </a>
+                                        </li>
+                                        <li class="mb-2">
+                                            <a href="https://design.ros2.org/articles/actions.html" target="_blank" class="text-decoration-none">
+                                                <i class="bi bi-arrow-right-circle"></i> Actions Design Documentation
+                                            </a>
+                                        </li>
+                                        <li class="mb-2">
+                                            <a href="https://docs.ros.org/en/humble/Concepts/About-Actions.html" target="_blank" class="text-decoration-none">
+                                                <i class="bi bi-arrow-right-circle"></i> About ROS2 Actions
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card card-custom h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-tools text-success"></i> Tools & Commands
+                                    </h5>
+                                    <div class="code-block">
+<pre><code class="language-bash"># List all actions
+ros2 action list
+
+# Get action info
+ros2 action info /action_name
+
+# Send test goal
+ros2 action send_goal /action_name \
+  action_type '{goal_data}'
+
+# Monitor feedback
+ros2 action send_goal /action_name \
+  action_type '{goal_data}' --feedback</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-2"><i class="bi bi-robot"></i> ROS2 Actions Interactive Tutorial</p>
+            <p class="small mb-0">Week 5: Long-Running Intelligent Tasks | Built for autonomous systems education</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+    <script>
+        // Progress tracking
+        let sectionsCompleted = new Set();
+        const totalSections = 7;
+
+        // Scroll tracking for progress
+        function updateProgress() {
+            const sections = ['overview', 'concepts', 'architecture', 'package-setup', 'implementation', 'project', 'quiz'];
+            const windowHeight = window.innerHeight;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top < windowHeight / 2 && rect.bottom > windowHeight / 2) {
+                        sectionsCompleted.add(sectionId);
+
+                        // Update active topic
+                        document.querySelectorAll('.topic-card').forEach(card => {
+                            card.classList.remove('active');
+                        });
+                        const activeCard = document.querySelector(`[onclick="scrollToSection('${sectionId}')"]`);
+                        if (activeCard) activeCard.classList.add('active');
+                    }
+                }
+            });
+
+            const progress = (sectionsCompleted.size / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '%';
+        }
+
+        window.addEventListener('scroll', updateProgress);
+        window.addEventListener('load', updateProgress);
+
+        // Smooth scroll
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Copy code functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling.querySelector('code');
+            const text = codeBlock.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                button.classList.remove('btn-secondary');
+                button.classList.add('btn-success');
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-secondary');
+                }, 2000);
+            });
+        }
+
+        // Animation for drone mission
+        let missionInterval = null;
+        let currentWaypoint = 1;
+        let cancelled = false;
+
+        function startMission() {
+            const drone = document.getElementById('drone');
+            const statusDisplay = document.getElementById('statusDisplay');
+            const feedbackDisplay = document.getElementById('feedbackDisplay');
+            const startBtn = document.getElementById('startBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            cancelled = false;
+            currentWaypoint = 1;
+            feedbackDisplay.innerHTML = '';
+
+            startBtn.disabled = true;
+            cancelBtn.disabled = false;
+
+            statusDisplay.className = 'alert alert-info';
+            statusDisplay.innerHTML = '<i class="bi bi-hourglass-split"></i> Mission in progress...';
+
+            addFeedback('Mission started. Moving to waypoint 1...');
+
+            const waypoints = [
+                { x: 450, y: 50, num: 1 },
+                { x: 450, y: 200, num: 2 },
+                { x: 250, y: 200, num: 3 }
+            ];
+
+            let waypointIndex = 0;
+
+            function moveToNextWaypoint() {
+                if (cancelled || waypointIndex >= waypoints.length) {
+                    if (!cancelled) {
+                        statusDisplay.className = 'alert alert-success';
+                        statusDisplay.innerHTML = '<i class="bi bi-check-circle-fill"></i> Mission completed successfully!';
+                        addFeedback('All waypoints reached. Mission complete!');
+                    }
+                    startBtn.disabled = false;
+                    cancelBtn.disabled = true;
+                    if (missionInterval) clearInterval(missionInterval);
+                    return;
+                }
+
+                const target = waypoints[waypointIndex];
+                const currentX = parseInt(drone.style.left);
+                const currentY = parseInt(drone.style.top);
+
+                const dx = target.x - currentX;
+                const dy = target.y - currentY;
+                const distance = Math.sqrt(dx*dx + dy*dy);
+
+                if (distance < 5) {
+                    addFeedback(`Reached waypoint ${target.num}!`);
+                    waypointIndex++;
+                    if (waypointIndex < waypoints.length) {
+                        addFeedback(`Moving to waypoint ${waypoints[waypointIndex].num}...`);
+                    }
+                } else {
+                    const stepSize = 5;
+                    const ratio = stepSize / distance;
+                    const newX = currentX + dx * ratio;
+                    const newY = currentY + dy * ratio;
+
+                    drone.style.left = newX + 'px';
+                    drone.style.top = newY + 'px';
+
+                    const distanceRemaining = distance.toFixed(1);
+                    addFeedback(`Distance to waypoint ${target.num}: ${distanceRemaining}px`);
+                }
+            }
+
+            missionInterval = setInterval(moveToNextWaypoint, 100);
+        }
+
+        function cancelMission() {
+            cancelled = true;
+            const statusDisplay = document.getElementById('statusDisplay');
+            statusDisplay.className = 'alert alert-warning';
+            statusDisplay.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Mission cancelled by user';
+            addFeedback('Mission cancelled. Returning to home position...');
+
+            if (missionInterval) {
+                clearInterval(missionInterval);
+            }
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+        }
+
+        function resetMission() {
+            cancelled = false;
+            const drone = document.getElementById('drone');
+            drone.style.left = '50px';
+            drone.style.top = '50px';
+
+            const statusDisplay = document.getElementById('statusDisplay');
+            statusDisplay.className = 'alert alert-secondary';
+            statusDisplay.innerHTML = '<i class="bi bi-info-circle"></i> Ready to start mission';
+
+            document.getElementById('feedbackDisplay').innerHTML = '<p class="text-muted small mb-0">Feedback will appear here...</p>';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+
+            if (missionInterval) {
+                clearInterval(missionInterval);
+            }
+        }
+
+        function addFeedback(message) {
+            const feedbackDisplay = document.getElementById('feedbackDisplay');
+            if (feedbackDisplay.querySelector('.text-muted')) {
+                feedbackDisplay.innerHTML = '';
+            }
+
+            const timestamp = new Date().toLocaleTimeString();
+            const feedbackItem = document.createElement('div');
+            feedbackItem.className = 'feedback-item';
+            feedbackItem.innerHTML = `<small class="text-muted">${timestamp}</small><br>${message}`;
+            feedbackDisplay.appendChild(feedbackItem);
+            feedbackDisplay.scrollTop = feedbackDisplay.scrollHeight;
+        }
+
+        // Quiz functionality
+        let quizAnswers = {};
+
+        function checkAnswer(element, questionNum) {
+            const siblings = element.parentElement.querySelectorAll('.quiz-option');
+            siblings.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                opt.style.pointerEvents = 'none';
+            });
+
+            const isCorrect = element.getAttribute('data-answer') === 'correct';
+            element.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+            quizAnswers[questionNum] = isCorrect;
+
+            const feedback = document.getElementById('feedback' + questionNum);
+            if (isCorrect) {
+                feedback.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Correct! Well done!</div>';
+            } else {
+                feedback.innerHTML = '<div class="alert alert-danger"><i class="bi bi-x-circle-fill me-2"></i>Incorrect. Try reviewing the material above.</div>';
+            }
+        }
+
+        function calculateScore() {
+            const totalQuestions = 5;
+            const correctAnswers = Object.values(quizAnswers).filter(answer => answer === true).length;
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+
+            const scoreDiv = document.getElementById('finalScore');
+            let message = '';
+            let alertClass = '';
+
+            if (percentage >= 80) {
+                message = 'Excellent! You have a strong understanding of ROS2 Actions!';
+                alertClass = 'alert-success';
+            } else if (percentage >= 60) {
+                message = 'Good job! Review the material to strengthen your knowledge.';
+                alertClass = 'alert-info';
+            } else {
+                message = 'Keep learning! Review the tutorial sections above.';
+                alertClass = 'alert-warning';
+            }
+
+            scoreDiv.innerHTML = `
+                <div class="alert ${alertClass} mt-3">
+                    <h4 class="fw-bold">Your Score: ${correctAnswers}/${totalQuestions} (${percentage}%)</h4>
+                    <p class="mb-0">${message}</p>
+                </div>
+            `;
+        }
+
+        // Initialize Prism.js
+        document.addEventListener('DOMContentLoaded', function() {
+            Prism.highlightAll();
+        });
+    </script>
+
+<script>
+// Theme toggle
+function toggleTheme(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+}
+(function(){
+    const saved=localStorage.getItem('theme');
+    if(saved==='light'){
+        document.body.classList.add('light-mode');
+        const icon=document.getElementById('themeIcon');
+        if(icon) icon.className='fa-solid fa-moon';
+    }
+})();
+
+// Copy code
+function copyCode(btn){
+    const code=btn.closest('pre,.code-block,.code-container').querySelector('code,pre');
+    const text=code?code.textContent:btn.parentElement.textContent;
+    navigator.clipboard.writeText(text.replace(/^Copy\s*/,''));
+    btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+    setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
+}
+
+// Add copy buttons to all code blocks
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
+        if(pre.querySelector('.copy-btn')) return;
+        pre.classList.add('has-copy');
+        pre.style.position='relative';
+        var btn=document.createElement('button');
+        btn.className='copy-btn';
+        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
+        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5;transition:all .2s';
+        btn.onmouseover=function(){this.style.borderColor='#3b82f6';this.style.color='#3b82f6'};
+        btn.onmouseout=function(){this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'};
+        btn.onclick=function(e){
+            e.stopPropagation();
+            var code=pre.querySelector('code')||pre;
+            navigator.clipboard.writeText(code.textContent.replace(/^Copy\s*/,''));
+            this.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+            var b=this;
+            setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);
+        };
+        pre.appendChild(btn);
+    });
+
+    // Scroll to top button
+    var st=document.createElement('button');
+    st.id='scrollTopBtn';
+    st.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
+    st.style.cssText='position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface,#111827);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;opacity:0;pointer-events:none;z-index:900;transition:all .2s';
+    st.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+    document.body.appendChild(st);
+    window.addEventListener('scroll',function(){
+        st.style.opacity=window.scrollY>500?'1':'0';
+        st.style.pointerEvents=window.scrollY>500?'auto':'none';
+    });
+});
+</script>
+</body>
+</html>

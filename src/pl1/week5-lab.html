@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5: Lab — Thinking in Objects | PL1 - Java (601112)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        [data-theme="light"] .navbar{background:var(--bg)}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero::before{display:none}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px}
+
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+        .section-title i{color:var(--primary);font-size:1.2rem}
+
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+
+        .usecase-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.9rem;line-height:1.7;color:var(--text2)}
+        .usecase-box i{color:var(--secondary);margin-right:.4rem}
+        .usecase-box strong{color:var(--secondary)}
+
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}
+            .nav-links.open{display:flex}
+            .mobile-toggle{display:block}
+            .hero h1{font-size:1.8rem}
+            .exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week5.html">&larr; Week 5</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week5.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 5</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 5: Lab — <span class="gradient">Thinking in Objects</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 9 &amp; 10</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 13 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1: Encapsulation + Immutable -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Encapsulated &amp; Immutable Student</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A university system stores student records. Once a student ID and name are registered, they should <strong>never change</strong> — that's immutability. But the GPA can be updated through a controlled setter with validation (0.0–4.0 only). This combines <strong>encapsulation</strong> (private fields, getters/setters) with <strong>immutability</strong> (no setter for id/name).</div>
+                <div class="info-box">Create an <code>ImmutableStudent</code> class with <strong>private</strong> fields: <code>id</code> (int), <code>name</code> (String), and <code>gpa</code> (double). Provide <strong>getters for all</strong> fields, but a <strong>setter only for gpa</strong> with validation (0.0 to 4.0). The <code>id</code> and <code>name</code> are set only through the constructor and can never be changed. In <code>main</code>, create a student, try to update gpa with valid and invalid values.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>ID: 1001, Name: Ali, GPA: 3.5
+Setting GPA to 5.0 (invalid)...
+ID: 1001, Name: Ali, GPA: 3.5
+Setting GPA to 3.9 (valid)...
+ID: 1001, Name: Ali, GPA: 3.9</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" rows="40" spellcheck="false">class ImmutableStudent {
+    // Private fields: id (int), name (String), gpa (double)
+
+
+    // Constructor that takes id, name, gpa
+
+
+    // Getter for id (NO setter — immutable)
+
+
+    // Getter for name (NO setter — immutable)
+
+
+    // Getter for gpa
+
+
+    // Setter for gpa WITH validation (0.0 to 4.0 only)
+
+}
+
+public class TestImmutableStudent {
+    public static void main(String[] args) {
+        ImmutableStudent s = new ImmutableStudent(1001, "Ali", 3.5);
+        System.out.println("ID: " + s.getId() + ", Name: " + s.getName() + ", GPA: " + s.getGpa());
+
+        System.out.println("Setting GPA to 5.0 (invalid)...");
+        s.setGpa(5.0);
+        System.out.println("ID: " + s.getId() + ", Name: " + s.getName() + ", GPA: " + s.getGpa());
+
+        System.out.println("Setting GPA to 3.9 (valid)...");
+        s.setGpa(3.9);
+        System.out.println("ID: " + s.getId() + ", Name: " + s.getName() + ", GPA: " + s.getGpa());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">Declare: <code>private int id; private String name; private double gpa;</code>. Constructor: <code>ImmutableStudent(int id, String name, double gpa) { this.id = id; this.name = name; this.gpa = gpa; }</code>. Only provide getters for id and name (no setters!). Setter for gpa: <code>public void setGpa(double gpa) { if (gpa &gt;= 0.0 && gpa &lt;= 4.0) this.gpa = gpa; }</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Scope of Variables -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>Variable Scope Explorer</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> Understanding scope prevents bugs caused by variable shadowing. When a local variable has the same name as an instance variable, the local one takes priority. Using <code>this</code> lets you explicitly access the instance variable. This exercise makes you practice distinguishing between local and instance scope.</div>
+                <div class="info-box">Create a <code>ScopeTest</code> class with an instance variable <code>x = 10</code>. Add a method <code>demonstrate(int x)</code> that receives a parameter named <code>x</code> (same name!). Inside the method, print: (1) the local parameter <code>x</code>, (2) the instance variable using <code>this.x</code>, (3) create a local variable <code>y</code> and print it. Then call the method from <code>main</code> with argument <code>50</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Parameter x: 50
+Instance x: 10
+Local y: 99
+Back in main — cannot access y here</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" rows="28" spellcheck="false">class ScopeTest {
+    // Instance variable x = 10
+
+
+    // Method: demonstrate(int x)
+    // Print parameter x, this.x, and a local variable y = 99
+
+}
+
+public class TestScope {
+    public static void main(String[] args) {
+        ScopeTest obj = new ScopeTest();
+        obj.demonstrate(50);
+        System.out.println("Back in main — cannot access y here");
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Instance variable: <code>int x = 10;</code>. Method: <code>public void demonstrate(int x) { System.out.println("Parameter x: " + x); System.out.println("Instance x: " + this.x); int y = 99; System.out.println("Local y: " + y); }</code>. The parameter <code>x</code> shadows the instance variable, so use <code>this.x</code> to access the instance one.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Static Variable + Constant -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Static Counter &amp; Constant</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A pizza shop wants to track how many pizzas have been ordered and apply a fixed tax rate to every order. The <strong>order count</strong> should be shared across all Pizza objects (static variable), and the <strong>tax rate</strong> should be a constant that nobody can change (static final). This exercise practices <strong>static variables</strong>, <strong>static constants</strong>, and <strong>static methods</strong>.</div>
+                <div class="info-box">Create a <code>Pizza</code> class with: instance fields <code>name</code> (String) and <code>price</code> (double), a <strong>static</strong> variable <code>orderCount = 0</code>, and a <strong>static final</strong> constant <code>TAX_RATE = 0.16</code>. The constructor increments <code>orderCount</code>. Add a method <code>getTotalPrice()</code> that returns <code>price + price * TAX_RATE</code>. Add a <strong>static method</strong> <code>getOrderCount()</code>. Create 3 pizzas in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Margherita total: 11.6
+Pepperoni total: 16.24
+Hawaiian total: 13.92
+Total orders: 3</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" rows="36" spellcheck="false">class Pizza {
+    // Instance fields: name (String), price (double)
+
+
+    // Static variable: orderCount = 0
+
+
+    // Static constant: TAX_RATE = 0.16
+
+
+    // Constructor: takes name and price, increments orderCount
+
+
+    // Method: getTotalPrice() — returns price + price * TAX_RATE
+
+
+    // Static method: getOrderCount()
+
+}
+
+public class TestPizza {
+    public static void main(String[] args) {
+        Pizza p1 = new Pizza("Margherita", 10.0);
+        Pizza p2 = new Pizza("Pepperoni", 14.0);
+        Pizza p3 = new Pizza("Hawaiian", 12.0);
+
+        System.out.println(p1.name + " total: " + p1.getTotalPrice());
+        System.out.println(p2.name + " total: " + p2.getTotalPrice());
+        System.out.println(p3.name + " total: " + p3.getTotalPrice());
+        System.out.println("Total orders: " + Pizza.getOrderCount());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Fields: <code>String name; double price; static int orderCount = 0; public static final double TAX_RATE = 0.16;</code>. Constructor: <code>Pizza(String name, double price) { this.name = name; this.price = price; orderCount++; }</code>. Method: <code>public double getTotalPrice() { return price + price * TAX_RATE; }</code>. Static: <code>public static int getOrderCount() { return orderCount; }</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4: Passing Objects to Methods -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>Passing Objects — Circle Resizer</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> When you pass a primitive to a method, it gets a <strong>copy</strong> — changes don't affect the original. But when you pass an object, the method receives a copy of the <strong>reference</strong> — so it can modify the original object's fields! This is a fundamental concept to understand in Java.</div>
+                <div class="info-box">Create a <code>Circle</code> class with a private field <code>radius</code>, a constructor, getter, and setter. Write two static methods in the test class: <code>doubleValue(int n)</code> that doubles a primitive (won't affect the original), and <code>doubleRadius(Circle c)</code> that doubles a circle's radius (WILL affect the original). Demonstrate both in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Before: num = 5
+After doubleValue: num = 5
+Before: radius = 10.0
+After doubleRadius: radius = 20.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" rows="40" spellcheck="false">class Circle {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    public double getRadius() { return radius; }
+    public void setRadius(double radius) { this.radius = radius; }
+}
+
+public class TestPassing {
+    // Static method: doubleValue(int n) — doubles n (only local copy)
+
+
+    // Static method: doubleRadius(Circle c) — doubles c's radius using setRadius
+
+
+    public static void main(String[] args) {
+        // Test primitive passing
+        int num = 5;
+        System.out.println("Before: num = " + num);
+        doubleValue(num);
+        System.out.println("After doubleValue: num = " + num);
+
+        // Test object passing
+        Circle c = new Circle(10.0);
+        System.out.println("Before: radius = " + c.getRadius());
+        doubleRadius(c);
+        System.out.println("After doubleRadius: radius = " + c.getRadius());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4">Primitive method: <code>public static void doubleValue(int n) { n = n * 2; }</code> — this only changes the local copy. Object method: <code>public static void doubleRadius(Circle c) { c.setRadius(c.getRadius() * 2); }</code> — this modifies the actual object because <code>c</code> is a reference to the same object.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5: Array of Objects -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>Array of Objects — Student Roster</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A professor needs to manage a roster of students. Using an <strong>array of objects</strong>, you can store multiple Student objects and loop through them to find the highest GPA, calculate the average, or print all students. Remember: creating the array doesn't create the objects — you must <code>new</code> each one!</div>
+                <div class="info-box">Create a <code>Student</code> class with fields <code>name</code> (String) and <code>gpa</code> (double). Create an <strong>array</strong> of 4 students. Loop through the array to: (1) print each student, (2) find the student with the <strong>highest GPA</strong>, (3) calculate the <strong>average GPA</strong>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>--- Roster ---
+Ali: 3.5
+Sara: 3.9
+Omar: 3.2
+Lina: 3.7
+Best student: Sara (GPA: 3.9)
+Average GPA: 3.575</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" rows="44" spellcheck="false">class Student {
+    String name;
+    double gpa;
+
+    // Constructor
+
+}
+
+public class TestRoster {
+    public static void main(String[] args) {
+        // Create array of 4 students
+        // Student("Ali", 3.5), Student("Sara", 3.9)
+        // Student("Omar", 3.2), Student("Lina", 3.7)
+
+
+        // Print all students
+        System.out.println("--- Roster ---");
+        // Use a for-each loop
+
+
+        // Find the student with the highest GPA
+        Student best = students[0];
+        // Loop and compare
+
+
+        System.out.println("Best student: " + best.name + " (GPA: " + best.gpa + ")");
+
+        // Calculate average GPA
+        double sum = 0;
+        // Loop and sum
+
+
+        System.out.println("Average GPA: " + (sum / students.length));
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Constructor: <code>Student(String name, double gpa) { this.name = name; this.gpa = gpa; }</code>. Array: <code>Student[] students = { new Student("Ali", 3.5), new Student("Sara", 3.9), new Student("Omar", 3.2), new Student("Lina", 3.7) };</code>. Print: <code>for (Student s : students) System.out.println(s.name + ": " + s.gpa);</code>. Best: <code>for (Student s : students) if (s.gpa &gt; best.gpa) best = s;</code>. Average: <code>for (Student s : students) sum += s.gpa;</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 6: Aggregation & Composition -->
+        <div class="exercise-card" id="ex6">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">6</span>Aggregation vs. Composition — School System</h3>
+                <span class="exercise-status" id="status6"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A <code>School</code> has an <code>Address</code> that is created when the school is built — that's <strong>composition</strong> (created inside). A <code>School</code> also has a <code>Principal</code> who was hired from outside — that's <strong>aggregation</strong> (passed in). This exercise asks you to implement both in one class.</div>
+                <div class="info-box">Create an <code>Address</code> class with a field <code>city</code>. Create a <code>Principal</code> class with a field <code>name</code>. Create a <code>School</code> class that uses <strong>composition</strong> for Address (created inside the constructor with <code>new Address(city)</code>) and <strong>aggregation</strong> for Principal (passed in as a parameter). Add a <code>display()</code> method. Show that the Principal exists independently after the school is gone.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>School: Petra School, City: Amman, Principal: Dr. Ahmad
+Principal still exists: Dr. Ahmad</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(6)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor6" rows="44" spellcheck="false">class Address {
+    String city;
+    // Constructor
+
+}
+
+class Principal {
+    String name;
+    // Constructor
+
+}
+
+class School {
+    String name;
+    Address address;      // Composition — created inside
+    Principal principal;  // Aggregation — passed in
+
+    // Constructor: takes name, city (String), and Principal (object)
+    // Create Address INSIDE with new Address(city)
+    // Assign Principal from parameter
+
+
+    // display() — print school name, city, and principal name
+
+}
+
+public class TestSchool {
+    public static void main(String[] args) {
+        // Create Principal outside
+        Principal p = new Principal("Dr. Ahmad");
+
+        // Create School — Address created inside, Principal passed in
+        School s = new School("Petra School", "Amman", p);
+        s.display();
+
+        // Set school to null
+        s = null;
+
+        // Principal still exists!
+        System.out.println("Principal still exists: " + p.name);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(5)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(5)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(5)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback6"></div>
+                <button class="hint-toggle" onclick="toggleHint(6)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint6">Address: <code>Address(String city) { this.city = city; }</code>. Principal: <code>Principal(String name) { this.name = name; }</code>. School constructor: <code>School(String name, String city, Principal principal) { this.name = name; this.address = new Address(city); this.principal = principal; }</code>. Key: <code>new Address(city)</code> = composition (inside), <code>this.principal = principal</code> = aggregation (passed in).</div>
+            </div>
+        </div>
+
+        <!-- Exercise 7: String Methods -->
+        <div class="exercise-card" id="ex7">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">7</span>String Processing — Password Validator</h3>
+                <span class="exercise-status" id="status7"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A registration form needs to validate passwords. Using String methods, you can check length, whether it contains certain characters, and compare values. This exercise practices <code>length()</code>, <code>contains()</code>, <code>charAt()</code>, <code>equals()</code>, and <code>toUpperCase()</code>.</div>
+                <div class="info-box">Write a program that validates a password string. Check: (1) length is at least 8 using <code>length()</code>, (2) contains "A" or "a" using <code>contains()</code>, (3) first character is uppercase using <code>charAt(0)</code> and <code>Character.isUpperCase()</code>. Also demonstrate <code>==</code> vs <code>.equals()</code> with two identical strings created differently.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Password: HelloJava123
+Length OK (>= 8): true
+Contains 'a': true
+Starts with uppercase: true
+--- String Comparison ---
+s1 == s2 (literals): true
+s1 == s3 (new String): false
+s1.equals(s3): true</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(7)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor7" rows="32" spellcheck="false">public class PasswordValidator {
+    public static void main(String[] args) {
+        String password = "HelloJava123";
+        System.out.println("Password: " + password);
+
+        // Check length >= 8 using length()
+
+
+        // Check contains "a" using contains()
+
+
+        // Check first char is uppercase using charAt(0) and Character.isUpperCase()
+
+
+        // String comparison demo
+        System.out.println("--- String Comparison ---");
+        String s1 = "Java";
+        String s2 = "Java";
+        String s3 = new String("Java");
+
+        // Print s1 == s2, s1 == s3, s1.equals(s3)
+
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(6)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(6)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(6)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback7"></div>
+                <button class="hint-toggle" onclick="toggleHint(7)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint7">Length: <code>System.out.println("Length OK (&gt;= 8): " + (password.length() &gt;= 8));</code>. Contains: <code>System.out.println("Contains 'a': " + password.contains("a"));</code>. Uppercase: <code>System.out.println("Starts with uppercase: " + Character.isUpperCase(password.charAt(0)));</code>. Comparison: <code>System.out.println("s1 == s2 (literals): " + (s1 == s2));</code> etc.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 8: BigDecimal Shopping -->
+        <div class="exercise-card" id="ex8">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">8</span>BigDecimal — Precise Invoice Calculator</h3>
+                <span class="exercise-status" id="status8"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> Financial applications must be exact. Using <code>double</code>, <code>0.1 + 0.2 = 0.30000000000000004</code>. That error compounds across millions of transactions! <code>BigDecimal</code> gives exact results. This exercise also uses <code>Integer.parseInt()</code> for parsing quantities (wrapper classes).</div>
+                <div class="info-box">Create an invoice calculator using <code>BigDecimal</code>. Parse quantity strings using <code>Integer.parseInt()</code> (wrapper class). Calculate subtotal = price &times; quantity using <code>multiply()</code>. Apply 16% tax using <code>multiply()</code>. Calculate total using <code>add()</code>. Compare results with <code>double</code> arithmetic. Use String constructor for BigDecimal!</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>--- BigDecimal Invoice ---
+Item: Widget, Qty: 3, Price: 19.99
+Subtotal: 59.97
+Tax (16%): 9.5952
+Total: 69.5652
+--- double comparison ---
+double total: 69.56520000000001</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(8)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor8" rows="38" spellcheck="false">import java.math.BigDecimal;
+
+public class InvoiceCalculator {
+    public static void main(String[] args) {
+        // Parse quantity from String using Integer.parseInt()
+        String qtyString = "3";
+        int qty = Integer.parseInt(qtyString);
+
+        // Create BigDecimal price (use String constructor!)
+        BigDecimal price = new BigDecimal("19.99");
+        BigDecimal quantity = new BigDecimal(qtyString);
+
+        System.out.println("--- BigDecimal Invoice ---");
+        System.out.println("Item: Widget, Qty: " + qty + ", Price: " + price);
+
+        // Calculate subtotal: price.multiply(quantity)
+
+        System.out.println("Subtotal: " + subtotal);
+
+        // Tax rate: new BigDecimal("0.16")
+        // Calculate tax: subtotal.multiply(taxRate)
+
+
+        System.out.println("Tax (16%): " + tax);
+
+        // Calculate total: subtotal.add(tax)
+
+        System.out.println("Total: " + total);
+
+        // Compare with double
+        System.out.println("--- double comparison ---");
+        double dTotal = 19.99 * 3 * 1.16;
+        System.out.println("double total: " + dTotal);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(7)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(7)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(7)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback8"></div>
+                <button class="hint-toggle" onclick="toggleHint(8)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint8">Subtotal: <code>BigDecimal subtotal = price.multiply(quantity);</code>. Tax: <code>BigDecimal taxRate = new BigDecimal("0.16"); BigDecimal tax = subtotal.multiply(taxRate);</code>. Total: <code>BigDecimal total = subtotal.add(tax);</code>. Always use the String constructor: <code>new BigDecimal("0.16")</code> not <code>new BigDecimal(0.16)</code>!</div>
+            </div>
+        </div>
+
+        <!-- Exercise 9: Array of Objects — Product Inventory -->
+        <div class="exercise-card" id="ex9">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">9</span>Array of Objects — Product Inventory</h3>
+                <span class="exercise-status" id="status9"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> An online store needs to manage its product catalog. Each product has a name, price, and stock quantity. By storing products in an <strong>array of objects</strong>, you can loop through them to generate reports — find the most expensive item, and calculate the total inventory value (<code>price &times; quantity</code> for each). This is a very common real-world pattern!</div>
+                <div class="info-box">Create a <code>Product</code> class with fields <code>name</code> (String), <code>price</code> (double), and <code>quantity</code> (int). Create an <strong>array</strong> of 3 products. Loop through the array to: (1) print each product, (2) find the <strong>most expensive</strong> product, (3) calculate the <strong>total inventory value</strong> (sum of price &times; quantity).</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>--- Inventory ---
+Laptop: $800.0 x 5
+Phone: $500.0 x 12
+Tablet: $350.0 x 8
+Most expensive: Laptop ($800.0)
+Total inventory value: $12800.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(9)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor9" rows="36" spellcheck="false">class Product {
+    String name;
+    double price;
+    int quantity;
+
+    // Constructor
+
+}
+
+public class TestInventory {
+    public static void main(String[] args) {
+        // Create array of 3 products
+        // Product("Laptop", 800.0, 5), Product("Phone", 500.0, 12)
+        // Product("Tablet", 350.0, 8)
+
+
+        // Print all products
+        System.out.println("--- Inventory ---");
+        // Use a for-each loop
+
+
+        // Find the most expensive product
+        Product expensive = products[0];
+        // Loop and compare
+
+
+        System.out.println("Most expensive: " + expensive.name + " ($" + expensive.price + ")");
+
+        // Calculate total inventory value (price * quantity for each)
+        double totalValue = 0;
+        // Loop and calculate
+
+
+        System.out.println("Total inventory value: $" + totalValue);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(8)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(8)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(8)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback9"></div>
+                <button class="hint-toggle" onclick="toggleHint(9)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint9">Constructor: <code>Product(String name, double price, int quantity) { this.name = name; this.price = price; this.quantity = quantity; }</code>. Array: <code>Product[] products = { new Product("Laptop", 800.0, 5), new Product("Phone", 500.0, 12), new Product("Tablet", 350.0, 8) };</code>. Print: <code>for (Product p : products) System.out.println(p.name + ": $" + p.price + " x " + p.quantity);</code>. Most expensive: <code>for (Product p : products) if (p.price &gt; expensive.price) expensive = p;</code>. Value: <code>for (Product p : products) totalValue += p.price * p.quantity;</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 10: Array of Objects — Employee Bonus -->
+        <div class="exercise-card" id="ex10">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">10</span>Array of Objects — Employee Bonus Calculator</h3>
+                <span class="exercise-status" id="status10"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> An HR system stores employees with their department and salary. Using an <strong>array of objects</strong>, you can generate a bonus report (10% of salary for each), filter by department using <code>.equals()</code>, and find the highest-paid employee. This combines arrays of objects with <strong>String comparison</strong> and <strong>arithmetic</strong>.</div>
+                <div class="info-box">Create an <code>Employee</code> class with fields <code>name</code> (String), <code>department</code> (String), and <code>salary</code> (double). Create an <strong>array</strong> of 4 employees. Loop to: (1) print each employee with a 10% bonus, (2) <strong>count</strong> how many work in "IT" using <code>.equals()</code>, (3) find the employee with the <strong>highest salary</strong>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>--- Bonus Report ---
+Sami (IT): Salary=3000.0, Bonus=300.0
+Nour (HR): Salary=2800.0, Bonus=280.0
+Rami (IT): Salary=3500.0, Bonus=350.0
+Dana (HR): Salary=2900.0, Bonus=290.0
+IT employees: 2
+Highest salary: Rami ($3500.0)</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(10)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor10" rows="36" spellcheck="false">class Employee {
+    String name;
+    String department;
+    double salary;
+
+    // Constructor
+
+}
+
+public class TestBonus {
+    public static void main(String[] args) {
+        // Create array of 4 employees
+        // Employee("Sami", "IT", 3000), Employee("Nour", "HR", 2800)
+        // Employee("Rami", "IT", 3500), Employee("Dana", "HR", 2900)
+
+
+        // Print bonus report (10% of salary)
+        System.out.println("--- Bonus Report ---");
+        // Loop: print name, department, salary, and bonus
+
+
+        // Count IT department employees
+        int itCount = 0;
+        // Loop and count using .equals("IT")
+
+
+        System.out.println("IT employees: " + itCount);
+
+        // Find employee with highest salary
+        Employee top = employees[0];
+        // Loop and compare
+
+
+        System.out.println("Highest salary: " + top.name + " ($" + top.salary + ")");
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(9)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(9)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(9)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback10"></div>
+                <button class="hint-toggle" onclick="toggleHint(10)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint10">Constructor: <code>Employee(String name, String department, double salary) { this.name = name; this.department = department; this.salary = salary; }</code>. Array: <code>Employee[] employees = { new Employee("Sami", "IT", 3000), new Employee("Nour", "HR", 2800), new Employee("Rami", "IT", 3500), new Employee("Dana", "HR", 2900) };</code>. Bonus: <code>for (Employee e : employees) { double bonus = e.salary * 0.10; System.out.println(e.name + " (" + e.department + "): Salary=" + e.salary + ", Bonus=" + bonus); }</code>. Count: <code>if (e.department.equals("IT")) itCount++;</code>. Top: <code>if (e.salary &gt; top.salary) top = e;</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 11: Composition — Car & Engine -->
+        <div class="exercise-card" id="ex11">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">11</span>Composition — Car &amp; Engine</h3>
+                <span class="exercise-status" id="status11"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A <code>Car</code> has an <code>Engine</code> that is built specifically for it — the engine is created <strong>inside</strong> the Car constructor, not passed from outside. If the car is destroyed, the engine goes with it. This is <strong>composition</strong>: a strong "owns" relationship where the part cannot exist independently of the whole.</div>
+                <div class="info-box">Create an <code>Engine</code> class with fields <code>horsepower</code> (int) and <code>type</code> (String). Create a <code>Car</code> class with a field <code>model</code> (String) and an <code>Engine</code> field. The Car constructor takes <code>model</code>, <code>hp</code>, and <code>engineType</code> and creates the Engine <strong>inside</strong> using <code>new Engine(hp, engineType)</code>. Add a <code>display()</code> method. Show that when the car is set to null, the engine is gone too.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Car: Toyota Camry, Engine: 203HP V4
+Car destroyed — engine is gone too (composition)</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(11)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor11" rows="29" spellcheck="false">class Engine {
+    int horsepower;
+    String type;
+
+    // Constructor
+
+}
+
+class Car {
+    String model;
+    Engine engine;  // Composition — created inside
+
+    // Constructor: takes model, hp, engineType
+    // Create Engine INSIDE with new Engine(hp, engineType)
+
+
+    // display() — print car model, engine horsepower and type
+
+}
+
+public class TestCar {
+    public static void main(String[] args) {
+        Car car = new Car("Toyota Camry", 203, "V4");
+        car.display();
+
+        car = null;
+        System.out.println("Car destroyed — engine is gone too (composition)");
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(10)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(10)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(10)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback11"></div>
+                <button class="hint-toggle" onclick="toggleHint(11)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint11">Engine: <code>Engine(int horsepower, String type) { this.horsepower = horsepower; this.type = type; }</code>. Car constructor: <code>Car(String model, int hp, String engineType) { this.model = model; this.engine = new Engine(hp, engineType); }</code>. Key: <code>new Engine(hp, engineType)</code> is created INSIDE the Car — that's composition. Display: <code>System.out.println("Car: " + model + ", Engine: " + engine.horsepower + "HP " + engine.type);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 12: Aggregation — Team & Player -->
+        <div class="exercise-card" id="ex12">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">12</span>Aggregation — Team &amp; Player</h3>
+                <span class="exercise-status" id="status12"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A football <code>Team</code> has a <code>captain</code> and a <code>topScorer</code>, but players exist independently — they were recruited from outside and can join another team if this one is dissolved. This is <strong>aggregation</strong>: a weak "uses" relationship where the parts are passed in and survive on their own.</div>
+                <div class="info-box">Create a <code>Player</code> class with fields <code>name</code> (String) and <code>position</code> (String). Create a <code>Team</code> class with <code>name</code> (String), <code>captain</code> (Player), and <code>topScorer</code> (Player). The Team constructor receives Player objects as parameters (<strong>aggregation</strong> — not created inside). Add a <code>display()</code> method. Show that players still exist after the team is set to null.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Team: Al-Ahli
+  Captain: Khalid (Midfielder)
+  Top Scorer: Yazan (Forward)
+Team dissolved!
+Players still exist: Khalid, Yazan</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(12)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor12" rows="37" spellcheck="false">class Player {
+    String name;
+    String position;
+
+    // Constructor
+
+}
+
+class Team {
+    String name;
+    Player captain;    // Aggregation — passed in
+    Player topScorer;  // Aggregation — passed in
+
+    // Constructor: takes name, captain (Player), topScorer (Player)
+    // Assign both from parameters (NOT created inside)
+
+
+    // display() — print team name, captain, and top scorer
+
+}
+
+public class TestTeam {
+    public static void main(String[] args) {
+        // Create players outside
+        Player p1 = new Player("Khalid", "Midfielder");
+        Player p2 = new Player("Yazan", "Forward");
+
+        // Create team — players passed in (aggregation)
+        Team team = new Team("Al-Ahli", p1, p2);
+        team.display();
+
+        // Dissolve the team
+        team = null;
+        System.out.println("Team dissolved!");
+        System.out.println("Players still exist: " + p1.name + ", " + p2.name);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(11)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(11)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(11)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback12"></div>
+                <button class="hint-toggle" onclick="toggleHint(12)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint12">Player: <code>Player(String name, String position) { this.name = name; this.position = position; }</code>. Team constructor: <code>Team(String name, Player captain, Player topScorer) { this.name = name; this.captain = captain; this.topScorer = topScorer; }</code>. Key: players are passed in, NOT created inside — that's aggregation. Display: <code>System.out.println("Team: " + name); System.out.println("  Captain: " + captain.name + " (" + captain.position + ")"); System.out.println("  Top Scorer: " + topScorer.name + " (" + topScorer.position + ")");</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 13: Composition + Aggregation — University Department -->
+        <div class="exercise-card" id="ex13">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">13</span>Composition + Aggregation — University Department</h3>
+                <span class="exercise-status" id="status13"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A <code>Department</code> owns a <code>Course</code> that was designed specifically for it — <strong>composition</strong> (created inside). But the <code>Instructor</code> teaching the course was hired from outside and can teach elsewhere — <strong>aggregation</strong> (passed in). This exercise combines <strong>both</strong> relationships in one class, reinforcing the difference.</div>
+                <div class="info-box">Create a <code>Course</code> class with fields <code>title</code> (String) and <code>credits</code> (int). Create an <code>Instructor</code> class with fields <code>name</code> (String) and <code>specialization</code> (String). Create a <code>Department</code> class that uses <strong>composition</strong> for Course (created inside with <code>new Course(courseTitle, credits)</code>) and <strong>aggregation</strong> for Instructor (passed in). Add a <code>display()</code> method. Show that the Instructor survives after the department is closed.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Department: Computer Science
+  Course: Intro to DB (3 credits)
+  Instructor: Dr. Huda — Databases
+Department closed!
+Instructor still exists: Dr. Huda</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(13)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor13" rows="45" spellcheck="false">class Course {
+    String title;
+    int credits;
+
+    // Constructor
+
+}
+
+class Instructor {
+    String name;
+    String specialization;
+
+    // Constructor
+
+}
+
+class Department {
+    String name;
+    Course course;         // Composition — created inside
+    Instructor instructor; // Aggregation — passed in
+
+    // Constructor: takes name, courseTitle, credits, Instructor
+    // Create Course INSIDE with new Course(courseTitle, credits)
+    // Assign Instructor from parameter
+
+
+    // display() — print department, course info, and instructor
+
+}
+
+public class TestDepartment {
+    public static void main(String[] args) {
+        // Create instructor outside
+        Instructor prof = new Instructor("Dr. Huda", "Databases");
+
+        // Create department — Course inside (composition), Instructor passed in (aggregation)
+        Department dept = new Department("Computer Science", "Intro to DB", 3, prof);
+        dept.display();
+
+        // Close department
+        dept = null;
+        System.out.println("Department closed!");
+        System.out.println("Instructor still exists: " + prof.name);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(12)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(12)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(12)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback13"></div>
+                <button class="hint-toggle" onclick="toggleHint(13)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint13">Course: <code>Course(String title, int credits) { this.title = title; this.credits = credits; }</code>. Instructor: <code>Instructor(String name, String specialization) { this.name = name; this.specialization = specialization; }</code>. Department constructor: <code>Department(String name, String courseTitle, int credits, Instructor instructor) { this.name = name; this.course = new Course(courseTitle, credits); this.instructor = instructor; }</code>. Key: <code>new Course(...)</code> = composition (inside), <code>this.instructor = instructor</code> = aggregation (passed in). Display: print name, <code>course.title</code>, <code>course.credits</code>, <code>instructor.name</code>, <code>instructor.specialization</code>.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  { skeleton: "class ImmutableStudent {\n    // Private fields: id (int), name (String), gpa (double)\n    \n    \n    // Constructor that takes id, name, gpa\n    \n    \n    // Getter for id (NO setter \u2014 immutable)\n    \n    \n    // Getter for name (NO setter \u2014 immutable)\n    \n    \n    // Getter for gpa\n    \n    \n    // Setter for gpa WITH validation (0.0 to 4.0 only)\n    \n}\n\npublic class TestImmutableStudent {\n    public static void main(String[] args) {\n        ImmutableStudent s = new ImmutableStudent(1001, \"Ali\", 3.5);\n        System.out.println(\"ID: \" + s.getId() + \", Name: \" + s.getName() + \", GPA: \" + s.getGpa());\n        \n        System.out.println(\"Setting GPA to 5.0 (invalid)...\");\n        s.setGpa(5.0);\n        System.out.println(\"ID: \" + s.getId() + \", Name: \" + s.getName() + \", GPA: \" + s.getGpa());\n        \n        System.out.println(\"Setting GPA to 3.9 (valid)...\");\n        s.setGpa(3.9);\n        System.out.println(\"ID: \" + s.getId() + \", Name: \" + s.getName() + \", GPA: \" + s.getGpa());\n    }\n}", keywords: ["private", "getId", "getName", "getGpa", "setGpa", "this.", "new ImmutableStudent"] },
+  { skeleton: "class ScopeTest {\n    // Instance variable x = 10\n    \n    \n    // Method: demonstrate(int x)\n    // Print parameter x, this.x, and a local variable y = 99\n    \n}\n\npublic class TestScope {\n    public static void main(String[] args) {\n        ScopeTest obj = new ScopeTest();\n        obj.demonstrate(50);\n        System.out.println(\"Back in main \u2014 cannot access y here\");\n    }\n}", keywords: ["this.x", "int x", "int y", "demonstrate"] },
+  { skeleton: "class Pizza {\n    // Instance fields: name (String), price (double)\n    \n    \n    // Static variable: orderCount = 0\n    \n    \n    // Static constant: TAX_RATE = 0.16\n    \n    \n    // Constructor: takes name and price, increments orderCount\n    \n    \n    // Method: getTotalPrice() \u2014 returns price + price * TAX_RATE\n    \n    \n    // Static method: getOrderCount()\n    \n}\n\npublic class TestPizza {\n    public static void main(String[] args) {\n        Pizza p1 = new Pizza(\"Margherita\", 10.0);\n        Pizza p2 = new Pizza(\"Pepperoni\", 14.0);\n        Pizza p3 = new Pizza(\"Hawaiian\", 12.0);\n        \n        System.out.println(p1.name + \" total: \" + p1.getTotalPrice());\n        System.out.println(p2.name + \" total: \" + p2.getTotalPrice());\n        System.out.println(p3.name + \" total: \" + p3.getTotalPrice());\n        System.out.println(\"Total orders: \" + Pizza.getOrderCount());\n    }\n}", keywords: ["static", "final", "TAX_RATE", "orderCount", "getOrderCount", "getTotalPrice", "this.", "new Pizza"] },
+  { skeleton: "class Circle {\n    private double radius;\n    \n    public Circle(double radius) {\n        this.radius = radius;\n    }\n    \n    public double getRadius() { return radius; }\n    public void setRadius(double radius) { this.radius = radius; }\n}\n\npublic class TestPassing {\n    // Static method: doubleValue(int n) \u2014 doubles n (only local copy)\n    \n    \n    // Static method: doubleRadius(Circle c) \u2014 doubles c's radius using setRadius\n    \n    \n    public static void main(String[] args) {\n        // Test primitive passing\n        int num = 5;\n        System.out.println(\"Before: num = \" + num);\n        doubleValue(num);\n        System.out.println(\"After doubleValue: num = \" + num);\n        \n        // Test object passing\n        Circle c = new Circle(10.0);\n        System.out.println(\"Before: radius = \" + c.getRadius());\n        doubleRadius(c);\n        System.out.println(\"After doubleRadius: radius = \" + c.getRadius());\n    }\n}", keywords: ["doubleValue", "doubleRadius", "setRadius", "getRadius", "static void"] },
+  { skeleton: "class Student {\n    String name;\n    double gpa;\n    \n    // Constructor\n    \n}\n\npublic class TestRoster {\n    public static void main(String[] args) {\n        // Create array of 4 students\n        // Student(\"Ali\", 3.5), Student(\"Sara\", 3.9)\n        // Student(\"Omar\", 3.2), Student(\"Lina\", 3.7)\n        \n        \n        // Print all students\n        System.out.println(\"--- Roster ---\");\n        // Use a for-each loop\n        \n        \n        // Find the student with the highest GPA\n        Student best = students[0];\n        // Loop and compare\n        \n        \n        System.out.println(\"Best student: \" + best.name + \" (GPA: \" + best.gpa + \")\");\n        \n        // Calculate average GPA\n        double sum = 0;\n        // Loop and sum\n        \n        \n        System.out.println(\"Average GPA: \" + (sum / students.length));\n    }\n}", keywords: ["Student[]", "new Student", "this.", "students.length", "best.gpa"] },
+  { skeleton: "class Address {\n    String city;\n    // Constructor\n    \n}\n\nclass Principal {\n    String name;\n    // Constructor\n    \n}\n\nclass School {\n    String name;\n    Address address;      // Composition \u2014 created inside\n    Principal principal;  // Aggregation \u2014 passed in\n    \n    // Constructor: takes name, city (String), and Principal (object)\n    // Create Address INSIDE with new Address(city)\n    // Assign Principal from parameter\n    \n    \n    // display() \u2014 print school name, city, and principal name\n    \n}\n\npublic class TestSchool {\n    public static void main(String[] args) {\n        // Create Principal outside\n        Principal p = new Principal(\"Dr. Ahmad\");\n        \n        // Create School \u2014 Address created inside, Principal passed in\n        School s = new School(\"Petra School\", \"Amman\", p);\n        s.display();\n        \n        // Set school to null\n        s = null;\n        \n        // Principal still exists!\n        System.out.println(\"Principal still exists: \" + p.name);\n    }\n}", keywords: ["new Address", "new Principal", "new School", "this.", "address.city", "principal.name"] },
+  { skeleton: "public class PasswordValidator {\n    public static void main(String[] args) {\n        String password = \"HelloJava123\";\n        System.out.println(\"Password: \" + password);\n        \n        // Check length >= 8 using length()\n        \n        \n        // Check contains \"a\" using contains()\n        \n        \n        // Check first char is uppercase using charAt(0) and Character.isUpperCase()\n        \n        \n        // String comparison demo\n        System.out.println(\"--- String Comparison ---\");\n        String s1 = \"Java\";\n        String s2 = \"Java\";\n        String s3 = new String(\"Java\");\n        \n        // Print s1 == s2, s1 == s3, s1.equals(s3)\n        \n    }\n}", keywords: ["length()", "contains(", "charAt(", "Character.isUpperCase", ".equals("] },
+  { skeleton: "import java.math.BigDecimal;\n\npublic class InvoiceCalculator {\n    public static void main(String[] args) {\n        // Parse quantity from String using Integer.parseInt()\n        String qtyString = \"3\";\n        int qty = Integer.parseInt(qtyString);\n        \n        // Create BigDecimal price (use String constructor!)\n        BigDecimal price = new BigDecimal(\"19.99\");\n        BigDecimal quantity = new BigDecimal(qtyString);\n        \n        System.out.println(\"--- BigDecimal Invoice ---\");\n        System.out.println(\"Item: Widget, Qty: \" + qty + \", Price: \" + price);\n        \n        // Calculate subtotal: price.multiply(quantity)\n        \n        System.out.println(\"Subtotal: \" + subtotal);\n        \n        // Tax rate: new BigDecimal(\"0.16\")\n        // Calculate tax: subtotal.multiply(taxRate)\n        \n        \n        System.out.println(\"Tax (16%): \" + tax);\n        \n        // Calculate total: subtotal.add(tax)\n        \n        System.out.println(\"Total: \" + total);\n        \n        // Compare with double\n        System.out.println(\"--- double comparison ---\");\n        double dTotal = 19.99 * 3 * 1.16;\n        System.out.println(\"double total: \" + dTotal);\n    }\n}", keywords: ["new BigDecimal", ".multiply(", ".add(", "Integer.parseInt", "BigDecimal"] },
+  { skeleton: "class Product {\n    String name;\n    double price;\n    int quantity;\n\n    // Constructor\n\n}\n\npublic class TestInventory {\n    public static void main(String[] args) {\n        // Create array of 3 products\n        // Product(\"Laptop\", 800.0, 5), Product(\"Phone\", 500.0, 12)\n        // Product(\"Tablet\", 350.0, 8)\n\n\n        // Print all products\n        System.out.println(\"--- Inventory ---\");\n        // Use a for-each loop\n\n\n        // Find the most expensive product\n        Product expensive = products[0];\n        // Loop and compare\n\n\n        System.out.println(\"Most expensive: \" + expensive.name + \" ($\" + expensive.price + \")\");\n\n        // Calculate total inventory value (price * quantity for each)\n        double totalValue = 0;\n        // Loop and calculate\n\n\n        System.out.println(\"Total inventory value: $\" + totalValue);\n    }\n}", keywords: ["Product[]", "new Product", "this.", "expensive.price", "totalValue"] },
+  { skeleton: "class Employee {\n    String name;\n    String department;\n    double salary;\n\n    // Constructor\n\n}\n\npublic class TestBonus {\n    public static void main(String[] args) {\n        // Create array of 4 employees\n        // Employee(\"Sami\", \"IT\", 3000), Employee(\"Nour\", \"HR\", 2800)\n        // Employee(\"Rami\", \"IT\", 3500), Employee(\"Dana\", \"HR\", 2900)\n\n\n        // Print bonus report (10% of salary)\n        System.out.println(\"--- Bonus Report ---\");\n        // Loop: print name, department, salary, and bonus\n\n\n        // Count IT department employees\n        int itCount = 0;\n        // Loop and count using .equals(\"IT\")\n\n\n        System.out.println(\"IT employees: \" + itCount);\n\n        // Find employee with highest salary\n        Employee top = employees[0];\n        // Loop and compare\n\n\n        System.out.println(\"Highest salary: \" + top.name + \" ($\" + top.salary + \")\");\n    }\n}", keywords: ["Employee[]", "new Employee", "this.", ".equals(", "top.salary"] },
+  { skeleton: "class Engine {\n    int horsepower;\n    String type;\n\n    // Constructor\n\n}\n\nclass Car {\n    String model;\n    Engine engine;  // Composition \u2014 created inside\n\n    // Constructor: takes model, hp, engineType\n    // Create Engine INSIDE with new Engine(hp, engineType)\n\n\n    // display() \u2014 print car model, engine horsepower and type\n\n}\n\npublic class TestCar {\n    public static void main(String[] args) {\n        Car car = new Car(\"Toyota Camry\", 203, \"V4\");\n        car.display();\n\n        car = null;\n        System.out.println(\"Car destroyed \u2014 engine is gone too (composition)\");\n    }\n}", keywords: ["new Engine", "new Car", "this.", "engine.horsepower", "engine.type"] },
+  { skeleton: "class Player {\n    String name;\n    String position;\n\n    // Constructor\n\n}\n\nclass Team {\n    String name;\n    Player captain;    // Aggregation \u2014 passed in\n    Player topScorer;  // Aggregation \u2014 passed in\n\n    // Constructor: takes name, captain (Player), topScorer (Player)\n    // Assign both from parameters (NOT created inside)\n\n\n    // display() \u2014 print team name, captain, and top scorer\n\n}\n\npublic class TestTeam {\n    public static void main(String[] args) {\n        // Create players outside\n        Player p1 = new Player(\"Khalid\", \"Midfielder\");\n        Player p2 = new Player(\"Yazan\", \"Forward\");\n\n        // Create team \u2014 players passed in (aggregation)\n        Team team = new Team(\"Al-Ahli\", p1, p2);\n        team.display();\n\n        // Dissolve the team\n        team = null;\n        System.out.println(\"Team dissolved!\");\n        System.out.println(\"Players still exist: \" + p1.name + \", \" + p2.name);\n    }\n}", keywords: ["new Player", "new Team", "this.", "captain.name", "topScorer.name"] },
+  { skeleton: "class Course {\n    String title;\n    int credits;\n\n    // Constructor\n\n}\n\nclass Instructor {\n    String name;\n    String specialization;\n\n    // Constructor\n\n}\n\nclass Department {\n    String name;\n    Course course;         // Composition \u2014 created inside\n    Instructor instructor; // Aggregation \u2014 passed in\n\n    // Constructor: takes name, courseTitle, credits, Instructor\n    // Create Course INSIDE with new Course(courseTitle, credits)\n    // Assign Instructor from parameter\n\n\n    // display() \u2014 print department, course info, and instructor\n\n}\n\npublic class TestDepartment {\n    public static void main(String[] args) {\n        // Create instructor outside\n        Instructor prof = new Instructor(\"Dr. Huda\", \"Databases\");\n\n        // Create department \u2014 Course inside (composition), Instructor passed in (aggregation)\n        Department dept = new Department(\"Computer Science\", \"Intro to DB\", 3, prof);\n        dept.display();\n\n        // Close department\n        dept = null;\n        System.out.println(\"Department closed!\");\n        System.out.println(\"Instructor still exists: \" + prof.name);\n    }\n}", keywords: ["new Course", "new Instructor", "new Department", "this.", "course.title", "instructor.name"] }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied to clipboard! Paste it in the compiler tab that just opened (Ctrl+V / \u2318+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use the required constructs: ' + missing.map(k=>'<code>'+k+'</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+// Tab key inserts spaces
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){const t=localStorage.getItem('theme')||'dark';if(t==='light')document.getElementById('themeIcon').className='fas fa-sun';})();
+
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+
+</body>
+</html>

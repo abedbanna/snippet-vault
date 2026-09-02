@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimization &amp; Regularization - Deep Learning</title>
+    <meta name="description" content="How neural networks are trained and made to generalize: gradient descent and its batch/mini-batch variants, the learning rate, momentum, AdaGrad/RMSProp, Adam/AdamW, learning-rate schedules, weight initialization, gradient clipping, batch/layer normalization, the bias-variance trade-off, L1/L2 weight decay, dropout, early stopping and data augmentation. With worked examples and 16 solved exercises. From Dr. Abdulkarim Albanna's Deep Learning course notes.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#059669;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#065f46);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#059669}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#059669;border-left-color:#059669;background:rgba(16,185,129,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#059669}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#34d399}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#34d399}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .formula{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:22px;margin:14px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:1.05rem;color:#e6edf3;overflow-x:auto}
+        body.light-mode .formula{background:#1e293b;color:#e2e8f0}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(16,185,129,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+        .formula mjx-container{color:#e6edf3}
+    </style>
+    <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]}};</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> Deep Learning</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#s1">Optimizers</a>
+                <a href="#s11">Regularization</a>
+                <a href="#lab">Exercises</a>
+                <a href="#practice">Practice</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#s1" onclick="this.parentElement.classList.remove('open')">Optimizers</a>
+        <a href="#s11" onclick="this.parentElement.classList.remove('open')">Regularization</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercises</a>
+        <a href="#practice" onclick="this.parentElement.classList.remove('open')">Practice</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Optimization &amp; Regularization</h1>
+            <p class="hero-sub">Two goals, one training loop: <em>optimization</em> makes the training loss small, <em>regularization</em> makes the model work on data it has never seen.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 7 &middot; Lecture notes by Dr. Abdulkarim Albanna</p>
+            <span class="diff-badge" style="background:#10b981">Core</span>
+            <span class="cat-badge"><i class="fa-solid fa-gauge-high" style="margin-right:6px"></i>Training</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~60 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>How <strong>gradient descent</strong> minimizes the loss, and the batch / stochastic / mini-batch trade-off</li>
+                    <li>The <strong>learning rate</strong> and the smarter optimizers &mdash; <strong>momentum, AdaGrad, RMSProp, Adam/AdamW</strong> &mdash; plus schedules and warmup</li>
+                    <li>Why <strong>weight initialization</strong> matters, and how <strong>gradient clipping</strong> and <strong>batch/layer normalization</strong> keep training stable</li>
+                    <li>The <strong>bias&ndash;variance trade-off</strong>, and the regularizers that beat overfitting: <strong>L1/L2 weight decay, dropout, early stopping, data augmentation</strong></li>
+                    <li>A practical <strong>training recipe</strong> and a symptom&rarr;remedy table for when training goes wrong</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Modules 3&ndash;6 (Neural-Network Foundations, Activation Functions and Backpropagation). Every method here is a variation on one idea &mdash; either change <em>how</em> we step down the loss surface, or change <em>what</em> we minimize so the model generalizes. References: Goodfellow, Bengio &amp; Courville; Kingma &amp; Ba (Adam); Srivastava et al. (Dropout).</p>
+        </div>
+
+        <!-- 1. Gradient descent -->
+        <div class="section fade-up" id="s1">
+            <h2 class="section-title"><i class="fa-solid fa-mountain"></i> 1. Training = Optimization: Minimizing the Loss</h2>
+            <p class="section-desc">Training a network means searching for the weights that make the loss as small as possible. The loss <code>J(w)</code> is a <strong>surface</strong> over the weight space; learning is the walk downhill to its lowest point. <strong>Gradient descent</strong> takes the derivative <code>&nabla;J</code> (the direction of steepest increase) and steps in the opposite direction:</p>
+            <div class="formula">\[ w \leftarrow w - \eta \cdot \nabla J(w) \]</div>
+            <p class="section-desc"><code>&eta;</code> (eta) is the <strong>learning rate</strong> &mdash; how big each step is; <code>&nabla;J</code> is the gradient supplied by backpropagation. For a simple linear model the loss is <strong>convex</strong> (a single bowl) so we reach the global minimum. Deep networks are <strong>non-convex</strong> &mdash; many local minima and saddle points &mdash; which is exactly why smarter optimizers and regularizers matter.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_bowl.png" alt="Gradient descent steps walking down a bowl-shaped loss surface to the minimum" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Gradient descent walks the loss surface downhill toward the minimum. Every method in this module either changes <em>how</em> we step (Sections 2&ndash;10) or <em>what</em> we minimize (Sections 11&ndash;14). <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p><code>J(w) = w&sup2;</code>, so <code>&nabla;J = 2w</code>. Start <code>w = 3</code>, <code>&eta; = 0.1</code>: gradient <code>= 2&middot;3 = 6</code>, so <code>w &larr; 3 &minus; 0.1&middot;6 = 2.4</code> (moved toward 0). Next step: <code>g = 4.8 &rarr; w &larr; 2.4 &minus; 0.48 = 1.92</code>.</p>
+            </div>
+        </div>
+
+        <!-- 2. Batch/SGD/Mini-batch -->
+        <div class="section fade-up" id="s2">
+            <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> 2. Batch, Stochastic and Mini-batch Gradient Descent</h2>
+            <p class="section-desc">How many training examples do we look at before each weight update? That single choice defines the three classic variants.</p>
+            <div class="info-box">
+                <ul>
+                    <li><strong>Batch GD:</strong> use the whole dataset for every update. Accurate, smooth gradient &mdash; but slow and memory-hungry on large data.</li>
+                    <li><strong>Stochastic GD (SGD):</strong> update after every single example. Very fast and noisy; the noise can help escape shallow local minima, but the path jitters.</li>
+                    <li><strong>Mini-batch GD:</strong> update after a small batch (typically 32&ndash;256). The practical sweet spot &mdash; efficient on GPUs and reasonably smooth. This is what &ldquo;SGD&rdquo; means in practice.</li>
+                </ul>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_variants.png" alt="Training-loss curves for batch, mini-batch and stochastic gradient descent" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Full-batch descent is smoothest; stochastic is noisiest; mini-batch sits in between. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <p class="section-desc"><strong>Key vocabulary.</strong> <strong>Batch size</strong> = examples per update. <strong>Iteration</strong> = one weight update. <strong>Epoch</strong> = one full pass over the training set.</p>
+            <div class="formula">\[ \text{iterations per epoch} = \left\lceil \frac{\text{dataset size}}{\text{batch size}} \right\rceil \]</div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Dataset = 1,000 samples, batch size = 100: iterations per epoch = <code>1000 / 100 = 10</code>. After 5 epochs the weights were updated <code>5&middot;10 = 50</code> times.</p>
+            </div>
+        </div>
+
+        <!-- 3. Learning rate -->
+        <div class="section fade-up" id="s3">
+            <h2 class="section-title"><i class="fa-solid fa-ruler-horizontal"></i> 3. The Learning Rate &mdash; the Most Important Hyperparameter</h2>
+            <p class="section-desc">The learning rate <code>&eta;</code> scales every step. Get it wrong and nothing else matters:</p>
+            <div class="info-box warning">
+                <ul>
+                    <li><strong>Too small</strong> &rarr; training crawls and may never finish.</li>
+                    <li><strong>Too large</strong> &rarr; steps overshoot the minimum; the loss oscillates or diverges to infinity.</li>
+                    <li><strong>Well chosen</strong> &rarr; steady, fast descent to the minimum.</li>
+                </ul>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_lr.png" alt="Three parabolas showing a learning rate that is too small, well chosen, and too large" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Too small crawls; well chosen descends fast; too large overshoots and diverges. A good first move when a model will not train is to <strong>lower <code>&eta;</code> by 10&times;</strong>. Typical starting points: 0.1 for plain SGD, 0.001 for Adam. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p><code>J(w) = w&sup2;</code> (<code>&nabla;J = 2w</code>), start <code>w = 1</code>. With <code>&eta; = 0.1</code>: <code>w &larr; 1 &minus; 0.1&middot;2 = 0.8</code> (good). With <code>&eta; = 1.1</code>: <code>w &larr; 1 &minus; 1.1&middot;2 = &minus;1.2</code> &mdash; <code>|w|</code> grew from 1 to 1.2, so it diverges.</p>
+            </div>
+        </div>
+
+        <!-- 4. Momentum -->
+        <div class="section fade-up" id="s4">
+            <h2 class="section-title"><i class="fa-solid fa-forward"></i> 4. Momentum and Nesterov Accelerated Gradient</h2>
+            <p class="section-desc">Plain SGD zig-zags across steep, narrow valleys (<strong>ravines</strong>) and crawls along the shallow direction. <strong>Momentum</strong> fixes this by accumulating a <strong>velocity</strong> &mdash; an exponentially-weighted average of past gradients:</p>
+            <div class="formula">\[ v \leftarrow \beta v - \eta\,\nabla J(w) \qquad w \leftarrow w + v \qquad (\beta \approx 0.9) \]</div>
+            <p class="section-desc">Consistent directions build up speed; oscillating directions cancel out. Like a ball rolling downhill, it powers through small bumps and flat regions. <strong>Nesterov Accelerated Gradient (NAG)</strong> is a smarter variant that evaluates the gradient at the look-ahead position <code>w + &beta;v</code> &mdash; it &ldquo;looks before it leaps&rdquo; and corrects sooner.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_momentum.png" alt="Plain SGD zig-zagging across a ravine versus momentum damping the oscillations" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5"><code>&beta; = 0.9</code> means each step keeps 90% of the previous velocity. With a constant gradient <code>g</code> the velocity settles at <code>g/(1&minus;&beta;) = 10g</code> &mdash; a 10&times; effective speed-up along steady directions. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p><code>&beta; = 0.9</code>, constant gradient <code>g = 1</code>, <code>v&#8320; = 0</code> (using <code>v &larr; &beta;v + g</code>): <code>v&#8321; = 0.9&middot;0 + 1 = 1</code>; <code>v&#8322; = 0.9&middot;1 + 1 = 1.9</code>; <code>v&#8323; = 0.9&middot;1.9 + 1 = 2.71</code> &mdash; the velocity grows toward the steady value 10.</p>
+            </div>
+        </div>
+
+        <!-- 5. AdaGrad / RMSProp -->
+        <div class="section fade-up" id="s5">
+            <h2 class="section-title"><i class="fa-solid fa-sliders"></i> 5. Adaptive Learning Rates: AdaGrad and RMSProp</h2>
+            <p class="section-desc">Instead of one global <code>&eta;</code>, give each weight its <strong>own effective learning rate</strong> based on the size of its recent gradients. Weights with large gradients get smaller steps; rarely-updated weights get larger steps.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-plus"></i> AdaGrad &mdash; accumulate squared gradients</h3>
+                <div class="formula">\[ \text{cache} \leftarrow \text{cache} + g^2 \qquad w \leftarrow w - \eta \cdot \frac{g}{\sqrt{\text{cache}} + \epsilon} \]</div>
+                <p class="section-desc">Great for sparse features, but the cache only grows, so the effective step keeps shrinking and learning can stop prematurely.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-wave-square"></i> RMSProp &mdash; use a decaying average instead</h3>
+                <div class="formula">\[ \text{cache} \leftarrow \beta\,\text{cache} + (1-\beta)\,g^2 \qquad w \leftarrow w - \eta \cdot \frac{g}{\sqrt{\text{cache}} + \epsilon} \]</div>
+                <p class="section-desc">By forgetting old gradients (<code>&beta; &asymp; 0.9</code>), RMSProp keeps a healthy step size and works well on non-stationary, non-convex deep networks. <code>&epsilon;</code> (~1e-8) is a tiny constant that prevents division by zero.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_optimizers.png" alt="Trajectories of different optimizers descending a loss surface" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Adaptive optimizers give each parameter its own step size, reaching the minimum along a steadier path. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>AdaGrad, <code>&eta; = 0.5</code>, one weight, gradients <code>g = 3, 1, 1</code>: cache <code>9 &rarr; 10 &rarr; 11</code>. Steps: <code>0.5&middot;3/&radic;9 = 0.5</code>; <code>0.5&middot;1/&radic;10 &asymp; 0.158</code>; <code>0.5&middot;1/&radic;11 &asymp; 0.151</code> &mdash; the effective learning rate shrinks over time.</p>
+            </div>
+        </div>
+
+        <!-- 6. Adam -->
+        <div class="section fade-up" id="s6">
+            <h2 class="section-title"><i class="fa-solid fa-star"></i> 6. Adam &mdash; the Default Modern Optimizer</h2>
+            <p class="section-desc"><strong>Adam</strong> (Adaptive Moment Estimation) combines the two best ideas: <strong>momentum</strong> (first moment <code>m</code>) and <strong>RMSProp's adaptive scaling</strong> (second moment <code>v</code>).</p>
+            <div class="formula">\[ m \leftarrow \beta_1 m + (1-\beta_1)\,g \qquad v \leftarrow \beta_2 v + (1-\beta_2)\,g^2 \]</div>
+            <p class="section-desc">Because <code>m</code> and <code>v</code> start at 0 they are biased toward 0 early on, so Adam applies a <strong>bias correction</strong>:</p>
+            <div class="formula">\[ \hat{m} = \frac{m}{1 - \beta_1^{\,t}} \qquad \hat{v} = \frac{v}{1 - \beta_2^{\,t}} \qquad w \leftarrow w - \eta \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} \]</div>
+            <p class="section-desc">Defaults that &ldquo;just work&rdquo;: <code>&beta;&#8321; = 0.9</code>, <code>&beta;&#8322; = 0.999</code>, <code>&eta; = 0.001</code>, <code>&epsilon; = 1e-8</code>. <strong>AdamW</strong> is the recommended refinement: it applies weight decay (Section 12) separately from the adaptive step, which generalizes better and is now standard for training transformers.</p>
+            <table class="dark-table">
+                <thead><tr><th>Advantages</th><th>Limitations</th></tr></thead>
+                <tbody>
+                    <tr><td>Fast, robust convergence out of the box</td><td>More memory (stores <code>m</code> and <code>v</code> per weight)</td></tr>
+                    <tr><td>Per-parameter adaptive step sizes</td><td>Can generalize slightly worse than tuned SGD+momentum</td></tr>
+                    <tr><td>Little learning-rate tuning needed</td><td>Plain Adam mishandles weight decay &mdash; use AdamW</td></tr>
+                    <tr><td>Works well on sparse and noisy gradients</td><td>&mdash;</td></tr>
+                </tbody>
+            </table>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_adam.png" alt="Adam optimizer combining momentum and adaptive scaling" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Adam = momentum (first moment) + RMSProp scaling (second moment) + bias correction. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Adam, first step (<code>t = 1</code>), <code>g = 0.1</code>, <code>m = v = 0</code>, defaults: <code>m = 0.1&middot;0.1 = 0.01 &rarr; m&#770; = 0.01/(1&minus;0.9) = 0.1</code>; <code>v = 0.001&middot;0.01 = 1e-5 &rarr; v&#770; = 1e-5/(1&minus;0.999) = 0.01</code>; step <code>= 0.001&middot;0.1/&radic;0.01 = 0.001</code>.</p>
+            </div>
+        </div>
+
+        <!-- 7. Schedules -->
+        <div class="section fade-up" id="s7">
+            <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> 7. Learning-Rate Schedules and Warmup</h2>
+            <p class="section-desc">Even with a good optimizer, the best learning rate <strong>changes during training</strong>: large early to move fast, small late to settle into the minimum. A schedule lowers <code>&eta;</code> over time.</p>
+            <div class="info-box">
+                <ul>
+                    <li><strong>Step decay:</strong> multiply <code>&eta;</code> by a factor (e.g. &times;0.5) every <code>k</code> epochs.</li>
+                    <li><strong>Exponential decay:</strong> <code>&eta; = &eta;&#8320; &middot; e<sup>&minus;kt</sup></code> &mdash; a smooth continuous drop.</li>
+                    <li><strong>Cosine annealing:</strong> <code>&eta;</code> follows a half-cosine from <code>&eta;&#8320;</code> down to 0 &mdash; very common in modern training.</li>
+                    <li><strong>Warmup:</strong> start from a tiny <code>&eta;</code> and ramp up for the first few hundred steps before decaying. It stabilizes early training, especially for Adam and transformers.</li>
+                </ul>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_schedules.png" alt="Constant, step-decay, exponential, cosine and warmup-plus-cosine learning-rate schedules" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Common learning-rate schedules; warmup+cosine (red) ramps up first, then anneals to zero. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Step decay, <code>&eta;&#8320; = 0.1</code>, &times;0.5 every 10 epochs. At epoch 25 it has dropped <code>&lfloor;25/10&rfloor; = 2</code> times, so <code>&eta; = 0.1 &middot; 0.5&sup2; = 0.025</code>.</p>
+            </div>
+        </div>
+
+        <!-- 8. Weight init -->
+        <div class="section fade-up" id="s8">
+            <h2 class="section-title"><i class="fa-solid fa-seedling"></i> 8. Weight Initialization</h2>
+            <p class="section-desc">Where training starts matters. Initialize all weights to the same value and every neuron learns the same thing (<strong>broken symmetry</strong>); make them too big or too small and the signal <strong>explodes or vanishes</strong> as it passes through the layers. The fix: random weights scaled so the <strong>variance of activations stays roughly constant</strong> from layer to layer.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-wave-square"></i> Xavier / Glorot &mdash; for tanh and sigmoid</h3>
+                <div class="formula">\[ \mathrm{Var}(W) = \frac{2}{n_\text{in} + n_\text{out}} \qquad \text{or uniform on } \pm\sqrt{\frac{6}{n_\text{in}+n_\text{out}}} \]</div>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-bolt"></i> He / Kaiming &mdash; for ReLU and its variants</h3>
+                <div class="formula">\[ \mathrm{Var}(W) = \frac{2}{n_\text{in}} \qquad \text{std} = \sqrt{\frac{2}{n_\text{in}}} \]</div>
+                <p class="section-desc">He initialization accounts for ReLU zeroing out half the inputs, so it is the default for modern ReLU networks.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_init.png" alt="Activation standard deviation staying stable across depth with He/Xavier initialization" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Good initialization keeps the signal variance stable across depth; too small vanishes, too large explodes. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Layer with <code>n<sub>in</sub> = 100</code> inputs. Xavier std <code>&asymp; &radic;(1/100) = 0.1</code>; He std <code>= &radic;(2/100) = &radic;0.02 &asymp; 0.141</code> (He is larger, compensating for ReLU killing half the signal).</p>
+            </div>
+        </div>
+
+        <!-- 9. Vanishing/exploding + clipping -->
+        <div class="section fade-up" id="s9">
+            <h2 class="section-title"><i class="fa-solid fa-scissors"></i> 9. Vanishing / Exploding Gradients and Gradient Clipping</h2>
+            <p class="section-desc">In deep or recurrent networks, gradients are products of many terms. They can <strong>vanish</strong> (&rarr; 0, so early layers stop learning) or <strong>explode</strong> (&rarr; &infin;, so the loss becomes NaN). Partial fixes for vanishing: ReLU-family activations, careful initialization (Section 8), residual connections, batch/layer norm. The standard fix for <strong>exploding</strong> gradients is <strong>gradient clipping</strong> &mdash; cap the gradient's norm before the update:</p>
+            <div class="formula">\[ \text{if } \lVert g \rVert > c: \quad g \leftarrow g \cdot \frac{c}{\lVert g \rVert} \]</div>
+            <p class="section-desc">The <strong>direction is preserved</strong>; only the oversized magnitude is shrunk to the threshold <code>c</code>.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_clip.png" alt="A gradient vector rescaled to a threshold, and clipping taming a loss spike" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Clip-by-norm rescales an over-long gradient back to the threshold, taming the loss spikes that exploding gradients cause. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Gradient <code>g = [3, 4]</code>, threshold <code>c = 1</code>. <code>&Vert;g&Vert; = &radic;(9+16) = 5</code>; scale <code>= c/&Vert;g&Vert; = 1/5 = 0.2</code>; <code>g &larr; [3, 4]&middot;0.2 = [0.6, 0.8]</code>, new norm 1.</p>
+            </div>
+        </div>
+
+        <!-- 10. Batch norm -->
+        <div class="section fade-up" id="s10">
+            <h2 class="section-title"><i class="fa-solid fa-arrows-to-circle"></i> 10. Batch Normalization (and Layer Norm)</h2>
+            <p class="section-desc">As weights change, the distribution of each layer's inputs keeps shifting (&ldquo;internal covariate shift&rdquo;), which slows training. <strong>Batch Normalization</strong> normalizes each feature across the mini-batch to mean 0, variance 1, then rescales it with two <strong>learnable</strong> parameters <code>&gamma;</code> and <code>&beta;</code>:</p>
+            <div class="formula">\[ \hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}} \qquad y = \gamma \cdot \hat{x} + \beta \]</div>
+            <p class="section-desc"><code>&gamma;</code> and <code>&beta;</code> let the network <em>undo</em> the normalization if that is actually better &mdash; it keeps full expressive power.</p>
+            <table class="dark-table">
+                <thead><tr><th>Advantages</th><th>Limitations</th></tr></thead>
+                <tbody>
+                    <tr><td>Allows much higher learning rates</td><td>Behaves differently in train vs test (running stats)</td></tr>
+                    <tr><td>Faster, more stable convergence</td><td>Weak for very small batches</td></tr>
+                    <tr><td>Acts as a mild regularizer (batch noise)</td><td>Awkward for RNNs / variable-length sequences</td></tr>
+                    <tr><td>Reduces sensitivity to initialization</td><td>&mdash;</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc"><strong>Layer Normalization</strong> normalizes across the features of one example instead of across the batch &mdash; batch-size independent, so it is the norm of choice for RNNs and transformers.</p>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_batchnorm.png" alt="A feature distribution before batch norm (mean 3) and after (mean 0, std 1)" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Batch norm recentres and rescales each feature to mean 0, std 1, before the learnable <code>&gamma;, &beta;</code> restore flexibility. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Batch <code>x = [2, 4, 6, 8]</code>: <code>&mu; = 5</code>, <code>&sigma;&sup2; = 5</code>, <code>&sigma; &asymp; 2.236</code>. Normalize <code>x = 2</code>: <code>(2&minus;5)/2.236 = &minus;1.342</code>; <code>x = 8</code>: <code>(8&minus;5)/2.236 = +1.342</code>.</p>
+            </div>
+        </div>
+
+        <!-- 11. Overfitting -->
+        <div class="section fade-up" id="s11">
+            <h2 class="section-title"><i class="fa-solid fa-scale-balanced"></i> 11. Overfitting, Underfitting and the Bias&ndash;Variance Trade-off</h2>
+            <p class="section-desc">Optimization makes the <em>training</em> loss small. <strong>Regularization</strong> makes the model work on <em>unseen</em> data &mdash; the two goals are different.</p>
+            <div class="info-box">
+                <ul>
+                    <li><strong>Underfitting (high bias):</strong> the model is too simple &mdash; both training and validation error are high.</li>
+                    <li><strong>Overfitting (high variance):</strong> the model memorizes the training data, including its noise &mdash; training error is tiny but validation error is large. The <strong>gap</strong> between the two is the tell-tale sign.</li>
+                    <li>The goal is the <strong>sweet spot</strong>: enough capacity to fit the signal, not so much that it fits the noise.</li>
+                </ul>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_overfit.png" alt="Training loss falling while validation loss turns up, and the bias-variance trade-off curve" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">When validation loss turns up while training loss keeps falling, overfitting has begun. <strong>Diagnosis:</strong> high training error &rarr; underfitting (add capacity); low training but high validation error &rarr; overfitting (add data or regularization). <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>A model reports training accuracy 99%, validation 72%. The large gap (27 points) &rarr; <strong>overfitting</strong>. Remedy: more data, or regularization (Sections 12&ndash;14).</p>
+            </div>
+        </div>
+
+        <!-- 12. L1/L2 -->
+        <div class="section fade-up" id="s12">
+            <h2 class="section-title"><i class="fa-solid fa-compress"></i> 12. L2 and L1 Regularization (Weight Decay)</h2>
+            <p class="section-desc">Add a penalty on large weights to the loss, so the optimizer is pushed toward smaller, smoother weights that generalize better.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-notch"></i> L2 (ridge / weight decay)</h3>
+                <div class="formula">\[ J = J_\text{data} + \lambda \sum w^2 \quad\Rightarrow\quad w \leftarrow (1 - 2\eta\lambda)\,w - \eta \cdot g_\text{data} \]</div>
+                <p class="section-desc">Every step multiplies the weight by a factor just below 1 &mdash; hence the name <strong>weight decay</strong>. It shrinks weights toward (but not exactly to) zero.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-diamond"></i> L1 (lasso)</h3>
+                <div class="formula">\[ J = J_\text{data} + \lambda \sum |w| \qquad \text{gradient adds } \lambda \cdot \operatorname{sign}(w) \]</div>
+                <p class="section-desc">L1 pushes many weights to <strong>exactly zero</strong>, producing a <strong>sparse</strong> model that effectively selects features. The geometry (diamond vs circle) is why L1 lands on the axes.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_l1l2.png" alt="L2 round constraint giving small weights versus L1 diamond constraint giving a sparse solution on an axis" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">L2's round constraint pulls toward small weights; L1's diamond corner lands on an axis (<code>w&#8322; = 0</code>) &mdash; sparsity. <code>&lambda;</code> is the regularization strength: larger &rarr; smaller weights &rarr; smoother model, but too large under-fits. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>L2, <code>w = 0.8</code>, <code>&eta; = 0.1</code>, <code>&lambda; = 0.5</code>, data gradient <code>g = 0</code>: <code>w &larr; (1 &minus; 2&middot;0.1&middot;0.5)&middot;0.8 = (1 &minus; 0.1)&middot;0.8 = 0.72</code> (decayed toward 0).</p>
+            </div>
+        </div>
+
+        <!-- 13. Dropout -->
+        <div class="section fade-up" id="s13">
+            <h2 class="section-title"><i class="fa-solid fa-power-off"></i> 13. Dropout</h2>
+            <p class="section-desc">During training, randomly switch off each neuron with probability <code>p</code> (e.g. 0.5) on every forward pass. The network can never rely on any single unit, so it learns <strong>redundant, robust features</strong> &mdash; like training a huge ensemble of sub-networks that share weights.</p>
+            <div class="formula">\[ \text{train: keep each unit with prob } (1-p) \qquad \text{test: use all units} \]</div>
+            <p class="section-desc">At test time all units are active, so their outputs must be scaled to match the training expectation. <strong>Inverted dropout</strong> (the standard) instead scales the kept units by <code>1/(1&minus;p)</code> during training, leaving test-time code unchanged.</p>
+            <table class="dark-table">
+                <thead><tr><th>Advantages</th><th>Limitations</th></tr></thead>
+                <tbody>
+                    <tr><td>Strong, cheap regularizer for large FC layers</td><td>Slows convergence (needs more epochs)</td></tr>
+                    <tr><td>Approximates an ensemble of many networks</td><td>Less used in conv layers (BN often preferred)</td></tr>
+                    <tr><td>Reduces co-adaptation of neurons</td><td>Must be turned off at inference</td></tr>
+                </tbody>
+            </table>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_dropout.png" alt="A full network at test time versus a training pass with random units switched off" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Left: the full network at inference. Right: a single training pass with units randomly dropped. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Layer of 10 units, dropout <code>p = 0.5</code>: on average 5 units stay active each pass. Inverted dropout, keep prob 0.8, activation <code>a = 2.0</code>: kept units scaled by <code>1/0.8 = 1.25 &rarr; 2.0&middot;1.25 = 2.5</code>.</p>
+            </div>
+        </div>
+
+        <!-- 14. Early stopping + augmentation -->
+        <div class="section fade-up" id="s14">
+            <h2 class="section-title"><i class="fa-solid fa-hand"></i> 14. Early Stopping and Data Augmentation</h2>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-stopwatch"></i> Early stopping</h3>
+                <p class="section-desc">Watch the validation loss while training. When it stops improving for a set number of epochs (the <strong>patience</strong>), stop and keep the weights from the <strong>best epoch</strong>. Free regularization &mdash; it simply avoids the over-training regime.</p>
+            </div>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/or_early.png" alt="Validation loss reaching a minimum then rising, with a marker at the best-validation stopping point" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Stop at the lowest validation loss and restore those weights; training past it only memorizes noise. <em>(From Dr. Albanna's course notes.)</em></figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-images"></i> Data augmentation</h3>
+                <p class="section-desc">The best cure for overfitting is <strong>more data</strong>. When you cannot collect more, synthesize it by <strong>label-preserving transforms</strong>: for <em>images</em> &mdash; random crops, flips, rotations, brightness/contrast jitter, cutout; for <em>text</em> &mdash; synonym swaps, back-translation; for <em>audio</em> &mdash; time-shift, noise, pitch-shift. Each epoch the model sees slightly different inputs, so it learns the invariances that matter and memorizes less.</p>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Validation loss by epoch: <code>0.9, 0.7, 0.6, 0.58, 0.60, 0.63</code>. Best is epoch 4 (0.58). With patience 2, epochs 5&ndash;6 fail to improve &rarr; stop and restore epoch 4.</p>
+            </div>
+        </div>
+
+        <!-- 15. Recipe -->
+        <div class="section fade-up" id="s15">
+            <h2 class="section-title"><i class="fa-solid fa-list-check"></i> 15. Putting It Together &mdash; a Practical Training Recipe</h2>
+            <div class="info-box">
+                <ul>
+                    <li><strong>Optimizer:</strong> start with Adam (or AdamW), <code>&eta; = 0.001</code>. Switch to tuned SGD+momentum if you need the last bit of generalization.</li>
+                    <li><strong>Learning rate:</strong> the first thing to tune. Add a schedule (cosine or step decay), with warmup for large models.</li>
+                    <li><strong>Initialization:</strong> He for ReLU nets, Xavier for tanh/sigmoid.</li>
+                    <li><strong>Normalization:</strong> BatchNorm for CNNs, LayerNorm for transformers/RNNs &mdash; both stabilize and speed up training.</li>
+                    <li><strong>Regularize only if overfitting:</strong> add data / augmentation first, then weight decay (L2), then dropout on large FC layers, and always use early stopping.</li>
+                    <li><strong>If it diverges (NaN loss):</strong> lower <code>&eta;</code>, add gradient clipping, check initialization.</li>
+                </ul>
+            </div>
+            <table class="dark-table">
+                <thead><tr><th>Symptom</th><th>Likely cause</th><th>What to try</th></tr></thead>
+                <tbody>
+                    <tr><td>Loss = NaN / inf</td><td>Exploding gradients, <code>&eta;</code> too high</td><td>Lower <code>&eta;</code>, gradient clipping</td></tr>
+                    <tr><td>Loss barely moves</td><td><code>&eta;</code> too small / vanishing</td><td>Raise <code>&eta;</code>, ReLU + He init, BN</td></tr>
+                    <tr><td>Train good, val bad</td><td>Overfitting</td><td>More data, L2, dropout, early stop</td></tr>
+                    <tr><td>Train &amp; val both bad</td><td>Underfitting (high bias)</td><td>Bigger model, train longer, less reg.</td></tr>
+                    <tr><td>Loss zig-zags</td><td><code>&eta;</code> too high / steep ravine</td><td>Momentum / Adam, lower <code>&eta;</code></td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Worked example</h3>
+                <p>Model: train loss 0.05, val loss 0.9, rising after epoch 20. Diagnosis: <strong>overfitting</strong>. Recipe: early stopping ~epoch 20 + dropout/L2 + augmentation.</p>
+            </div>
+        </div>
+
+        <!-- 16. Summary table -->
+        <div class="section fade-up" id="s16">
+            <h2 class="section-title"><i class="fa-solid fa-table-list"></i> 16. Summary &mdash; Update Rules at a Glance</h2>
+            <table class="dark-table">
+                <thead><tr><th>Method</th><th>Core update</th><th>When to use</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>SGD</strong></td><td><code>w &larr; w &minus; &eta; g</code></td><td>Baseline; well-tuned generalizes well</td></tr>
+                    <tr><td><strong>Momentum</strong></td><td><code>v &larr; &beta;v &minus; &eta;g ; w &larr; w + v</code></td><td>Ravines, consistent gradients</td></tr>
+                    <tr><td><strong>RMSProp</strong></td><td><code>cache &larr; &beta;cache+(1&minus;&beta;)g&sup2;</code></td><td>Non-stationary, RNNs</td></tr>
+                    <tr><td><strong>Adam / AdamW</strong></td><td>momentum + RMSProp + bias correction</td><td>Default first choice</td></tr>
+                    <tr><td><strong>L2 / weight decay</strong></td><td><code>w &larr; (1&minus;2&eta;&lambda;)w &minus; &eta;g</code></td><td>Smoother weights, less overfit</td></tr>
+                    <tr><td><strong>L1 / lasso</strong></td><td><code>J += &lambda;&Sigma;|w|</code></td><td>Sparse / feature selection</td></tr>
+                    <tr><td><strong>Dropout</strong></td><td>randomly zero units (prob <code>p</code>)</td><td>Large fully-connected layers</td></tr>
+                    <tr><td><strong>BatchNorm</strong></td><td>normalize batch, then <code>&gamma;&middot;x&#770; + &beta;</code></td><td>CNNs; faster, higher <code>&eta;</code></td></tr>
+                    <tr><td><strong>Early stopping</strong></td><td>halt at best validation loss</td><td>Almost always</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-key"></i> Key takeaways</h3>
+                <ul>
+                    <li>Optimization = reach low training loss fast; regularization = make it generalize. You need <strong>both</strong>.</li>
+                    <li>The <strong>learning rate</strong> is the most important knob; a schedule + Adam/AdamW is a strong default.</li>
+                    <li>Reach for regularizers only when you actually <strong>overfit</strong> &mdash; and add data/augmentation before anything else.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Exercises -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercises</h2>
+            <p class="section-desc">Sixteen homework problems, one per section &mdash; the &ldquo;solve it at home&rdquo; column from the notes. Work each on paper, then reveal the worked solution from the answer key.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Gradient descent</h3>
+                    <p class="section-desc"><code>J(w) = w&sup2;</code>, start <code>w = &minus;2</code>, <code>&eta; = 0.25</code>. Perform two gradient-descent steps. Which value is <code>w</code> approaching, and why?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>&nabla;J = 2w</code>. Step 1: <code>g = 2&middot;(&minus;2) = &minus;4 &rarr; w = &minus;2 &minus; 0.25&middot;(&minus;4) = &minus;2 + 1 = &minus;1</code>. Step 2: <code>g = 2&middot;(&minus;1) = &minus;2 &rarr; w = &minus;1 &minus; 0.25&middot;(&minus;2) = &minus;1 + 0.5 = &minus;0.5</code>. <code>w</code> is approaching <strong>0</strong>, the minimum of <code>J(w) = w&sup2;</code> (each step halves the distance to it).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Batch / mini-batch</h3>
+                    <p class="section-desc">Dataset = 50,000 samples, mini-batch = 250. How many iterations make one epoch? How many weight updates in 20 epochs?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Iterations per epoch <code>= 50,000 / 250 = 200</code>. Weight updates in 20 epochs <code>= 200 &times; 20 = 4,000</code>. (One iteration = one mini-batch = one weight update.)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Learning rate</h3>
+                    <p class="section-desc"><code>J(w) = w&sup2;</code>, start <code>w = 4</code>. (a) one step with <code>&eta; = 0.5</code>; (b) one step with <code>&eta; = 0.9</code>. Which converges, which oscillates?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>&nabla;J = 2w = 8</code> at <code>w = 4</code>. (a) <code>&eta; = 0.5</code>: <code>w = 4 &minus; 0.5&middot;8 = 0</code> &mdash; lands exactly on the minimum in one step. (b) <code>&eta; = 0.9</code>: <code>w = 4 &minus; 0.9&middot;8 = 4 &minus; 7.2 = &minus;3.2</code> &mdash; overshoots to the other side; <code>|w|</code> goes 4 &rarr; 3.2. (a) converges cleanly; (b) oscillates around 0 but still converges because <code>|1 &minus; 2&eta;| = 0.8 &lt; 1</code>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Momentum</h3>
+                    <p class="section-desc"><code>&beta; = 0.9</code>, constant gradient <code>g = 2</code>, <code>v&#8320; = 0</code>. Compute <code>v&#8321;, v&#8322;, v&#8323;</code> (use <code>v &larr; &beta;v + g</code>). What is the steady-state velocity <code>g/(1&minus;&beta;)</code>?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>v&#8321; = 0.9&middot;0 + 2 = 2</code>; <code>v&#8322; = 0.9&middot;2 + 2 = 3.8</code>; <code>v&#8323; = 0.9&middot;3.8 + 2 = 5.42</code>. Steady state: <code>v = g/(1 &minus; &beta;) = 2/0.1 = 20</code> &mdash; a 10&times; amplification along a consistent gradient direction.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>RMSProp</h3>
+                    <p class="section-desc"><code>&eta; = 0.1</code>, <code>&beta; = 0.9</code>, constant <code>g = 1</code>, <code>cache&#8320; = 0</code>. Compute <code>cache&#8321;</code> and the first step. As <code>cache &rarr; 1</code>, what does the step approach?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>cache&#8321; = 0.9&middot;0 + 0.1&middot;1&sup2; = 0.1</code>. First step <code>= &eta;&middot;g/&radic;cache&#8321; = 0.1&middot;1/&radic;0.1 = 0.1/0.316 &asymp; 0.316</code>. The steady cache equals <code>g&sup2; = 1</code>, so the step approaches <code>&eta;&middot;1/&radic;1 = 0.1</code> &mdash; RMSProp settles to a stable effective step (it does not keep shrinking like AdaGrad).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">6</div>
+                <div class="step-body">
+                    <h3>Adam &mdash; second step</h3>
+                    <p class="section-desc">Second step (<code>t = 2</code>), <code>g = 0.1</code>, starting from <code>m = 0.01</code>, <code>v = 1e-5</code>. Compute <code>m, v</code>, the bias-corrected <code>m&#770;, v&#770;</code> (use <code>1&minus;0.9&sup2; = 0.19</code>, <code>1&minus;0.999&sup2; &asymp; 0.002</code>) and the update. Is the step still <code>&asymp; 0.001</code>?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>m = 0.9&middot;0.01 + 0.1&middot;0.1 = 0.009 + 0.01 = 0.019</code>; <code>m&#770; = 0.019/(1 &minus; 0.9&sup2;) = 0.019/0.19 = 0.1</code>. <code>v = 0.999&middot;1e-5 + 0.001&middot;0.01 &asymp; 2.0e-5</code>; <code>v&#770; = 2.0e-5/(1 &minus; 0.999&sup2;) &asymp; 2.0e-5/0.002 = 0.01</code>. Update <code>= 0.001&middot;0.1/&radic;0.01 = 0.001&middot;0.1/0.1 = 0.001</code> &mdash; <strong>yes, still &asymp; 0.001</strong>. Bias correction keeps the early steps near <code>&eta;</code> instead of near 0.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">7</div>
+                <div class="step-body">
+                    <h3>Learning-rate schedule</h3>
+                    <p class="section-desc">Exponential decay <code>&eta; = &eta;&#8320;&middot;e<sup>&minus;kt</sup></code>, <code>&eta;&#8320; = 0.1</code>, <code>k = 0.1</code>. Compute <code>&eta;</code> at <code>t = 10</code> and <code>t = 20</code>. (Use <code>e<sup>&minus;1</sup> &asymp; 0.368</code>, <code>e<sup>&minus;2</sup> &asymp; 0.135</code>.)</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>t = 10</code>: <code>&eta; = 0.1&middot;e<sup>&minus;1</sup> = 0.1&middot;0.368 = 0.0368</code>. <code>t = 20</code>: <code>&eta; = 0.1&middot;e<sup>&minus;2</sup> = 0.1&middot;0.135 = 0.0135</code>. The learning rate has dropped to ~37% after 10 epochs and ~14% after 20 &mdash; large early, small late.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">8</div>
+                <div class="step-body">
+                    <h3>Weight initialization</h3>
+                    <p class="section-desc">A layer has <code>n<sub>in</sub> = 256</code>, <code>n<sub>out</sub> = 64</code>. Compute the He std <code>&radic;(2/256)</code> and the Xavier-uniform limit <code>&radic;(6/(256+64))</code>. Which scheme fits a ReLU layer?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">He std <code>= &radic;(2/256) = &radic;0.0078 &asymp; 0.088</code>. Xavier-uniform limit <code>= &radic;(6/(256+64)) = &radic;(6/320) = &radic;0.01875 &asymp; 0.137</code>. <strong>He initialization fits a ReLU layer</strong> &mdash; it accounts for ReLU zeroing half the inputs; Xavier is for tanh/sigmoid.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">9</div>
+                <div class="step-body">
+                    <h3>Gradient clipping</h3>
+                    <p class="section-desc">Gradient <code>g = [6, 8, 0]</code>, threshold <code>c = 2.5</code>. Compute <code>&Vert;g&Vert;</code>, the scale factor and the clipped gradient. Did the direction change?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>&Vert;g&Vert; = &radic;(6&sup2; + 8&sup2; + 0) = &radic;100 = 10</code>. Scale <code>= c/&Vert;g&Vert; = 2.5/10 = 0.25</code>. Clipped <code>g = [6, 8, 0]&middot;0.25 = [1.5, 2, 0]</code>, whose norm is <code>&radic;(2.25 + 4) = 2.5</code> &#10003;. The direction is <strong>unchanged</strong> &mdash; clipping multiplies by a positive scalar, so only the magnitude shrinks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">10</div>
+                <div class="step-body">
+                    <h3>Batch normalization</h3>
+                    <p class="section-desc">Batch <code>x = [1, 2, 3, 4]</code>. Compute <code>&mu;, &sigma;&sup2;, &sigma;</code>. Normalize <code>x = 4</code>, then apply <code>&gamma; = 2</code>, <code>&beta; = 1</code> to get <code>y</code>.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><code>&mu; = (1+2+3+4)/4 = 2.5</code>. <code>&sigma;&sup2; = ((1.5)&sup2;+(0.5)&sup2;+(0.5)&sup2;+(1.5)&sup2;)/4 = 5/4 = 1.25</code>, so <code>&sigma; &asymp; 1.118</code>. <code>x&#770; = (4 &minus; 2.5)/1.118 = 1.5/1.118 = 1.342</code>. <code>y = &gamma;&middot;x&#770; + &beta; = 2&middot;1.342 + 1 = 3.684</code>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">11</div>
+                <div class="step-body">
+                    <h3>Overfitting vs underfitting</h3>
+                    <p class="section-desc">Classify each and give one fix: (a) train 80%, val 78%; (b) train 99%, val 85%. Which needs more capacity, which needs regularization?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">(a) 80 / 78: both low and close &rarr; <strong>underfitting</strong> (high bias). Fix: a bigger model / train longer &mdash; it needs more capacity. (b) 99 / 85: tiny training error, 14-point gap &rarr; <strong>overfitting</strong> (high variance). Fix: more data, L2, dropout, early stopping &mdash; it needs regularization.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">12</div>
+                <div class="step-body">
+                    <h3>L2 and L1</h3>
+                    <p class="section-desc"><code>w = 1.0</code>, <code>&eta; = 0.1</code>, <code>&lambda; = 1</code>, data gradient <code>g = 0.2</code>. Compute the L2 update <code>w &larr; (1&minus;2&eta;&lambda;)w &minus; &eta;g</code>. Then the L1 update (penalty gradient <code>&lambda;&middot;sign(w) = 1</code>).</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">L2: <code>w = (1 &minus; 2&middot;0.1&middot;1)&middot;1 &minus; 0.1&middot;0.2 = 0.8 &minus; 0.02 = 0.78</code>. L1: <code>w = w &minus; &eta;(g + &lambda;&middot;sign(w)) = 1 &minus; 0.1&middot;(0.2 + 1) = 1 &minus; 0.12 = 0.88</code>. L2 shrinks proportionally (removes <code>0.2&middot;w</code>), so it pulls big weights harder; L1 removes a constant 0.1 each step, which is what drives small weights all the way to exactly 0 (sparsity).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">13</div>
+                <div class="step-body">
+                    <h3>Dropout</h3>
+                    <p class="section-desc">Activations <code>[1, 2, 3, 4]</code>, <code>p = 0.25</code>, mask keeps units 1, 3, 4 (drops unit 2). Apply inverted dropout (scale <code>1/(1&minus;0.25)</code>) to the kept units. If <code>p = 0.4</code> over 20 units, how many stay active on average?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Scale <code>= 1/(1 &minus; 0.25) = 1/0.75 = 1.333</code>. Output <code>= [1&middot;1.333, 0, 3&middot;1.333, 4&middot;1.333] = [1.333, 0, 4.0, 5.333]</code> (dropped unit &rarr; 0). The 1.333&times; scaling keeps the expected sum the same as with no dropout. <code>p = 0.4</code> over 20 units: average active <code>= 20&middot;(1 &minus; 0.4) = 12</code> units.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">14</div>
+                <div class="step-body">
+                    <h3>Early stopping</h3>
+                    <p class="section-desc">Patience = 3. Validation loss by epoch: <code>1.0, 0.8, 0.7, 0.72, 0.69, 0.71, 0.73, 0.74</code>. At which epoch is the best model? At which epoch does training stop? Name two augmentations for an image classifier.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Best (lowest) validation loss = <strong>0.69 at epoch 5</strong>. After epoch 5 the loss fails to improve for epochs 6, 7, 8 &mdash; 3 consecutive fails = patience &rarr; <strong>stop at epoch 8</strong> and restore the epoch-5 weights. Two image augmentations: e.g. random horizontal flip and random crop (also valid: rotation, color jitter, cutout).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">15</div>
+                <div class="step-body">
+                    <h3>Diverging transformer</h3>
+                    <p class="section-desc">A transformer's loss becomes NaN after a few hundred steps. List three fixes in order. Which normalization and which optimizer would you use here?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">1. Lower the learning rate (and add warmup so early steps are tiny). 2. Add gradient clipping (clip-by-norm) to stop exploding gradients. 3. Check initialization / data (and use loss scaling if mixed precision). Normalization: <strong>LayerNorm</strong> (batch-size independent, standard for transformers). Optimizer: <strong>AdamW</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">16</div>
+                <div class="step-body">
+                    <h3>Concept check</h3>
+                    <p class="section-desc">In one sentence each: why (a) momentum helps in a ravine, (b) Adam needs bias correction, (c) L1 gives sparse weights, (d) dropout is disabled at test time.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>(a)</strong> Momentum accumulates velocity in the consistent shallow direction while the oscillating steep-direction gradients cancel, so it accelerates toward the minimum. <strong>(b)</strong> <code>m</code> and <code>v</code> start at 0, biasing the early estimates toward 0; dividing by <code>(1 &minus; &beta;<sup>t</sup>)</code> rescales them to unbiased values. <strong>(c)</strong> The <code>|w|</code> penalty has a constant-magnitude gradient (<code>&plusmn;&lambda;</code>) that pushes weights all the way to exactly 0 (its diamond constraint touches the axes). <strong>(d)</strong> At test time we want the full deterministic network (the ensemble average); with inverted dropout the training-time scaling already fixed the magnitudes, so no units are dropped.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice online -->
+        <div class="section fade-up" id="practice">
+            <h2 class="section-title"><i class="fa-solid fa-code"></i> Practice Online &mdash; TorchCode</h2>
+            <p class="section-desc">Implement every optimizer and regularizer from this module in PyTorch on the companion practice site <a href="../torchcode/index.html">TorchCode</a> &mdash; &ldquo;like LeetCode, but for tensors&rdquo;: instant feedback, reference solutions, no GPU needed.</p>
+            <table class="dark-table">
+                <thead><tr><th>Module section</th><th>TorchCode problem</th><th>What you will implement</th></tr></thead>
+                <tbody>
+                    <tr><td>1&ndash;3. Gradient descent</td><td><a href="../torchcode/40_linear_regression.html">Linear Regression</a></td><td>MSE cost + a manual gradient-descent step</td></tr>
+                    <tr><td>4. Momentum</td><td><a href="../torchcode/41_sgd_momentum.html">SGD with Momentum</a></td><td>velocity accumulation from scratch</td></tr>
+                    <tr><td>5. Adaptive</td><td><a href="../torchcode/42_rmsprop.html">RMSProp</a> &middot; <a href="../torchcode/43_adagrad.html">AdaGrad</a></td><td>decaying vs accumulated squared-gradient cache</td></tr>
+                    <tr><td>6. Adam</td><td><a href="../torchcode/29_adam.html">Adam Optimizer</a></td><td>moments + bias correction, step by step</td></tr>
+                    <tr><td>7. Schedules</td><td><a href="../torchcode/30_cosine_lr.html">Cosine LR Scheduler</a></td><td>warmup + cosine annealing</td></tr>
+                    <tr><td>8. Init</td><td><a href="../torchcode/20_weight_init.html">Kaiming Weight Init</a></td><td>He/Xavier scaling done right</td></tr>
+                    <tr><td>9. Clipping</td><td><a href="../torchcode/21_gradient_clipping.html">Gradient Clipping</a></td><td>clip-by-norm to tame exploding gradients</td></tr>
+                    <tr><td>10. BatchNorm</td><td><a href="../torchcode/07_batchnorm.html">Batch Normalization</a> &middot; <a href="../torchcode/04_layernorm.html">Layer Normalization</a></td><td>normalize + learnable gamma, beta</td></tr>
+                    <tr><td>12. Weight decay</td><td><a href="../torchcode/44_l2_weight_decay.html">L2 Weight Decay</a></td><td>the <code>(1&minus;2&eta;&lambda;)</code> shrink term</td></tr>
+                    <tr><td>13. Dropout</td><td><a href="../torchcode/17_dropout.html">Dropout</a></td><td>inverted dropout, train vs eval</td></tr>
+                    <tr><td>2. Big batches</td><td><a href="../torchcode/31_gradient_accumulation.html">Gradient Accumulation</a></td><td>large effective batches on small hardware</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; Where Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now know</h3>
+                <ul>
+                    <li><strong>Optimization</strong>: gradient descent and its batch/mini-batch variants, the all-important learning rate, and the optimizer family &mdash; momentum &rarr; AdaGrad/RMSProp &rarr; Adam/AdamW &mdash; plus schedules and warmup.</li>
+                    <li><strong>Stability</strong>: sensible weight initialization (He/Xavier), gradient clipping for exploding gradients, and batch/layer normalization.</li>
+                    <li><strong>Regularization</strong>: diagnosing the bias&ndash;variance trade-off, then L1/L2 weight decay, dropout, early stopping and data augmentation to close the train/validation gap.</li>
+                    <li>A <strong>practical recipe</strong> and a symptom&rarr;remedy table to debug real training runs.</li>
+                </ul>
+            </div>
+            <p class="section-desc">This module is the training toolbox for everything that follows &mdash; the same optimizers and regularizers train convolutional networks, recurrent networks and transformers. The best next move is to <strong>implement them yourself</strong> on <a href="../torchcode/index.html">TorchCode</a>: the suggested path is Linear Regression &rarr; Momentum &rarr; RMSProp &rarr; Adam &rarr; Weight Init &rarr; Dropout &rarr; BatchNorm, then a full training-loop project end to end.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="06_backpropagation.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 6: Backpropagation</a>
+            <a href="index.html" class="nav-btn next">Back to Course Home <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Deep Learning &middot; Course notes by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Optimization &amp; Reg.</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#s1">1. Gradient Descent</a>
+        <a class="toc-item" href="#s2">2. GD Variants</a>
+        <a class="toc-item" href="#s3">3. Learning Rate</a>
+        <a class="toc-item" href="#s4">4. Momentum</a>
+        <a class="toc-item" href="#s5">5. AdaGrad / RMSProp</a>
+        <a class="toc-item" href="#s6">6. Adam</a>
+        <a class="toc-item" href="#s7">7. LR Schedules</a>
+        <a class="toc-item" href="#s8">8. Initialization</a>
+        <a class="toc-item" href="#s9">9. Clipping</a>
+        <a class="toc-item" href="#s10">10. Batch Norm</a>
+        <a class="toc-item" href="#s11">11. Over/Underfitting</a>
+        <a class="toc-item" href="#s12">12. L1 &amp; L2</a>
+        <a class="toc-item" href="#s13">13. Dropout</a>
+        <a class="toc-item" href="#s14">14. Early Stopping</a>
+        <a class="toc-item" href="#s15">15. Training Recipe</a>
+        <a class="toc-item" href="#s16">16. Summary Table</a>
+        <a class="toc-item" href="#lab">Exercises</a>
+        <a class="toc-item" href="#practice">Practice</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

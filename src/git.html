@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git & GitHub Interactive Tutorial for Developers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main-container {
+            background: white;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .content-section {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .subsection-title {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 20px 0;
+            position: relative;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7rem;
+            color: #95a5a6;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .command-box {
+            background: #34495e;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            margin: 15px 0;
+            position: relative;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .command-box::before {
+            content: '$';
+            margin-right: 10px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+
+        .interactive-demo {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .workflow-step {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .workflow-step::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-interactive {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-interactive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+
+        .quiz-container {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid #9b59b6;
+        }
+
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .quiz-option {
+            display: block;
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .quiz-option.correct {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .quiz-option.incorrect {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        .progress-indicator {
+            background: #ecf0f1;
+            height: 6px;
+            border-radius: 3px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .git-visualization {
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: white;
+            font-family: 'Fira Code', monospace;
+            text-align: center;
+        }
+
+        .commit-node {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 50%;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .commit-node::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 40px;
+            height: 2px;
+            background: #3498db;
+            transform: translateY(-50%);
+        }
+
+        .commit-node:last-child::after {
+            display: none;
+        }
+
+        .alert-tip {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible-content.active {
+            max-height: 1000px;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+
+            .main-container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">
+                <i class="fab fa-git-alt"></i> Git & GitHub
+            </h1>
+            <p class="hero-subtitle">Complete Interactive Tutorial for Developers</p>
+            <p>Master version control and collaborative development with hands-on examples</p>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="content-section">
+            <h2 class="section-title"><i class="fas fa-list"></i> Table of Contents</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="#intro" class="text-decoration-none">1. Introduction to Version Control</a></li>
+                        <li class="list-group-item"><a href="#git-basics" class="text-decoration-none">2. Git Fundamentals</a></li>
+                        <li class="list-group-item"><a href="#github-basics" class="text-decoration-none">3. GitHub Fundamentals</a></li>
+                        <li class="list-group-item"><a href="#commands" class="text-decoration-none">4. Essential Git Commands</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="#workflows" class="text-decoration-none">5. Git Workflows</a></li>
+                        <li class="list-group-item"><a href="#best-practices" class="text-decoration-none">6. Best Practices</a></li>
+                        <li class="list-group-item"><a href="#interactive" class="text-decoration-none">7. Interactive Examples</a></li>
+                        <li class="list-group-item"><a href="#summary" class="text-decoration-none">8. Summary & Next Steps</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Introduction to Version Control -->
+        <div class="content-section" id="intro">
+            <h2 class="section-title"><i class="fas fa-code-branch"></i> 1. Introduction to Version Control</h2>
+
+            <p class="lead">Version control is a system that records changes to files over time so that you can recall specific versions later. It's essential for software development and collaboration.</p>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-history"></i></div>
+                        <h4>Track Changes</h4>
+                        <p>Keep a detailed history of all changes made to your code, including who made them and when.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
+                        <h4>Collaboration</h4>
+                        <p>Multiple developers can work on the same project simultaneously without conflicts.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>Backup & Recovery</h4>
+                        <p>Never lose your work. Revert to previous versions if something goes wrong.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Why Version Control Matters</h3>
+            <div class="alert-tip">
+                <i class="fas fa-lightbulb"></i> <strong>Pro Tip:</strong> Version control is not just for code! You can use it for any text-based files including documentation, configuration files, and even this tutorial!
+            </div>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check text-success"></i> <strong>Reversibility:</strong> Easily undo changes that break your application</li>
+                <li class="list-group-item"><i class="fas fa-check text-success"></i> <strong>Accountability:</strong> See exactly who changed what and when</li>
+                <li class="list-group-item"><i class="fas fa-check text-success"></i> <strong>Branching:</strong> Work on different features simultaneously</li>
+                <li class="list-group-item"><i class="fas fa-check text-success"></i> <strong>Merging:</strong> Combine changes from different contributors</li>
+                <li class="list-group-item"><i class="fas fa-check text-success"></i> <strong>Distributed Development:</strong> Work offline and sync when ready</li>
+            </ul>
+
+            <div class="quiz-container">
+                <h4 class="quiz-question"><i class="fas fa-question-circle"></i> Quick Quiz: What is the primary purpose of version control?</h4>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">A) To make code run faster</div>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">B) To compress files</div>
+                <div class="quiz-option" onclick="selectAnswer(this, true)">C) To track changes and enable collaboration</div>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">D) To write better code</div>
+            </div>
+        </div>
+
+        <!-- Section 2: Git Fundamentals -->
+        <div class="content-section" id="git-basics">
+            <h2 class="section-title"><i class="fab fa-git-alt"></i> 2. Git Fundamentals</h2>
+
+            <p class="lead">Git is a distributed version control system that tracks changes in source code during software development. It's designed for speed, data integrity, and support for distributed workflows.</p>
+
+            <h3 class="subsection-title">Key Git Concepts</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-folder-open"></i> Repository (Repo)</h5>
+                        <p>A directory containing your project files and the entire history of changes. Can be local or remote.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-save"></i> Commit</h5>
+                        <p>A snapshot of your project at a specific point in time. Each commit has a unique ID and message.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-code-branch"></i> Branch</h5>
+                        <p>A parallel version of your repository. Allows you to work on different features independently.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-compress-arrows-alt"></i> Merge</h5>
+                        <p>The process of combining changes from different branches into a single branch.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Git Workflow Overview</h3>
+
+            <div class="git-visualization">
+                <h5>Basic Git Workflow</h5>
+                <div class="d-flex justify-content-center align-items-center my-4">
+                    <div class="text-center mx-3">
+                        <i class="fas fa-folder fa-2x mb-2"></i>
+                        <div>Working Directory</div>
+                    </div>
+                    <i class="fas fa-arrow-right fa-2x mx-2"></i>
+                    <div class="text-center mx-3">
+                        <i class="fas fa-plus-circle fa-2x mb-2"></i>
+                        <div>Staging Area</div>
+                    </div>
+                    <i class="fas fa-arrow-right fa-2x mx-2"></i>
+                    <div class="text-center mx-3">
+                        <i class="fas fa-database fa-2x mb-2"></i>
+                        <div>Repository</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-step" data-step="1">
+                <h5>Working Directory</h5>
+                <p>This is where you edit your files. Changes here are not yet tracked by Git.</p>
+            </div>
+
+            <div class="workflow-step" data-step="2">
+                <h5>Staging Area (Index)</h5>
+                <p>A holding area for changes you want to include in your next commit. Use <code>git add</code> to stage files.</p>
+            </div>
+
+            <div class="workflow-step" data-step="3">
+                <h5>Repository</h5>
+                <p>The Git database where your project history is stored. Use <code>git commit</code> to save staged changes.</p>
+            </div>
+
+            <h3 class="subsection-title">Installing Git</h3>
+
+            <div class="alert-tip">
+                <i class="fas fa-download"></i> <strong>Installation:</strong> Download Git from <a href="https://git-scm.com" target="_blank">git-scm.com</a> and follow the installation instructions for your operating system.
+            </div>
+
+            <div class="code-block" data-lang="bash">
+# Verify Git installation
+git --version
+
+# Configure Git with your identity
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+
+# Check your configuration
+git config --list
+            </div>
+
+            <div class="quiz-container">
+                <h4 class="quiz-question"><i class="fas fa-question-circle"></i> Quick Quiz: What are the three main areas in Git workflow?</h4>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">A) Local, Remote, Cloud</div>
+                <div class="quiz-option" onclick="selectAnswer(this, true)">B) Working Directory, Staging Area, Repository</div>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">C) Master, Branch, Merge</div>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">D) Add, Commit, Push</div>
+            </div>
+        </div>
+
+        <!-- Section 3: GitHub Fundamentals -->
+        <div class="content-section" id="github-basics">
+            <h2 class="section-title"><i class="fab fa-github"></i> 3. GitHub Fundamentals</h2>
+
+            <p class="lead">GitHub is a cloud-based hosting service for Git repositories. It provides a web-based interface for Git and adds collaboration features like issue tracking, project management, and code review.</p>
+
+            <h3 class="subsection-title">GitHub vs Git</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fab fa-git-alt"></i> Git</h5>
+                        <ul>
+                            <li>Version control system</li>
+                            <li>Command-line tool</li>
+                            <li>Works locally</li>
+                            <li>Distributed</li>
+                            <li>Free and open source</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fab fa-github"></i> GitHub</h5>
+                        <ul>
+                            <li>Hosting service for Git repositories</li>
+                            <li>Web-based interface</li>
+                            <li>Cloud-based</li>
+                            <li>Collaboration features</li>
+                            <li>Free tier + paid plans</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Key GitHub Features</h3>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-code"></i></div>
+                        <h5>Code Hosting</h5>
+                        <p>Store your Git repositories in the cloud with unlimited public repositories.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-code-branch"></i></div>
+                        <h5>Pull Requests</h5>
+                        <p>Propose changes to a repository and collaborate on code review before merging.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bug"></i></div>
+                        <h5>Issue Tracking</h5>
+                        <p>Track bugs, feature requests, and other project-related discussions.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
+                        <h5>Collaboration</h5>
+                        <p>Work with team members, assign tasks, and manage project permissions.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                        <h5>GitHub Actions</h5>
+                        <p>Automate your workflow with CI/CD pipelines and automated testing.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-globe"></i></div>
+                        <h5>GitHub Pages</h5>
+                        <p>Host static websites directly from your GitHub repositories.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Creating Your First Repository</h3>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-play-circle"></i> Interactive Demo: Create a Repository</h4>
+                <p>Follow these steps to create your first GitHub repository:</p>
+                <button class="btn btn-interactive" onclick="toggleDemo('create-repo')">Show Step-by-Step Guide</button>
+            </div>
+
+            <div id="create-repo" class="collapsible-content">
+                <div class="workflow-step" data-step="1">
+                    <h5>Sign Up for GitHub</h5>
+                    <p>Visit <a href="https://github.com" target="_blank">github.com</a> and create a free account.</p>
+                </div>
+
+                <div class="workflow-step" data-step="2">
+                    <h5>Create New Repository</h5>
+                    <p>Click the "+" icon in the top right corner and select "New repository".</p>
+                </div>
+
+                <div class="workflow-step" data-step="3">
+                    <h5>Configure Repository</h5>
+                    <ul>
+                        <li>Choose a repository name (e.g., "my-first-repo")</li>
+                        <li>Add a description (optional)</li>
+                        <li>Choose public or private</li>
+                        <li>Initialize with a README file</li>
+                    </ul>
+                </div>
+
+                <div class="workflow-step" data-step="4">
+                    <h5>Clone to Local Machine</h5>
+                    <div class="command-box">git clone https://github.com/yourusername/my-first-repo.git</div>
+                </div>
+            </div>
+
+            <div class="alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Never commit sensitive information like passwords, API keys, or personal data to a public repository!
+            </div>
+        </div>
+
+        <!-- Section 4: Essential Git Commands -->
+        <div class="content-section" id="commands">
+            <h2 class="section-title"><i class="fas fa-terminal"></i> 4. Essential Git Commands</h2>
+
+            <p class="lead">Master these fundamental Git commands to manage your repositories effectively. Each command is explained with practical examples.</p>
+
+            <h3 class="subsection-title">Repository Setup</h3>
+
+            <div class="code-block" data-lang="bash">
+# Initialize a new Git repository
+git init
+
+# Clone an existing repository
+git clone https://github.com/user/repo.git
+
+# Clone to a specific folder
+git clone https://github.com/user/repo.git my-project
+            </div>
+
+            <h3 class="subsection-title">Basic File Operations</h3>
+
+            <div class="code-block" data-lang="bash">
+# Check repository status
+git status
+
+# Add files to staging area
+git add filename.txt          # Add specific file
+git add .                     # Add all files
+git add *.js                  # Add all JavaScript files
+
+# Commit changes
+git commit -m "Your commit message"
+
+# Add and commit in one command
+git commit -am "Your commit message"
+            </div>
+
+            <h3 class="subsection-title">Viewing History</h3>
+
+            <div class="code-block" data-lang="bash">
+# View commit history
+git log
+
+# View compact log
+git log --oneline
+
+# View graphical log
+git log --graph --oneline --all
+
+# View changes in a specific commit
+git show commit-hash
+
+# View differences
+git diff                      # Working directory vs staging area
+git diff --staged             # Staging area vs last commit
+git diff HEAD~1               # Compare with previous commit
+            </div>
+
+            <h3 class="subsection-title">Branching and Merging</h3>
+
+            <div class="code-block" data-lang="bash">
+# List branches
+git branch                    # Local branches
+git branch -r                 # Remote branches
+git branch -a                 # All branches
+
+# Create new branch
+git branch feature-branch
+
+# Switch to branch
+git checkout feature-branch
+
+# Create and switch to new branch
+git checkout -b feature-branch
+
+# Merge branch
+git checkout main
+git merge feature-branch
+
+# Delete branch
+git branch -d feature-branch
+            </div>
+
+            <h3 class="subsection-title">Remote Repository Operations</h3>
+
+            <div class="code-block" data-lang="bash">
+# Add remote repository
+git remote add origin https://github.com/user/repo.git
+
+# View remote repositories
+git remote -v
+
+# Push changes to remote
+git push origin main
+
+# Pull changes from remote
+git pull origin main
+
+# Fetch changes (without merging)
+git fetch origin
+            </div>
+
+            <h3 class="subsection-title">Undoing Changes</h3>
+
+            <div class="code-block" data-lang="bash">
+# Unstage a file
+git reset filename.txt
+
+# Discard changes in working directory
+git checkout -- filename.txt
+
+# Revert a commit (creates new commit)
+git revert commit-hash
+
+# Reset to previous commit (dangerous!)
+git reset --hard HEAD~1
+
+# Reset to specific commit
+git reset --hard commit-hash
+            </div>
+
+            <div class="alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> Commands like <code>git reset --hard</code> can permanently delete your work. Always make sure you have backups or your changes are committed before using destructive commands.
+            </div>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-terminal"></i> Command Practice</h4>
+                <p>Test your knowledge of Git commands:</p>
+                <button class="btn btn-interactive" onclick="toggleDemo('command-practice')">Start Practice Session</button>
+            </div>
+
+            <div id="command-practice" class="collapsible-content">
+                <div class="quiz-container">
+                    <h4 class="quiz-question">What command would you use to create a new branch called "feature-login"?</h4>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">A) git create feature-login</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">B) git new-branch feature-login</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, true)">C) git branch feature-login</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">D) git checkout feature-login</div>
+                </div>
+
+                <div class="quiz-container">
+                    <h4 class="quiz-question">How do you stage all modified files for commit?</h4>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">A) git commit -a</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, true)">B) git add .</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">C) git stage *</div>
+                    <div class="quiz-option" onclick="selectAnswer(this, false)">D) git add-all</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Git Workflows -->
+        <div class="content-section" id="workflows">
+            <h2 class="section-title"><i class="fas fa-project-diagram"></i> 5. Git Workflows</h2>
+
+            <p class="lead">Learn popular Git workflows that teams use to collaborate effectively. Choose the right workflow for your project size and team structure.</p>
+
+            <h3 class="subsection-title">Centralized Workflow</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-users"></i> Best for: Small teams, simple projects</h5>
+                <p>Everyone works on the main branch. Simple but can lead to conflicts with multiple developers.</p>
+
+                <div class="git-visualization">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="commit-node" title="Initial commit"></div>
+                        <div class="commit-node" title="Feature A"></div>
+                        <div class="commit-node" title="Feature B"></div>
+                        <div class="commit-node" title="Bug fix"></div>
+                        <div class="commit-node" title="Feature C"></div>
+                    </div>
+                    <div class="mt-2">main branch</div>
+                </div>
+            </div>
+
+            <div class="code-block" data-lang="bash">
+# Centralized workflow commands
+git clone https://github.com/team/project.git
+git add .
+git commit -m "Add new feature"
+git pull origin main    # Get latest changes
+git push origin main    # Push your changes
+            </div>
+
+            <h3 class="subsection-title">Feature Branch Workflow</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-code-branch"></i> Best for: Medium teams, organized development</h5>
+                <p>Each feature is developed in its own branch. Features are merged back to main via pull requests.</p>
+
+                <div class="git-visualization">
+                    <div class="text-center">
+                        <div class="mb-2">
+                            <span class="badge bg-primary">main</span>
+                            <div class="commit-node" title="Initial"></div>
+                            <div class="commit-node" title="Merge feature-A"></div>
+                            <div class="commit-node" title="Merge feature-B"></div>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-success">feature-A</span>
+                            <div class="commit-node" title="Work on A"></div>
+                            <div class="commit-node" title="Complete A"></div>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning">feature-B</span>
+                            <div class="commit-node" title="Work on B"></div>
+                            <div class="commit-node" title="Complete B"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block" data-lang="bash">
+# Feature branch workflow
+git checkout -b feature-login        # Create feature branch
+git add .
+git commit -m "Implement login"
+git push origin feature-login        # Push feature branch
+# Create pull request on GitHub
+# After review and approval, merge via GitHub
+git checkout main
+git pull origin main                 # Get merged changes
+git branch -d feature-login          # Delete local feature branch
+            </div>
+
+            <h3 class="subsection-title">Gitflow Workflow</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-sitemap"></i> Best for: Large teams, scheduled releases</h5>
+                <p>Structured workflow with specific branches for development, features, releases, and hotfixes.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Branch Types:</h6>
+                        <ul>
+                            <li><strong>main:</strong> Production-ready code</li>
+                            <li><strong>develop:</strong> Integration branch</li>
+                            <li><strong>feature/*:</strong> New features</li>
+                            <li><strong>release/*:</strong> Prepare releases</li>
+                            <li><strong>hotfix/*:</strong> Emergency fixes</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Workflow Steps:</h6>
+                        <ol>
+                            <li>Create feature branch from develop</li>
+                            <li>Work on feature</li>
+                            <li>Merge back to develop</li>
+                            <li>Create release branch</li>
+                            <li>Merge release to main and develop</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block" data-lang="bash">
+# Gitflow workflow commands
+git flow init                        # Initialize gitflow
+git flow feature start login        # Start new feature
+git flow feature finish login       # Finish feature
+git flow release start v1.0         # Start release
+git flow release finish v1.0        # Finish release
+git flow hotfix start urgent-fix    # Start hotfix
+git flow hotfix finish urgent-fix   # Finish hotfix
+            </div>
+
+            <h3 class="subsection-title">GitHub Flow</h3>
+
+            <div class="feature-card">
+                <h5><i class="fab fa-github"></i> Best for: Continuous deployment, web applications</h5>
+                <p>Simplified workflow focusing on main branch with feature branches and pull requests.</p>
+
+                <div class="workflow-step" data-step="1">
+                    <h5>Create Branch</h5>
+                    <p>Create a feature branch from main for your work.</p>
+                </div>
+
+                <div class="workflow-step" data-step="2">
+                    <h5>Add Commits</h5>
+                    <p>Make changes and commit them to your feature branch.</p>
+                </div>
+
+                <div class="workflow-step" data-step="3">
+                    <h5>Open Pull Request</h5>
+                    <p>Open a pull request to propose your changes.</p>
+                </div>
+
+                <div class="workflow-step" data-step="4">
+                    <h5>Review & Discuss</h5>
+                    <p>Team reviews code and discusses changes.</p>
+                </div>
+
+                <div class="workflow-step" data-step="5">
+                    <h5>Deploy & Test</h5>
+                    <p>Deploy from the feature branch to test in production-like environment.</p>
+                </div>
+
+                <div class="workflow-step" data-step="6">
+                    <h5>Merge</h5>
+                    <p>Once approved and tested, merge to main and deploy.</p>
+                </div>
+            </div>
+
+            <div class="alert-tip">
+                <i class="fas fa-lightbulb"></i> <strong>Choosing a Workflow:</strong> Start simple with GitHub Flow or Feature Branch workflow. Move to Gitflow only if you need structured releases and have a large team.
+            </div>
+        </div>
+
+        <!-- Section 6: Best Practices -->
+        <div class="content-section" id="best-practices">
+            <h2 class="section-title"><i class="fas fa-star"></i> 6. Best Practices</h2>
+
+            <p class="lead">Follow these proven practices to maintain clean, professional repositories and collaborate effectively with your team.</p>
+
+            <h3 class="subsection-title">Commit Message Guidelines</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-comment"></i> Writing Great Commit Messages</h5>
+                <p>Good commit messages make your project history readable and useful.</p>
+
+                <div class="code-block" data-lang="text">
+# Good commit message structure:
+#
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+
+# Examples:
+feat(auth): add login functionality
+fix(ui): correct button alignment on mobile
+docs(readme): update installation instructions
+refactor(api): optimize user data fetching
+test(utils): add unit tests for validation helpers
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6 class="text-success"><i class="fas fa-check"></i> Do:</h6>
+                        <ul>
+                            <li>Use present tense ("add" not "added")</li>
+                            <li>Keep subject line under 50 characters</li>
+                            <li>Capitalize the subject line</li>
+                            <li>Don't end with a period</li>
+                            <li>Use imperative mood</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger"><i class="fas fa-times"></i> Don't:</h6>
+                        <ul>
+                            <li>Write vague messages like "fix bug"</li>
+                            <li>Use past tense</li>
+                            <li>Include unnecessary details in subject</li>
+                            <li>Use periods in subject line</li>
+                            <li>Commit without a message</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Repository Structure</h3>
+
+            <div class="code-block" data-lang="text">
+project-root/
+├── README.md              # Project overview and setup instructions
+├── .gitignore            # Files to ignore in version control
+├── LICENSE               # License information
+├── package.json          # Project dependencies (if applicable)
+├── src/                  # Source code directory
+│   ├── components/       # Reusable components
+│   ├── utils/           # Utility functions
+│   └── index.js         # Main entry point
+├── tests/               # Test files
+├── docs/                # Documentation
+└── assets/              # Static assets (images, fonts)
+            </div>
+
+            <h3 class="subsection-title">Branch Naming Conventions</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-code-branch"></i> Consistent Branch Names</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Feature Branches:</h6>
+                        <ul>
+                            <li><code>feature/user-authentication</code></li>
+                            <li><code>feature/shopping-cart</code></li>
+                            <li><code>feat/api-integration</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Bug Fix Branches:</h6>
+                        <ul>
+                            <li><code>fix/login-error</code></li>
+                            <li><code>bugfix/mobile-layout</code></li>
+                            <li><code>hotfix/security-patch</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Essential Files</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-file-alt"></i> README.md</h5>
+                        <p>The front page of your repository. Should include:</p>
+                        <ul>
+                            <li>Project description</li>
+                            <li>Installation instructions</li>
+                            <li>Usage examples</li>
+                            <li>Contributing guidelines</li>
+                            <li>License information</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-eye-slash"></i> .gitignore</h5>
+                        <p>Prevent unwanted files from being committed:</p>
+                        <ul>
+                            <li>Build artifacts</li>
+                            <li>Dependencies (node_modules)</li>
+                            <li>Environment files (.env)</li>
+                            <li>IDE configuration files</li>
+                            <li>OS-specific files (.DS_Store)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block" data-lang="gitignore">
+# Example .gitignore file
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+*.min.js
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+            </div>
+
+            <h3 class="subsection-title">Security Best Practices</h3>
+
+            <div class="alert-warning">
+                <i class="fas fa-shield-alt"></i> <strong>Security Checklist:</strong>
+                <ul class="mt-2 mb-0">
+                    <li>Never commit passwords, API keys, or sensitive data</li>
+                    <li>Use environment variables for configuration</li>
+                    <li>Review code before merging pull requests</li>
+                    <li>Keep dependencies updated</li>
+                    <li>Use signed commits for verified authorship</li>
+                    <li>Enable two-factor authentication on GitHub</li>
+                </ul>
+            </div>
+
+            <h3 class="subsection-title">Code Review Guidelines</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-search"></i> Effective Code Reviews</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>For Authors:</h6>
+                        <ul>
+                            <li>Keep pull requests small and focused</li>
+                            <li>Write clear descriptions</li>
+                            <li>Test your changes thoroughly</li>
+                            <li>Respond to feedback constructively</li>
+                            <li>Update documentation if needed</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>For Reviewers:</h6>
+                        <ul>
+                            <li>Review code promptly</li>
+                            <li>Be constructive and specific</li>
+                            <li>Check for functionality and style</li>
+                            <li>Verify tests are included</li>
+                            <li>Approve when satisfied</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-container">
+                <h4 class="quiz-question"><i class="fas fa-question-circle"></i> Quick Quiz: Which is a good commit message?</h4>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">A) "fixed stuff"</div>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">B) "Updated the login page and also fixed a bug in the header component and changed some styling"</div>
+                <div class="quiz-option" onclick="selectAnswer(this, true)">C) "fix(auth): resolve login validation error"</div>
+                <div class="quiz-option" onclick="selectAnswer(this, false)">D) "changes made to files"</div>
+            </div>
+        </div>
+
+        <!-- Section 7: Interactive Examples -->
+        <div class="content-section" id="interactive">
+            <h2 class="section-title"><i class="fas fa-hands-helping"></i> 7. Interactive Examples</h2>
+
+            <p class="lead">Practice Git concepts with these interactive scenarios. Each example simulates real-world situations you'll encounter as a developer.</p>
+
+            <h3 class="subsection-title">Scenario 1: Your First Contribution</h3>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-code"></i> Scenario: Contributing to an Open Source Project</h4>
+                <p>You want to contribute to an open source project. Follow the complete workflow:</p>
+                <button class="btn btn-interactive" onclick="toggleDemo('scenario1')">Start Scenario</button>
+            </div>
+
+            <div id="scenario1" class="collapsible-content">
+                <div class="workflow-step" data-step="1">
+                    <h5>Fork the Repository</h5>
+                    <p>Go to the project's GitHub page and click "Fork" to create your own copy.</p>
+                    <div class="command-box">Navigate to: https://github.com/original-owner/project</div>
+                </div>
+
+                <div class="workflow-step" data-step="2">
+                    <h5>Clone Your Fork</h5>
+                    <div class="command-box">git clone https://github.com/your-username/project.git</div>
+                    <div class="command-box">cd project</div>
+                </div>
+
+                <div class="workflow-step" data-step="3">
+                    <h5>Add Upstream Remote</h5>
+                    <div class="command-box">git remote add upstream https://github.com/original-owner/project.git</div>
+                    <div class="command-box">git remote -v</div>
+                </div>
+
+                <div class="workflow-step" data-step="4">
+                    <h5>Create Feature Branch</h5>
+                    <div class="command-box">git checkout -b fix-typo-in-readme</div>
+                </div>
+
+                <div class="workflow-step" data-step="5">
+                    <h5>Make Your Changes</h5>
+                    <p>Edit the README.md file to fix the typo, then:</p>
+                    <div class="command-box">git add README.md</div>
+                    <div class="command-box">git commit -m "docs(readme): fix typo in installation section"</div>
+                </div>
+
+                <div class="workflow-step" data-step="6">
+                    <h5>Push to Your Fork</h5>
+                    <div class="command-box">git push origin fix-typo-in-readme</div>
+                </div>
+
+                <div class="workflow-step" data-step="7">
+                    <h5>Create Pull Request</h5>
+                    <p>Go to your fork on GitHub and click "New Pull Request". Write a clear description of your changes.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Scenario 2: Handling Merge Conflicts</h3>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-exclamation-triangle"></i> Scenario: Resolving Merge Conflicts</h4>
+                <p>Two developers modified the same file. Learn how to resolve conflicts:</p>
+                <button class="btn btn-interactive" onclick="toggleDemo('scenario2')">Start Scenario</button>
+            </div>
+
+            <div id="scenario2" class="collapsible-content">
+                <div class="workflow-step" data-step="1">
+                    <h5>The Conflict Occurs</h5>
+                    <p>When you try to merge or pull, Git shows a conflict:</p>
+                    <div class="command-box">git merge feature-branch</div>
+                    <div class="alert-warning mt-2">
+                        <strong>Output:</strong> Auto-merging index.html<br>
+                        CONFLICT (content): Merge conflict in index.html<br>
+                        Automatic merge failed; fix conflicts and then commit the result.
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="2">
+                    <h5>View Conflict Markers</h5>
+                    <p>Open the conflicted file. Git adds conflict markers:</p>
+                    <div class="code-block" data-lang="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+    My Amazing Website
+=======
+    My Awesome Website
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch
+    &lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="3">
+                    <h5>Resolve the Conflict</h5>
+                    <p>Edit the file to resolve the conflict. Choose one version or combine both:</p>
+                    <div class="code-block" data-lang="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My Amazing Website&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="4">
+                    <h5>Mark as Resolved</h5>
+                    <div class="command-box">git add index.html</div>
+                    <div class="command-box">git commit -m "resolve merge conflict in page title"</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Scenario 3: Emergency Hotfix</h3>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-fire"></i> Scenario: Emergency Production Fix</h4>
+                <p>Critical bug in production needs immediate fix while development continues:</p>
+                <button class="btn btn-interactive" onclick="toggleDemo('scenario3')">Start Scenario</button>
+            </div>
+
+            <div id="scenario3" class="collapsible-content">
+                <div class="workflow-step" data-step="1">
+                    <h5>Create Hotfix Branch</h5>
+                    <p>Create a hotfix branch from the main branch:</p>
+                    <div class="command-box">git checkout main</div>
+                    <div class="command-box">git pull origin main</div>
+                    <div class="command-box">git checkout -b hotfix/critical-security-patch</div>
+                </div>
+
+                <div class="workflow-step" data-step="2">
+                    <h5>Implement Quick Fix</h5>
+                    <p>Make the minimal necessary changes to fix the issue:</p>
+                    <div class="command-box">git add security-patch.js</div>
+                    <div class="command-box">git commit -m "hotfix: patch security vulnerability in auth module"</div>
+                </div>
+
+                <div class="workflow-step" data-step="3">
+                    <h5>Test the Fix</h5>
+                    <p>Run tests to ensure the fix works and doesn't break anything:</p>
+                    <div class="command-box">npm test</div>
+                </div>
+
+                <div class="workflow-step" data-step="4">
+                    <h5>Deploy to Production</h5>
+                    <div class="command-box">git checkout main</div>
+                    <div class="command-box">git merge hotfix/critical-security-patch</div>
+                    <div class="command-box">git push origin main</div>
+                </div>
+
+                <div class="workflow-step" data-step="5">
+                    <h5>Merge Back to Development</h5>
+                    <p>Ensure the fix is also in the development branch:</p>
+                    <div class="command-box">git checkout develop</div>
+                    <div class="command-box">git merge hotfix/critical-security-patch</div>
+                    <div class="command-box">git push origin develop</div>
+                </div>
+
+                <div class="workflow-step" data-step="6">
+                    <h5>Clean Up</h5>
+                    <div class="command-box">git branch -d hotfix/critical-security-patch</div>
+                    <div class="command-box">git push origin --delete hotfix/critical-security-patch</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Git Command Simulator</h3>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-terminal"></i> Command Line Simulator</h4>
+                <p>Practice Git commands in a safe environment:</p>
+                <div class="mt-3">
+                    <div class="code-block" data-lang="bash">
+# Current repository state:
+# - Branch: main
+# - Status: clean
+# - Remote: origin (https://github.com/user/repo.git)
+
+<span id="simulator-output">$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</span>
+                    </div>
+                    <div class="input-group mt-3">
+                        <span class="input-group-text">$</span>
+                        <input type="text" class="form-control" id="gitCommand" placeholder="Enter git command..." onkeypress="handleGitCommand(event)">
+                        <button class="btn btn-primary" onclick="executeGitCommand()">Execute</button>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Try commands like: git status, git branch, git log --oneline, git add ., git commit -m "message"
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 8: Summary -->
+        <div class="content-section" id="summary">
+            <h2 class="section-title"><i class="fas fa-graduation-cap"></i> 8. Summary & Next Steps</h2>
+
+            <p class="lead">Congratulations! You've completed the Git and GitHub tutorial. Here's what you've learned and where to go next.</p>
+
+            <h3 class="subsection-title">What You've Learned</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-check-circle text-success"></i> Core Concepts</h5>
+                        <ul>
+                            <li>Version control fundamentals</li>
+                            <li>Git repository structure</li>
+                            <li>Working directory, staging area, and commits</li>
+                            <li>Branches and merging</li>
+                            <li>Remote repositories</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5><i class="fas fa-check-circle text-success"></i> Practical Skills</h5>
+                        <ul>
+                            <li>Essential Git commands</li>
+                            <li>GitHub collaboration features</li>
+                            <li>Pull request workflow</li>
+                            <li>Conflict resolution</li>
+                            <li>Best practices and conventions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Quick Reference</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-bookmark"></i> Most Used Commands</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Daily Commands:</h6>
+                        <ul>
+                            <li><code>git status</code></li>
+                            <li><code>git add .</code></li>
+                            <li><code>git commit -m "message"</code></li>
+                            <li><code>git push</code></li>
+                            <li><code>git pull</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Branching:</h6>
+                        <ul>
+                            <li><code>git branch</code></li>
+                            <li><code>git checkout -b branch</code></li>
+                            <li><code>git merge branch</code></li>
+                            <li><code>git branch -d branch</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Information:</h6>
+                        <ul>
+                            <li><code>git log</code></li>
+                            <li><code>git diff</code></li>
+                            <li><code>git show</code></li>
+                            <li><code>git remote -v</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Next Steps</h3>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                        <h5>Advanced Git</h5>
+                        <ul>
+                            <li>Interactive rebasing</li>
+                            <li>Cherry-picking commits</li>
+                            <li>Git hooks</li>
+                            <li>Submodules</li>
+                            <li>Advanced merging strategies</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-cogs"></i></div>
+                        <h5>DevOps Integration</h5>
+                        <ul>
+                            <li>GitHub Actions (CI/CD)</li>
+                            <li>Automated testing</li>
+                            <li>Deployment pipelines</li>
+                            <li>Code quality tools</li>
+                            <li>Security scanning</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
+                        <h5>Team Collaboration</h5>
+                        <ul>
+                            <li>Code review best practices</li>
+                            <li>Issue tracking and project management</li>
+                            <li>Documentation strategies</li>
+                            <li>Open source contribution</li>
+                            <li>Team workflow optimization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Additional Resources</h3>
+
+            <div class="feature-card">
+                <h5><i class="fas fa-book"></i> Recommended Reading</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li><a href="https://git-scm.com/doc" target="_blank">Official Git Documentation</a></li>
+                            <li><a href="https://docs.github.com/" target="_blank">GitHub Documentation</a></li>
+                            <li><a href="https://learngitbranching.js.org/" target="_blank">Learn Git Branching (Interactive)</a></li>
+                            <li><a href="https://www.atlassian.com/git/tutorials" target="_blank">Atlassian Git Tutorials</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li><a href="https://training.github.com/" target="_blank">GitHub Training</a></li>
+                            <li><a href="https://gitexplorer.com/" target="_blank">Git Explorer</a></li>
+                            <li><a href="https://ohshitgit.com/" target="_blank">Oh Shit, Git!?!</a></li>
+                            <li><a href="https://github.com/k88hudson/git-flight-rules" target="_blank">Git Flight Rules</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-tip">
+                <i class="fas fa-lightbulb"></i> <strong>Practice Makes Perfect:</strong> The best way to learn Git is to use it daily. Start with simple projects and gradually work on more complex scenarios. Don't be afraid to experiment with branches – you can always start over!
+            </div>
+
+            <div class="interactive-demo">
+                <h4><i class="fas fa-medal"></i> Congratulations!</h4>
+                <p>You've completed the Git and GitHub tutorial. You now have the foundation to use version control effectively in your development projects.</p>
+                <p>Remember: Git is a powerful tool with many features. Start with the basics and gradually explore advanced features as you become more comfortable.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h4><i class="fab fa-git-alt"></i> Git & GitHub Tutorial</h4>
+            <p>Master version control and collaborative development</p>
+            <p class="mt-3">
+                <small>This tutorial covered the essential concepts and commands for Git and GitHub. Continue practicing and exploring to become a version control expert!</small>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Progress tracking
+        let currentSection = 0;
+        const totalSections = 8;
+
+        function updateProgress() {
+            const progress = ((currentSection + 1) / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Interactive demo toggle
+        function toggleDemo(demoId) {
+            const demo = document.getElementById(demoId);
+            demo.classList.toggle('active');
+
+            // Update button text
+            const button = event.target;
+            if (demo.classList.contains('active')) {
+                button.textContent = 'Hide Guide';
+            } else {
+                button.textContent = 'Show Step-by-Step Guide';
+            }
+        }
+
+        // Quiz functionality
+        function selectAnswer(option, isCorrect) {
+            // Remove previous selections
+            const siblings = option.parentElement.querySelectorAll('.quiz-option');
+            siblings.forEach(sibling => {
+                sibling.classList.remove('correct', 'incorrect');
+            });
+
+            // Add appropriate class
+            if (isCorrect) {
+                option.classList.add('correct');
+            } else {
+                option.classList.add('incorrect');
+                // Show correct answer
+                setTimeout(() => {
+                    siblings.forEach(sibling => {
+                        if (sibling !== option) {
+                            sibling.classList.remove('incorrect');
+                        }
+                    });
+                    // Find and highlight correct answer
+                    const correctOption = Array.from(siblings).find(sibling =>
+                        sibling.getAttribute('onclick').includes('true')
+                    );
+                    if (correctOption) {
+                        correctOption.classList.add('correct');
+                    }
+                }, 1000);
+            }
+        }
+
+        // Git command simulator
+        const gitSimulator = {
+            currentBranch: 'main',
+            branches: ['main'],
+            stagedFiles: [],
+            modifiedFiles: [],
+            commits: [
+                { hash: 'a1b2c3d', message: 'Initial commit', author: 'You' }
+            ],
+
+            executeCommand: function(command) {
+                const parts = command.trim().split(' ');
+                const gitCommand = parts[1];
+
+                switch (gitCommand) {
+                    case 'status':
+                        return this.getStatus();
+                    case 'branch':
+                        return this.getBranches();
+                    case 'log':
+                        return this.getLog(parts);
+                    case 'add':
+                        return this.addFiles(parts);
+                    case 'commit':
+                        return this.commit(parts);
+                    case 'checkout':
+                        return this.checkout(parts);
+                    default:
+                        return `git: '${gitCommand}' is not a git command. See 'git --help'.`;
+                }
+            },
+
+            getStatus: function() {
+                let status = `On branch ${this.currentBranch}\n`;
+                if (this.stagedFiles.length === 0 && this.modifiedFiles.length === 0) {
+                    status += 'nothing to commit, working tree clean';
+                } else {
+                    if (this.stagedFiles.length > 0) {
+                        status += 'Changes to be committed:\n';
+                        this.stagedFiles.forEach(file => {
+                            status += `  modified: ${file}\n`;
+                        });
+                    }
+                    if (this.modifiedFiles.length > 0) {
+                        status += 'Changes not staged for commit:\n';
+                        this.modifiedFiles.forEach(file => {
+                            status += `  modified: ${file}\n`;
+                        });
+                    }
+                }
+                return status;
+            },
+
+            getBranches: function() {
+                return this.branches.map(branch =>
+                    branch === this.currentBranch ? `* ${branch}` : `  ${branch}`
+                ).join('\n');
+            },
+
+            getLog: function(parts) {
+                const oneline = parts.includes('--oneline');
+                return this.commits.map(commit => {
+                    if (oneline) {
+                        return `${commit.hash.substring(0, 7)} ${commit.message}`;
+                    } else {
+                        return `commit ${commit.hash}\nAuthor: ${commit.author}\nDate: ${new Date().toDateString()}\n\n    ${commit.message}\n`;
+                    }
+                }).join('\n');
+            },
+
+            addFiles: function(parts) {
+                if (parts.length < 3) return 'Nothing specified, nothing added.';
+                const file = parts[2];
+                if (file === '.') {
+                    this.stagedFiles = [...this.modifiedFiles];
+                    this.modifiedFiles = [];
+                    return '';
+                } else {
+                    if (!this.stagedFiles.includes(file)) {
+                        this.stagedFiles.push(file);
+                        this.modifiedFiles = this.modifiedFiles.filter(f => f !== file);
+                    }
+                    return '';
+                }
+            },
+
+            commit: function(parts) {
+                if (this.stagedFiles.length === 0) {
+                    return 'no changes added to commit (use "git add" and/or "git commit -a")';
+                }
+                const messageIndex = parts.indexOf('-m');
+                if (messageIndex === -1) {
+                    return 'Aborting commit due to empty commit message.';
+                }
+                const message = parts.slice(messageIndex + 1).join(' ').replace(/['"]/g, '');
+                const hash = Math.random().toString(36).substring(2, 9);
+                this.commits.unshift({ hash, message, author: 'You' });
+                this.stagedFiles = [];
+                return `[${this.currentBranch} ${hash}] ${message}`;
+            },
+
+            checkout: function(parts) {
+                if (parts.length < 3) return 'error: pathspec is required';
+                const branch = parts[2];
+                if (parts.includes('-b')) {
+                    this.branches.push(branch);
+                    this.currentBranch = branch;
+                    return `Switched to a new branch '${branch}'`;
+                } else if (this.branches.includes(branch)) {
+                    this.currentBranch = branch;
+                    return `Switched to branch '${branch}'`;
+                } else {
+                    return `error: pathspec '${branch}' did not match any file(s) known to git`;
+                }
+            }
+        };
+
+        function executeGitCommand() {
+            const input = document.getElementById('gitCommand');
+            const command = input.value.trim();
+
+            if (!command) return;
+
+            // Simulate some common file modifications
+            if (command.includes('add') || command.includes('commit')) {
+                if (gitSimulator.modifiedFiles.length === 0) {
+                    gitSimulator.modifiedFiles = ['index.html', 'style.css'];
+                }
+            }
+
+            const output = gitSimulator.executeCommand(command);
+            const outputElement = document.getElementById('simulator-output');
+            outputElement.innerHTML = `$ ${command}\n${output}`;
+
+            input.value = '';
+        }
+
+        function handleGitCommand(event) {
+            if (event.key === 'Enter') {
+                executeGitCommand();
+            }
+        }
+
+        // Intersection Observer for progress tracking
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionIndex = Array.from(document.querySelectorAll('.content-section')).indexOf(entry.target);
+                    if (sectionIndex >= 0) {
+                        currentSection = sectionIndex;
+                        updateProgress();
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.content-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Initialize progress
+        updateProgress();
+
+        // Add some interactive behaviors
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate feature cards on hover
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add copy functionality to code blocks
+            document.querySelectorAll('.code-block, .command-box').forEach(block => {
+                block.addEventListener('click', function() {
+                    const text = this.textContent.trim();
+                    navigator.clipboard.writeText(text).then(() => {
+                        // Show temporary feedback
+                        const originalBg = this.style.backgroundColor;
+                        this.style.backgroundColor = '#27ae60';
+                        setTimeout(() => {
+                            this.style.backgroundColor = originalBg;
+                        }, 200);
+                    });
+                });
+
+                // Add click hint
+                block.style.cursor = 'pointer';
+                block.title = 'Click to copy';
+            });
+        });
+    </script>
+</body>
+</html>

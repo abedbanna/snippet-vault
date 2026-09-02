@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is AI? - AI Course</title>
+    <meta name="description" content="What Artificial Intelligence really is: definitions, the Turing Test, and the four approaches to AI (thinking vs. acting, humanly vs. rationally). Module 1 of the Introduction to AI course, based on Russell & Norvig's AIMA 4th edition.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#8b5cf6;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#7c3aed;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#5b21b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#7c3aed}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(139,92,246,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#7c3aed}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#a78bfa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#7c3aed;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(139,92,246,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> AI Course</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#definitions">Definitions</a>
+                <a href="#approaches">Four Approaches</a>
+                <a href="#turing">Turing Test</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#definitions" onclick="this.parentElement.classList.remove('open')">Definitions</a>
+        <a href="#approaches" onclick="this.parentElement.classList.remove('open')">Four Approaches</a>
+        <a href="#turing" onclick="this.parentElement.classList.remove('open')">Turing Test</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>What is Artificial Intelligence?</h1>
+            <p class="hero-sub">Definitions, the Turing Test, and the four approaches to AI &mdash; the foundation of everything ahead.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 1 &middot; Based on Russell &amp; Norvig, AIMA Chapter 1</p>
+            <span class="diff-badge" style="background:#10b981">Beginner</span>
+            <span class="cat-badge"><i class="fa-solid fa-lightbulb" style="margin-right:6px"></i>Foundations</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~30 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Define <strong>intelligence</strong> and <strong>artificial intelligence</strong></li>
+                    <li>Distinguish AI vs. Machine Learning vs. Deep Learning</li>
+                    <li>Explain the <strong>Turing Test</strong> &mdash; and why passing it isn't the whole story</li>
+                    <li>Compare the four approaches to AI (thinking/acting &times; humanly/rationally)</li>
+                    <li>Explain why <strong>acting rationally</strong> is the modern, textbook definition of AI</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> None. This is the very first step.</p>
+        </div>
+
+        <!-- AI is Everywhere -->
+        <div class="section fade-up" id="everywhere">
+            <h2 class="section-title"><i class="fa-solid fa-globe"></i> AI is Everywhere</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-quote-left"></i> Sundar Pichai, CEO of Google</h3>
+                <p>&ldquo;The last 10 years have been about building a world that is mobile-first. In the next 10 years, we will shift to a world that is AI first.&rdquo;</p>
+            </div>
+            <p class="section-desc">You already use AI dozens of times a day without thinking about it. When Instagram automatically blurs the background of a portrait in <strong>focus mode</strong>, that's AI detecting where the person ends and the background begins. When <strong>Netflix</strong> suggests exactly the show you end up binging, that's AI learning your taste from millions of viewing histories. When <strong>Google Translate</strong> turns an Arabic sentence into fluent English in milliseconds, that's AI &mdash; a task that once required a professional human translator.</p>
+            <p class="section-desc">Beyond everyday apps, AI now sets the state of the art across entire fields:</p>
+            <table class="dark-table">
+                <thead><tr><th>Application area</th><th>What AI achieves there</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Computer Vision</strong></td><td>Convolutional neural networks (CNNs) attain the best performance on vision tasks &mdash; recognizing objects, faces, and scenes in images.</td></tr>
+                    <tr><td><strong>Healthcare</strong></td><td>Deep learning outperforms trained specialists in some medical recognition tasks, such as spotting disease in medical scans.</td></tr>
+                    <tr><td><strong>Games</strong></td><td>Reinforcement learning attains the best performance on complex games &mdash; famously <strong>AlphaGo</strong>, which defeated the world's top Go players.</td></tr>
+                    <tr><td><strong>Natural Language Processing</strong></td><td>Neural networks excel at translation; large language models like <strong>ChatGPT</strong> hold fluent conversations, write essays, and answer questions.</td></tr>
+                    <tr><td><strong>Art</strong></td><td>Generative models create realistic synthetic images &mdash; faces, paintings, and photographs of people who never existed.</td></tr>
+                </tbody>
+            </table>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/w1_vision.png" alt="Object detection versus object segmentation on photos of dogs" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Computer vision in action: <em>object detection</em> localises each object with a box, while <em>object segmentation</em> also outlines the exact shape of the object. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <figure style="margin:22px 0">
+                <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:flex-end">
+                    <div style="flex:1 1 160px;max-width:230px;text-align:center">
+                        <img src="images/w1_app_health.jpg" alt="Healthy versus diseased retina scans" loading="lazy" style="width:100%;height:130px;object-fit:cover;border:1px solid var(--border2);border-radius:8px;background:#fff">
+                        <div style="color:var(--text2);font-size:.78rem;margin-top:6px"><strong>Healthcare</strong> &mdash; spotting disease in scans</div>
+                    </div>
+                    <div style="flex:1 1 160px;max-width:230px;text-align:center">
+                        <img src="images/w1_app_games.png" alt="Atari games played by reinforcement learning" loading="lazy" style="width:100%;height:130px;object-fit:cover;border:1px solid var(--border2);border-radius:8px;background:#fff">
+                        <div style="color:var(--text2);font-size:.78rem;margin-top:6px"><strong>Games</strong> &mdash; reinforcement learning</div>
+                    </div>
+                    <div style="flex:1 1 160px;max-width:230px;text-align:center">
+                        <img src="images/w1_app_nlp.png" alt="Voice assistants Alexa, Siri, Google and Cortana" loading="lazy" style="width:100%;height:130px;object-fit:cover;border:1px solid var(--border2);border-radius:8px;background:#fff">
+                        <div style="color:var(--text2);font-size:.78rem;margin-top:6px"><strong>NLP</strong> &mdash; voice assistants &amp; translation</div>
+                    </div>
+                    <div style="flex:1 1 160px;max-width:230px;text-align:center">
+                        <img src="images/w1_app_art.jpg" alt="A synthetic human face generated by a neural network" loading="lazy" style="width:100%;height:130px;object-fit:cover;border:1px solid var(--border2);border-radius:8px;background:#fff">
+                        <div style="color:var(--text2);font-size:.78rem;margin-top:6px"><strong>Art</strong> &mdash; generated faces that never existed</div>
+                    </div>
+                    <div style="flex:1 1 160px;max-width:230px;text-align:center">
+                        <img src="images/w1_app_instagram.png" alt="Instagram focus mode blurring a photo background" loading="lazy" style="width:100%;height:130px;object-fit:cover;border:1px solid var(--border2);border-radius:8px;background:#fff">
+                        <div style="color:var(--text2);font-size:.78rem;margin-top:6px"><strong>Everyday apps</strong> &mdash; Instagram focus mode</div>
+                    </div>
+                </div>
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:12px;text-align:center;line-height:1.5">AI already sets the state of the art across these fields &mdash; and powers apps you use every day. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">So AI clearly <em>works</em>. But what exactly <em>is</em> it? That question turns out to be surprisingly subtle &mdash; and answering it carefully is the goal of this module.</p>
+        </div>
+
+        <!-- Definitions -->
+        <div class="section fade-up" id="definitions">
+            <h2 class="section-title"><i class="fa-solid fa-book-open"></i> Defining Intelligence and AI</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/w1_digits.png" alt="A grid of handwritten digits 0-9" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Recognising handwritten digits. The classical approach hand-codes feature detectors; the learning approach is shown many labelled examples and infers the mapping itself. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">Before defining <em>artificial</em> intelligence, we need to pin down <em>intelligence</em> itself. Webster's dictionary describes intelligence as the ability to:</p>
+            <div class="info-box">
+                <ul>
+                    <li>Learn or understand from <strong>experience</strong></li>
+                    <li><strong>Acquire and retain</strong> knowledge</li>
+                    <li>Respond <strong>quickly and successfully</strong> to new situations</li>
+                    <li>Use <strong>reason</strong> to solve problems</li>
+                </ul>
+            </div>
+            <p class="section-desc">With that in hand, here are the two working definitions this course builds on:</p>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-robot"></i> Artificial Intelligence (AI)</h3>
+                <p>&ldquo;The theory and development of computer systems able to perform tasks that normally require human intelligence, such as visual perception, decision-making, and translation between languages.&rdquo;</p>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-graduation-cap"></i> Machine Learning (ML)</h3>
+                <p>&ldquo;A type of AI that provides computers with the ability to learn without being explicitly programmed.&rdquo;</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-circle-nodes"></i> How the terms nest: AI &sup; ML &sup; Deep Learning</h3>
+                <p>Think of three concentric circles. <strong>AI</strong> is the outer circle: any technique that makes machines perform tasks requiring intelligence &mdash; including old-school hand-coded rules. <strong>Machine Learning</strong> is the middle circle: the subset of AI where systems <em>learn from data</em> instead of following explicit instructions. <strong>Deep Learning</strong> is the inner circle: the subset of ML that uses many-layered neural networks &mdash; the engine behind most of the breakthroughs in the table above.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-pen-nib"></i> An intuitive example: recognizing handwritten digits</h3>
+                <p class="section-desc">Suppose you want a program that reads a handwritten digit &mdash; say, telling a &ldquo;0&rdquo; from a &ldquo;1&rdquo; or a &ldquo;7&rdquo;. There are two fundamentally different ways to build it:</p>
+                <table class="dark-table">
+                    <thead><tr><th>The classical approach</th><th>The learning approach</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>Hand-write functions that detect features: a function that looks for a <strong>circle</strong> (that's probably a 0), one that detects a <strong>diagonal line</strong> (maybe a 7 or a 1), and so on for every stroke, loop, and corner &mdash; then combine them with hand-crafted rules.</td>
+                            <td>Show the computer <strong>many input/output examples</strong> &mdash; thousands of images, each labeled with the correct digit &mdash; and let the machine <em>learn the mapping</em> from image to digit on its own.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <figure style="margin:22px 0;text-align:center">
+                    <img src="images/w1_classical_code.png" alt="Pseudocode of a hand-coded feature detector for recognising a digit" loading="lazy" style="max-width:420px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                    <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The classical approach means hand-writing code like <code>detectTwoCircles()</code> for every feature &mdash; and quickly running out of ideas for how to define them in pixels. <em>(From the course slides.)</em></figcaption>
+                </figure>
+                <p class="section-desc">The classical approach collapses under the messiness of real handwriting: everyone writes a &ldquo;7&rdquo; differently, and no human can anticipate every variation with hand-coded rules. The learning approach sidesteps the problem entirely &mdash; and that shift, from <em>programming the answer</em> to <em>learning it from examples</em>, is why machine learning dominates modern AI.</p>
+            </div>
+        </div>
+
+        <!-- Four Approaches -->
+        <div class="section fade-up" id="approaches">
+            <h2 class="section-title"><i class="fa-solid fa-table-cells-large"></i> The Four Approaches to AI</h2>
+            <p class="section-desc">Historically, researchers have defined AI along two dimensions: is the goal to model <strong>thought processes</strong> or <strong>behavior</strong>? And should the standard of success be <strong>human performance</strong> or an ideal called <strong>rationality</strong>? Crossing the two gives the famous 2&times;2 grid from Russell &amp; Norvig:</p>
+            <table class="dark-table">
+                <thead><tr><th></th><th>Humanly</th><th>Rationally</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Thinking</strong></td>
+                        <td><strong>Thinking Humanly</strong><br>Cognitive science / cognitive modeling: build systems whose internal reasoning mirrors the human mind.</td>
+                        <td><strong>Thinking Rationally</strong><br>The &ldquo;laws of thought&rdquo;: build systems that reason via formal logic, tracing back to Aristotle.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acting</strong></td>
+                        <td><strong>Acting Humanly</strong><br>The Turing Test: build systems whose <em>behavior</em> is indistinguishable from a human's.</td>
+                        <td><strong>Acting Rationally</strong><br>Rational agents: build systems that act to achieve the <em>best outcome</em>. The modern approach.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-head-side-virus"></i> Thinking Humanly: cognitive modeling</h3>
+                <p class="section-desc">If we want a machine to think like a person, we first need to know how people think &mdash; through introspection, psychological experiments, and brain imaging. This program became <strong>cognitive science</strong>: a fascinating field, but its goal is to <em>understand the mind</em>, not necessarily to build the most capable machines.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-masks-theater"></i> Acting Humanly: the Turing Test</h3>
+                <p class="section-desc">Skip the question of how the machine thinks and just ask: can its <em>behavior</em> fool a human judge? This is the Turing Test &mdash; important enough to get its own section below.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Thinking Rationally: the laws of thought</h3>
+                <p class="section-desc">Aristotle tried to codify &ldquo;right thinking&rdquo; with syllogisms &mdash; patterns of argument that always yield correct conclusions from correct premises. The classic example: <em>&ldquo;Socrates is a man; all men are mortal; therefore Socrates is mortal.&rdquo;</em> This tradition led to formal logic and early hopes that intelligence could be reduced to logical deduction. The problem: the real world is full of <strong>uncertainty</strong> (logic wants facts to be true or false, but real knowledge is rarely certain), and even when logic applies, the <strong>computational complexity</strong> of reasoning over any realistic problem explodes. Pure logic alone is impractical as a foundation for intelligence.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-chess-knight"></i> Acting Rationally: rational agents</h3>
+                <p class="section-desc">A <strong>rational agent</strong> acts so as to achieve the best outcome &mdash; or, under uncertainty, the best <em>expected</em> outcome. This is the approach modern AI (and this course) adopts, and it too gets its own section below.</p>
+            </div>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Why not just imitate humans?</h3>
+                <p>The two &ldquo;humanly&rdquo; approaches share a deep problem: humans are a difficult standard to copy.</p>
+                <ul>
+                    <li><strong>The mind is hard to introspect.</strong> We can't simply look inside our own heads and read off the algorithm.</li>
+                    <li><strong>Much of intelligence is unconscious.</strong> You see a face or understand a spoken sentence instantly, with no idea how &mdash; vision and speech happen below awareness.</li>
+                    <li><strong>Humans make systematic mistakes.</strong> We are biased, inconsistent, and error-prone. Why bake our flaws into machines?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Turing Test -->
+        <div class="section fade-up" id="turing">
+            <h2 class="section-title"><i class="fa-solid fa-user-secret"></i> Acting Humanly: The Turing Test</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/w1_turing.png" alt="Portrait of Alan Turing" loading="lazy" style="max-width:260px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Alan Turing (1912&ndash;1954), who proposed the &ldquo;imitation game&rdquo; in his 1950 paper. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc"><strong>Alan Turing</strong> (1912&ndash;1954), the British mathematician who helped found computer science itself, proposed in his 1950 paper <em>&ldquo;Computing Machinery and Intelligence&rdquo;</em> a way to sidestep the fuzzy question &ldquo;can machines think?&rdquo; entirely. His operational test: a human <strong>interrogator</strong> holds a text conversation with two hidden parties &mdash; one a <strong>human</strong>, one a <strong>machine</strong>. If, after questioning both, the interrogator cannot reliably tell which is which, the machine passes the test.</p>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Passing &ne; intelligent</h3>
+                <p>Passing the Turing Test does <strong>not</strong> necessarily mean the machine is intelligent. It means the machine <em>mimics human conversational behavior convincingly</em>. A system could pass by imitation and clever pattern-matching without anything we'd call understanding &mdash; and conversely, a genuinely intelligent system might fail simply because it doesn't behave like a human.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list-check"></i> What would a machine need to pass?</h3>
+                <p class="section-desc">Turing's test is demanding: to hold up under interrogation, a machine needs a whole stack of capabilities. Remarkably, that list &mdash; plus two additions from the <strong>Total Turing Test</strong> (where the interrogator can also pass physical objects through a hatch and watch the machine act) &mdash; maps exactly onto the main branches of AI today:</p>
+                <table class="dark-table">
+                    <thead><tr><th>Capability</th><th>Needed for</th><th>AI branch</th></tr></thead>
+                    <tbody>
+                        <tr><td>Natural language processing</td><td>Communicating in a human language</td><td>NLP</td></tr>
+                        <tr><td>Knowledge representation</td><td>Storing what it knows and hears</td><td>Knowledge representation</td></tr>
+                        <tr><td>Automated reasoning</td><td>Answering questions and drawing new conclusions</td><td>Reasoning &amp; inference</td></tr>
+                        <tr><td>Machine learning</td><td>Adapting to new circumstances and detecting patterns</td><td>Machine learning</td></tr>
+                        <tr><td>Computer vision <em>(Total Turing Test)</em></td><td>Perceiving objects it is shown</td><td>Computer vision</td></tr>
+                        <tr><td>Robotics <em>(Total Turing Test)</em></td><td>Manipulating objects and moving about</td><td>Robotics</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-comments"></i> A modern example: chatting with ChatGPT</h3>
+                <p class="section-desc">Here's the kind of exchange an evaluator might have today &mdash; small talk about favorite movies. Could you tell there's a machine on the other end?</p>
+                <div class="code-block"><span class="diag">Evaluator:</span> Hey! What's your favorite movie?
+<span class="diag">Hidden party:</span> Tough call, but I'd have to say The Shawshank
+Redemption. The friendship, the patience, that ending — it
+gets me every time. What about you?
+<span class="diag">Evaluator:</span> I'm more of a Star Wars person, honestly.
+<span class="diag">Hidden party:</span> Nice! Original trilogy or the newer ones?
+I've always loved Han Solo — "never tell me the odds" is
+basically a life philosophy.
+<span class="diag">Evaluator:</span> Ha, same. Han Solo is the best character by far.
+<span class="diag">Hidden party:</span> Agreed. Half scoundrel, half hero — and he
+shot first, no matter what the re-edits say. 😄</div>
+                <p class="section-desc">The evaluator walks away unable to tell it's a machine. Modern systems like <strong>ChatGPT</strong> and Google's <strong>LaMDA</strong> are widely reported to pass casual Turing-style tests exactly like this one &mdash; which, seventy years after Turing's paper, tells us as much about the limits of the test as it does about the machines.</p>
+            </div>
+        </div>
+
+        <!-- Rational Agents -->
+        <div class="section fade-up" id="rational">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> Acting Rationally: The Rational Agent</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/w1_flight_a.png" alt="An early flying machine imitating a bird" loading="lazy" style="max-width:340px;width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The &ldquo;artificial flight&rdquo; analogy: we achieved flight by studying aerodynamics, not by copying birds &mdash; likewise AI succeeds by studying rationality, not by imitating human thought. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">The approach modern AI settles on is the fourth quadrant. A <strong>rational agent</strong> is one that acts to achieve the best outcome &mdash; or, when there is uncertainty (which is almost always), the best <em>expected</em> outcome. The standard isn't &ldquo;did it think like a person?&rdquo; or even &ldquo;did it reason logically?&rdquo; &mdash; it's simply: <em>did it do the right thing, given what it knew?</em></p>
+            <p class="section-desc">Note that rational action doesn't even require deliberation. When you touch a hot surface, you yank your hand back <em>before</em> any conscious reasoning happens. That reflex is perfectly rational &mdash; it achieves the best outcome &mdash; despite involving no chain of logical inference at all. Rationality is about outcomes, not about the internal process that produces them.</p>
+            <p class="section-desc">Two advantages make this the winning definition:</p>
+            <div class="info-box">
+                <ul>
+                    <li><strong>It's more general than &ldquo;thinking rationally.&rdquo;</strong> Correct logical inference is just <em>one</em> mechanism for acting rationally &mdash; reflexes, learned habits, and probabilistic judgment under uncertainty all count too.</li>
+                    <li><strong>It's mathematically principled.</strong> &ldquo;Best expected outcome&rdquo; can be defined precisely using probability and utility theory, giving us a clear, objective standard to design toward and measure against &mdash; unlike human behavior, which is a moving, flawed target.</li>
+                </ul>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-dove"></i> The &ldquo;artificial flight&rdquo; analogy</h3>
+                <p>For centuries, would-be aviators failed by strapping on wings and flapping like birds. The Wright brothers succeeded when they stopped imitating birds and started studying <strong>aerodynamics</strong> &mdash; the underlying principles of flight. Aeronautical engineering texts don't define their goal as &ldquo;making machines that fly so exactly like pigeons that they fool other pigeons.&rdquo; Likewise, AI succeeds by studying the underlying principles of <strong>rationality</strong>, not by copying human thought.</p>
+            </div>
+            <p class="section-desc">This is the definition the AIMA textbook &mdash; and this course &mdash; adopts: <strong>AI is the study and construction of rational agents</strong>. Every module that follows, from search to learning, is ultimately about building agents that act rationally.</p>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise: Test Your Understanding</h2>
+            <p class="section-desc">No code yet &mdash; this module is about concepts. Try each question honestly before revealing the solution.</p>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Classify the systems</h3>
+                    <p class="section-desc">Place each of these into the quadrant of the 2&times;2 grid it best fits: (a) a <strong>spam filter</strong> that learns to maximize correctly-sorted mail, (b) a <strong>chess program</strong> that searches for the objectively best move, (c) an <strong>ELIZA-style chatbot</strong> built purely to sound like a human therapist, (d) a <strong>self-driving car</strong> choosing maneuvers to minimize expected accident risk.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <div class="info-box success">
+                            <p>(a) <strong>Acting rationally</strong> &mdash; it optimizes an outcome (correct sorting), with no pretense of human-like behavior. (b) <strong>Thinking rationally</strong> is a defensible answer (it performs logical/exhaustive deliberation toward correct conclusions), though since the deliberation serves choosing the best <em>move</em>, <strong>acting rationally</strong> is also acceptable. (c) <strong>Acting humanly</strong> &mdash; its entire goal is to imitate human conversation, Turing Test style. (d) <strong>Acting rationally</strong> &mdash; it maximizes expected outcome (safety) under uncertainty; it certainly shouldn't drive like a typical human.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Neither necessary nor sufficient</h3>
+                    <p class="section-desc">In two sentences, explain why passing the Turing Test is <em>neither necessary nor sufficient</em> for intelligence.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <div class="info-box success">
+                            <p><strong>Not sufficient:</strong> a system can pass by convincingly <em>mimicking</em> human conversation through pattern-matching and imitation, without any genuine understanding or general intelligence behind the words. <strong>Not necessary:</strong> a genuinely intelligent system (say, a superhuman chess engine or a scientific-discovery system) can fail the test simply because it doesn't chat like a human &mdash; just as an airplane genuinely flies without fooling anyone into thinking it's a bird.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Digits, two ways</h3>
+                    <p class="section-desc">For the handwritten-digit problem, name <em>one weakness</em> of the hand-coded-features (classical) approach and <em>one requirement</em> of the learning approach.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <div class="info-box success">
+                            <p><strong>Weakness of the classical approach:</strong> handwriting varies endlessly, so no set of hand-written feature detectors (circle detectors, diagonal-line detectors, &hellip;) can anticipate every way people draw a digit &mdash; the rules become brittle and never cover all cases. <strong>Requirement of the learning approach:</strong> a large collection of <em>labeled examples</em> (many images, each paired with the correct digit) from which the machine can learn the input&rarr;output mapping.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now understand</h3>
+                <p>What intelligence and AI are, how AI &sup; ML &sup; Deep Learning nest, the four approaches to defining AI (thinking/acting &times; humanly/rationally), what the Turing Test measures &mdash; and what it doesn't &mdash; and why <strong>acting rationally</strong>, the rational-agent view, is the definition modern AI is built on. That's the lens for the entire course.</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 2 &mdash; History &amp; Foundations of AI</strong>. Where did these ideas come from? We'll trace AI from its philosophical and mathematical roots through the booms, the winters, and the deep learning revolution.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="index.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> All Modules</a>
+            <a href="02_history_foundations.html" class="nav-btn next">Module 2: History &amp; Foundations <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Introduction to Artificial Intelligence &middot; Based on Russell &amp; Norvig, AIMA 4th ed. &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>What is AI?</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#everywhere">AI is Everywhere</a>
+        <a class="toc-item" href="#definitions">Definitions</a>
+        <a class="toc-item" href="#approaches">Four Approaches</a>
+        <a class="toc-item" href="#turing">The Turing Test</a>
+        <a class="toc-item" href="#rational">Rational Agents</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ai-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('ai-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

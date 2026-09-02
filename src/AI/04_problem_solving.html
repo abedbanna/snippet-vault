@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Solving by Search - AI Course</title>
+    <meta name="description" content="How to turn a real problem into a state space a computer can search: problem formulation, state spaces vs search trees, the fringe, and how to evaluate search strategies. Module 4 of the Introduction to AI course, based on Russell &amp; Norvig AIMA 3.1-3.3.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#8b5cf6;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#7c3aed;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#5b21b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#7c3aed}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(139,92,246,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#7c3aed}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#a78bfa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#7c3aed;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(139,92,246,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> AI Course</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#formulation">Formulation</a>
+                <a href="#tree">Search Trees</a>
+                <a href="#performance">Performance</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#formulation" onclick="this.parentElement.classList.remove('open')">Formulation</a>
+        <a href="#tree" onclick="this.parentElement.classList.remove('open')">Search Trees</a>
+        <a href="#performance" onclick="this.parentElement.classList.remove('open')">Performance</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Problem Solving by Search</h1>
+            <p class="hero-sub">How to turn a real problem into a state space a computer can search.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 4 &middot; Based on Russell &amp; Norvig, AIMA Sections 3.1&ndash;3.3</p>
+            <span class="diff-badge" style="background:#f59e0b">Intermediate</span>
+            <span class="cat-badge"><i class="fa-solid fa-magnifying-glass" style="margin-right:6px"></i>Search</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~35 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Formulate a search problem: initial state, actions, transition model, goal test, path cost</li>
+                    <li>Distinguish the <em>state space</em> from the <em>search tree</em> built while exploring it</li>
+                    <li>Describe the node data structure and the fringe (frontier)</li>
+                    <li>Evaluate search strategies on completeness, optimality, time and space using <code>b</code>, <code>d</code>, <code>m</code></li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 3 &mdash; Intelligent Agents. You should be comfortable with the idea of an agent acting in an environment to achieve goals.</p>
+        </div>
+
+        <!-- Why Search -->
+        <div class="section fade-up" id="why">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> Why Search?</h2>
+            <p class="section-desc">In Module 3 we saw that a rational agent picks actions that maximize its performance measure. But most interesting goals can't be reached in one step &mdash; the agent must perform a <strong>sequence of actions</strong>. Could we just build a giant lookup table (a reactive policy) that tells the agent what to do in every possible circumstance? In practice, no:</p>
+            <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1.05rem;line-height:1.8">
+                <li>Such a table would be enormously hard to build.</li>
+                <li>Every contingency &mdash; every situation that could ever arise &mdash; would have to be anticipated in advance.</li>
+            </ul>
+            <p class="section-desc" style="margin-top:12px">The general approach is smarter: give the agent a <strong>model of the world and of its own actions</strong>, and let it <em>simulate</em> action sequences in that internal model until it finds one that reaches the goal. Thinking replaces trial-and-error in the real world &mdash; the agent "plans ahead" without ever moving.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-puzzle-piece"></i> Two ingredients of problem solving</h3>
+                <p>Solving a problem computationally always requires: <strong>(a)</strong> a <em>representation</em> of the problem, and <strong>(b)</strong> <em>algorithms</em> that apply a strategy over that representation. This module builds the representation; Modules 5 and 6 supply the algorithms.</p>
+            </div>
+            <p class="section-desc">At the highest level, a problem-solving agent runs a simple loop &mdash; sense, plan, act, update:</p>
+            <div class="code-block"><span class="diag">state = initial_state
+while not problem_solved:
+    gather_information(state)
+    plan = formulate_plan(state)
+    execute_plan(plan)
+    state = update_state(state, plan)</span></div>
+            <p class="section-desc">The interesting part is <code>formulate_plan</code>: how does the agent find a sequence of actions that leads to the goal? Answer: it <strong>searches</strong> for one. First, though, we need a precise definition of what a "problem" is.</p>
+        </div>
+
+        <!-- Formulation -->
+        <div class="section fade-up" id="formulation">
+            <h2 class="section-title"><i class="fa-solid fa-list-check"></i> Defining a Search Problem</h2>
+            <p class="section-desc">A search problem is defined formally by <strong>five components</strong>. Get these right and any search algorithm can attack the problem; get them wrong and even the best algorithm searches the wrong world.</p>
+            <table class="dark-table">
+                <thead><tr><th>Component</th><th>What it specifies</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Initial state</strong></td><td>The state the agent starts in, e.g. <code>In(Amman)</code>.</td></tr>
+                    <tr><td><strong>Actions</strong></td><td>The set of actions (operators) applicable in a given state &mdash; what the agent <em>can do</em> from there.</td></tr>
+                    <tr><td><strong>Transition model</strong></td><td>What each action does: <code>RESULT(s, a)</code> returns the state reached by performing action <code>a</code> in state <code>s</code>.</td></tr>
+                    <tr><td><strong>Goal test</strong></td><td>Determines whether a given state is a goal state. Can be an explicit set of states or a property to satisfy.</td></tr>
+                    <tr><td><strong>Path cost</strong> <code>g(n)</code></td><td>A number assigned to each path, typically the <em>sum of the step costs</em> of the actions along it.</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc">Together, the initial state and the actions <em>implicitly</em> define the <strong>state space</strong>: the set of all states reachable from the initial state by any sequence of actions. The state space forms a <strong>graph</strong> whose nodes are states and whose edges are actions. A <strong>solution</strong> is a path through this graph from the initial state to a goal state; an <strong>optimal solution</strong> is a solution with the lowest path cost.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Measuring performance: path cost vs. search cost</h3>
+                <p>Two very different costs matter. The <strong>path cost</strong> is the quality of the solution found (e.g. kilometres driven). The <strong>search cost</strong> is the time and memory the algorithm spends <em>finding</em> it. There is a trade-off: computing the truly optimal solution may cost more than it's worth, so sometimes the rational move is to <strong>"satisfice"</strong> &mdash; accept a good-enough solution found cheaply.</p>
+            </div>
+        </div>
+
+        <!-- Toy Problems -->
+        <div class="section fade-up" id="examples">
+            <h2 class="section-title"><i class="fa-solid fa-cubes"></i> Toy Problems</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps1_vacuum_statespace.png" alt="The complete state space of the two-square vacuum world" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The complete state space of the vacuum world: 8 states, with links labelled by the actions L (Left), R (Right) and S (Suck). <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_8puzzle_states.png" alt="Part of the 8-puzzle state space generated by sliding the blank" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Part of the 8-puzzle state space, generated by sliding the blank Up / Down / Left / Right. Even this small puzzle has 181,440 reachable states. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">Toy problems have crisp, exact formulations, which makes them perfect for comparing algorithms. Real-world problems (route finding, VLSI layout, robot navigation) are messier but follow the same recipe.</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-broom"></i> The vacuum world</h3>
+                <p class="section-desc">Our friend from Module 3, now as a search problem. Two squares, each either dirty or clean, and the agent in one of them: <strong>2 positions &times; 4 dirt combinations = 8 states</strong>. Actions: <code>Left</code>, <code>Right</code>, <code>Suck</code>. Goal test: no dirt anywhere. Path cost: 1 per action. Small enough to draw the entire state-space graph on paper &mdash; try it.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-table-cells"></i> The 8-puzzle</h3>
+                <p class="section-desc">Eight numbered tiles on a 3&times;3 board with one blank; slide tiles into the blank until the goal configuration appears:</p>
+                <div class="code-block"><span class="diag">   START                GOAL
+ ┌───┬───┬───┐       ┌───┬───┬───┐
+ │ 2 │ 8 │ 3 │       │ 1 │ 2 │ 3 │
+ ├───┼───┼───┤       ├───┼───┼───┤
+ │ 1 │ 6 │ 4 │  ──▶  │ 8 │   │ 4 │
+ ├───┼───┼───┤       ├───┼───┼───┤
+ │ 7 │   │ 5 │       │ 7 │ 6 │ 5 │
+ └───┴───┴───┘       └───┴───┴───┘</span></div>
+                <table class="dark-table">
+                    <thead><tr><th>Component</th><th>8-puzzle formulation</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>States</strong></td><td>The location of each of the eight tiles and the blank.</td></tr>
+                        <tr><td><strong>Initial state</strong></td><td>Any state can be the initial state.</td></tr>
+                        <tr><td><strong>Successor function</strong></td><td>The blank moves <code>Left</code>, <code>Right</code>, <code>Up</code> or <code>Down</code> (when legal) &mdash; a neat trick: 4 operators instead of one per tile.</td></tr>
+                        <tr><td><strong>Goal test</strong></td><td>The state matches the goal configuration.</td></tr>
+                        <tr><td><strong>Path cost</strong></td><td>Each step costs 1, so the path cost is the length of the path.</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box warning">
+                    <h3><i class="fa-solid fa-bomb"></i> Small board, big trouble</h3>
+                    <p>The 8-puzzle belongs to the family of <strong>sliding-block puzzles, which is NP-complete</strong>. The 8-puzzle has 9!/2 = 181,440 reachable states &mdash; searchable. The 15-puzzle has ~10<sup>13</sup>; the 24-puzzle ~10<sup>25</sup>. Brute force explodes fast, which is exactly why we'll need clever strategies and, later, heuristics.</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-route"></i> Route finding</h3>
+                <p class="section-desc">Given a map (a graph of cities and road distances), find a path from one city to another &mdash; the classic example is the <strong>Romania map</strong> from AIMA: get from Arad to Bucharest. States are cities, actions are driving along a road, step cost is the road's length. This problem powers GPS navigation and airline planning &mdash; and it will be our running example when we meet <strong>A*</strong> in Module 6.</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-box-archive"></i> Worked example: the six locked boxes</h3>
+                <p class="section-desc"><strong>Problem.</strong> There are six glass boxes in a row, each with a lock. Each of the first five boxes holds a key that unlocks the next box in line; the last box holds a <em>banana</em>. You have the key to the first box, and you want the banana. Formulate this precisely enough to be implemented:</p>
+                <table class="dark-table">
+                    <thead><tr><th>Component</th><th>Formulation</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Initial state</strong></td><td>All six boxes locked; you hold only the key to box&nbsp;1.</td></tr>
+                        <tr><td><strong>Actions</strong></td><td>Unlock the next locked box using the key you currently hold (boxes are opened in sequence, box&nbsp;1 &rarr; box&nbsp;6).</td></tr>
+                        <tr><td><strong>Transition model</strong></td><td>Unlocking box <em>i</em> yields the key inside it (which opens box <em>i</em>+1), or the banana if <em>i</em> is the last box. Boxes already opened stay open.</td></tr>
+                        <tr><td><strong>Goal test</strong></td><td>The banana has been retrieved from the last box.</td></tr>
+                        <tr><td><strong>Path cost</strong></td><td>Each unlock/retrieve step costs 1, so the path cost is the number of actions taken.</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-lightbulb"></i> Why formulate first?</h3>
+                    <p>Notice that problem formulation follows <em>goal</em> formulation: you must know the desired result (get the banana) before you can shape the sequence of actions that reaches it. A precise formulation like this is exactly what a search algorithm consumes &mdash; the topic of Modules&nbsp;5 and&nbsp;6.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- State space vs search tree -->
+        <div class="section fade-up" id="tree">
+            <h2 class="section-title"><i class="fa-solid fa-sitemap"></i> State Space vs Search Tree</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_node.png" alt="The fields that make up a search-tree node" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">A search-tree node is a data structure: it stores a <code>STATE</code> plus the bookkeeping fields <code>PARENT</code>, <code>ACTION</code> and <code>PATH-COST</code>. Arrows point from a child to its parent. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">How do we actually search? By building a <strong>search tree</strong>. The initial state becomes the root. We <strong>expand</strong> a state by applying the successor function to it, generating its children. The leaf nodes that have been generated but not yet expanded form the <strong>fringe</strong> (also called the <em>frontier</em>) &mdash; the set of candidates waiting to be explored. A <strong>search strategy</strong> is simply the rule for choosing which fringe node to expand next.</p>
+            <div class="code-block"><span class="diag">function TREE-SEARCH(problem, strategy) returns a solution, or failure
+    initialize the frontier using the initial state of problem
+    loop do
+        if the frontier is empty then return failure
+        choose a leaf node according to strategy and remove it from the frontier
+        if the node contains a goal state then return the corresponding solution
+        expand the node, adding the resulting nodes to the frontier</span></div>
+            <p class="section-desc">Every search algorithm in Modules 5 and 6 is this loop with a different <em>strategy</em> plugged in. BFS, DFS, uniform cost, A* &mdash; they differ only in which fringe node they pick.</p>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Crucial: state space &ne; search tree</h3>
+                <p>The state space is a fixed graph of <em>states</em>; the search tree is a record of <em>paths</em> explored, and the same state can appear in it many times. A state space with just <strong>2 states {A, B}</strong> connected both ways generates an <strong>infinite</strong> search tree: A &rarr; B &rarr; A &rarr; B &rarr; &hellip; via cyclic paths. Good search strategies avoid expanding <strong>repeated states</strong> &mdash; e.g. by remembering the states already visited.</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-cube"></i> The node data structure</h3>
+                <p class="section-desc">A tree node is <em>not</em> just a state &mdash; it is bookkeeping wrapped around a state, so the solution path can be reconstructed once a goal is found:</p>
+                <table class="dark-table">
+                    <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>STATE</code></td><td>The state in the state space that this node corresponds to.</td></tr>
+                        <tr><td><code>PARENT-NODE</code></td><td>The node in the tree that generated this one (follow parents back to the root to read off the solution).</td></tr>
+                        <tr><td><code>ACTION</code></td><td>The action applied to the parent to generate this node.</td></tr>
+                        <tr><td><code>PATH-COST</code> <code>g(n)</code></td><td>The cost of the path from the initial state to this node.</td></tr>
+                        <tr><td><code>DEPTH</code></td><td>The number of steps from the root to this node.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="section fade-up" id="performance">
+            <h2 class="section-title"><i class="fa-solid fa-gauge-high"></i> Evaluating Search Strategies</h2>
+            <p class="section-desc">With many strategies to choose from, we need yardsticks. Every strategy is judged on four criteria:</p>
+            <table class="dark-table">
+                <thead><tr><th>Criterion</th><th>Question it answers</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Completeness</strong></td><td>Is the strategy guaranteed to find a solution if one exists?</td></tr>
+                    <tr><td><strong>Optimality</strong></td><td>Does it find the highest-quality (lowest path cost) solution when there are several?</td></tr>
+                    <tr><td><strong>Time complexity</strong></td><td>How long does it take? Measured in <em>nodes generated</em> during the search.</td></tr>
+                    <tr><td><strong>Space complexity</strong></td><td>How much memory does it need? Measured in the <em>maximum number of nodes stored</em>.</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc">Time and space are expressed with three quantities:</p>
+            <ul style="list-style:disc;padding-left:24px;color:var(--text2);font-size:1.05rem;line-height:1.8">
+                <li><code>b</code> &mdash; the <strong>branching factor</strong>: the maximum number of successors of any node</li>
+                <li><code>d</code> &mdash; the <strong>depth</strong> of the shallowest goal node</li>
+                <li><code>m</code> &mdash; the <strong>maximum path length</strong> in the state space (possibly infinite)</li>
+            </ul>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-explosion"></i> Worked example: the exponential blow-up</h3>
+                <p>Suppose <code>b = 2</code> and the goal sits at depth <code>d = 10</code>. A naive algorithm that examines every node level by level generates 1 + 2 + 4 + &hellip; + 1024 = <strong>2,047 nodes</strong> (about 2<sup>11</sup>) &mdash; trivial. Push the goal to <code>d = 20</code> and it becomes <strong>2,097,151 nodes</strong> (about 2<sup>21</sup>) &mdash; a thousand-fold increase for doubling the depth. This exponential growth in <code>b<sup>d</sup></code> is why naive search is impractical for real problems, and why the <em>choice of strategy</em> matters so much.</p>
+            </div>
+        </div>
+
+        <!-- Taxonomy -->
+        <div class="section fade-up" id="taxonomy">
+            <h2 class="section-title"><i class="fa-solid fa-code-branch"></i> Uninformed vs Informed Search</h2>
+            <p class="section-desc">Search strategies split into two big families, and the next two modules cover one each:</p>
+            <table class="dark-table">
+                <thead><tr><th></th><th>Uninformed (blind) search</th><th>Informed (heuristic) search</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Knowledge used</strong></td><td>Only the problem definition itself &mdash; solution cost is not taken into account when choosing what to expand.</td><td>Problem-specific knowledge that <em>estimates the distance to the goal</em> and guides the search efficiently.</td></tr>
+                    <tr><td><strong>Can it tell a promising state from a useless one?</strong></td><td>No &mdash; it only knows goal vs. non-goal.</td><td>Yes &mdash; the heuristic ranks non-goal states.</td></tr>
+                    <tr><td><strong>Typical algorithms</strong></td><td>Breadth-first, depth-first, uniform cost, iterative deepening&hellip;</td><td>Greedy best-first, A*&hellip;</td></tr>
+                    <tr><td><strong>Covered in</strong></td><td>Module 5</td><td>Module 6</td></tr>
+                </tbody>
+            </table>
+            <p class="section-desc">Uninformed strategies are simple and general but pay the full exponential price. Informed strategies buy speed with knowledge &mdash; a good heuristic can shrink the effective search space dramatically.</p>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise: Formulate and Count</h2>
+            <p class="section-desc">Grab pen and paper &mdash; formulating problems by hand is the skill this module is about. Attempt each part before opening the solution.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>The two water jugs</h3>
+                    <p class="section-desc">You have a 4-litre jug and a 3-litre jug, an unlimited water supply, and no markings on the jugs. You can fill a jug, empty a jug, or pour from one jug into the other until the source is empty or the target is full. <strong>Goal: measure exactly 2 litres.</strong> Formulate this as a search problem: states, initial state, actions, goal test, path cost.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <table class="dark-table">
+                            <thead><tr><th>Component</th><th>Formulation</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>States</strong></td><td>Pairs <code>(x, y)</code> where <code>x</code> = litres in the 4L jug (0&ndash;4) and <code>y</code> = litres in the 3L jug (0&ndash;3). At most 5 &times; 4 = 20 states.</td></tr>
+                                <tr><td><strong>Initial state</strong></td><td><code>(0, 0)</code> &mdash; both jugs empty.</td></tr>
+                                <tr><td><strong>Actions</strong></td><td>Fill the 4L jug &rarr; <code>(4, y)</code>; fill the 3L jug &rarr; <code>(x, 3)</code>; empty the 4L jug &rarr; <code>(0, y)</code>; empty the 3L jug &rarr; <code>(x, 0)</code>; pour 4L&rarr;3L: <code>(x&minus;t, y+t)</code> with <code>t = min(x, 3&minus;y)</code>; pour 3L&rarr;4L: <code>(x+t, y&minus;t)</code> with <code>t = min(y, 4&minus;x)</code>.</td></tr>
+                                <tr><td><strong>Goal test</strong></td><td><code>x = 2</code> or <code>y = 2</code>.</td></tr>
+                                <tr><td><strong>Path cost</strong></td><td>1 per action; path cost = number of actions.</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="section-desc">One solution path: <code>(0,0) &rarr; (0,3) &rarr; (3,0) &rarr; (3,3) &rarr; (4,2)</code> &mdash; the 3L jug now holds exactly 2 litres, in 4 steps.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Count the nodes</h3>
+                    <p class="section-desc">In some state space every state has exactly 3 successors, and the shallowest goal is at depth 4. In the worst case, how many nodes can a naive tree search generate before finding the goal?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Here <code>b = 3</code> and <code>d = 4</code>. In the worst case the search generates every node down to and including depth 4:</p>
+                        <div class="code-block"><span class="diag">1 + 3 + 9 + 27 + 81 = 121 nodes</span></div>
+                        <p class="section-desc">That is the geometric sum <code>(3<sup>5</sup> &minus; 1)/2 = 121</code>, i.e. <code>O(b<sup>d</sup>)</code>. Notice how quickly this grows: at depth 8 it would already be 9,841 nodes, and at depth 16 over 64 million.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Tiny space, infinite tree</h3>
+                    <p class="section-desc">Give an example of a state space with only 2 states whose search tree is infinite. What is the standard fix?</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc">Take states <code>{A, B}</code> with actions A&rarr;B and B&rarr;A. Starting from A, tree search can follow the cyclic path A &rarr; B &rarr; A &rarr; B &rarr; &hellip; forever, so the search tree is infinite even though the state space has just two states.</p>
+                        <div class="code-block"><span class="diag">state space:   A ⇄ B        search tree:  A
+                                          |
+                                          B
+                                          |
+                                          A
+                                          |
+                                          ... (infinite)</span></div>
+                        <p class="section-desc"><strong>The fix:</strong> repeated-state checking &mdash; keep a <strong>closed list</strong> (explored set) of states already expanded and never expand a state twice. This turns tree search into <em>graph search</em> and bounds the tree by the size of the state space.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You now understand</h3>
+                <p>Why agents search instead of memorizing reactions; the five components of a problem formulation (initial state, actions, transition model, goal test, path cost); how the state space differs from the search tree built over it; the node structure and the fringe; and the four evaluation criteria &mdash; completeness, optimality, time and space &mdash; expressed with <code>b</code>, <code>d</code> and <code>m</code>. You've also seen why exponential blow-up makes naive search hopeless and how the uninformed/informed split organizes everything to come.</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 5 &mdash; Uninformed Search</strong>: BFS, DFS, iterative deepening, uniform cost and friends.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="03_intelligent_agents.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 3: Intelligent Agents</a>
+            <a href="05_uninformed_search.html" class="nav-btn next">Module 5: Uninformed Search <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Introduction to Artificial Intelligence &middot; Based on Russell &amp; Norvig, AIMA 4th ed. &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Problem Solving</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#why">Why Search?</a>
+        <a class="toc-item" href="#formulation">Problem Formulation</a>
+        <a class="toc-item" href="#examples">Toy Problems</a>
+        <a class="toc-item" href="#tree">State Space vs Tree</a>
+        <a class="toc-item" href="#performance">Evaluating Strategies</a>
+        <a class="toc-item" href="#taxonomy">Uninformed vs Informed</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ai-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('ai-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

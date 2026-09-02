@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recurrent Neural Networks - Deep Learning</title>
+    <meta name="description" content="Recurrent Neural Networks explained: why sequences need memory, RNN architecture and time steps, a full worked forward pass by hand, vanishing/exploding gradients, and the LSTM, GRU and Bi-LSTM networks that fix them. Module 9 of Dr. Abdulkarim Albanna's Deep Learning course.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#059669;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#065f46);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#059669}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#059669;border-left-color:#059669;background:rgba(16,185,129,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#34d399}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .fig{margin:20px 0;text-align:center}
+        .fig img{max-width:100%;height:auto;background:#fff;border-radius:10px;padding:12px;border:1px solid var(--border2)}
+        .fig figcaption{font-size:.85rem;color:var(--text2);margin-top:10px;font-style:italic}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#34d399}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(16,185,129,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}}
+    </style>
+    <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]}};</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> Deep Learning</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#what-are-rnns">RNNs</a>
+                <a href="#example">Example</a>
+                <a href="#lstm">LSTM</a>
+                <a href="#gru">GRU</a>
+                <a href="#bilstm">Bi-LSTM</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#what-are-rnns" onclick="this.parentElement.classList.remove('open')">RNNs</a>
+        <a href="#example" onclick="this.parentElement.classList.remove('open')">Example</a>
+        <a href="#lstm" onclick="this.parentElement.classList.remove('open')">LSTM</a>
+        <a href="#gru" onclick="this.parentElement.classList.remove('open')">GRU</a>
+        <a href="#bilstm" onclick="this.parentElement.classList.remove('open')">Bi-LSTM</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Recurrent Neural Networks</h1>
+            <p class="hero-sub">Networks with memory &mdash; how RNNs handle sequences one time step at a time, and how LSTM, GRU and Bi-LSTM fix their gradient problems.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 9 &middot; Lecture notes by Dr. Abdulkarim Albanna</p>
+            <span class="diff-badge" style="background:#10b981">Core Concept</span>
+            <span class="cat-badge"><i class="fa-solid fa-clock-rotate-left" style="margin-right:6px"></i>Sequence Models</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~45 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- What is an RNN -->
+        <div class="section fade-up" id="what-is-rnn">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> What is a Recurrent Neural Network?</h2>
+            <p class="section-desc">To solve the problem of sequences it comes recurrent neural network (RNN). <strong>Recurrent means happening repeatedly for certain time</strong>. In this case each time the model receives a new word from the sentence it will translate into English, this same step will be repeated for the rest of the words consequently the translation task will be recurrent. Moreover, it will remember the previous translated word and keep it in memory so when we translate the second one, we have the context.</p>
+            <figure class="fig">
+                <img src="figs/rnn/ffnn_translation.png" alt="Feed forward neural network with input, hidden and output layers translating Spanish words to English">
+                <figcaption>Feed forward neural network structure to translate incoming spanish words</figcaption>
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/rnn_translation.png" alt="Recurrent neural network unrolled over time steps translating a Spanish sentence word by word">
+                <figcaption>Recurrent neural network structure to translate incoming spanish words</figcaption>
+            </figure>
+            <p class="section-desc"><strong>In the first image</strong> we see how a feed forward neural network will try to translate a full sentence. <strong>We create one-hot encoding for the sentence</strong>, this first layer will include all the possible Spanish words, if the word is present in the sentence like &lsquo;banco&rsquo; we input 1 if not we input 0. The output layer is the same, a one-hot encoding for the English words. The major problem is <strong>the order is lost</strong> as we are providing a bag of words and not a sequence.</p>
+            <p class="section-desc"><strong>In the second image</strong> we see how a recurrent neural network will perform the same task. The first thing we notice is <strong>the model is no longer represented from left to right but instead from bottom to top</strong>. Why is that? We keep the x axes for the time step. A time step is the unit of action or time the model will do a task, in our case our time step is a word, so if we want to translate a sentence of 5 words we will have 5 time steps.</p>
+            <p class="section-desc">We still can see the first layer which is the input layer in blue that connects to a hidden layer in green. The second big difference we see compare to a FFNN where the cells in the hidden layer does not talk to each other, is that <strong>there is a new arrow from the cell of the previous step connecting with the next cell in the same layer</strong>. Here is the magic, in the second prediction the cell will not just receive the Spanish word but also will receive the context. The cell has created memory and now is using it to make the second prediction, instead of memory we refer to it as state. Finally, we see an output layer that will make the translation. From the prediction errors, we update the weights thanks to back propagation through time.</p>
+        </div>
+
+        <!-- Need for sequences -->
+        <div class="section fade-up" id="need">
+            <h2 class="section-title"><i class="fa-solid fa-arrow-down-wide-short"></i> Need for a Neural Network dealing with Sequences</h2>
+            <p class="section-desc">The beauty of recurrent neural networks lies in their diversity of application. When we are dealing with RNNs they have a great ability to deal with various input and output types.</p>
+            <figure class="fig">
+                <img src="figs/rnn/rnn_io_types.png" alt="RNN input-output types: one to many for image captioning, many to one for sentiment classification, many to many for machine translation">
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-face-smile"></i> Sentiment Classification</h3>
+                <p class="section-desc">This can be a task of simply classifying tweets into positive and negative sentiment. So here the input would be a tweet of varying lengths, while output is of a fixed type and size.</p>
+                <figure class="fig">
+                    <img src="figs/rnn/sentiment_classification.png" alt="Two example sentences classified as positive and negative sentiment">
+                </figure>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-image"></i> Image Captioning</h3>
+                <p class="section-desc">Here, let&rsquo;s say we have an image for which we need a textual description. So we have a single input &ndash; the image, and a series or sequence of words as output. Here the image might be of a fixed size, but the output is a description of varying lengths</p>
+                <figure class="fig">
+                    <img src="figs/rnn/image_captioning.png" alt="Four photos with generated captions: a person riding a motorcycle, two dogs playing in grass, people playing frisbee, hockey players">
+                </figure>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-language"></i> Language Translation</h3>
+                <p class="section-desc">This basically means that we have some text in a particular language let&rsquo;s say English, and we wish to translate it in French. Each language has it&rsquo;s own semantics and would have varying lengths for the same sentence. So here the inputs as well as outputs are of varying lengths.</p>
+                <figure class="fig">
+                    <img src="figs/rnn/language_translation.png" alt="An English paragraph translated into French">
+                </figure>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-keyboard"></i> Text Generations</h3>
+                <figure class="fig">
+                    <img src="figs/rnn/text_generation.png" alt="Text generation output improving over training: from random characters to readable sentences after training more">
+                </figure>
+            </div>
+            <p class="section-desc">So RNNs can be used for mapping inputs to outputs of varying types, lengths and are fairly generalized in their application. Looking at their applications, let&rsquo;s see how the architecture of an RNN looks like.</p>
+        </div>
+
+        <!-- What are RNNs -->
+        <div class="section fade-up" id="what-are-rnns">
+            <h2 class="section-title"><i class="fa-solid fa-rotate"></i> What are Recurrent Neural Networks?</h2>
+            <p class="section-desc">We can process a sequence of vectors \(\mathbf{x}\) by applying a <strong>recurrence formula</strong> at every time step:</p>
+            <figure class="fig">
+                <img src="figs/rnn/recurrence_formula.png" alt="Recurrence formula h_t = f_W(h_{t-1}, x_t): new state from old state and input vector at some time step">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/notice_same_params.png" alt="Notice: the same function and the same set of parameters are used at every time step">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/hidden_state.png" alt="The state consists of a single hidden vector h: h_t = tanh(W_hh h_{t-1} + W_xh x_t), y_t = W_hy h_t">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/rnn_unfold.png" alt="An RNN with a feedback loop unfolded across time steps t-1, t, t+1">
+                <figcaption>Unfolding the recurrent loop across time steps</figcaption>
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/comp_graph_one_to_many.png" alt="RNN computational graph, one to many: shared weights W feed f_W at every time step producing y_1 to y_T">
+                <figcaption>RNN: Computational Graph: One to Many</figcaption>
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/seq2seq.png" alt="Sequence to sequence: many-to-one encoder compressing the input into a single vector plus one-to-many decoder producing the output sequence">
+                <figcaption>Sequence to Sequence: Many-to-one + one-to-many</figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list-ol"></i> Let me summarize the steps in a recurrent neuron for you</h3>
+                <div class="info-box">
+                    <ul>
+                        <li>A single time step of the input is supplied to the network i.e. \(x_t\) is supplied to the network</li>
+                        <li>We then calculate its current state using a combination of the current input and the previous state i.e. we calculate \(h_t\)</li>
+                        <li>The current \(h_t\) becomes \(h_{t-1}\) for the next time step</li>
+                        <li>We can go as many time steps as the problem demands and combine the information from all the previous states</li>
+                        <li>Once all the time steps are completed the final current state is used to calculate the output \(y_t\)</li>
+                        <li>The output is then compared to the actual output and the error is generated</li>
+                        <li>The error is then backpropagated to the network to update the weights and the network is trained</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example -->
+        <div class="section fade-up" id="example">
+            <h2 class="section-title"><i class="fa-solid fa-pen-ruler"></i> Example</h2>
+            <p class="section-desc">The state consists of a single <em>&ldquo;hidden&rdquo;</em> vector \(\mathbf{h}\):</p>
+            <p class="section-desc">\[ h_t = f_W(h_{t-1}, x_t) \]</p>
+            <p class="section-desc">\[ h_t = \tanh(W_{hh} h_{t-1} + W_{xh} x_t) \qquad y_t = W_{hy} h_t \]</p>
+            <p class="section-desc">Let&rsquo;s take a look at the inputs first &ndash; the inputs are one hot encoded. Our entire vocabulary is {h,e,l,o} and hence we can easily one hot encode the inputs. Now the input neuron would transform the input to the hidden state using the weight \(w_{xh}\). We have randomly initialized the weights as a 3&times;4 matrix &ndash;</p>
+            <figure class="fig">
+                <img src="figs/rnn/example_inputs.png" alt="One hot encoded inputs for letters h, e, l, l over vocabulary {h,e,l,o}, and the randomly initialized 3x4 weight matrix wxh">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/example_step1.png" alt="Step 1: for the letter h, the hidden state needs Wxh times Xt; matrix multiplication gives the 3x1 result">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/example_step2.png" alt="Step 2: the recurrent neuron has Whh as a 1x1 weight matrix 0.427043 and bias 0.567001; for letter h the previous state is all zeros, so whh*ht-1+bias is computed">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/example_step3.png" alt="Step 3: current state h_t = tanh(Whh h_{t-1} + Wxh x_t); the two vectors are added and tanh is applied to get the current state">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/example_step4.png" alt="Step 4: the letter e is supplied; ht becomes ht-1 and the one hot encoded e is xt; Whh*ht-1+bias and Wxh*xt are computed">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/example_step5.png" alt="Step 5: ht for the letter e is computed by applying tanh to the sum">
+            </figure>
+            <p class="section-desc">Now this would become \(h_{t-1}\) for the next state and the recurrent neuron would use this along with the new character to predict the next one.</p>
+            <figure class="fig">
+                <img src="figs/rnn/example_step6.png" alt="Step 6: at each state the RNN produces the output as well; yt = Why ht is calculated for the letter e">
+            </figure>
+            <figure class="fig">
+                <img src="figs/rnn/example_step7.png" alt="Step 7: softmax applied to yt gives classwise probabilities for the next letter">
+            </figure>
+            <p class="section-desc">If we convert these probabilities to understand the prediction, we see that the model says that the letter after &ldquo;e&rdquo; should be h, since the highest probability is for the letter &ldquo;h&rdquo;. Does this mean we have done something wrong? No, so here we have hardly trained the network. We have just shown it two letters. So it pretty much hasn&rsquo;t learnt anything yet.</p>
+            <p class="section-desc">Now the next BIG question that faces us is how does Back propagation work in case of a Recurrent Neural Network. How are the weights updated while there is a feedback loop?</p>
+        </div>
+
+        <!-- Problems with RNN -->
+        <div class="section fade-up" id="problems">
+            <h2 class="section-title"><i class="fa-solid fa-triangle-exclamation"></i> Problems with RNN</h2>
+            <p class="section-desc"><strong>Exploding and vanishing gradient problems during backpropagation.</strong></p>
+            <p class="section-desc">Gradients are those values which to update neural networks weights. In other words, we can say that Gradient carries information.</p>
+            <p class="section-desc">Vanishing gradient is a big problem in deep neural networks. it vanishes or explodes quickly in earlier layers and this makes RNN unable to hold information of longer sequence. and thus RNN becomes <strong>short-term memory</strong>.</p>
+            <p class="section-desc">If we apply RNN for a paragraph RNN may leave out necessary information due to gradient problems and not be able to carry information from the initial time step to later time steps.</p>
+            <p class="section-desc">To solve this problem <strong>LSTM</strong>, <strong>GRU</strong> came into the picture.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-wrench"></i> How do LSTM, GRU solve this problem?</h3>
+                <p class="section-desc">I highly encourage you to read <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener">Colah&rsquo;s blog</a> for in-depth knowledge of LSTM.</p>
+                <p class="section-desc">The reason for exploding gradient was the capturing of relevant and irrelevant information. a model which can decide what information from a paragraph and relevant and remember only relevant information and throw all the irrelevant information</p>
+                <p class="section-desc">This is achieved by using <strong>gates</strong>. the LSTM ( Long -short-term memory ) and GRU ( Gated Recurrent Unit ) have gates as an internal mechanism, which control what information to keep and what information to throw out. By doing this LSTM, GRU networks solve the exploding and vanishing gradient problem.</p>
+                <p class="section-desc">Almost each and every SOTA ( state of the art) model based on RNN follows LSTM or GRU networks for prediction.</p>
+                <p class="section-desc">LSTMs /GRUs are implemented in speech recognition, text generation, caption generation, etc.</p>
+            </div>
+        </div>
+
+        <!-- LSTM -->
+        <div class="section fade-up" id="lstm">
+            <h2 class="section-title"><i class="fa-solid fa-memory"></i> LSTM networks</h2>
+            <p class="section-desc">Every LSTM network basically contains three gates to control the flow of information and cells to hold information. The <strong>Cell States</strong> carries the information from initial to later time steps without getting vanished.</p>
+            <figure class="fig">
+                <img src="figs/rnn/lstm_cell.png" alt="LSTM cell diagram showing the cell state, forget gate, input gate and output gate with sigmoid and tanh functions">
+                <figcaption>LSTM CELL</figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-door-open"></i> Gates</h3>
+                <p class="section-desc">Gates make use of sigmoid activation or you can say tanh activation. values ranges in tanh activation are 0 -1.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Forget Gate</h3>
+                    <p class="section-desc">This gate decides what information should be carried out forward or what information should be ignored.</p>
+                    <p class="section-desc">Information from previous hidden states and the current state information passes through the sigmoid function. Values that come out from sigmoid are always between 0 and 1. if the value is closer to 1 means information should proceed forward and if value closer to 0 means information should be ignored.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Input Gate</h3>
+                    <p class="section-desc">After deciding the relevant information, the information goes to the input gate, Input gate passes the relevant information, and this leads to updating the cell states. simply saving updating the weight.</p>
+                    <p class="section-desc">Input gate adds the new relevant information to the existing information by updating cell states.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Output Gate</h3>
+                    <p class="section-desc">After the information is passed through the input gate, now the output gate comes into play. Output gate generates the next hidden states. and cell states are carried over the next time step.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRU -->
+        <div class="section fade-up" id="gru">
+            <h2 class="section-title"><i class="fa-solid fa-shuffle"></i> GRU</h2>
+            <figure class="fig">
+                <img src="figs/rnn/gru_cell.png" alt="Gated Recurrent Network (GRU) cell diagram with update gate and reset gate">
+                <figcaption>Gated Recurrent Network (GRU)</figcaption>
+            </figure>
+            <p class="section-desc">GRU ( Gated Recurrent Units ) are similar to the LSTM networks. GRU is a kind of newer version of RNN. However, there are some differences between GRU and LSTM.</p>
+            <div class="info-box">
+                <ul>
+                    <li>GRU doesn&rsquo;t contain a cell state</li>
+                    <li>GRU uses its hidden states to transport information</li>
+                    <li>It Contains only 2 gates(Reset and Update Gate)</li>
+                    <li>GRU is faster than LSTM</li>
+                    <li>GRU has lesser tensor&rsquo;s operation that makes it faster</li>
+                </ul>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Update Gate</h3>
+                    <p class="section-desc">Update Gate is a combination of Forget Gate and Input Gate. Forget gate decides what information to ignore and what information to add in memory.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Reset Gate</h3>
+                    <p class="section-desc">This Gate Resets the past information in order to get rid of gradient explosion. Reset Gate determines how much past information should be forgotten.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bi-LSTM -->
+        <div class="section fade-up" id="bilstm">
+            <h2 class="section-title"><i class="fa-solid fa-arrows-left-right"></i> BI-LSTM Networks</h2>
+            <figure class="fig">
+                <img src="figs/rnn/bilstm.png" alt="Bidirectional LSTM with a forward layer and a backward layer of LSTM cells feeding an activation layer and outputs">
+            </figure>
+            <p class="section-desc">We have seen how LSTM works and we noticed that it works in uni-direction.</p>
+            <p class="section-desc">Bidirectional long-short term memory networks are advancements of unidirectional LSTM. <strong>Bi-LSTM tries to capture information from both sides left to right and right to left.</strong> The rest of the concept in Bi-LSTM is the same as LSTM.</p>
+            <p class="section-desc">This improves the accuracy of models.</p>
+        </div>
+
+        <!-- Simulator -->
+        <div class="section fade-up" id="simulator" style="border-color:rgba(16,185,129,.35);background:linear-gradient(135deg,var(--surface),rgba(16,185,129,.06))">
+            <h2 class="section-title"><i class="fa-solid fa-circle-play"></i> Interactive: LSTM &middot; GRU &middot; Bi-LSTM Simulator</h2>
+            <p class="section-desc" style="margin-bottom:16px">See the gates compute with real numbers &mdash; step through every &sigma; and tanh, drag the forget bias to watch long-term memory appear and vanish, and follow a Bi-LSTM's forward and backward passes cell by cell.</p>
+            <a href="rnn_simulator.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:#fff;padding:12px 22px;border-radius:10px;font-weight:700;font-size:.95rem"><i class="fa-solid fa-arrow-right"></i> Open the Simulator</a>
+        </div>
+
+        <!-- TorchCode practice -->
+        <div class="section fade-up" id="practice" style="border-color:rgba(16,185,129,.35);background:linear-gradient(135deg,var(--surface),rgba(16,185,129,.06))">
+            <h2 class="section-title"><i class="fa-solid fa-fire"></i> Practice in PyTorch: TorchCode</h2>
+            <p class="section-desc" style="margin-bottom:16px">Implement an RNN cell's forward pass &mdash; the same \(h_t = \tanh(W_{hh}h_{t-1} + W_{xh}x_t)\) recurrence worked by hand above &mdash; and check it against PyTorch: instant feedback, reference solutions, no GPU needed.</p>
+            <a href="../torchcode/index.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:#fff;padding:12px 22px;border-radius:10px;font-weight:700;font-size:.95rem"><i class="fa-solid fa-arrow-right"></i> Open TorchCode</a>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="08_convolutional_networks.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 8: Convolutional Networks</a>
+            <a href="index.html" class="nav-btn next">All Modules <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Deep Learning &middot; Course notes by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Recurrent Networks</h4>
+        <a class="toc-item" href="#what-is-rnn">What is an RNN?</a>
+        <a class="toc-item" href="#need">Why Sequences?</a>
+        <a class="toc-item" href="#what-are-rnns">The Recurrence</a>
+        <a class="toc-item" href="#example">Worked Example</a>
+        <a class="toc-item" href="#problems">Problems with RNN</a>
+        <a class="toc-item" href="#lstm">LSTM</a>
+        <a class="toc-item" href="#gru">GRU</a>
+        <a class="toc-item" href="#bilstm">Bi-LSTM</a>
+        <a class="toc-item" href="#simulator">Simulator</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

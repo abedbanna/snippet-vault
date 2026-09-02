@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenManus Architecture</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #4253b4;
+            --secondary-color: #62d6c4;
+            --dark-color: #333;
+            --light-color: #f8f9fa;
+            --accent-color: #ffaa44;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-color);
+            line-height: 1.6;
+            background-color: var(--light-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+
+        .diagram {
+            width: 100%;
+            height: auto;
+            margin: 1.5rem 0;
+        }
+
+        .code-container {
+            background-color: #282c34;
+            border-radius: 6px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #21252b;
+            color: white;
+            cursor: pointer;
+        }
+
+        .code-block {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .code-block.active {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .code-content {
+            padding: 1rem;
+            color: #abb2bf;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .interactive-diagram {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .tooltip {
+            position: absolute;
+            display: none;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            max-width: 200px;
+            z-index: 10;
+        }
+
+        .hotspot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+
+        .hotspot:hover {
+            transform: scale(1.2);
+        }
+
+        .tab-container {
+            margin: 1.5rem 0;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 0.25rem;
+        }
+
+        .tab-button.active {
+            background-color: white;
+            border-color: #ddd;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            background-color: white;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 4px;
+            background-color: var(--primary-color);
+            transition: width 0.3s;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            position: relative;
+        }
+
+        .highlight::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            background-color: rgba(98, 214, 196, 0.3);
+            z-index: -1;
+        }
+
+        .workflow-node {
+            display: inline-block;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .workflow-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .workflow-connection {
+            position: relative;
+            height: 2px;
+            background-color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .workflow-connection::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 8px solid var(--primary-color);
+        }
+
+        @media print {
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            body {
+                background-color: white;
+            }
+
+            .progress-container {
+                display: none;
+            }
+
+            .code-block.active {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="hero">
+
+        <div class="container mx-auto text-center px-4 flex items-center justify-center">
+            <a href="index.html" class="absolute left-4 top-4">
+                <img src="images/logo.png" alt="Al-banna Tutorials Logo" class="h-12">Home
+            </a>
+            <div>
+                <h1 class="text-4xl font-bold mb-4">OpenManus Architecture</h1>
+                <p class="text-xl opacity-90 max-w-3xl mx-auto">
+                    A step-by-step guide to understanding the open-source multi-agent AI system
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pb-16">
+        <!-- Introduction -->
+        <div class="section fade-in" id="introduction">
+            <h2 class="text-2xl font-bold mb-4">Introduction to OpenManus</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <p class="mb-4">
+                        OpenManus is an open-source project aimed at replicating the capabilities of Manus AI, a groundbreaking general-purpose AI system. It uses a modular, containerized framework built with Docker, Python, and JavaScript to create a multi-agent AI system capable of autonomously executing complex tasks.
+                    </p>
+                    <p class="mb-4">
+                        This powerful system can handle diverse tasks ranging from personalized travel planning to stock analysis, leveraging a collaborative team of AI agents working together to solve problems.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <span class="tag">Python 3.9+</span>
+                        <span class="tag">JavaScript ES6+</span>
+                        <span class="tag">Docker</span>
+                        <span class="tag">Open Source</span>
+                        <span class="tag">Multi-Agent Architecture</span>
+                    </div>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-3">Key Features</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><span class="font-medium">Multi-Agent System:</span> Collaborative AI agents working together to solve complex tasks</li>
+                        <li><span class="font-medium">Dockerized Environment:</span> Easy setup and deployment with containerization</li>
+                        <li><span class="font-medium">Task Execution:</span> Supports tasks like travel planning, data analysis, and content generation</li>
+                        <li><span class="font-medium">Tool Integration:</span> Web browsing, code execution, and data retrieval capabilities</li>
+                        <li><span class="font-medium">Modular Design:</span> Easily extendable with new agents, tools, or features</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h3 class="text-lg font-semibold mb-2">Learning Journey Overview</h3>
+                <p class="mb-3">This guide takes you through a progressive learning journey to understand OpenManus:</p>
+                <ol class="list-decimal pl-5 space-y-1">
+                    <li>Understanding Multi-Agent System Architecture</li>
+                    <li>Exploring Different Agent Types</li>
+                    <li>Diving into the Workflow System</li>
+                    <li>Learning about Tool Integration</li>
+                    <li>Putting it All Together - How Components Work in Harmony</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Multi-Agent System Architecture -->
+        <div class="section fade-in" id="architecture">
+            <div class="flex items-center mb-6">
+                <div class="step-number">1</div>
+                <h2 class="text-2xl font-bold">Multi-Agent System Architecture</h2>
+            </div>
+
+            <p class="mb-4">
+                At its core, OpenManus is built on a <span class="highlight">multi-agent architecture</span> where specialized AI agents collaborate to solve complex tasks. This modular design enables high code reusability, strong extensibility, and clear separation of responsibilities.
+            </p>
+
+            <div class="interactive-diagram" id="architectureDiagram">
+                <h3 class="text-lg font-semibold mb-4">OpenManus Component Architecture</h3>
+
+                <svg width="100%" height="500" viewBox="0 0 800 500" class="diagram">
+                    <!-- Core Container -->
+                    <rect x="100" y="50" width="600" height="400" rx="10" fill="#f0f4f8" stroke="#ddd" stroke-width="2" />
+
+                    <!-- Agent Layer -->
+                    <rect x="150" y="100" width="500" height="80" rx="8" fill="#4253b4" stroke="#3a49a0" stroke-width="2" opacity="0.9" class="hoverable" data-tooltip="The brain of OpenManus, responsible for decision-making and task execution" />
+                    <text x="400" y="145" text-anchor="middle" fill="white" font-weight="bold">Agent Layer</text>
+
+                    <!-- LLM Layer -->
+                    <rect x="150" y="200" width="180" height="60" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" opacity="0.9" class="hoverable" data-tooltip="Manages interaction with large language models" />
+                    <text x="240" y="235" text-anchor="middle" fill="white" font-weight="bold">LLM</text>
+
+                    <!-- Memory Layer -->
+                    <rect x="350" y="200" width="180" height="60" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" opacity="0.9" class="hoverable" data-tooltip="Stores and manages conversation history and context" />
+                    <text x="440" y="235" text-anchor="middle" fill="white" font-weight="bold">Memory</text>
+
+                    <!-- Tools Layer -->
+                    <rect x="150" y="280" width="500" height="60" rx="8" fill="#ffaa44" stroke="#ee9933" stroke-width="2" opacity="0.9" class="hoverable" data-tooltip="Provides interfaces for interacting with external systems" />
+                    <text x="400" y="315" text-anchor="middle" fill="white" font-weight="bold">Tools Layer</text>
+
+                    <!-- Flow Layer -->
+                    <rect x="150" y="360" width="240" height="60" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" opacity="0.9" class="hoverable" data-tooltip="Manages workflow and execution patterns" />
+                    <text x="270" y="395" text-anchor="middle" fill="white" font-weight="bold">Flow</text>
+
+                    <!-- Prompt Layer -->
+                    <rect x="410" y="360" width="240" height="60" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" opacity="0.9" class="hoverable" data-tooltip="Defines the behavior patterns of agents" />
+                    <text x="530" y="395" text-anchor="middle" fill="white" font-weight="bold">Prompt</text>
+
+                    <!-- Connection lines -->
+                    <line x1="240" y1="180" x2="240" y2="200" stroke="#333" stroke-width="2" />
+                    <line x1="440" y1="180" x2="440" y2="200" stroke="#333" stroke-width="2" />
+                    <line x1="400" y1="180" x2="400" y2="280" stroke="#333" stroke-width="2" />
+                    <line x1="270" y1="340" x2="270" y2="360" stroke="#333" stroke-width="2" />
+                    <line x1="530" y1="340" x2="530" y2="360" stroke="#333" stroke-width="2" />
+
+                    <!-- Hotspots -->
+                    <circle cx="400" cy="145" r="10" fill="#fff" stroke="#4253b4" stroke-width="2" class="hotspot" id="hotspot1" />
+                    <circle cx="240" cy="235" r="10" fill="#fff" stroke="#62d6c4" stroke-width="2" class="hotspot" id="hotspot2" />
+                    <circle cx="440" cy="235" r="10" fill="#fff" stroke="#62d6c4" stroke-width="2" class="hotspot" id="hotspot3" />
+                    <circle cx="400" cy="315" r="10" fill="#fff" stroke="#ffaa44" stroke-width="2" class="hotspot" id="hotspot4" />
+                    <circle cx="270" cy="395" r="10" fill="#fff" stroke="#f87171" stroke-width="2" class="hotspot" id="hotspot5" />
+                    <circle cx="530" cy="395" r="10" fill="#fff" stroke="#f87171" stroke-width="2" class="hotspot" id="hotspot6" />
+                </svg>
+
+                <div class="tooltip" id="tooltip"></div>
+            </div>
+
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-3">Core Components</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Agent Layer</h4>
+                        <p>The brain of OpenManus, consisting of specialized AI agents that handle different aspects of task execution. Agents are organized in a hierarchical structure, from basic proxies to specialized ones.</p>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">LLM Component</h4>
+                        <p>Handles interactions with large language models, serving as the intelligence engine that powers decision-making, content generation, and understanding.</p>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Memory Component</h4>
+                        <p>Stores and manages conversation history and context, ensuring coherent and contextually relevant interactions across multiple exchanges.</p>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Tools Component</h4>
+                        <p>Provides interfaces for agents to interact with external systems and perform actions like web browsing, code execution, and data retrieval.</p>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Flow Component</h4>
+                        <p>Manages the workflows and execution patterns, coordinating how multiple agents collaborate to solve complex tasks.</p>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Prompt Component</h4>
+                        <p>Defines the behavior patterns and guidelines for agents, shaping how they respond to tasks and make decisions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3">Project Structure</h3>
+                <div class="code-container">
+                    <div class="code-header" onclick="toggleCode(this)">
+                        <span>OpenManus Project Structure</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="code-block">
+                        <pre class="code-content">
+OpenManus/
+ docker/               # Docker configurations
+    frontend/        # Next.js frontend container
+       Dockerfile   # Frontend container configuration
+    unified/         # Backend container configuration
+        Dockerfile   # Backend container configuration
+        start.sh     # Container startup script
+ src/                 # Source code
+    agents/          # Multi-agent logic (Python)
+       nodes/       # Agent node implementations
+       browser_agent.py
+       coder_agent.py
+       coordinator.py
+       reporter_agent.py
+       research_agent.py
+    components/      # React components
+    config/          # Configuration files
+    graph/           # Graph-based workflow
+    llms/            # LLM integrations
+    pages/           # Next.js pages
+    prompts/         # Agent prompts
+    service/         # Backend services
+    tools/           # Tool implementations
+    utils/           # Utility functions
+    workflow/        # Workflow management
+    client.py        # CLI client for testing
+    server.py        # FastAPI server
+ docs/                # Documentation and API specs
+ package.json         # Next.js frontend dependencies
+ next.config.js       # Next.js configuration
+ docker-compose.yml   # Docker Compose configuration
+ README.md           # Main documentation file</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Types -->
+        <div class="section fade-in" id="agent-types">
+            <div class="flex items-center mb-6">
+                <div class="step-number">2</div>
+                <h2 class="text-2xl font-bold">Different Agent Types</h2>
+            </div>
+
+            <p class="mb-6">
+                OpenManus implements a hierarchical agent structure, with each agent type building upon the capabilities of the previous one. This modular approach allows for specialized agents that excel at specific tasks while sharing common functionality.
+            </p>
+
+            <div class="interactive-diagram">
+                <h3 class="text-lg font-semibold mb-4">Agent Hierarchy</h3>
+
+                <svg width="100%" height="400" viewBox="0 0 800 400" class="diagram">
+                    <!-- Base Agent -->
+                    <rect x="300" y="50" width="200" height="60" rx="8" fill="#4253b4" stroke="#3a49a0" stroke-width="2" />
+                    <text x="400" y="85" text-anchor="middle" fill="white" font-weight="bold">BaseAgent</text>
+
+                    <!-- ReAct Agent -->
+                    <rect x="300" y="150" width="200" height="60" rx="8" fill="#5263c4" stroke="#4253b4" stroke-width="2" />
+                    <text x="400" y="185" text-anchor="middle" fill="white" font-weight="bold">ReActAgent</text>
+
+                    <!-- Tool Call Agent -->
+                    <rect x="300" y="250" width="200" height="60" rx="8" fill="#6273d4" stroke="#5263c4" stroke-width="2" />
+                    <text x="400" y="285" text-anchor="middle" fill="white" font-weight="bold">ToolCallAgent</text>
+
+                    <!-- Specialized Agents -->
+                    <rect x="150" y="350" width="150" height="60" rx="8" fill="#7283e4" stroke="#6273d4" stroke-width="2" />
+                    <text x="225" y="385" text-anchor="middle" fill="white" font-weight="bold">PlanningAgent</text>
+
+                    <rect x="325" y="350" width="150" height="60" rx="8" fill="#7283e4" stroke="#6273d4" stroke-width="2" />
+                    <text x="400" y="385" text-anchor="middle" fill="white" font-weight="bold">SWEAgent</text>
+
+                    <rect x="500" y="350" width="150" height="60" rx="8" fill="#8293f4" stroke="#7283e4" stroke-width="2" />
+                    <text x="575" y="385" text-anchor="middle" fill="white" font-weight="bold">Manus</text>
+
+                    <!-- Connection lines -->
+                    <line x1="400" y1="110" x2="400" y2="150" stroke="#333" stroke-width="2" />
+                    <line x1="400" y1="210" x2="400" y2="250" stroke="#333" stroke-width="2" />
+                    <line x1="400" y1="310" x2="400" y2="330" stroke="#333" stroke-width="2" />
+                    <line x1="400" y1="330" x2="225" y2="350" stroke="#333" stroke-width="2" />
+                    <line x1="400" y1="330" x2="400" y2="350" stroke="#333" stroke-width="2" />
+                    <line x1="400" y1="330" x2="575" y2="350" stroke="#333" stroke-width="2" />
+                </svg>
+            </div>
+
+            <div class="tab-container mt-8">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="changeTab(event, 'baseAgent')">BaseAgent</div>
+                    <div class="tab-button" onclick="changeTab(event, 'reactAgent')">ReActAgent</div>
+                    <div class="tab-button" onclick="changeTab(event, 'toolCallAgent')">ToolCallAgent</div>
+                    <div class="tab-button" onclick="changeTab(event, 'planningAgent')">PlanningAgent</div>
+                    <div class="tab-button" onclick="changeTab(event, 'manusAgent')">Manus</div>
+                </div>
+
+                <div class="tab-content active" id="baseAgent">
+                    <h3 class="text-xl font-semibold mb-3">BaseAgent</h3>
+                    <p class="mb-4">
+                        BaseAgent is the foundation of the entire agent framework, defining the core attributes and methods that all agents share. It handles basic state management, memory operations, and the execution lifecycle.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header" onclick="toggleCode(this)">
+                            <span>BaseAgent Implementation</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="code-block">
+                            <pre class="code-content">
+class BaseAgent(BaseModel, ABC):
+    """Abstract base class for managing agent state and execution."""
+    # Core attributes
+    name: str = Field(..., description="Unique name of the agent")
+    description: Optional[str] = Field(None, description="Optional agent description")
+
+    # Prompts
+    system_prompt: Optional[str] = Field(None, description="System-level instruction prompt")
+    next_step_prompt: Optional[str] = Field(None, description="Prompt for determining next action")
+
+    # Dependent components
+    llm: LLM = Field(default_factory=LLM, description="Language model instance")
+    memory: Memory = Field(default_factory=Memory, description="Agent's memory store")
+    state: AgentState = Field(default=AgentState.IDLE, description="Current agent state")
+
+    # Execution control
+    max_steps: int = Field(default=10, description="Maximum steps before termination")
+    current_step: int = Field(default=0, description="Current step in execution")</pre>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-semibold mb-2">Key Responsibilities:</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Managing agent state (idle, thinking, acting, etc.)</li>
+                            <li>Storing and retrieving messages from memory</li>
+                            <li>Handling basic execution lifecycle</li>
+                            <li>Providing core attributes that all agents need</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="reactAgent">
+                    <h3 class="text-xl font-semibold mb-3">ReActAgent</h3>
+                    <p class="mb-4">
+                        ReActAgent extends BaseAgent by implementing the "Think-Act" pattern, which divides the agent's execution into two distinct phases: a thinking phase for decision making and an action phase for execution.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header" onclick="toggleCode(this)">
+                            <span>ReActAgent Implementation</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="code-block">
+                            <pre class="code-content">
+class ReActAgent(BaseAgent, ABC):
+    @abstractmethod
+    async def think(self) -> bool:
+        """Process the current state and decide the next action."""
+
+    @abstractmethod
+    async def act(self) -> str:
+        """Execute the decided actions."""
+
+    async def step(self) -> str:
+        """Execute a single step: think and act."""
+        should_act = await self.think()
+        if not should_act:
+            return "Thinking complete - no action needed"
+        return await self.act()</pre>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-semibold mb-2">Key Responsibilities:</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Implementing the Think-Act pattern for decision making</li>
+                            <li>Separating the reasoning process from action execution</li>
+                            <li>Providing a step method that orchestrates a think-act cycle</li>
+                            <li>Enabling more sophisticated agent behavior through deliberation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="toolCallAgent">
+                    <h3 class="text-xl font-semibold mb-3">ToolCallAgent</h3>
+                    <p class="mb-4">
+                        ToolCallAgent extends ReActAgent by adding the ability to interact with external tools and APIs. This enables the agent to perform actions like web browsing, code execution, and data retrieval.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header" onclick="toggleCode(this)">
+                            <span>ToolCallAgent Implementation</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="code-block">
+                            <pre class="code-content">
+class ToolCallAgent(ReActAgent):
+    """Base agent class for handling tool/function calls with enhanced abstraction"""
+
+    available_tools: ToolCollection = ToolCollection(
+        CreateChatCompletion(), Terminate()
+    )
+    tool_choices: Literal["none", "auto", "required"] = "auto"
+
+    async def think(self) -> bool:
+        # Get the LLM response and tool selection
+        response = await self.llm.ask_tool(
+            messages=self.messages,
+            system_msgs=[Message.system_message(self.system_prompt)]
+            if self.system_prompt
+            else None,
+            tools=self.available_tools.to_params(),
+            tool_choice=self.tool_choices,
+        )
+        self.tool_calls = response.tool_calls
+
+        # Process the response and tool calls
+        # ...
+
+    async def act(self) -> str:
+        # Execute tool calls
+        results = []
+        for command in self.tool_calls:
+            result = await self.execute_tool(command)
+            # Add tool response to memory
+            # ...
+            results.append(result)
+
+        return "\n\n".join(results)</pre>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-semibold mb-2">Key Responsibilities:</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Managing available tools and their parameters</li>
+                            <li>Interpreting tool calls from LLM responses</li>
+                            <li>Executing tool operations and handling results</li>
+                            <li>Providing a bridge between the agent's reasoning and external actions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="planningAgent">
+                    <h3 class="text-xl font-semibold mb-3">PlanningAgent</h3>
+                    <p class="mb-4">
+                        PlanningAgent extends ToolCallAgent by adding planning capabilities, allowing it to break down complex tasks into manageable steps and track progress through the execution of a plan.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header" onclick="toggleCode(this)">
+                            <span>PlanningAgent Implementation</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="code-block">
+                            <pre class="code-content">
+class PlanningAgent(ToolCallAgent):
+    """
+    An agent that creates and manages plans to solve tasks.
+    This agent uses a planning tool to create and manage structured plans,
+    and tracks progress through individual steps until task completion.
+    """
+    name: str = "planning"
+    description: str = "An agent that creates and manages plans to solve tasks"
+    system_prompt: str = PLANNING_SYSTEM_PROMPT
+    next_step_prompt: str = NEXT_STEP_PROMPT
+    available_tools: ToolCollection = Field(
+        default_factory=lambda: ToolCollection(PlanningTool(), Terminate())
+    )
+
+    # Step execution tracker
+    step_execution_tracker: Dict[str, Dict] = Field(default_factory=dict)
+    current_step_index: Optional[int] = None
+
+    async def think(self) -> bool:
+        """Decide the next action based on plan status."""
+        prompt = (
+            f"CURRENT PLAN STATUS:\n{await self.get_plan()}\n\n{self.next_step_prompt}"
+            if self.active_plan_id
+            else self.next_step_prompt
+        )
+        self.messages.append(Message.user_message(prompt))
+
+        # Get the current step index
+        self.current_step_index = await self._get_current_step_index()
+        result = await super().think()
+        # Associate tool calls with the current step
+        if result and self.tool_calls:
+            # ...association logic...
+        return result</pre>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-semibold mb-2">Key Responsibilities:</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Creating and managing plans for complex tasks</li>
+                            <li>Breaking tasks into logical, sequential steps</li>
+                            <li>Tracking progress through plan execution</li>
+                            <li>Providing status updates and adapting plans as needed</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="manusAgent">
+                    <h3 class="text-xl font-semibold mb-3">Manus</h3>
+                    <p class="mb-4">
+                        Manus is the flagship agent of OpenManus, combining all the capabilities of previous agent types with additional specialized tools to create a versatile, general-purpose AI assistant.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header" onclick="toggleCode(this)">
+                            <span>Manus Implementation</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="code-block">
+                            <pre class="code-content">
+class Manus(ToolCallAgent):
+    """
+    A versatile general-purpose agent that uses planning to solve various tasks.
+    This agent extends PlanningAgent with a comprehensive set of tools and capabilities,
+    including Python execution, web browsing, file operations, and information retrieval
+    to handle a wide range of user requests.
+    """
+    name: str = "manus"
+    description: str = "A versatile general-purpose agent"
+    system_prompt: str = SYSTEM_PROMPT
+    next_step_prompt: str = NEXT_STEP_PROMPT
+    available_tools: ToolCollection = Field(
+        default_factory=lambda: ToolCollection(
+            PythonExecute(), GoogleSearch(), BrowserUseTool(), FileSaver(), Terminate()
+        )
+    )</pre>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-semibold mb-2">Key Responsibilities:</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Providing a comprehensive set of tools for general-purpose use</li>
+                            <li>Handling a wide range of user requests and tasks</li>
+                            <li>Combining planning, execution, and specialized capabilities</li>
+                            <li>Serving as the primary interface for end-user interactions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-gray-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-3">Comparing Agent Capabilities</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 border">Agent Type</th>
+                                <th class="px-4 py-2 border">Basic State Management</th>
+                                <th class="px-4 py-2 border">Think-Act Pattern</th>
+                                <th class="px-4 py-2 border">Tool Usage</th>
+                                <th class="px-4 py-2 border">Planning</th>
+                                <th class="px-4 py-2 border">Specialized Capabilities</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2 border font-medium">BaseAgent</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2 border font-medium">ReActAgent</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2 border font-medium">ToolCallAgent</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2 border font-medium">PlanningAgent</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">❌</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2 border font-medium">Manus</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                                <td class="px-4 py-2 border text-center">✅</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow System -->
+        <div class="section fade-in" id="workflow">
+            <div class="flex items-center mb-6">
+                <div class="step-number">3</div>
+                <h2 class="text-2xl font-bold">Workflow System</h2>
+            </div>
+
+            <p class="mb-6">
+                OpenManus's workflow system orchestrates how agents collaborate to solve complex tasks. The Flow component manages these workflows, determining which agents handle which parts of a task and how their results are integrated.
+            </p>
+
+            <div class="interactive-diagram">
+                <h3 class="text-lg font-semibold mb-4">Workflow Execution</h3>
+
+                <div class="flex flex-col items-center">
+                    <div class="workflow-node bg-blue-500 text-white">
+                        User Input
+                    </div>
+
+                    <div class="workflow-connection w-1/4"></div>
+
+                    <div class="workflow-node bg-green-500 text-white">
+                        Coordinator
+                    </div>
+
+                    <div class="workflow-connection w-1/4"></div>
+
+                    <div class="flex justify-center w-full">
+                        <div class="flex flex-col mx-4">
+                            <div class="workflow-node bg-purple-500 text-white">
+                                Research Agent
+                            </div>
+                            <div class="workflow-connection w-full"></div>
+                            <div class="workflow-node bg-yellow-500 text-white">
+                                Planning Agent
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col mx-4">
+                            <div class="workflow-node bg-red-500 text-white">
+                                Browser Agent
+                            </div>
+                            <div class="workflow-connection w-full"></div>
+                            <div class="workflow-node bg-indigo-500 text-white">
+                                Coder Agent
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-connection w-1/4"></div>
+
+                    <div class="workflow-node bg-pink-500 text-white">
+                        Reporter Agent
+                    </div>
+
+                    <div class="workflow-connection w-1/4"></div>
+
+                    <div class="workflow-node bg-blue-500 text-white">
+                        Final Output
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3">Flow Components</h3>
+
+                <div class="code-container">
+                    <div class="code-header" onclick="toggleCode(this)">
+                        <span>BaseFlow Implementation</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="code-block">
+                        <pre class="code-content">
+class BaseFlow(BaseModel, ABC):
+    """Base class for execution flows supporting multiple agents"""
+
+    agents: Dict[str, BaseAgent]
+    tools: Optional[List] = None
+    primary_agent_key: Optional[str] = None
+
+    @property
+    def primary_agent(self) -> Optional[BaseAgent]:
+        """Get the primary agent for the flow"""
+        return self.agents.get(self.primary_agent_key)
+
+    @abstractmethod
+    async def execute(self, input_text: str) -> str:
+        """Execute the flow with the given input"""</pre>
+                    </div>
+                </div>
+
+                <div class="code-container mt-4">
+                    <div class="code-header" onclick="toggleCode(this)">
+                        <span>PlanningFlow Implementation</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="code-block">
+                        <pre class="code-content">
+class PlanningFlow(BaseFlow):
+    """A flow that manages planning and execution of tasks using agents."""
+    llm: LLM = Field(default_factory=lambda: LLM())
+    planning_tool: PlanningTool = Field(default_factory=PlanningTool)
+    executor_keys: List[str] = Field(default_factory=list)
+    active_plan_id: str = Field(default_factory=lambda: f"plan_{int(time.time())}")
+    current_step_index: Optional[int] = None
+
+    async def execute(self, input_text: str) -> str:
+        """Execute the planning flow with agents."""
+        try:
+            # Create the initial plan
+            if input_text:
+                await self._create_initial_plan(input_text)
+
+            # Execute plan steps
+            while await self._has_next_step():
+                # Get the current step
+                step_info = await self._get_current_step()
+
+                # Select the appropriate executor
+                executor = self.get_executor(step_info.get("type"))
+
+                # Execute the step
+                result = await self._execute_step(executor, step_info)
+
+                # Update the step status
+                await self._update_step_status(step_info["index"], "completed")
+
+            # Complete the plan
+            return await self._finalize_plan()
+
+        except Exception as e:
+            # Handle exceptions
+            return f"Error executing flow: {str(e)}"</pre>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Graph-Based Workflow</h4>
+                        <p>OpenManus implements a graph-based workflow system that allows for flexible orchestration of agent activities. Nodes in the graph represent agents or actions, while edges represent the flow of data and control.</p>
+                        <div class="mt-3 text-sm text-gray-600">
+                            <span class="font-medium">Key Benefit:</span> This approach enables complex branching logic and parallel execution paths.
+                        </div>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Task Decomposition</h4>
+                        <p>When a user submits a task, the workflow system breaks it down into smaller, manageable sub-tasks. Each sub-task is assigned to the most suitable agent based on its capabilities.</p>
+                        <div class="mt-3 text-sm text-gray-600">
+                            <span class="font-medium">Key Benefit:</span> Complex problems become tractable through effective division of labor.
+                        </div>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Agent Coordination</h4>
+                        <p>The workflow system handles communication and coordination between agents, ensuring they can share information and build upon each other's work. This coordination is managed by specialized flow components.</p>
+                        <div class="mt-3 text-sm text-gray-600">
+                            <span class="font-medium">Key Benefit:</span> Agents can collaborate effectively without direct knowledge of each other's internals.
+                        </div>
+                    </div>
+                    <div class="card p-4 bg-white">
+                        <h4 class="text-lg font-medium text-primary-color mb-2">Result Integration</h4>
+                        <p>As agents complete their assigned sub-tasks, their results are collected and integrated into a coherent final output. This integration considers dependencies between sub-tasks and ensures logical flow.</p>
+                        <div class="mt-3 text-sm text-gray-600">
+                            <span class="font-medium">Key Benefit:</span> Users receive unified responses that represent the collective intelligence of the system.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="text-lg font-semibold mb-2">Workflow Execution Example</h4>
+                    <p class="mb-3">Consider a user asking OpenManus to "Plan a 3-day trip to Tokyo with a budget of $1000":</p>
+                    <ol class="list-decimal pl-5 space-y-2">
+                        <li><span class="font-medium">Task Analysis</span>: The coordinator analyzes the request and identifies it as a travel planning task.</li>
+                        <li><span class="font-medium">Task Delegation</span>: The coordinator assigns research on Tokyo attractions to the Research Agent, budget analysis to the Planning Agent, and web searches for current prices to the Browser Agent.</li>
+                        <li><span class="font-medium">Parallel Execution</span>: Agents work simultaneously on their assigned tasks, communicating interim results as needed.</li>
+                        <li><span class="font-medium">Integration</span>: The Reporter Agent collects all findings and generates a comprehensive 3-day itinerary within budget.</li>
+                        <li><span class="font-medium">Response</span>: The finalized trip plan is presented to the user, with details on attractions, accommodations, transportation, and costs.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Integration -->
+        <div class="section fade-in" id="tools">
+            <div class="flex items-center mb-6">
+                <div class="step-number">4</div>
+                <h2 class="text-2xl font-bold">Tool Integration</h2>
+            </div>
+
+            <p class="mb-6">
+                Tools are the interfaces through which OpenManus agents interact with the external world. The flexible tool system allows agents to perform a wide range of actions, from web browsing to code execution.
+            </p>
+
+            <div class="interactive-diagram">
+                <h3 class="text-lg font-semibold mb-4">Tool Integration Architecture</h3>
+
+                <svg width="100%" height="400" viewBox="0 0 800 400" class="diagram">
+                    <!-- Agent -->
+                    <rect x="150" y="50" width="200" height="60" rx="8" fill="#4253b4" stroke="#3a49a0" stroke-width="2" />
+                    <text x="250" y="85" text-anchor="middle" fill="white" font-weight="bold">Agent</text>
+
+                    <!-- Tool Manager -->
+                    <rect x="150" y="150" width="200" height="60" rx="8" fill="#ffaa44" stroke="#ee9933" stroke-width="2" />
+                    <text x="250" y="185" text-anchor="middle" fill="white" font-weight="bold">Tool Manager</text>
+
+                    <!-- Tool Classes -->
+                    <rect x="50" y="250" width="120" height="60" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" />
+                    <text x="110" y="285" text-anchor="middle" fill="white" font-weight="bold">Web Tools</text>
+
+                    <rect x="190" y="250" width="120" height="60" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" />
+                    <text x="250" y="285" text-anchor="middle" fill="white" font-weight="bold">Code Tools</text>
+
+                    <rect x="330" y="250" width="120" height="60" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" />
+                    <text x="390" y="285" text-anchor="middle" fill="white" font-weight="bold">Data Tools</text>
+
+                    <!-- External Systems -->
+                    <rect x="50" y="350" width="120" height="60" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="110" y="385" text-anchor="middle" fill="white" font-weight="bold">Web APIs</text>
+
+                    <rect x="190" y="350" width="120" height="60" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="250" y="385" text-anchor="middle" fill="white" font-weight="bold">Python Runtime</text>
+
+                    <rect x="330" y="350" width="120" height="60" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="390" y="385" text-anchor="middle" fill="white" font-weight="bold">File System</text>
+
+                    <!-- Tool Base Class -->
+                    <rect x="500" y="150" width="200" height="60" rx="8" fill="#ffaa44" stroke="#ee9933" stroke-width="2" />
+                    <text x="600" y="185" text-anchor="middle" fill="white" font-weight="bold">BaseTool</text>
+
+                    <!-- Tool Result -->
+                    <rect x="500" y="250" width="200" height="60" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" />
+                    <text x="600" y="285" text-anchor="middle" fill="white" font-weight="bold">ToolResult</text>
+
+                    <!-- Connection lines -->
+                    <line x1="250" y1="110" x2="250" y2="150" stroke="#333" stroke-width="2" />
+                    <line x1="250" y1="210" x2="250" y2="230" stroke="#333" stroke-width="2" />
+                    <line x1="250" y1="230" x2="110" y2="250" stroke="#333" stroke-width="2" />
+                    <line x1="250" y1="230" x2="250" y2="250" stroke="#333" stroke-width="2" />
+                    <line x1="250" y1="230" x2="390" y2="250" stroke="#333" stroke-width="2" />
+                    <line x1="110" y1="310" x2="110" y2="350" stroke="#333" stroke-width="2" />
+                    <line x1="250" y1="310" x2="250" y2="350" stroke="#333" stroke-width="2" />
+                    <line x1="390" y1="310" x2="390" y2="350" stroke="#333" stroke-width="2" />
+                    <line x1="350" y1="180" x2="500" y2="180" stroke="#333" stroke-width="2" />
+                    <line x1="600" y1="210" x2="600" y2="250" stroke="#333" stroke-width="2" />
+                </svg>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3">Tool System</h3>
+
+                <div class="code-container">
+                    <div class="code-header" onclick="toggleCode(this)">
+                        <span>BaseTool Implementation</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="code-block">
+                        <pre class="code-content">
+class BaseTool(ABC, BaseModel):
+    name: str
+    description: str
+    parameters: Optional[dict] = None
+
+    async def __call__(self, **kwargs) -> Any:
+        """Execute the tool with given parameters."""
+        return await self.execute(**kwargs)
+
+    @abstractmethod
+    async def execute(self, **kwargs) -> Any:
+        """Execute the tool with given parameters."""
+
+    def to_param(self) -> Dict:
+        """Convert tool to function call format."""
+        return {
+            "type": "function",
+            "function": {
+                "name": self.name,
+                "description": self.description,
+                "parameters": self.parameters,
+            },
+        }</pre>
+                    </div>
+                </div>
+
+                <div class="code-container mt-4">
+                    <div class="code-header" onclick="toggleCode(this)">
+                        <span>ToolResult Implementation</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="code-block">
+                        <pre class="code-content">
+class ToolResult(BaseModel):
+    """Represents the result of a tool execution."""
+    output: Any = Field(default=None)
+    error: Optional[str] = Field(default=None)
+    system: Optional[str] = Field(default=None)</pre>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="card p-4 bg-white">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-globe text-4xl text-blue-500"></i>
+                        </div>
+                        <h4 class="text-lg font-medium text-center text-primary-color mb-2">Web Tools</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-1">
+                            <li>GoogleSearch: Performs web searches</li>
+                            <li>BrowserUseTool: Opens and navigates web browsers</li>
+                            <li>WebScraper: Extracts data from web pages</li>
+                            <li>APITool: Makes calls to external APIs</li>
+                        </ul>
+                    </div>
+
+                    <div class="card p-4 bg-white">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-code text-4xl text-green-500"></i>
+                        </div>
+                        <h4 class="text-lg font-medium text-center text-primary-color mb-2">Code Tools</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-1">
+                            <li>PythonExecute: Runs Python code</li>
+                            <li>JSExecute: Executes JavaScript code</li>
+                            <li>ShellTool: Runs shell commands</li>
+                            <li>GitTool: Manages Git repositories</li>
+                        </ul>
+                    </div>
+
+                    <div class="card p-4 bg-white">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-database text-4xl text-purple-500"></i>
+                        </div>
+                        <h4 class="text-lg font-medium text-center text-primary-color mb-2">Data Tools</h4>
+                        <ul class="list-disc pl-5 text-sm space-y-1">
+                            <li>FileSaver: Saves files to disk</li>
+                            <li>FileReader: Reads files from disk</li>
+                            <li>DataAnalyzer: Performs data analysis</li>
+                            <li>DataVisualizer: Creates visualizations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="text-lg font-semibold mb-2">Tool Usage Example</h4>
+                    <p class="mb-3">Let's look at how an agent might use the PythonExecute tool to perform data analysis:</p>
+
+                    <div class="code-container">
+                        <div class="code-header" onclick="toggleCode(this)">
+                            <span>PythonExecute Tool Example</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="code-block">
+                            <pre class="code-content">
+# Tool definition
+class PythonExecute(BaseTool):
+    name: str = "python_execute"
+    description: str = "Execute Python code and return the result."
+    parameters: dict = {
+        "type": "object",
+        "properties": {
+            "code": {
+                "type": "string",
+                "description": "The Python code to execute.",
+            }
+        },
+        "required": ["code"],
+    }
+
+    async def execute(self, code: str) -> ToolResult:
+        try:
+            # Set up a secure execution environment
+            local_vars = {}
+
+            # Execute the code
+            exec(code, {"__builtins__": __builtins__}, local_vars)
+
+            # Return the result
+            return ToolResult(output=local_vars.get("result", "Code executed successfully"))
+        except Exception as e:
+            return ToolResult(error=str(e))
+
+# Agent using the tool
+async def analyze_data(agent, dataset_url):
+    # First, download the dataset
+    browser_result = await agent.execute_tool({
+        "name": "browser_use",
+        "arguments": {"url": dataset_url}
+    })
+
+    # Now, analyze the data with Python
+    python_result = await agent.execute_tool({
+        "name": "python_execute",
+        "arguments": {
+            "code": """
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the data
+data = pd.read_csv('downloaded_data.csv')
+
+# Perform analysis
+summary = data.describe()
+correlations = data.corr()
+
+# Create visualization
+plt.figure(figsize=(10, 6))
+data.plot(kind='scatter', x='feature1', y='feature2')
+plt.savefig('analysis_plot.png')
+
+# Store result for return
+result = {
+    'summary': summary.to_dict(),
+    'correlations': correlations.to_dict()
+}
+"""
+        }
+    })
+
+    # Save the visualization
+    save_result = await agent.execute_tool({
+        "name": "file_saver",
+        "arguments": {
+            "file_path": "analysis_results.json",
+            "content": json.dumps(python_result.output)
+        }
+    })
+
+    return {
+        "analysis": python_result.output,
+        "visualization": "analysis_plot.png",
+        "saved_results": save_result.output
+    }</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Putting It All Together -->
+        <div class="section fade-in" id="integration">
+            <div class="flex items-center mb-6">
+                <div class="step-number">5</div>
+                <h2 class="text-2xl font-bold">Putting It All Together</h2>
+            </div>
+
+            <p class="mb-6">
+                Now that we've explored the individual components of OpenManus, let's see how they all work together to create a powerful multi-agent AI system capable of handling complex tasks.
+            </p>
+
+            <div class="interactive-diagram">
+                <h3 class="text-lg font-semibold mb-4">Complete System Architecture</h3>
+
+                <svg width="100%" height="500" viewBox="0 0 900 500" class="diagram">
+                    <!-- User -->
+                    <rect x="400" y="20" width="100" height="40" rx="8" fill="#4253b4" stroke="#3a49a0" stroke-width="2" />
+                    <text x="450" y="45" text-anchor="middle" fill="white" font-weight="bold">User</text>
+
+                    <!-- API Server -->
+                    <rect x="400" y="100" width="100" height="40" rx="8" fill="#62d6c4" stroke="#52b6a4" stroke-width="2" />
+                    <text x="450" y="125" text-anchor="middle" fill="white" font-weight="bold">API Server</text>
+
+                    <!-- Flow Manager -->
+                    <rect x="400" y="180" width="100" height="40" rx="8" fill="#ffaa44" stroke="#ee9933" stroke-width="2" />
+                    <text x="450" y="205" text-anchor="middle" fill="white" font-weight="bold">Flow Manager</text>
+
+                    <!-- Agents -->
+                    <rect x="150" y="260" width="100" height="40" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="200" y="285" text-anchor="middle" fill="white" font-weight="bold">Research Agent</text>
+
+                    <rect x="300" y="260" width="100" height="40" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="350" y="285" text-anchor="middle" fill="white" font-weight="bold">Browser Agent</text>
+
+                    <rect x="450" y="260" width="100" height="40" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="500" y="285" text-anchor="middle" fill="white" font-weight="bold">Planning Agent</text>
+
+                    <rect x="600" y="260" width="100" height="40" rx="8" fill="#f87171" stroke="#ef4444" stroke-width="2" />
+                    <text x="650" y="285" text-anchor="middle" fill="white" font-weight="bold">Coder Agent</text>
+
+                    <!-- LLM -->
+                    <rect x="150" y="340" width="250" height="40" rx="8" fill="#8293f4" stroke="#7283e4" stroke-width="2" />
+                    <text x="275" y="365" text-anchor="middle" fill="white" font-weight="bold">LLM</text>
+
+                    <!-- Tools -->
+                    <rect x="450" y="340" width="300" height="40" rx="8" fill="#b794f4" stroke="#a284e4" stroke-width="2" />
+                    <text x="600" y="365" text-anchor="middle" fill="white" font-weight="bold">Tools</text>
+
+                    <!-- Memory -->
+                    <rect x="150" y="420" width="250" height="40" rx="8" fill="#4fd1c5" stroke="#3eb8ac" stroke-width="2" />
+                    <text x="275" y="445" text-anchor="middle" fill="white" font-weight="bold">Memory</text>
+
+                    <!-- External Systems -->
+                    <rect x="450" y="420" width="300" height="40" rx="8" fill="#f6ad55" stroke="#e69e40" stroke-width="2" />
+                    <text x="600" y="445" text-anchor="middle" fill="white" font-weight="bold">External Systems</text>
+
+                    <!-- Connection lines -->
+                    <line x1="450" y1="60" x2="450" y2="100" stroke="#333" stroke-width="2" />
+                    <line x1="450" y1="140" x2="450" y2="180" stroke="#333" stroke-width="2" />
+                    <line x1="450" y1="220" x2="450" y2="240" stroke="#333" stroke-width="2" />
+                    <line x1="450" y1="240" x2="200" y2="260" stroke="#333" stroke-width="2" />
+                    <line x1="450" y1="240" x2="350" y2="260" stroke="#333" stroke-width="2" />
+                    <line x1="450" y1="240" x2="500" y2="260" stroke="#333" stroke-width="2" />
+                    <line x1="450" y1="240" x2="650" y2="260" stroke="#333" stroke-width="2" />
+                    <line x1="200" y1="300" x2="200" y2="340" stroke="#333" stroke-width="2" />
+                    <line x1="350" y1="300" x2="350" y2="340" stroke="#333" stroke-width="2" />
+                    <line x1="500" y1="300" x2="500" y2="340" stroke="#333" stroke-width="2" />
+                    <line x1="650" y1="300" x2="650" y2="340" stroke="#333" stroke-width="2" />
+                    <line x1="275" y1="380" x2="275" y2="420" stroke="#333" stroke-width="2" />
+                    <line x1="600" y1="380" x2="600" y2="420" stroke="#333" stroke-width="2" />
+                </svg>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">End-to-End Task Execution</h3>
+
+                <div class="relative overflow-hidden pb-4">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-blue-500"></div>
+                            <div class="timeline-content p-4 bg-white rounded-lg shadow">
+                                <h4 class="text-lg font-medium mb-2">1. User Input</h4>
+                                <p>User submits a task request via the CLI, API, or web interface.</p>
+                                <div class="bg-gray-100 p-3 mt-2 rounded text-sm">
+                                    <code>python client.py --task "Build a dashboard to visualize Tesla stock trends for the past year"</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-line"></div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-green-500"></div>
+                            <div class="timeline-content p-4 bg-white rounded-lg shadow">
+                                <h4 class="text-lg font-medium mb-2">2. Task Analysis</h4>
+                                <p>The Coordinator Agent analyzes the task and creates a plan using the Planning Agent.</p>
+                                <div class="bg-gray-100 p-3 mt-2 rounded text-sm">
+                                    <code>
+Plan created:
+1. Research Tesla stock data sources
+2. Collect historical stock data
+3. Select visualization framework
+4. Create dashboard code
+5. Test and refine dashboard
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-line"></div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-yellow-500"></div>
+                            <div class="timeline-content p-4 bg-white rounded-lg shadow">
+                                <h4 class="text-lg font-medium mb-2">3. Parallel Agent Execution</h4>
+                                <p>Multiple agents work on different aspects of the task in parallel.</p>
+                                <ul class="list-disc pl-5 mt-2 space-y-1">
+                                    <li><strong>Research Agent</strong>: Finds reliable stock data APIs</li>
+                                    <li><strong>Browser Agent</strong>: Navigates to financial websites to confirm data availability</li>
+                                    <li><strong>Planning Agent</strong>: Updates the plan with specific implementation details</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="timeline-line"></div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-red-500"></div>
+                            <div class="timeline-content p-4 bg-white rounded-lg shadow">
+                                <h4 class="text-lg font-medium mb-2">4. Tool Utilization</h4>
+                                <p>Agents use various tools to perform actions and gather information.</p>
+                                <div class="bg-gray-100 p-3 mt-2 rounded text-sm">
+                                    <code>
+# Browser Agent uses BrowserUseTool
+await agent.execute_tool({
+    "name": "browser_use",
+    "arguments": {"url": "https://finance.yahoo.com/quote/TSLA"}
+})
+
+# Coder Agent uses PythonExecute
+await agent.execute_tool({
+    "name": "python_execute",
+    "arguments": {"code": "import yfinance as yf\ndata = yf.download('TSLA', period='1y')\nresult = data.head()"}
+})
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-line"></div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-purple-500"></div>
+                            <div class="timeline-content p-4 bg-white rounded-lg shadow">
+                                <h4 class="text-lg font-medium mb-2">5. Integration and Output</h4>
+                                <p>The Flow Manager collects results from all agents and constructs the final solution.</p>
+                                <ul class="list-disc pl-5 mt-2 space-y-1">
+                                    <li>Combines code snippets from different agents</li>
+                                    <li>Ensures integration between components</li>
+                                    <li>Verifies the solution meets requirements</li>
+                                    <li>Delivers final code and instructions to the user</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="text-lg font-semibold mb-2">Advanced Use Cases</h4>
+                    <p class="mb-3">OpenManus's architecture enables a wide range of complex applications:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h5 class="font-medium mb-2">Autonomous Research Assistant</h5>
+                            <p class="text-sm">Conducts comprehensive research on topics, synthesizing information from multiple sources, verifying facts, and generating coherent reports.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h5 class="font-medium mb-2">Full-Stack Development Helper</h5>
+                            <p class="text-sm">Plans, codes, and tests applications based on user requirements, handling both frontend and backend components with appropriate frameworks.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h5 class="font-medium mb-2">Data Analysis Pipeline</h5>
+                            <p class="text-sm">Collects, cleans, analyzes, and visualizes data from various sources, applying appropriate statistical methods and creating insightful visualizations.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h5 class="font-medium mb-2">Content Generation System</h5>
+                            <p class="text-sm">Researches topics, plans content structure, generates written material, creates visual assets, and optimizes for specific platforms and audiences.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="section fade-in" id="conclusion">
+            <h2 class="text-2xl font-bold mb-4">Conclusion</h2>
+
+            <p class="mb-4">
+                OpenManus represents a significant step forward in open-source AI agent architecture, offering a modular, extensible framework for building powerful multi-agent systems. By understanding its architecture, you can now:
+            </p>
+
+            <ul class="list-disc pl-5 space-y-2 mb-6">
+                <li>Understand how multiple specialized agents can collaborate to solve complex tasks</li>
+                <li>See how the hierarchical agent structure provides both simplicity and power</li>
+                <li>Recognize the importance of flexible tool integration for real-world capabilities</li>
+                <li>Appreciate the workflow system that orchestrates agent activities</li>
+                <li>Implement or extend the OpenManus architecture for your own projects</li>
+            </ul>
+
+            <div class="bg-primary-color bg-opacity-10 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-3">Next Steps</h3>
+                <p class="mb-4">Ready to dive deeper into OpenManus? Here are some ways to continue your journey:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-medium mb-2">Try It Yourself</h4>
+                        <p class="text-sm mb-2">Set up the OpenManus environment and experiment with its capabilities.</p>
+                        <a href="https://github.com/henryalps/OpenManus" class="text-primary-color hover:underline text-sm">Visit GitHub Repository</a>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-medium mb-2">Extend Functionality</h4>
+                        <p class="text-sm mb-2">Create new specialized agents or tools to enhance OpenManus's capabilities.</p>
+                        <a href="https://github.com/henryalps/OpenManus/blob/main/CONTRIBUTING.md" class="text-primary-color hover:underline text-sm">Contribution Guidelines</a>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-medium mb-2">Join the Community</h4>
+                        <p class="text-sm mb-2">Connect with other developers and researchers working on AI agent systems.</p>
+                        <a href="https://github.com/henryalps/OpenManus/issues" class="text-primary-color hover:underline text-sm">Discussions & Issues</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>OpenManus Architecture Guide</p>
+            <p class="text-sm mt-2 text-gray-400">An interactive exploration of the open-source multi-agent AI system</p>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle code blocks
+        function toggleCode(element) {
+            const codeBlock = element.nextElementSibling;
+            codeBlock.classList.toggle('active');
+            const icon = element.querySelector('i');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+
+        // Change tabs
+        function changeTab(event, tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Show the selected tab content and mark button as active
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Detect when elements are in viewport for animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(element => {
+                observer.observe(element);
+            });
+
+            // Initialize tooltips for SVG hotspots
+            const tooltip = document.getElementById('tooltip');
+            const hotspots = document.querySelectorAll('.hotspot');
+
+            hotspots.forEach(hotspot => {
+                hotspot.addEventListener('mouseenter', (e) => {
+                    const parent = e.target.closest('.interactive-diagram');
+                    const hoverables = parent.querySelectorAll('.hoverable');
+
+                    // Find the corresponding hoverable element
+                    let tooltipContent = '';
+                    if (hotspot.id === 'hotspot1') {
+                        tooltipContent = hoverables[0].dataset.tooltip;
+                    } else if (hotspot.id === 'hotspot2') {
+                        tooltipContent = hoverables[1].dataset.tooltip;
+                    } else if (hotspot.id === 'hotspot3') {
+                        tooltipContent = hoverables[2].dataset.tooltip;
+                    } else if (hotspot.id === 'hotspot4') {
+                        tooltipContent = hoverables[3].dataset.tooltip;
+                    } else if (hotspot.id === 'hotspot5') {
+                        tooltipContent = hoverables[4].dataset.tooltip;
+                    } else if (hotspot.id === 'hotspot6') {
+                        tooltipContent = hoverables[5].dataset.tooltip;
+                    }
+
+                    tooltip.textContent = tooltipContent;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${e.pageX + 10}px`;
+                    tooltip.style.top = `${e.pageY + 10}px`;
+                });
+
+                hotspot.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+
+                hotspot.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = `${e.pageX + 10}px`;
+                    tooltip.style.top = `${e.pageY + 10}px`;
+                });
+            });
+
+            // Progress bar
+            window.addEventListener('scroll', () => {
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const scrollTop = window.scrollY;
+                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
+
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            });
+
+            // Automatically expand the first code block in each section
+            document.querySelectorAll('.section').forEach(section => {
+                const firstCodeHeader = section.querySelector('.code-header');
+                if (firstCodeHeader) {
+                    toggleCode(firstCodeHeader);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

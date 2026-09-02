@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البدء مع Django: بناء أول تطبيق ويب</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-okaidia.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 240px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 20;
+        }
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        #content {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
+        #content.full-width {
+            margin-left: 0;
+        }
+        .nav-link {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #4a5568;
+            border-left: 3px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: #edf2f7;
+            color: #2d3748;
+        }
+        .nav-link.active {
+            background-color: #e2e8f0;
+            color: #2b6cb0;
+            border-left: 3px solid #4299e1;
+        }
+        .section {
+            scroll-margin-top: 2rem;
+            max-width: 100%;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        pre {
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        code {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+        }
+        .terminal {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+            direction: ltr;
+        }
+        .note {
+            background-color: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.25rem;
+        }
+        .warning {
+            background-color: #fffbeb;
+            border-left: 4px solid #ecc94b;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.25rem;
+        }
+        .tip {
+            background-color: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.25rem;
+        }
+        .quiz-container {
+            background-color: #e6f7ff;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .quiz-option {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: #f3f4f6;
+        }
+        .quiz-option.correct {
+            background-color: #d1fae5;
+            border-color: #34d399;
+        }
+        .quiz-option.incorrect {
+            background-color: #fee2e2;
+            border-color: #f87171;
+        }
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            display: none;
+        }
+        .code-tabs {
+            margin: 1.5rem 0;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 0.25rem 0.25rem 0 0;
+            margin-right: 0.25rem;
+            background-color: #f8fafc;
+        }
+        .tab.active {
+            border-color: #e2e8f0;
+            background-color: white;
+            margin-bottom: -1px;
+        }
+        .tab-content {
+            display: none;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            padding: 1rem;
+            border-radius: 0 0 0.25rem 0.25rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* For PDF export optimization */
+        @media print {
+            .sidebar, .toggle-sidebar {
+                display: none;
+            }
+            #content {
+                margin-left: 0;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+            .quiz-container, .terminal, pre, .note, .warning, .tip {
+                page-break-inside: avoid;
+            }
+            body {
+                padding: 2rem;
+            }
+        }
+
+        /* Progress tracking */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            position: fixed;
+            top: 0;
+            z-index: 30;
+        }
+        #progressBar {
+            height: 8px;
+            background: #4299e1;
+            width: 0%;
+        }
+
+        /* Visual diagram styles */
+        .diagram {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .folder-structure {
+            font-family: 'Fira Code', monospace;
+            line-height: 1.5;
+        }
+        .folder-structure .folder {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .folder-structure .folder::before {
+            content: "📁";
+            position: absolute;
+            left: 0;
+        }
+        .folder-structure .file {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .folder-structure .file::before {
+            content: "📄";
+            position: absolute;
+            left: 0;
+        }
+
+        /* Steps counter */
+        .steps-container {
+            counter-reset: step;
+        }
+        .step {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: #4299e1;
+            color: white;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Checkboxes for tracking progress */
+        .progress-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        /* Flow diagram */
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        .flow-item {
+            padding: 1rem 2rem;
+            background-color: #e6f7ff;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            position: relative;
+            width: 80%;
+            max-width: 400px;
+        }
+        .flow-item::after {
+            content: "↓";
+            position: absolute;
+            bottom: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: #4299e1;
+        }
+        .flow-item:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="progress-container">
+        <div id="progressBar"></div>
+    </div>
+
+    <!-- زر تبديل الشريط الجانبي -->
+    <button id="sidebarToggle" class="toggle-sidebar fixed top-4 left-4 z-30 bg-blue-500 text-white p-2 rounded-full shadow-lg hidden md:block">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- الشريط الجانبي للتنقل -->
+    <div id="sidebar" class="sidebar shadow-lg" dir="rtl">
+        <div class="p-4 bg-blue-600 text-white">
+            <h2 class="text-xl font-bold">تنقل الدرس</h2>
+        </div>
+        <div class="p-2">
+            <a href="index.html" class="nav-link rounded">الرئيسية</a>
+            <a href="#introduction" class="nav-link rounded">1. مقدمة إلى Django</a>
+            <a href="#setup" class="nav-link rounded">2. إعداد البيئة</a>
+            <a href="#project-creation" class="nav-link rounded">3. إنشاء مشروع Django</a>
+            <a href="#folder-structure" class="nav-link rounded">4. هيكلية مجلد Django</a>
+            <a href="#models" class="nav-link rounded">5. إنشاء النماذج</a>
+            <a href="#views" class="nav-link rounded">6. العروض، القوالب وروابط URLs</a>
+            <a href="#forms" class="nav-link rounded">7. إضافة النماذج</a>
+            <a href="#styling" class="nav-link rounded">8. التنسيق باستخدام Bootstrap</a>
+            <a href="#testing" class="nav-link rounded">9. التشغيل والاختبار</a>
+            <a href="#deployment" class="nav-link rounded">10. خيارات النشر</a>
+            <a href="#final-project" class="nav-link rounded">11. ملخص المشروع النهائي</a>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div id="content" class="py-8 px-6 md:px-12 bg-white min-h-screen">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">البدء مع Django: بناء أول تطبيق ويب</h1>
+            <p class="text-xl text-gray-600 mb-6">دليل تفاعلي خطوة بخطوة للمبتدئين تمامًا</p>
+            <div class="flex justify-center">
+                <span class="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium text-sm">
+                    <i class="fas fa-clock mr-2"></i>الوقت المقدر: 90 دقيقة
+                </span>
+            </div>
+        </header>
+
+        <!-- المقدمة -->
+        <section id="introduction" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">1. مقدمة إلى Django</h2>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">ما هو Django؟</h3>
+                <p class="mb-4">
+                    Django هو إطار عمل ويب عالي المستوى بلغة Python يشجع على التطوير السريع والتصميم النظيف العملي. إنه يهتم بالكثير من متاعب تطوير الويب، مما يتيح لك التركيز على كتابة التطبيق دون الحاجة لإعادة اختراع العجلة.
+                </p>
+                <p class="mb-4">
+                    يتبع Django فلسفة "شامل المكونات" ويوفر تقريبًا كل ما قد يحتاجه المطورون "جاهزًا للاستخدام". وبما أن كل ما تحتاجه هو جزء من المنتج الواحد، فإنه يعمل بسلاسة، ويتبع مبادئ تصميم متسقة، ويوفر وثائق شاملة ومحدّثة.
+                </p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">لماذا Django؟</h3>
+                <ul class="list-disc pl-6 mb-4 space-y-2">
+                    <li><strong>سريع للغاية</strong> - صُمم Django لمساعدة المطورين على تحويل الأفكار إلى تطبيقات بسرعة.</li>
+                    <li><strong>آمن للغاية</strong> - يأخذ Django الأمان على محمل الجد ويساعد المطورين على تجنب العديد من الأخطاء الأمنية الشائعة.</li>
+                    <li><strong>قابل للتوسع بشكل استثنائي</strong> - تستخدم بعض أكثر المواقع ازدحامًا على الويب Django للتعامل مع أعلى متطلبات حركة المرور.</li>
+                    <li><strong>مرن جدًا</strong> - استخدمت شركات ومنظمات وحكومات Django لبناء جميع أنواع الأنظمة، بدءًا من أنظمة إدارة المحتوى إلى الشبكات الاجتماعية ومنصات الحوسبة العلمية.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">هيكلية Django</h3>
+                <p class="mb-4">
+                    يتبع Django نمط العمارة Model-View-Template (MVT)، وهو نسخة معدلة من نمط Model-View-Controller (MVC):
+                </p>
+
+                <div class="diagram">
+                    <div class="flow-diagram">
+                        <div class="flow-item bg-green-100 border border-green-300">
+                            <strong>Model</strong>
+                            <p class="text-sm">هيكل البيانات وقاعدة البيانات</p>
+                        </div>
+                        <div class="flow-item bg-blue-100 border border-blue-300">
+                            <strong>View</strong>
+                            <p class="text-sm">منطق العمل ومعالجة البيانات</p>
+                        </div>
+                        <div class="flow-item bg-yellow-100 border border-yellow-300">
+                            <strong>Template</strong>
+                            <p class="text-sm">منطق العرض وإظهار المحتوى</p>
+                        </div>
+                        <div class="flow-item bg-purple-100 border border-purple-300">
+                            <strong>URLs</strong>
+                            <p class="text-sm">التوجيه والتعيين</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-container">
+                <h3 class="text-xl font-semibold mb-3">اختبار سريع: أساسيات Django</h3>
+                <p class="mb-4">اختبر فهمك لأساسيات Django:</p>
+
+                <div class="quiz" data-question="1">
+                    <p class="font-medium mb-2">ما هو النمط المعماري الذي يتبعه Django؟</p>
+                    <div class="quiz-option" data-correct="true">Model-View-Template (MVT)</div>
+                    <div class="quiz-option">Model-View-Controller (MVC)</div>
+                    <div class="quiz-option">View-Template-Controller (VTC)</div>
+                    <div class="quiz-option">Template-Model-View (TMV)</div>
+                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                        صحيح! يتبع Django نمط MVT (Model-View-Template) وهو مشابه لـ MVC مع بعض المصطلحات الخاصة بـ Django.
+                    </div>
+                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                        ليس تمامًا. يتبع Django نمط MVT (Model-View-Template) وهو مشابه لـ MVC مع بعض المصطلحات الخاصة بـ Django.
+                    </div>
+                </div>
+            </div>
+
+            <div class="note mt-8">
+                <strong>ما سنقوم ببنائه:</strong> في هذا الدرس، سننشئ تطبيق تدوين ملاحظات بسيط حيث يمكن للمستخدمين إنشاء وعرض وقائمة للملاحظات. كل ملاحظة ستحتوي على عنوان ومحتوى.
+            </div>
+        </section>
+
+        <!-- إعداد البيئة -->
+        <section id="setup" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">2. إعداد بيئة العمل</h2>
+
+            <p class="mb-4">
+                قبل بدء بناء تطبيق Django، نحتاج إلى إعداد بيئة التطوير. يشمل ذلك تثبيت Python، إنشاء بيئة افتراضية، وتثبيت Django.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تثبيت Python</h3>
+                    <p class="mb-2">
+                        Django هو إطار عمل Python، لذا نحتاج أولاً إلى تثبيت Python. يتطلب Django 4.0+ Python 3.8 أو أعلى.
+                    </p>
+                    <ul class="list-disc pl-6 mb-4 space-y-1">
+                        <li>قم بتنزيل Python من <a href="https://www.python.org/downloads/" class="text-blue-600 hover:underline" target="_blank">python.org/downloads</a></li>
+                        <li>أثناء التثبيت، تأكد من تحديد "Add Python to PATH"</li>
+                    </ul>
+                    <p class="mb-2">تحقق من التثبيت بفتح الطرفية أو موجه الأوامر وكتابة:</p>
+                    <div class="terminal">
+                        <code>python --version</code>
+                    </div>
+                    <p>يجب أن ترى شيئًا مثل <code>Python 3.10.0</code> (قد يختلف الإصدار لديك).</p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء بيئة افتراضية</h3>
+                    <p class="mb-2">
+                        تتيح لك البيئات الافتراضية وجود بيئات Python معزولة لمشاريع مختلفة حتى لا تتداخل تبعياتها مع بعضها البعض.
+                    </p>
+                    <p class="mb-2">افتح الطرفية وانتقل إلى المجلد الذي ترغب في إنشاء مشروعك فيه:</p>
+                    <div class="terminal">
+                        <code>cd path/to/your/projects/folder</code>
+                    </div>
+                    <p class="mb-2">قم بإنشاء مجلد جديد لمشروعك:</p>
+                    <div class="terminal">
+                        <code>mkdir mynotes</code><br>
+                        <code>cd mynotes</code>
+                    </div>
+                    <p class="mb-2">قم بإنشاء بيئة افتراضية:</p>
+                    <div class="code-tabs">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="windows">Windows</div>
+                            <div class="tab" data-tab="mac-linux">Mac/Linux</div>
+                        </div>
+                        <div class="tab-content active" id="windows">
+                            <div class="terminal">
+                                <code>python -m venv venv</code>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="mac-linux">
+                            <div class="terminal">
+                                <code>python3 -m venv venv</code>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-2">قم بتفعيل البيئة الافتراضية:</p>
+                    <div class="code-tabs">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="windows-activate">Windows</div>
+                            <div class="tab" data-tab="mac-linux-activate">Mac/Linux</div>
+                        </div>
+                        <div class="tab-content active" id="windows-activate">
+                            <div class="terminal">
+                                <code>venv\Scripts\activate</code>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="mac-linux-activate">
+                            <div class="terminal">
+                                <code>source venv/bin/activate</code>
+                            </div>
+                        </div>
+                    </div>
+                    <p>ستعرف أن البيئة الافتراضية مفَعلة عندما ترى <code>(venv)</code> في بداية موجه الأوامر.</p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تثبيت Django</h3>
+                    <p class="mb-2">مع تفعيل البيئة الافتراضية، قم بتثبيت Django:</p>
+                    <div class="terminal">
+                        <code>pip install django</code>
+                    </div>
+                    <p class="mb-2">تحقق من التثبيت:</p>
+                    <div class="terminal">
+                        <code>python -m django --version</code>
+                    </div>
+                    <p>يجب أن ترى رقم إصدار Django، مثل <code>4.2.1</code> (قد يختلف الإصدار لديك).</p>
+                </div>
+            </div>
+
+            <div class="tip mt-8">
+                <strong>نصيحة احترافية:</strong> قم دائمًا بتفعيل بيئتك الافتراضية قبل العمل على مشروعك. إذا أغلقت الطرفية وعدت لاحقًا، ستحتاج إلى إعادة تفعيلها.
+            </div>
+
+            <div class="quiz-container">
+                <h3 class="text-xl font-semibold mb-3">اختبار سريع: البيئات الافتراضية</h3>
+                <div class="quiz" data-question="2">
+                    <p class="font-medium mb-2">لماذا يجب عليك استخدام بيئة افتراضية لمشاريع Django الخاصة بك؟</p>
+                    <div class="quiz-option">لتسريع تشغيل الكود الخاص بك</div>
+                    <div class="quiz-option" data-correct="true">لعزل تبعيات المشروع وتجنب التعارضات</div>
+                    <div class="quiz-option">لجعل مشروعك متوافقًا مع جميع أنظمة التشغيل</div>
+                    <div class="quiz-option">لتفعيل ميزات الأمان في Django</div>
+                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                        صحيح! تعزل البيئات الافتراضية التبعيات لمشاريع مختلفة، مما يمنع التعارض بينها.
+                    </div>
+                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                        ليس تمامًا. تُستخدم البيئات الافتراضية لعزل تبعيات المشروع ومنع التعارض بين المشاريع المختلفة التي قد تحتاج إلى إصدارات مختلفة من نفس الحزم.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- إنشاء مشروع وتطبيق Django -->
+        <section id="project-creation" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">3. إنشاء مشروع وتطبيق Django</h2>
+
+            <p class="mb-4">
+                في Django، يمثل <strong>المشروع</strong> التطبيق الويب بأكمله، بينما يمثل <strong>التطبيق</strong> وحدة داخل المشروع تتولى وظيفة محددة. يمكن أن يحتوي المشروع على عدة تطبيقات.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء مشروع Django</h3>
+                    <p class="mb-2">مع تفعيل بيئتك الافتراضية، نفذ الأمر التالي:</p>
+                    <div class="terminal">
+                        <code>django-admin startproject mynotes .</code>
+                    </div>
+                    <p class="mb-2">
+                        لاحظ النقطة <code>.</code> في النهاية التي تخبر Django بإنشاء المشروع في الدليل الحالي بدلاً من إنشاء مجلد جديد.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء تطبيق Django</h3>
+                    <p class="mb-2">الآن، دعونا ننشئ تطبيقًا داخل مشروعنا:</p>
+                    <div class="terminal">
+                        <code>python manage.py startapp notes</code>
+                    </div>
+                </div>
+
+                <div class="step" dir="ltr">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تسجيل التطبيق</h3>
+                    <p class="mb-2">
+                        افتح ملف <code>mynotes/settings.py</code> وأضف تطبيقك إلى قائمة <code>INSTALLED_APPS</code>:
+                    </p>
+                    <pre><code class="language-python">INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'notes',  # Add this line
+]</code></pre>
+                </div>
+
+                <div class="step" dir="ltr">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تشغيل الترحيلات الأولية</h3>
+                    <p class="mb-2">
+                        يستخدم Django الترحيلات لمتابعة التغييرات التي تجريها على النماذج وتحديث مخطط قاعدة البيانات وفقًا لذلك. دعونا نشغل الترحيلات الأولية:
+                    </p>
+                    <div class="terminal">
+                        <code>python manage.py migrate</code>
+                    </div>
+                    <p class="mb-2">
+                        يقوم هذا الأمر بتطبيق الترحيلات المدمجة للتطبيقات الافتراضية المذكورة في <code>INSTALLED_APPS</code>.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">بدء خادم التطوير</h3>
+                    <p class="mb-2">دعونا نتأكد من أن كل شيء يعمل عن طريق تشغيل خادم التطوير:</p>
+                    <div class="terminal">
+                        <code>python manage.py runserver</code>
+                    </div>
+                    <p class="mb-2">
+                        افتح متصفح الويب وانتقل إلى <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a>. يجب أن ترى صفحة ترحيب Django.
+                    </p>
+                    <p class="mb-2">
+                        اضغط على <code>CTRL+C</code> في الطرفية لإيقاف الخادم عند الانتهاء.
+                    </p>
+                </div>
+            </div>
+
+            <div class="warning mt-8">
+                <strong>ملاحظة:</strong> لا تستخدم خادم التطوير في بيئة الإنتاج، فهو غير مصمم ليكون آمنًا أو مستقرًا أو فعالًا.
+            </div>
+
+            <div class="quiz-container">
+                <h3 class="text-xl font-semibold mb-3">اختبار سريع: المشاريع مقابل التطبيقات</h3>
+                <div class="quiz" data-question="3">
+                    <p class="font-medium mb-2">ما العلاقة بين مشاريع Django والتطبيقات؟</p>
+                    <div class="quiz-option">المشاريع والتطبيقات هما الشيء نفسه</div>
+                    <div class="quiz-option">تتألف المشاريع من عدة مواقع ويب، كل منها يحتوي على تطبيق واحد</div>
+                    <div class="quiz-option" data-correct="true">يمكن للمشروع أن يحتوي على عدة تطبيقات، كل منها يتولى وظيفة محددة</div>
+                    <div class="quiz-option">التطبيقات مستقلة ولا يمكن أن تكون جزءًا من مشروع</div>
+                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                        صحيح! يمثل مشروع Django التطبيق الويب بأكمله، ويمكن أن يحتوي على عدة تطبيقات تتولى كل منها وظيفة محددة.
+                    </div>
+                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                        ليس تمامًا. يمثل مشروع Django التطبيق الويب بأكمله ويمكن أن يحتوي على عدة تطبيقات تتولى كل منها وظيفة أو ميزة معينة في الموقع.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- إنشاء النماذج -->
+        <section id="models" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">5. إنشاء نموذج وترحيل قاعدة البيانات</h2>
+
+            <p class="mb-4">
+                النماذج هي المصدر الوحيد والنهائي للمعلومات حول بياناتك. تحتوي على الحقول الأساسية والسلوكيات الخاصة بالبيانات التي تقوم بتخزينها. في تطبيق تدوين الملاحظات لدينا، نحتاج إلى نموذج يمثل الملاحظة.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تعريف نموذج Note</h3>
+                    <p class="mb-2">افتح ملف <code>notes/models.py</code> وأضف الشيفرة التالية:</p>
+                    <pre><code class="language-python">from django.db import models
+from django.utils import timezone
+
+class Note(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title</code></pre>
+                    <p class="mb-2">تقوم هذه الشيفرة بـ:</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-1">
+                        <li>إنشاء نموذج <code>Note</code> يحتوي على حقول العنوان (title)، المحتوى (content)، ووقت الإنشاء (created_at)</li>
+                        <li>تعيين حقل <code>created_at</code> ليأخذ القيمة الافتراضية وهي الوقت الحالي</li>
+                        <li>تعريف دالة <code>__str__</code> التي تُعيد العنوان عند تحويل الكائن إلى سلسلة نصية</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء وتطبيق الترحيلات</h3>
+                    <p class="mb-2">تُستخدم الترحيلات في Django لمتابعة التغييرات التي تجريها على النماذج وتحديث مخطط قاعدة البيانات وفقًا لذلك. أولاً، نقوم بإنشاء ملف ترحيل:</p>
+                    <div class="terminal">
+                        <code>python manage.py makemigrations notes</code>
+                    </div>
+                    <p class="mb-2">
+                        ينشئ هذا الأمر ملف ترحيل في مجلد <code>notes/migrations/</code>. الآن، قم بتطبيق الترحيل لتحديث قاعدة البيانات:
+                    </p>
+                    <div class="terminal">
+                        <code>python manage.py migrate</code>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تسجيل النموذج في لوحة الإدارة</h3>
+                    <p class="mb-2">
+                        يأتي Django مع واجهة إدارة مدمجة يمكننا استخدامها لإدارة بياناتنا. دعونا نسجل نموذجنا فيها.
+                    </p>
+                    <p class="mb-2">
+                        افتح ملف <code>notes/admin.py</code> وأضف الشيفرة التالية:
+                    </p>
+                    <pre><code class="language-python">from django.contrib import admin
+from .models import Note
+
+admin.site.register(Note)</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء حساب مدير (Superuser)</h3>
+                    <p class="mb-2">
+                        للوصول إلى واجهة الإدارة، نحتاج إلى إنشاء حساب مدير:
+                    </p>
+                    <div class="terminal">
+                        <code>python manage.py createsuperuser</code>
+                    </div>
+                    <p class="mb-2">
+                        اتبع التعليمات لإنشاء اسم مستخدم، بريد إلكتروني، وكلمة مرور.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">استكشاف واجهة الإدارة</h3>
+                    <p class="mb-2">
+                        قم بتشغيل خادم التطوير:
+                    </p>
+                    <div class="terminal">
+                        <code>python manage.py runserver</code>
+                    </div>
+                    <p class="mb-2">
+                        زر <a href="http://127.0.0.1:8000/admin/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/admin/</a> وسجّل الدخول باستخدام بيانات مدير الحساب التي أنشأتها.
+                    </p>
+                    <p class="mb-2">
+                        يجب أن ترى واجهة إدارة Django مع نموذج Notes مدرج. جرب إضافة بعض الملاحظات للاختبار.
+                    </p>
+                </div>
+            </div>
+
+            <div class="diagram mt-8">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">العلاقة بين النموذج وقاعدة البيانات</h3>
+                <div class="flow-diagram">
+                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                        <strong>models.py</strong>
+                        <p class="text-sm">تعريف نموذج Note</p>
+                    </div>
+                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                        <strong>makemigrations</strong>
+                        <p class="text-sm">إنشاء ملفات الترحيل</p>
+                    </div>
+                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                        <strong>migrate</strong>
+                        <p class="text-sm">تطبيقها على قاعدة البيانات</p>
+                    </div>
+                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                        <strong>Database</strong>
+                        <p class="text-sm">إنشاء/تحديث الجداول</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-container">
+                <h3 class="text-xl font-semibold mb-3">اختبار سريع: نماذج Django</h3>
+                <div class="quiz" data-question="5">
+                    <p class="font-medium mb-2">بعد تغيير نموذج، ما الأمران اللذان يجب تشغيلهما لتحديث قاعدة البيانات؟</p>
+                    <div class="quiz-option">python manage.py createsuperuser and python manage.py runserver</div>
+                    <div class="quiz-option" data-correct="true">python manage.py makemigrations and python manage.py migrate</div>
+                    <div class="quiz-option">python manage.py startapp and python manage.py makemigrations</div>
+                    <div class="quiz-option">python manage.py migrate and python manage.py createsuperuser</div>
+                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                        صحيح! قم أولاً بتشغيل makemigrations لإنشاء ملفات الترحيل، ثم migrate لتطبيقها على قاعدة البيانات.
+                    </div>
+                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                        ليس تمامًا. التسلسل الصحيح هو: أولاً تشغيل makemigrations لإنشاء ملفات الترحيل، ثم migrate لتطبيقها على قاعدة البيانات.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- إنشاء العروض، القوالب، وروابط URLs -->
+        <section id="views" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">6. إنشاء العروض، القوالب، وروابط URLs</h2>
+
+            <p class="mb-4">
+                الآن بعد أن قمنا بإعداد النموذج، نحتاج إلى إنشاء العروض (views)، القوالب (templates)، وروابط URL لعرض الملاحظات للمستخدمين.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء دليل القوالب</h3>
+                    <p class="mb-2">أولاً، قم بإنشاء هيكل دليل للقوالب:</p>
+                    <div class="terminal">
+                        <code>mkdir -p notes/templates/notes</code>
+                    </div>
+                    <p class="mb-2">
+                        يبحث Django عن القوالب في مجلد "templates" داخل كل تطبيق. نضيف مجلد "notes" إضافي داخل مجلد القوالب لتفادي التعارض مع قوالب تطبيقات أخرى.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء القالب الأساسي</h3>
+                    <p class="mb-2">قم بإنشاء قالب أساسي في <code>notes/templates/notes/base.html</code>:</p>
+                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;{% block title %}My Notes App{% endblock %}&lt;/title&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark"&gt;
+        &lt;div class="container"&gt;
+            &lt;a class="navbar-brand" href="{% url 'home' %}"&gt;My Notes&lt;/a&gt;
+            &lt;button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"&gt;
+                &lt;span class="navbar-toggler-icon"&gt;&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;div class="collapse navbar-collapse" id="navbarNav"&gt;
+                &lt;ul class="navbar-nav"&gt;
+                    &lt;li class="nav-item"&gt;
+                        &lt;a class="nav-link" href="{% url 'home' %}"&gt;Home&lt;/a&gt;
+                    &lt;/li&gt;
+                    &lt;li class="nav-item"&gt;
+                        &lt;a class="nav-link" href="{% url 'note_list' %}"&gt;All Notes&lt;/a&gt;
+                    &lt;/li&gt;
+                    &lt;li class="nav-item"&gt;
+                        &lt;a class="nav-link" href="{% url 'note_new' %}"&gt;New Note&lt;/a&gt;
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+
+    &lt;div class="container mt-4"&gt;
+        {% block content %}
+        {% endblock %}
+    &lt;/div&gt;
+
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    <p class="mb-2">
+                        يتضمن هذا القالب الأساسي Bootstrap للتنسيق ويعرّف الكتل التي ستملأها القوالب الفرعية.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء قالب الصفحة الرئيسية</h3>
+                    <p class="mb-2">قم بإنشاء الملف <code>notes/templates/notes/home.html</code>:</p>
+                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+
+{% block title %}Home | My Notes App{% endblock %}
+
+{% block content %}
+&lt;div class="jumbotron"&gt;
+    &lt;h1 class="display-4"&gt;Welcome to My Notes App&lt;/h1&gt;
+    &lt;p class="lead"&gt;A simple Django application to manage your notes.&lt;/p&gt;
+    &lt;hr class="my-4"&gt;
+    &lt;p&gt;Get started by creating a new note or viewing your existing notes.&lt;/p&gt;
+    &lt;a class="btn btn-primary btn-lg" href="{% url 'note_new' %}" role="button"&gt;Create New Note&lt;/a&gt;
+    &lt;a class="btn btn-secondary btn-lg" href="{% url 'note_list' %}" role="button"&gt;View All Notes&lt;/a&gt;
+&lt;/div&gt;
+{% endblock %}</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء قالب قائمة الملاحظات</h3>
+                    <p class="mb-2">قم بإنشاء الملف <code>notes/templates/notes/note_list.html</code>:</p>
+                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+
+{% block title %}All Notes | My Notes App{% endblock %}
+
+{% block content %}
+&lt;h1&gt;All Notes&lt;/h1&gt;
+
+{% if notes %}
+    &lt;div class="row"&gt;
+        {% for note in notes %}
+            &lt;div class="col-md-4 mb-4"&gt;
+                &lt;div class="card"&gt;
+                    &lt;div class="card-body"&gt;
+                        &lt;h5 class="card-title"&gt;{{ note.title }}&lt;/h5&gt;
+                        &lt;p class="card-text"&gt;{{ note.content|truncatechars:100 }}&lt;/p&gt;
+                        &lt;p class="text-muted"&gt;Created: {{ note.created_at|date:"F j, Y" }}&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        {% endfor %}
+    &lt;/div&gt;
+{% else %}
+    &lt;p&gt;No notes yet. &lt;a href="{% url 'note_new' %}"&gt;Create one&lt;/a&gt;!&lt;/p&gt;
+{% endif %}
+{% endblock %}</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء العروض (Views)</h3>
+                    <p class="mb-2">افتح الملف <code>notes/views.py</code> وأضف الشيفرة التالية:</p>
+                    <pre><code class="language-python">from django.shortcuts import render
+from .models import Note
+
+def home(request):
+    return render(request, 'notes/home.html')
+
+def note_list(request):
+    notes = Note.objects.all().order_by('-created_at')
+    return render(request, 'notes/note_list.html', {'notes': notes})</code></pre>
+                    <p class="mb-2">
+                        تُنشئ هذه الدوال عرضين: واحد للصفحة الرئيسية وآخر لقائمة الملاحظات.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء روابط URLs للتطبيق</h3>
+                    <p class="mb-2">قم بإنشاء ملف جديد <code>notes/urls.py</code>:</p>
+                    <pre><code class="language-python">from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('notes/', views.note_list, name='note_list'),
+]</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إدراج روابط URLs للتطبيق في روابط URLs للمشروع</h3>
+                    <p class="mb-2">افتح الملف <code>mynotes/urls.py</code> وعدله كما يلي:</p>
+                    <pre><code class="language-python">from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('notes.urls')),
+]</code></pre>
+                    <p class="mb-2">
+                        يقوم هذا الأمر بإدراج روابط URL الخاصة بالتطبيق ضمن إعدادات روابط URL للمشروع.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر العروض</h3>
+                    <p class="mb-2">قم بتشغيل خادم التطوير:</p>
+                    <div class="terminal">
+                        <code>python manage.py runserver</code>
+                    </div>
+                    <p class="mb-2">
+                        زر <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a> لرؤية الصفحة الرئيسية، و<a href="http://127.0.0.1:8000/notes/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/notes/</a> لرؤية قائمة الملاحظات.
+                    </p>
+                    <p class="mb-2">
+                        ملاحظة: قد لا يعمل رابط "New Note" بعد لأننا لم ننشئ العرض الخاص به بعد. سنقوم بذلك في القسم التالي.
+                    </p>
+                </div>
+            </div>
+
+            <div class="diagram mt-8">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">تدفق نمط MVT في Django</h3>
+                <div class="flow-diagram">
+                    <div class="flow-item bg-blue-100 border border-blue-300">
+                        <strong>URL</strong>
+                        <p class="text-sm">يطلب المستخدم رابط URL</p>
+                    </div>
+                    <div class="flow-item bg-blue-100 border border-blue-300">
+                        <strong>View</strong>
+                        <p class="text-sm">يعالج الطلب</p>
+                    </div>
+                    <div class="flow-item bg-blue-100 border border-blue-300">
+                        <strong>Model</strong>
+                        <p class="text-sm">يتفاعل مع قاعدة البيانات</p>
+                    </div>
+                    <div class="flow-item bg-blue-100 border border-blue-300">
+                        <strong>Template</strong>
+                        <p class="text-sm">يقوم بعرض HTML</p>
+                    </div>
+                    <div class="flow-item bg-blue-100 border border-blue-300">
+                        <strong>Response</strong>
+                        <p class="text-sm">يعيد الاستجابة للمستخدم</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-container">
+                <h3 class="text-xl font-semibold mb-3">اختبار سريع: قوالب Django</h3>
+                <div class="quiz" data-question="6">
+                    <p class="font-medium mb-2">ما هو الوسم (tag) المستخدم للوراثة من القالب الأساسي؟</p>
+                    <div class="quiz-option">{% include 'base.html' %}</div>
+                    <div class="quiz-option" data-correct="true">{% extends 'base.html' %}</div>
+                    <div class="quiz-option">{% load 'base.html' %}</div>
+                    <div class="quiz-option">{% inherit 'base.html' %}</div>
+                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                        صحيح! يُستخدم الوسم {% extends %} للوراثة من القالب الأساسي.
+                    </div>
+                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                        ليس تمامًا. يُستخدم الوسم {% extends %} للوراثة من القالب الأساسي.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- إضافة النماذج -->
+        <section id="forms" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">7. إضافة النماذج لإنشاء ملاحظات جديدة</h2>
+
+            <p class="mb-4">
+                الآن، دعونا ننشئ نموذجاً يسمح للمستخدمين بإضافة ملاحظات جديدة إلى التطبيق.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء نموذج (Form)</h3>
+                    <p class="mb-2">قم بإنشاء ملف جديد <code>notes/forms.py</code>:</p>
+                    <pre><code class="language-python">from django import forms
+from .models import Note
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        }</code></pre>
+                    <p class="mb-2">
+                        يُنشئ هذا النموذج نموذجًا مستندًا إلى نموذج Note يحتوي على حقول العنوان والمحتوى، كما يضيف فئات Bootstrap لتنسيق النموذج.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إنشاء قالب للنموذج</h3>
+                    <p class="mb-2">قم بإنشاء الملف <code>notes/templates/notes/note_form.html</code>:</p>
+                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+
+{% block title %}New Note | My Notes App{% endblock %}
+
+{% block content %}
+&lt;h1&gt;{% if form.instance.id %}Edit Note{% else %}New Note{% endif %}&lt;/h1&gt;
+
+&lt;form method="post"&gt;
+    {% csrf_token %}
+    &lt;div class="mb-3"&gt;
+        &lt;label for="{{ form.title.id_for_label }}" class="form-label"&gt;Title&lt;/label&gt;
+        {{ form.title }}
+        {% if form.title.errors %}
+            &lt;div class="text-danger"&gt;{{ form.title.errors }}&lt;/div&gt;
+        {% endif %}
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="{{ form.content.id_for_label }}" class="form-label"&gt;Content&lt;/label&gt;
+        {{ form.content }}
+        {% if form.content.errors %}
+            &lt;div class="text-danger"&gt;{{ form.content.errors }}&lt;/div&gt;
+        {% endif %}
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save&lt;/button&gt;
+    &lt;a href="{% url 'note_list' %}" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
+&lt;/form&gt;
+{% endblock %}</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">إضافة عرض لإنشاء الملاحظات</h3>
+                    <p class="mb-2">حدث ملف <code>notes/views.py</code> لإضافة عرض لإنشاء الملاحظات:</p>
+                    <pre><code class="language-python">from django.shortcuts import render, redirect
+from .models import Note
+from .forms import NoteForm
+
+def home(request):
+    return render(request, 'notes/home.html')
+
+def note_list(request):
+    notes = Note.objects.all().order_by('-created_at')
+    return render(request, 'notes/note_list.html', {'notes': notes})
+
+def note_new(request):
+    if request.method == "POST":
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('note_list')
+    else:
+        form = NoteForm()
+    return render(request, 'notes/note_form.html', {'form': form})</code></pre>
+                    <p class="mb-2">
+                        يضيف هذا العرض وظيفة جديدة:
+                    </p>
+                    <ul class="list-disc pl-6 mb-4 space-y-1">
+                        <li>يعرض نموذجًا فارغًا عند تحميل الصفحة لأول مرة (GET request)</li>
+                        <li>يعالج بيانات النموذج عند الإرسال (POST request)</li>
+                        <li>يقوم بإعادة التوجيه إلى صفحة قائمة الملاحظات بعد حفظ الملاحظة بنجاح</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تحديث روابط URLs</h3>
+                    <p class="mb-2">حدث ملف <code>notes/urls.py</code> لإضافة رابط لإنشاء الملاحظات:</p>
+                    <pre><code class="language-python">from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('notes/', views.note_list, name='note_list'),
+    path('notes/new/', views.note_new, name='note_new'),
+]</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر النموذج</h3>
+                    <p class="mb-2">شغل خادم التطوير:</p>
+                    <div class="terminal">
+                        <code>python manage.py runserver</code>
+                    </div>
+                    <p class="mb-2">
+                        زر <a href="http://127.0.0.1:8000/notes/new/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/notes/new/</a> للاطلاع على النموذج الخاص بإنشاء ملاحظة جديدة.
+                    </p>
+                    <p class="mb-2">
+                        جرب إنشاء ملاحظة جديدة وتحقق من ظهورها في قائمة الملاحظات.
+                    </p>
+                </div>
+            </div>
+
+            <div class="note mt-8">
+                <strong>أمن نماذج Django:</strong> لا تنسَ أن وسم <code>{% csrf_token %}</code> في قالب النموذج مهم للأمان؛ فهو يضيف رمز حماية من هجمات Cross-Site Request Forgery.
+            </div>
+
+            <div class="quiz-container">
+                <h3 class="text-xl font-semibold mb-3">اختبار سريع: نماذج Django</h3>
+                <div class="quiz" data-question="7">
+                    <p class="font-medium mb-2">عند إنشاء نموذج بناءً على نموذج بيانات (Model)، من أي فئة يجب أن ترث؟</p>
+                    <div class="quiz-option">forms.Form</div>
+                    <div class="quiz-option" data-correct="true">forms.ModelForm</div>
+                    <div class="quiz-option">models.Form</div>
+                    <div class="quiz-option">models.ModelForm</div>
+                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                        صحيح! عند إنشاء نموذج بناءً على نموذج بيانات، يجب أن ترث من forms.ModelForm.
+                    </div>
+                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                        ليس تمامًا. عند إنشاء نموذج بناءً على نموذج بيانات، يجب أن ترث من forms.ModelForm التي توفر الوظائف اللازمة لإنشاء النماذج مباشرة من النماذج.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- التنسيق باستخدام Bootstrap -->
+        <section id="styling" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">8. التنسيق باستخدام Bootstrap</h2>
+
+            <p class="mb-4">
+                لقد أدخلنا Bootstrap مسبقًا في القالب الأساسي، لكن دعونا نحسن التنسيق أكثر لجعل التطبيق يبدو أكثر أناقة.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تحديث القالب الأساسي</h3>
+                    <p class="mb-2">أضف بعض CSS المخصص إلى القالب الأساسي. حدث الملف <code>notes/templates/notes/base.html</code>:</p>
+                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;{% block title %}My Notes App{% endblock %}&lt;/title&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+    &lt;style&gt;
+        body {
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .card {
+            box-shadow: 0 2px 5px rgba(0,0,0,.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,.15);
+        }
+        .jumbotron {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,.1);
+        }
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            background-color: #343a40;
+            color: #ffffff;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark"&gt;
+        &lt;div class="container"&gt;
+            &lt;a class="navbar-brand" href="{% url 'home' %}"&gt;
+                &lt;i class="fas fa-sticky-note me-2"&gt;&lt;/i&gt;My Notes
+            &lt;/a&gt;
+            &lt;button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"&gt;
+                &lt;span class="navbar-toggler-icon"&gt;&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;div class="collapse navbar-collapse" id="navbarNav"&gt;
+                &lt;ul class="navbar-nav"&gt;
+                    &lt;li class="nav-item"&gt;
+                        &lt;a class="nav-link" href="{% url 'home' %}"&gt;Home&lt;/a&gt;
+                    &lt;/li&gt;
+                    &lt;li class="nav-item"&gt;
+                        &lt;a class="nav-link" href="{% url 'note_list' %}"&gt;All Notes&lt;/a&gt;
+                    &lt;/li&gt;
+                    &lt;li class="nav-item"&gt;
+                        &lt;a class="nav-link" href="{% url 'note_new' %}"&gt;New Note&lt;/a&gt;
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+
+    &lt;div class="container mt-4"&gt;
+        {% block content %}
+        {% endblock %}
+    &lt;/div&gt;
+
+    &lt;footer class="footer mt-auto"&gt;
+        &lt;div class="container text-center"&gt;
+            &lt;p&gt;My Notes App - Built with Django&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/js/all.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    <p class="mb-2">
+                        يحتوي هذا القالب الأساسي على Bootstrap ويعرّف الكتل التي سيتم تعبئتها من قبل القوالب الفرعية.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تحديث قالب قائمة الملاحظات</h3>
+                    <p class="mb-2">قم بتحسين الملف <code>notes/templates/notes/note_list.html</code>:</p>
+                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+
+{% block title %}All Notes | My Notes App{% endblock %}
+
+{% block content %}
+&lt;div class="d-flex justify-content-between align-items-center mb-4"&gt;
+    &lt;h1&gt;All Notes&lt;/h1&gt;
+    &lt;a href="{% url 'note_new' %}" class="btn btn-primary"&gt;
+        &lt;i class="fas fa-plus me-2"&gt;&lt;/i&gt;New Note
+    &lt;/a&gt;
+&lt;/div&gt;
+
+{% if notes %}
+    &lt;div class="row"&gt;
+        {% for note in notes %}
+            &lt;div class="col-md-4 mb-4"&gt;
+                &lt;div class="card h-100"&gt;
+                    &lt;div class="card-header bg-light d-flex justify-content-between align-items-center"&gt;
+                        &lt;span class="text-muted"&gt;{{ note.created_at|date:"F j, Y" }}&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card-body"&gt;
+                        &lt;h5 class="card-title"&gt;{{ note.title }}&lt;/h5&gt;
+                        &lt;p class="card-text"&gt;{{ note.content|truncatechars:100 }}&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        {% endfor %}
+    &lt;/div&gt;
+{% else %}
+    &lt;div class="alert alert-info"&gt;
+        &lt;i class="fas fa-info-circle me-2"&gt;&lt;/i&gt;No notes yet. &lt;a href="{% url 'note_new' %}" class="alert-link"&gt;Create one&lt;/a&gt;!
+    &lt;/div&gt;
+{% endif %}
+{% endblock %}</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تحديث قالب الصفحة الرئيسية</h3>
+                    <p class="mb-2">قم بتحسين الملف <code>notes/templates/notes/home.html</code>:</p>
+                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+
+{% block title %}Home | My Notes App{% endblock %}
+
+{% block content %}
+&lt;div class="jumbotron text-center"&gt;
+    &lt;h1 class="display-4 mb-4"&gt;Welcome to My Notes App&lt;/h1&gt;
+    &lt;p class="lead"&gt;A simple Django application to manage your notes&lt;/p&gt;
+    &lt;hr class="my-4"&gt;
+    &lt;div class="row mt-5 justify-content-center"&gt;
+        &lt;div class="col-md-4 mb-4"&gt;
+            &lt;div class="card text-center h-100"&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;i class="fas fa-plus-circle fa-4x mb-3 text-success"&gt;&lt;/i&gt;
+                    &lt;h3 class="card-title"&gt;Create&lt;/h3&gt;
+                    &lt;p class="card-text"&gt;Create new notes with titles and content&lt;/p&gt;
+                    &lt;a href="{% url 'note_new' %}" class="btn btn-success"&gt;New Note&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="col-md-4 mb-4"&gt;
+            &lt;div class="card text-center h-100"&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;i class="fas fa-list-ul fa-4x mb-3 text-primary"&gt;&lt;/i&gt;
+                    &lt;h3 class="card-title"&gt;View&lt;/h3&gt;
+                    &lt;p class="card-text"&gt;View all your saved notes in one place&lt;/p&gt;
+                    &lt;a href="{% url 'note_list' %}" class="btn btn-primary"&gt;View Notes&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تحديث قالب النموذج</h3>
+                    <p class="mb-2">قم بتحسين الملف <code>notes/templates/notes/note_form.html</code>:</p>
+                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+
+{% block title %}New Note | My Notes App{% endblock %}
+
+{% block content %}
+&lt;div class="card"&gt;
+    &lt;div class="card-header"&gt;
+        &lt;h2&gt;{% if form.instance.id %}Edit Note{% else %}New Note{% endif %}&lt;/h2&gt;
+    &lt;/div&gt;
+    &lt;div class="card-body"&gt;
+        &lt;form method="post"&gt;
+            {% csrf_token %}
+            &lt;div class="mb-3"&gt;
+                &lt;label for="{{ form.title.id_for_label }}" class="form-label"&gt;Title&lt;/label&gt;
+                {{ form.title }}
+                {% if form.title.errors %}
+                    &lt;div class="text-danger"&gt;{{ form.title.errors }}&lt;/div&gt;
+                {% endif %}
+            &lt;/div&gt;
+
+            &lt;div class="mb-3"&gt;
+                &lt;label for="{{ form.content.id_for_label }}" class="form-label"&gt;Content&lt;/label&gt;
+                {{ form.content }}
+                {% if form.content.errors %}
+                    &lt;div class="text-danger"&gt;{{ form.content.errors }}&lt;/div&gt;
+                {% endif %}
+            &lt;/div&gt;
+
+            &lt;div class="d-flex mt-4"&gt;
+                &lt;button type="submit" class="btn btn-primary me-2"&gt;
+                    &lt;i class="fas fa-save me-2"&gt;&lt;/i&gt;Save
+                &lt;/button&gt;
+                &lt;a href="{% url 'note_list' %}" class="btn btn-secondary"&gt;
+                    &lt;i class="fas fa-times me-2"&gt;&lt;/i&gt;Cancel
+                &lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}</code></pre>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر التطبيق المُنسَّق</h3>
+                    <p class="mb-2">شغل خادم التطوير:</p>
+                    <div class="terminal">
+                        <code>python manage.py runserver</code>
+                    </div>
+                    <p class="mb-2">
+                        زر <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a> لرؤية التطبيق المُنسَّق.
+                    </p>
+                </div>
+            </div>
+
+            <div class="tip mt-8">
+                <strong>نصيحة التنسيق:</strong> يوفر Bootstrap العديد من المكونات والأدوات بشكل جاهز، ولكن يمكنك دومًا إضافة CSS مخصص لتكييف الشكل حسب احتياجاتك. أضف أنماطك الخاصة في قسم <code>&lt;style&gt;</code> من القالب الأساسي أو في ملف CSS منفصل.
+            </div>
+        </section>
+
+        <!-- التشغيل والاختبار -->
+        <section id="testing" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">9. تشغيل واختبار التطبيق</h2>
+
+            <p class="mb-4">
+                دعونا نتأكد من أن التطبيق يعمل بشكل صحيح ونختبر جميع الميزات التي قمنا بتنفيذها.
+            </p>
+
+            <div class="steps-container">
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">تشغيل خادم التطوير</h3>
+                    <p class="mb-2">قم بتشغيل خادم التطوير:</p>
+                    <div class="terminal">
+                        <code>python manage.py runserver</code>
+                    </div>
+                    <p class="mb-2">
+                        سيبدأ الخادم على <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a>
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر الصفحة الرئيسية</h3>
+                    <p class="mb-2">
+                        زر الصفحة الرئيسية وتحقق من عرضها بشكل صحيح مع روابط إنشاء وعرض الملاحظات.
+                    </p>
+                    <p class="mb-2">
+                        تأكد من أن زري "New Note" و"View Notes" يعملان بشكل صحيح.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر إنشاء ملاحظة</h3>
+                    <p class="mb-2">
+                        انقر على "New Note" وأنشئ ملاحظة بعنوان ومحتوى.
+                    </p>
+                    <p class="mb-2">
+                        بعد الإرسال، تأكد من إعادة التوجيه إلى صفحة قائمة الملاحظات وظهور الملاحظة الجديدة في القائمة.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر قائمة الملاحظات</h3>
+                    <p class="mb-2">
+                        زر صفحة قائمة الملاحظات وتحقق من عرض جميع الملاحظات بشكل صحيح.
+                    </p>
+                    <p class="mb-2">
+                        أنشئ عدة ملاحظات وتأكد من ظهورها جميعًا في القائمة.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر التنقل</h3>
+                    <p class="mb-2">
+                        تحقق من أن روابط التنقل في الرأس تعمل بشكل صحيح وتنقلك إلى الصفحات المناسبة.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">اختبر التحقق من صحة النموذج</h3>
+                    <p class="mb-2">
+                        حاول إرسال نموذج الملاحظة مع ترك الحقول فارغة للتأكد من أن التحقق من الصحة يعمل بشكل صحيح.
+                    </p>
+                    <p class="mb-2">
+                        تحقق من عرض رسائل الخطأ بشكل مناسب.
+                    </p>
+                </div>
+            </div>
+
+            <div class="note mt-8">
+                <strong>Django Admin:</strong> لا تنسَ أنه يمكنك أيضًا استخدام واجهة الإدارة على <a href="http://127.0.0.1:8000/admin/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/admin/</a> لإدارة ملاحظاتك. سجّل الدخول باستخدام بيانات مدير الحساب التي أنشأتها مسبقًا.
+            </div>
+
+            <div class="warning mt-4">
+                <strong>الاختبار على متصفحات مختلفة:</strong> من الأفضل اختبار تطبيقك على متصفحات مختلفة لضمان التوافق. جرّب فتح التطبيق في Chrome، Firefox، Safari، أو Edge للتأكد من أنه يظهر ويعمل بشكل صحيح عبرها.
+            </div>
+        </section>
+
+        <!-- خيارات النشر -->
+        <section id="deployment" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">10. خيارات النشر (نظرة عامة)</h2>
+
+            <p class="mb-4">
+                بعد بناء واختبار تطبيق Django الخاص بك، قد ترغب في نشره لجعله متاحًا للآخرين. إليك نظرة عامة موجزة على خيارات النشر.
+            </p>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">الاستعداد للنشر</h3>
+                <p class="mb-2">قبل النشر، تحتاج إلى إجراء بعض التغييرات على إعداداتك:</p>
+                <pre><code class="language-python"># في settings.py
+
+# اضبط DEBUG على False في بيئة الإنتاج
+DEBUG = False
+
+# عيّن ALLOWED_HOSTS إلى نطاقك (أو النطاقات الخاصة بك)
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
+
+# قم بتكوين قاعدة بيانات للإنتاج (مثال: PostgreSQL)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_database_name',
+        'USER': 'your_database_user',
+        'PASSWORD': 'your_database_password',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+# تعيين SECRET_KEY آمن
+SECRET_KEY = 'your-secret-key'  # استخدم المتغيرات البيئية لهذا في الواقع
+
+# تكوين الملفات الثابتة
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'</code></pre>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">منصات النشر</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">PythonAnywhere</h4>
+                        <p class="mb-2">منصة مناسبة للمبتدئين مصممة خصيصًا لتطبيقات Python و Django.</p>
+                        <ul class="list-disc pl-6 mb-2">
+                            <li>متوفر مستوى مجاني</li>
+                            <li>سهل الإعداد</li>
+                            <li>مناسب للمبتدئين</li>
+                        </ul>
+                        <a href="https://www.pythonanywhere.com/" class="text-blue-600 hover:underline" target="_blank">تعرف على المزيد</a>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Heroku</h4>
+                        <p class="mb-2">منصة كخدمة (PaaS) تتيح للمطورين بناء وتشغيل التطبيقات وإدارتها.</p>
+                        <ul class="list-disc pl-6 mb-2">
+                            <li>متوفر مستوى مجاني (مع بعض القيود)</li>
+                            <li>خيارات توسع جيدة</li>
+                            <li>وثائق موسعة</li>
+                        </ul>
+                        <a href="https://www.heroku.com/" class="text-blue-600 hover:underline" target="_blank">تعرف على المزيد</a>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">DigitalOcean</h4>
+                        <p class="mb-2">مزود خدمة سحابة يقدم Droplets (آلات افتراضية) ومنصة التطبيقات.</p>
+                        <ul class="list-disc pl-6 mb-2">
+                            <li>تحكم أكبر في الخادم الخاص بك</li>
+                            <li>يتطلب معرفة تقنية أكثر</li>
+                            <li>أسعار معقولة</li>
+                        </ul>
+                        <a href="https://www.digitalocean.com/" class="text-blue-600 hover:underline" target="_blank">تعرف على المزيد</a>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">AWS, Google Cloud, Azure</h4>
+                        <p class="mb-2">منصات سحابية كبرى تقدم خدمات متنوعة لنشر التطبيقات الوب.</p>
+                        <ul class="list-disc pl-6 mb-2">
+                            <li>مجموعة واسعة من الميزات</li>
+                            <li>قابلية توسع عالية</li>
+                            <li>منحنى تعلم أكثر انحدارًا</li>
+                        </ul>
+                        <p>خيارات متعددة متاحة</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">خطوات النشر العامة</h3>
+                <ol class="list-decimal pl-6 mb-4 space-y-2">
+                    <li>قم بإعداد قاعدة بيانات للإنتاج (مثال: PostgreSQL)</li>
+                    <li>قم بتكوين إعداداتك للإنتاج</li>
+                    <li>اجمع الملفات الثابتة: <code>python manage.py collectstatic</code></li>
+                    <li>اختر وقم بإعداد خادم ويب (مثال: Gunicorn، uWSGI)</li>
+                    <li>قم بتكوين بروكسي عكسي (مثال: Nginx، Apache)</li>
+                    <li>قم بإعداد HTTPS باستخدام شهادة (مثال: Let's Encrypt)</li>
+                    <li>انشر الكود الخاص بك على الخادم</li>
+                    <li>ابدأ تشغيل التطبيق</li>
+                </ol>
+            </div>
+
+            <div class="tip mt-8">
+                <strong>توصية بالنشر:</strong> للمبتدئين، يُعدّ PythonAnywhere أو Heroku خيارات جيدة بفضل سهولة إعدادها وتوفر وثائق مفصلة. مع ازدياد خبرتك، يمكنك استكشاف خيارات أخرى تمنحك سيطرة أكبر على بيئتك.
+            </div>
+        </section>
+
+        <!-- ملخص المشروع النهائي وقائمة المراجعة -->
+        <section id="final-project" class="section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">11. ملخص المشروع النهائي وقائمة المراجعة</h2>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">ما قمنا ببنائه</h3>
+                <p class="mb-4">
+                    تهانينا! لقد قمت ببناء تطبيق ويب بسيط باستخدام Django يسمح للمستخدمين بـ:
+                </p>
+                <ul class="list-disc pl-6 mb-4 space-y-1">
+                    <li>عرض صفحة رئيسية منسقة مع روابط لإنشاء وعرض الملاحظات</li>
+                    <li>إنشاء ملاحظات جديدة بعنوان ومحتوى</li>
+                    <li>عرض قائمة بجميع الملاحظات</li>
+                </ul>
+                <p class="mb-4">
+                    على طول الطريق، تعلمت:
+                </p>
+                <ul class="list-disc pl-6 mb-4 space-y-1">
+                    <li>كيفية إعداد بيئة تطوير Django</li>
+                    <li>كيفية إنشاء مشروع وتطبيق Django</li>
+                    <li>كيفية تعريف النماذج والعمل مع قواعد البيانات</li>
+                    <li>كيفية إنشاء العروض والقوالب وروابط URLs</li>
+                    <li>كيفية التعامل مع النماذج ومدخلات المستخدم</li>
+                    <li>كيفية تنسيق التطبيق باستخدام Bootstrap</li>
+                    <li>كيفية اختبار التطبيق</li>
+                    <li>نظرة عامة على خيارات النشر</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">قائمة مراجعة المشروع</h3>
+                <p class="mb-2">
+                    استخدم هذه القائمة للتأكد من إكمال جميع الخطوات اللازمة:
+                </p>
+                <div class="space-y-2">
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check1">
+                        <label for="check1" class="ml-2">إعداد بيئة التطوير باستخدام Python و Django</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check2">
+                        <label for="check2" class="ml-2">إنشاء مشروع وتطبيق Django</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check3">
+                        <label for="check3" class="ml-2">تحديد نموذج Note مع الحقول المناسبة</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check4">
+                        <label for="check4" class="ml-2">إنشاء وتطبيق الترحيلات</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check5">
+                        <label for="check5" class="ml-2">إنشاء العروض للصفحة الرئيسية، وقائمة الملاحظات، وإنشاء الملاحظة</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check6">
+                        <label for="check6" class="ml-2">إنشاء القوالب للصفحة الرئيسية، وقائمة الملاحظات، ونموذج الملاحظة</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check7">
+                        <label for="check7" class="ml-2">إنشاء روابط URLs لجميع العروض</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check8">
+                        <label for="check8" class="ml-2">إنشاء النماذج لمعالجة مدخلات المستخدم</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check9">
+                        <label for="check9" class="ml-2">تنسيق التطبيق باستخدام Bootstrap أو CSS مخصص</label>
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" class="progress-checkbox mt-1" id="check10">
+                        <label for="check10" class="ml-2">اختبار جميع الوظائف للتأكد من عملها بشكل صحيح</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-3">الخطوات التالية</h3>
+                <p class="mb-4">
+                    لقد بنيت تطبيق Django أساسي، ولكن هناك العديد من الطرق لتطويره:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">إضافة مصادقة المستخدم</h4>
+                        <p>السماح للمستخدمين بالتسجيل وتسجيل الدخول والحصول على ملاحظاتهم الخاصة.</p>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">إضافة عمليات CRUD</h4>
+                        <p>تنفيذ وظائف لتحديث وحذف الملاحظات.</p>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">إضافة التصنيفات/الوسوم</h4>
+                        <p>السماح للمستخدمين بتصنيف الملاحظات وتصفية حسب التصنيف.</p>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">إضافة تحرير نص منسق</h4>
+                        <p>تنفيذ محرر نص منسق لمحتوى الملاحظة.</p>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">إضافة وظيفة البحث</h4>
+                        <p>السماح للمستخدمين بالبحث في ملاحظاتهم.</p>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-lg shadow">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">إضافة API</h4>
+                        <p>إنشاء واجهة برمجة تطبيقات REST لتطبيق الملاحظات باستخدام Django REST framework.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-blue-50 rounded-lg border border-blue-200 mb-6">
+                <h3 class="text-2xl font-semibold text-blue-800 mb-3">مصادر للتعلم المزيد</h3>
+                <ul class="list-disc pl-6 space-y-2 text-blue-700">
+                    <li><a href="https://docs.djangoproject.com/en/stable/" class="hover:underline" target="_blank">التوثيق الرسمي لـ Django</a> - مرجع شامل ودروس تعليمية</li>
+                    <li><a href="https://www.djangoproject.com/download/" class="hover:underline" target="_blank">صفحة تحميل Django</a> - للحصول على أحدث إصدار من Django</li>
+                    <li><a href="https://docs.python.org/3/" class="hover:underline" target="_blank">توثيق Python</a> - مرجع لغة Python</li>
+                    <li><a href="https://www.geeksforgeeks.org/django-tutorial/" class="hover:underline" target="_blank">دروس GeeksforGeeks عن Django</a> - دروس وأمثلة إضافية</li>
+                    <li><a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/" class="hover:underline" target="_blank">توثيق Bootstrap</a> - تعرف على المزيد عن التنسيق باستخدام Bootstrap</li>
+                </ul>
+            </div>
+
+            <div class="text-center p-8 bg-gray-50 rounded-lg">
+                <h3 class="text-2xl font-bold text-gray-700 mb-4">تهانينا!</h3>
+                <p class="text-lg mb-4">لقد أكملت درس Django وبنيت أول تطبيق ويب خاص بك!</p>
+                <p>واصل استكشاف Django وبناء تطبيقات أكثر تعقيدًا لتعزيز مهاراتك.</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script>
+        // تبديل الشريط الجانبي
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+            document.getElementById('content').classList.toggle('full-width');
+        });
+
+        // تمييز الرابط النشط
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+
+        // تحديد الرابط النشط بناءً على موقع التمرير
+        function setActiveLink() {
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - 200) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // تحديث مؤشر التمرير
+        function updateProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+            document.getElementById('progressBar').style.width = scrollPercent * 100 + '%';
+        }
+
+        // وظيفة التبويبات
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('tab')) {
+                const tabGroup = e.target.closest('.tabs');
+                const tabContent = tabGroup.nextElementSibling;
+                const tabId = e.target.getAttribute('data-tab');
+
+                // إزالة الفئة النشطة من جميع التبويبات في هذه المجموعة
+                const tabs = tabGroup.querySelectorAll('.tab');
+                tabs.forEach(tab => tab.classList.remove('active'));
+
+                // إضافة الفئة النشطة للتبويب الذي تم النقر عليه
+                e.target.classList.add('active');
+
+                // إخفاء جميع محتويات التبويب في هذه المجموعة
+                const tabContents = e.target.closest('.code-tabs').querySelectorAll('.tab-content');
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // عرض محتوى التبويب المحدد
+                document.getElementById(tabId).classList.add('active');
+            }
+        });
+
+        // وظيفة الاختبارات
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('quiz-option')) {
+                const quiz = e.target.closest('.quiz');
+                const options = quiz.querySelectorAll('.quiz-option');
+                const correctFeedback = quiz.querySelector('.quiz-feedback.correct');
+                const incorrectFeedback = quiz.querySelector('.quiz-feedback.incorrect');
+
+                // تعطيل جميع الخيارات بعد الاختيار
+                options.forEach(option => {
+                    option.style.pointerEvents = 'none';
+                });
+
+                if (e.target.getAttribute('data-correct') === 'true') {
+                    e.target.classList.add('correct');
+                    correctFeedback.style.display = 'block';
+                } else {
+                    e.target.classList.add('incorrect');
+                    incorrectFeedback.style.display = 'block';
+
+                    // إظهار الخيار الصحيح
+                    options.forEach(option => {
+                        if (option.getAttribute('data-correct') === 'true') {
+                            option.classList.add('correct');
+                        }
+                    });
+                }
+            }
+        });
+
+        window.addEventListener('scroll', function() {
+            setActiveLink();
+            updateProgress();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setActiveLink();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

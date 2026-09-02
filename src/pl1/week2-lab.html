@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2: Lab — Arrays | PL1 - Java (601112)</title>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        [data-theme="light"] .navbar{background:var(--bg)}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero::before{display:none}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px}
+
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+        .section-title i{color:var(--primary);font-size:1.2rem}
+
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}
+            .nav-links.open{display:flex}
+            .mobile-toggle{display:block}
+            .hero h1{font-size:1.8rem}
+            .exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week2.html">← Week 2</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week2.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 2</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 2: Lab — <span class="gradient">Arrays</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 7</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 9 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1 -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Array Sum</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Read <strong>5 integers</strong> into an <strong>array</strong>, then compute and print the <strong>sum</strong> of all elements using a <code>for</code> loop and the <code>+=</code> operator.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter 5 numbers: 10 20 30 40 50
+Sum = 150</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class ArraySum {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Declare an int array of size 5
+        
+        // Read 5 integers into the array
+        
+        // Compute the sum using a for loop
+        int sum = 0;
+        
+        // Print the sum
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">Declare the array with <code>int[] numbers = new int[5];</code>. Use a <code>for</code> loop to read values: <code>numbers[i] = input.nextInt();</code>. Then loop again to add each element to <code>sum</code> using <code>sum += numbers[i];</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2 -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>Find Maximum</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Read <strong>N integers</strong> into an array, then find and print the <strong>maximum</strong> value. Initialize <code>max</code> with the first element and compare with the rest using an <code>if</code> statement.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter size: 4
+Enter 4 numbers: 8 23 5 17
+Max = 23</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class FindMax {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Read the size
+        
+        // Create an int array of that size
+        
+        // Read the elements
+        
+        // Find the maximum
+        
+        // Print the max
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Set <code>int max = numbers[0];</code> then loop from index 1: <code>if (numbers[i] &gt; max) max = numbers[i];</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3 -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Reverse Array</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Read <strong>N integers</strong> into an array, then print them in <strong>reverse order</strong> by looping from the last index (<code>length - 1</code>) down to 0.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter size: 5
+Enter 5 numbers: 1 2 3 4 5
+Reversed: 5 4 3 2 1</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class ReverseArray {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Read the size
+        
+        // Create and fill the array
+        
+        // Print elements in reverse order
+        // Loop from length - 1 down to 0
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Use <code>for (int i = numbers.length - 1; i &gt;= 0; i--)</code> to traverse the array backwards. Print each element with a space separator.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4 -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>Copy Array</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Create an array with values <code>{1, 2, 3, 4, 5}</code>, copy it using <code>System.arraycopy</code>, modify the copy, and show the <strong>original is unchanged</strong>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Original: 1 2 3 4 5
+Copy (modified): 99 2 3 4 5
+Original (unchanged): 1 2 3 4 5</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" rows="14" spellcheck="false">public class CopyArray {
+    public static void main(String[] args) {
+        int[] original = {1, 2, 3, 4, 5};
+        
+        // Create a new array of same length
+        
+        // Use System.arraycopy to copy
+        
+        // Modify the copy (e.g., copy[0] = 99)
+        
+        // Print original, copy, and original again
+        
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4">Create the copy: <code>int[] copy = new int[original.length];</code>. Then <code>System.arraycopy(original, 0, copy, 0, original.length);</code>. Modify <code>copy[0] = 99;</code> and print both arrays using a <code>for</code> loop.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5 -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>Array Average</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Read <strong>doubles</strong> into an array, then compute the <strong>average</strong> using an <strong>enhanced for loop</strong> (<code>for-each</code>). Divide the sum by <code>array.length</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter 4 grades: 85.5 90.0 78.5 92.0
+Average = 86.5</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class ArrayAverage {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Create a double array of size 4
+        
+        // Read the grades
+        
+        // Use enhanced for loop to compute sum
+        double sum = 0;
+        // for (double grade : grades) ...
+        
+        // Compute and print the average
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Use <code>for (double grade : grades) { sum += grade; }</code> then <code>double average = sum / grades.length;</code>. Print with <code>System.out.println("Average = " + average);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 6 -->
+        <div class="exercise-card" id="ex6">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">6</span>Pass Array to Method</h3>
+                <span class="exercise-status" id="status6"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Write a <strong>method</strong> called <code>doubleElements</code> that takes an <code>int[]</code> array and <strong>doubles every element</strong> in it. Print the array in <code>main</code> before and after calling the method to show that arrays are <strong>passed by reference</strong>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Before: 1 2 3 4 5
+After: 2 4 6 8 10</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(6)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor6" rows="14" spellcheck="false">public class DoubleElements {
+    // Write your method here
+    // public static void doubleElements(int[] arr)
+    
+    public static void main(String[] args) {
+        int[] numbers = {1, 2, 3, 4, 5};
+        
+        // Print array before calling the method
+        
+        // Call doubleElements
+        
+        // Print array after — values should be doubled!
+        
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(5)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(5)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(5)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback6"></div>
+                <button class="hint-toggle" onclick="toggleHint(6)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint6">In the method, loop through the array: <code>for (int i = 0; i &lt; arr.length; i++) arr[i] *= 2;</code>. Since arrays are passed by reference, changes inside the method affect the original array in <code>main</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 7 -->
+        <div class="exercise-card" id="ex7">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">7</span>Return Array from Method</h3>
+                <span class="exercise-status" id="status7"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Write a <strong>method</strong> called <code>createSquares</code> that takes an <strong>int n</strong> and <strong>returns</strong> a new <code>int[]</code> array of size n where each element at index <code>i</code> contains <code>(i+1)<sup>2</sup></code>. Print the returned array in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter n: 5
+Squares: 1 4 9 16 25</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(7)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor7" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class SquaresArray {
+    // Write your method here
+    // public static int[] createSquares(int n)
+    
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Read n
+        
+        // Call createSquares and store the returned array
+        
+        // Print the array
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(6)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(6)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(6)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback7"></div>
+                <button class="hint-toggle" onclick="toggleHint(7)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint7">Create a new array inside the method: <code>int[] result = new int[n];</code>. Fill it with a loop: <code>result[i] = (i + 1) * (i + 1);</code>. Then <code>return result;</code>. In main, receive it: <code>int[] squares = createSquares(n);</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 8 -->
+        <div class="exercise-card" id="ex8">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">8</span>2D Array Sum</h3>
+                <span class="exercise-status" id="status8"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Read a <strong>3×3 matrix</strong> using a <strong>2D array</strong> (<code>int[][]</code>), then compute the <strong>sum of all elements</strong> using nested <code>for</code> loops.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter 3x3 matrix:
+1 2 3
+4 5 6
+7 8 9
+Sum = 45</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(8)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor8" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class MatrixSum {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Declare a 3x3 int[][] array
+        
+        // Read the matrix using nested for loops
+        
+        // Compute the sum of all elements
+        int sum = 0;
+        
+        // Print the sum
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(7)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(7)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(7)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback8"></div>
+                <button class="hint-toggle" onclick="toggleHint(8)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint8">Declare: <code>int[][] matrix = new int[3][3];</code>. Use nested loops to read: <code>matrix[i][j] = input.nextInt();</code>. Then nested loops again to sum: <code>sum += matrix[i][j];</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 9 -->
+        <div class="exercise-card" id="ex9">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">9</span>Matrix Row Sum</h3>
+                <span class="exercise-status" id="status9"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="info-box">Read a <strong>3×3 matrix</strong> and print the <strong>sum of each row</strong>. Use nested <code>for</code> loops — the outer loop iterates rows, the inner loop sums columns within each row.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter 3x3 matrix:
+1 2 3
+4 5 6
+7 8 9
+Row 1 sum = 6
+Row 2 sum = 15
+Row 3 sum = 24</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(9)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor9" rows="14" spellcheck="false">import java.util.Scanner;
+
+public class MatrixRowSum {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        // Declare a 3x3 int[][] array
+        
+        // Read the matrix
+        
+        // For each row, compute and print the sum
+        // Reset sum to 0 for each row
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(8)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(8)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(8)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback9"></div>
+                <button class="hint-toggle" onclick="toggleHint(9)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint9">For each row <code>i</code>, initialize <code>int sum = 0;</code>, then inner loop: <code>sum += matrix[i][j];</code>. Print <code>"Row " + (i+1) + " sum = " + sum</code> after each inner loop.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  { skeleton: "import java.util.Scanner;\n\npublic class ArraySum {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Declare an int array of size 5\n        \n        // Read 5 integers into the array\n        \n        // Compute the sum using a for loop\n        int sum = 0;\n        \n        // Print the sum\n        \n        input.close();\n    }\n}", keywords: ["Scanner", "int[]", "for", "sum", "+="] },
+  { skeleton: "import java.util.Scanner;\n\npublic class FindMax {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Read the size\n        \n        // Create an int array of that size\n        \n        // Read the elements\n        \n        // Find the maximum\n        \n        // Print the max\n        \n        input.close();\n    }\n}", keywords: ["Scanner", "int[]", "for", "if", "max"] },
+  { skeleton: "import java.util.Scanner;\n\npublic class ReverseArray {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Read the size\n        \n        // Create and fill the array\n        \n        // Print elements in reverse order\n        // Loop from length - 1 down to 0\n        \n        input.close();\n    }\n}", keywords: ["Scanner", "int[]", "for", "length"] },
+  { skeleton: "public class CopyArray {\n    public static void main(String[] args) {\n        int[] original = {1, 2, 3, 4, 5};\n        \n        // Create a new array of same length\n        \n        // Use System.arraycopy to copy\n        \n        // Modify the copy (e.g., copy[0] = 99)\n        \n        // Print original, copy, and original again\n        \n    }\n}", keywords: ["System.arraycopy", "int[]", "new", "for"] },
+  { skeleton: "import java.util.Scanner;\n\npublic class ArrayAverage {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Create a double array of size 4\n        \n        // Read the grades\n        \n        // Use enhanced for loop to compute sum\n        double sum = 0;\n        // for (double grade : grades) ...\n        \n        // Compute and print the average\n        \n        input.close();\n    }\n}", keywords: ["Scanner", "double[]", "for", "sum", "length"] },
+  { skeleton: "public class DoubleElements {\n    // Write your method here\n    // public static void doubleElements(int[] arr)\n    \n    public static void main(String[] args) {\n        int[] numbers = {1, 2, 3, 4, 5};\n        \n        // Print array before calling the method\n        \n        // Call doubleElements\n        \n        // Print array after — values should be doubled!\n        \n    }\n}", keywords: ["public static void", "doubleElements", "int[]", "for", "*="] },
+  { skeleton: "import java.util.Scanner;\n\npublic class SquaresArray {\n    // Write your method here\n    // public static int[] createSquares(int n)\n    \n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Read n\n        \n        // Call createSquares and store the returned array\n        \n        // Print the array\n        \n        input.close();\n    }\n}", keywords: ["public static int[]", "createSquares", "return", "new int", "for"] },
+  { skeleton: "import java.util.Scanner;\n\npublic class MatrixSum {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Declare a 3x3 int[][] array\n        \n        // Read the matrix using nested for loops\n        \n        // Compute the sum of all elements\n        int sum = 0;\n        \n        // Print the sum\n        \n        input.close();\n    }\n}", keywords: ["int[][]", "for", "for", "sum", "+="] },
+  { skeleton: "import java.util.Scanner;\n\npublic class MatrixRowSum {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        // Declare a 3x3 int[][] array\n        \n        // Read the matrix\n        \n        // For each row, compute and print the sum\n        // Reset sum to 0 for each row\n        \n        input.close();\n    }\n}", keywords: ["int[][]", "for", "for", "sum", "println"] }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied to clipboard! Paste it in the compiler tab that just opened (Ctrl+V / ⌘+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use the required constructs: ' + missing.map(k=>'<code>'+k+'</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+// Tab key inserts spaces
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){const t=localStorage.getItem('theme')||'dark';if(t==='light')document.getElementById('themeIcon').className='fas fa-sun';})();
+
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+</body>
+</html>

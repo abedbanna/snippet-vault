@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.4: Data Preparation Techniques | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="#file-formats">File Formats</a>
+                <a href="#accessing-datasets">Datasets</a>
+                <a href="#extracting-data">Extraction</a>
+                <a href="#spreadsheet-practices">Spreadsheets</a>
+                <a href="#preprocessing">Pre-processing</a>
+                <a href="#quiz">Quiz</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="#file-formats" onclick="this.parentElement.classList.remove('open')">File Formats</a>
+        <a href="#accessing-datasets" onclick="this.parentElement.classList.remove('open')">Datasets</a>
+        <a href="#extracting-data" onclick="this.parentElement.classList.remove('open')">Extraction</a>
+        <a href="#spreadsheet-practices" onclick="this.parentElement.classList.remove('open')">Spreadsheets</a>
+        <a href="#preprocessing" onclick="this.parentElement.classList.remove('open')">Pre-processing</a>
+        <a href="#quiz" onclick="this.parentElement.classList.remove('open')">Quiz</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Data Preparation Techniques</h1>
+            <p class="hero-sub">Block 1: Data Acquisition and Pre-Processing</p>
+            <p class="hero-sub" style="font-size:1.05rem;">Topic 1.4 &middot; 5 Objectives</p>
+        </div>
+    </section>
+
+    <div class="container narrow">
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1.4.1: File Formats in Data Acquisition -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="file-formats">
+            <h2 class="section-title"><i class="fa-solid fa-file-code"></i> 1.4.1 File Formats in Data Acquisition</h2>
+            <p class="section-desc">Data comes in many file formats, and as a data analyst you must know when to use each format, how to read them into Python, and how to export your results. The four most common formats you should know are CSV, JSON, XML, and TXT.</p>
+
+            <div class="subsection" id="common-file-formats">
+                <h3><i class="fa-solid fa-table-list"></i> Common File Formats</h3>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Format</th>
+                        <th>Best For</th>
+                        <th>Structure</th>
+                        <th>Python Library</th>
+                    </tr>
+                    <tr>
+                        <td><strong>CSV</strong></td>
+                        <td>Tabular data (rows and columns)</td>
+                        <td>Comma-separated values, one record per line</td>
+                        <td><code>pandas</code>, <code>csv</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>JSON</strong></td>
+                        <td>Structured/nested data, APIs</td>
+                        <td>Key-value pairs, supports nesting</td>
+                        <td><code>pandas</code>, <code>json</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>XML</strong></td>
+                        <td>Hierarchical data, configuration files</td>
+                        <td>Tags with attributes and nested elements</td>
+                        <td><code>pandas</code>, <code>xml.etree.ElementTree</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TXT</strong></td>
+                        <td>Unstructured text, logs</td>
+                        <td>Plain text, custom delimiters possible</td>
+                        <td><code>pandas</code>, built-in <code>open()</code></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="subsection" id="csv-format">
+                <h3><i class="fa-solid fa-file-csv"></i> CSV (Comma-Separated Values)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">CSV is the most common format for tabular data. Each line represents a row, and values are separated by commas (or other delimiters like tabs or semicolons). CSV files do not store data types, so everything is read as strings unless explicitly converted.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Reading a CSV file with pandas</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Basic read</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/sales.csv'</span>)
+
+<span class="cm"># With options: custom delimiter, specific columns, date parsing</span>
+df = pd.<span class="fn">read_csv</span>(
+    <span class="str">'data/sales.csv'</span>,
+    sep=<span class="str">';'</span>,                  <span class="cm"># semicolon delimiter</span>
+    usecols=[<span class="str">'date'</span>, <span class="str">'amount'</span>], <span class="cm"># only load specific columns</span>
+    parse_dates=[<span class="str">'date'</span>],       <span class="cm"># parse date column</span>
+    encoding=<span class="str">'utf-8'</span>,           <span class="cm"># specify encoding</span>
+    na_values=[<span class="str">'N/A'</span>, <span class="str">''</span>]       <span class="cm"># treat these as NaN</span>
+)
+
+<span class="cm"># Writing a DataFrame to CSV</span>
+df.<span class="fn">to_csv</span>(<span class="str">'output/cleaned_sales.csv'</span>, index=<span class="kw">False</span>)</div>
+            </div>
+
+            <div class="subsection" id="json-format">
+                <h3><i class="fa-solid fa-brackets-curly"></i> JSON (JavaScript Object Notation)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">JSON stores data as key-value pairs and supports nested structures. It is the standard format for API responses and web data exchange. JSON preserves data types better than CSV (numbers, booleans, nulls).</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Reading JSON data with pandas</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Read a JSON file (records orientation)</span>
+df = pd.<span class="fn">read_json</span>(<span class="str">'data/employees.json'</span>)
+
+<span class="cm"># Read nested JSON using json_normalize</span>
+<span class="kw">import</span> json
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">'data/nested.json'</span>) <span class="kw">as</span> f:
+    data = json.<span class="fn">load</span>(f)
+
+df = pd.<span class="fn">json_normalize</span>(data, record_path=<span class="str">'orders'</span>,
+                        meta=[<span class="str">'customer_id'</span>, <span class="str">'name'</span>])
+
+<span class="cm"># Writing to JSON</span>
+df.<span class="fn">to_json</span>(<span class="str">'output/employees.json'</span>, orient=<span class="str">'records'</span>, indent=<span class="num">2</span>)</div>
+            </div>
+
+            <div class="subsection" id="xml-format">
+                <h3><i class="fa-solid fa-code"></i> XML (Extensible Markup Language)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">XML uses a tree structure with tags, attributes, and nested elements. It is common in legacy systems, configuration files, and enterprise data feeds.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Reading XML with pandas (pandas 1.3+)</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.<span class="fn">read_xml</span>(<span class="str">'data/catalog.xml'</span>)
+
+<span class="cm"># Parsing XML manually with ElementTree</span>
+<span class="kw">import</span> xml.etree.ElementTree <span class="kw">as</span> ET
+
+tree = ET.<span class="fn">parse</span>(<span class="str">'data/catalog.xml'</span>)
+root = tree.<span class="fn">getroot</span>()
+
+rows = []
+<span class="kw">for</span> item <span class="kw">in</span> root.<span class="fn">findall</span>(<span class="str">'product'</span>):
+    rows.<span class="fn">append</span>({
+        <span class="str">'name'</span>: item.<span class="fn">find</span>(<span class="str">'name'</span>).text,
+        <span class="str">'price'</span>: <span class="fn">float</span>(item.<span class="fn">find</span>(<span class="str">'price'</span>).text),
+        <span class="str">'category'</span>: item.<span class="fn">get</span>(<span class="str">'category'</span>)  <span class="cm"># attribute</span>
+    })
+
+df = pd.<span class="fn">DataFrame</span>(rows)</div>
+            </div>
+
+            <div class="subsection" id="txt-format">
+                <h3><i class="fa-solid fa-file-lines"></i> TXT (Plain Text Files)</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">TXT files are used for unstructured text, log files, or data with custom delimiters. They require careful handling since there is no inherent structure.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Reading a tab-delimited TXT file</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/log.txt'</span>, sep=<span class="str">'\t'</span>)
+
+<span class="cm"># Reading unstructured text</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">'data/notes.txt'</span>, <span class="str">'r'</span>) <span class="kw">as</span> f:
+    content = f.<span class="fn">read</span>()
+    lines = content.<span class="fn">splitlines</span>()
+
+<span class="cm"># Reading fixed-width format text</span>
+df = pd.<span class="fn">read_fwf</span>(<span class="str">'data/fixed_width.txt'</span>)</div>
+            </div>
+
+            <div class="subsection" id="excel-format">
+                <h3><i class="fa-solid fa-file-excel"></i> Reading Excel Files</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">While not a plain text format, Excel files (<code>.xlsx</code>, <code>.xls</code>) are ubiquitous in business settings. Pandas provides excellent Excel support.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Reading an Excel file</span>
+df = pd.<span class="fn">read_excel</span>(<span class="str">'data/report.xlsx'</span>)
+
+<span class="cm"># Read a specific sheet</span>
+df = pd.<span class="fn">read_excel</span>(<span class="str">'data/report.xlsx'</span>, sheet_name=<span class="str">'Q4 Sales'</span>)
+
+<span class="cm"># Read multiple sheets into a dictionary</span>
+sheets = pd.<span class="fn">read_excel</span>(<span class="str">'data/report.xlsx'</span>, sheet_name=<span class="kw">None</span>)
+<span class="cm"># sheets['Q4 Sales'], sheets['Summary'], etc.</span>
+
+<span class="cm"># Write to Excel</span>
+df.<span class="fn">to_excel</span>(<span class="str">'output/report.xlsx'</span>, index=<span class="kw">False</span>, sheet_name=<span class="str">'Results'</span>)</div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Study Tip</h3>
+                    <p><code>pd.read_csv()</code> is the most versatile reader &mdash; it can handle CSV, TSV, and any custom-delimited TXT file by setting the <code>sep</code> parameter. Remember that <code>pd.read_excel()</code> requires the <code>openpyxl</code> engine for <code>.xlsx</code> files.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1.4.2: Accessing and Managing Datasets -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="accessing-datasets">
+            <h2 class="section-title"><i class="fa-solid fa-folder-open"></i> 1.4.2 Accessing and Managing Datasets</h2>
+            <p class="section-desc">Data analysts must know how to access data from various storage locations and then organize it effectively for analysis. This includes local files, databases, and online repositories.</p>
+
+            <div class="subsection" id="local-files">
+                <h3><i class="fa-solid fa-hard-drive"></i> Accessing Data from Local Files</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Local files are the simplest data source. Use absolute or relative paths, and handle missing files gracefully.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> os
+
+<span class="cm"># Check if file exists before reading</span>
+file_path = <span class="str">'data/customers.csv'</span>
+<span class="kw">if</span> os.path.<span class="fn">exists</span>(file_path):
+    df = pd.<span class="fn">read_csv</span>(file_path)
+    <span class="fn">print</span>(<span class="str">f"Loaded {len(df)} rows"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f"File not found: {file_path}"</span>)
+
+<span class="cm"># List all CSV files in a directory</span>
+csv_files = [f <span class="kw">for</span> f <span class="kw">in</span> os.<span class="fn">listdir</span>(<span class="str">'data/'</span>) <span class="kw">if</span> f.<span class="fn">endswith</span>(<span class="str">'.csv'</span>)]</div>
+            </div>
+
+            <div class="subsection" id="database-access">
+                <h3><i class="fa-solid fa-database"></i> Accessing Data from Databases</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Databases are the backbone of enterprise data storage. Python connects to databases using libraries like <code>sqlite3</code>, <code>sqlalchemy</code>, or database-specific drivers.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> sqlite3
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Connect to a SQLite database</span>
+conn = sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>)
+
+<span class="cm"># Read SQL query results directly into a DataFrame</span>
+df = pd.<span class="fn">read_sql</span>(<span class="str">'SELECT * FROM employees WHERE department = "Sales"'</span>, conn)
+
+<span class="cm"># Always close the connection</span>
+conn.<span class="fn">close</span>()
+
+<span class="cm"># Better: use a context manager</span>
+<span class="kw">with</span> sqlite3.<span class="fn">connect</span>(<span class="str">'company.db'</span>) <span class="kw">as</span> conn:
+    df = pd.<span class="fn">read_sql_query</span>(<span class="str">'SELECT name, salary FROM employees'</span>, conn)</div>
+            </div>
+
+            <div class="subsection" id="online-repos">
+                <h3><i class="fa-solid fa-globe"></i> Accessing Data from Online Repositories</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Many datasets are hosted online. Pandas can read directly from URLs, and libraries like <code>sklearn.datasets</code> provide built-in sample data.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Read CSV directly from a URL</span>
+url = <span class="str">'https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv'</span>
+df = pd.<span class="fn">read_csv</span>(url)
+
+<span class="cm"># scikit-learn built-in datasets</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+iris = <span class="fn">load_iris</span>(as_frame=<span class="kw">True</span>)
+df = iris.frame</div>
+            </div>
+
+            <div class="subsection" id="sorting-filtering">
+                <h3><i class="fa-solid fa-filter"></i> Organizing, Sorting, and Filtering Data</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Once data is loaded, organizing it is essential. Sorting and filtering are the most fundamental data management operations.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/employees.csv'</span>)
+
+<span class="cm"># Sorting by a single column (ascending)</span>
+df_sorted = df.<span class="fn">sort_values</span>(<span class="str">'salary'</span>)
+
+<span class="cm"># Sorting by multiple columns</span>
+df_sorted = df.<span class="fn">sort_values</span>([<span class="str">'department'</span>, <span class="str">'salary'</span>],
+                            ascending=[<span class="kw">True</span>, <span class="kw">False</span>])
+
+<span class="cm"># Filtering rows with boolean conditions</span>
+high_earners = df[df[<span class="str">'salary'</span>] > <span class="num">80000</span>]
+
+<span class="cm"># Multiple filter conditions</span>
+senior_sales = df[(df[<span class="str">'department'</span>] == <span class="str">'Sales'</span>) &amp;
+                  (df[<span class="str">'years_exp'</span>] >= <span class="num">5</span>)]
+
+<span class="cm"># Using .query() for readable filtering</span>
+result = df.<span class="fn">query</span>(<span class="str">'salary > 80000 and department == "Sales"'</span>)
+
+<span class="cm"># Filtering with .isin() for multiple values</span>
+selected_depts = df[df[<span class="str">'department'</span>].<span class="fn">isin</span>([<span class="str">'Sales'</span>, <span class="str">'Marketing'</span>, <span class="str">'IT'</span>])]</div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Key Point</h3>
+                    <p>When combining multiple boolean conditions in pandas, you must use <code>&amp;</code> (and), <code>|</code> (or), and <code>~</code> (not) instead of Python's <code>and</code>, <code>or</code>, <code>not</code>. Each condition must be wrapped in parentheses.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1.4.3: Extracting Data from Various Sources -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="extracting-data">
+            <h2 class="section-title"><i class="fa-solid fa-download"></i> 1.4.3 Extracting Data from Various Sources</h2>
+            <p class="section-desc">Modern data analysis often requires extracting data from databases, APIs, and web pages. Understanding how to do this programmatically is a core skill for the exam.</p>
+
+            <div class="subsection" id="api-extraction">
+                <h3><i class="fa-solid fa-plug"></i> Extracting Data from APIs</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">APIs (Application Programming Interfaces) provide structured access to web data. The <code>requests</code> library is the standard tool for making HTTP requests in Python.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> requests
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># GET request to a REST API</span>
+response = requests.<span class="fn">get</span>(<span class="str">'https://api.example.com/data/products'</span>)
+
+<span class="cm"># Check the response status</span>
+<span class="kw">if</span> response.status_code == <span class="num">200</span>:
+    data = response.<span class="fn">json</span>()  <span class="cm"># Parse JSON response</span>
+    df = pd.<span class="fn">DataFrame</span>(data)
+    <span class="fn">print</span>(df.<span class="fn">head</span>())
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f"Error: {response.status_code}"</span>)
+
+<span class="cm"># API with query parameters</span>
+params = {
+    <span class="str">'country'</span>: <span class="str">'US'</span>,
+    <span class="str">'year'</span>: <span class="num">2024</span>,
+    <span class="str">'format'</span>: <span class="str">'json'</span>
+}
+response = requests.<span class="fn">get</span>(<span class="str">'https://api.example.com/statistics'</span>, params=params)
+
+<span class="cm"># API with authentication header</span>
+headers = {<span class="str">'Authorization'</span>: <span class="str">'Bearer YOUR_API_KEY'</span>}
+response = requests.<span class="fn">get</span>(<span class="str">'https://api.example.com/secure/data'</span>, headers=headers)</div>
+            </div>
+
+            <div class="subsection" id="web-scraping">
+                <h3><i class="fa-solid fa-spider"></i> Web Scraping with BeautifulSoup</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">When data is not available via an API, web scraping allows you to extract information directly from HTML pages. The <code>BeautifulSoup</code> library (from <code>bs4</code>) parses HTML and provides methods to navigate and search the document tree.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> requests
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Step 1: Fetch the web page</span>
+url = <span class="str">'https://example.com/data-table'</span>
+response = requests.<span class="fn">get</span>(url)
+soup = <span class="fn">BeautifulSoup</span>(response.text, <span class="str">'html.parser'</span>)
+
+<span class="cm"># Step 2: Find elements by tag, class, or id</span>
+title = soup.<span class="fn">find</span>(<span class="str">'h1'</span>).text
+paragraphs = soup.<span class="fn">find_all</span>(<span class="str">'p'</span>)
+specific_div = soup.<span class="fn">find</span>(<span class="str">'div'</span>, class_=<span class="str">'content'</span>)
+
+<span class="cm"># Step 3: Extract data from an HTML table</span>
+table = soup.<span class="fn">find</span>(<span class="str">'table'</span>)
+rows = table.<span class="fn">find_all</span>(<span class="str">'tr'</span>)
+
+data = []
+<span class="kw">for</span> row <span class="kw">in</span> rows[<span class="num">1</span>:]:  <span class="cm"># skip header row</span>
+    cols = row.<span class="fn">find_all</span>(<span class="str">'td'</span>)
+    data.<span class="fn">append</span>([col.text.<span class="fn">strip</span>() <span class="kw">for</span> col <span class="kw">in</span> cols])
+
+<span class="cm"># Get headers</span>
+headers = [th.text.<span class="fn">strip</span>() <span class="kw">for</span> th <span class="kw">in</span> rows[<span class="num">0</span>].<span class="fn">find_all</span>(<span class="str">'th'</span>)]
+df = pd.<span class="fn">DataFrame</span>(data, columns=headers)</div>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-bolt" style="color:var(--primary);margin-right:6px;"></i> Quick Alternative: pd.read_html()</h4>
+                <p style="color:var(--text2);margin-bottom:12px;">Pandas provides a shortcut for extracting tables from HTML pages:</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># read_html returns a list of DataFrames (one per table found)</span>
+tables = pd.<span class="fn">read_html</span>(<span class="str">'https://example.com/data-table'</span>)
+df = tables[<span class="num">0</span>]  <span class="cm"># first table on the page</span></div>
+            </div>
+
+            <div class="subsection" id="data-compatibility">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Data Compatibility and Integrity Challenges</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">When extracting data from multiple sources, you often face compatibility and integrity issues:</p>
+
+                <ul style="color:var(--text2);margin-bottom:16px;">
+                    <li><strong>Encoding mismatches:</strong> Different sources may use UTF-8, Latin-1, or other encodings. Mismatched encodings cause garbled characters.</li>
+                    <li><strong>Schema differences:</strong> Column names, data types, and formats may differ between sources (e.g., "Date" vs "date" vs "DATE").</li>
+                    <li><strong>Missing or inconsistent values:</strong> One source uses <code>N/A</code>, another uses <code>null</code>, another uses empty strings.</li>
+                    <li><strong>Timezone and locale differences:</strong> Dates may be in MM/DD/YYYY or DD/MM/YYYY format depending on the source.</li>
+                    <li><strong>Duplicate records:</strong> Merging data from multiple sources can introduce duplicates that need to be identified and resolved.</li>
+                </ul>
+            </div>
+
+            <div class="subsection" id="ethical-scraping">
+                <h3><i class="fa-solid fa-gavel"></i> Ethical Web Scraping</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Responsible web scraping follows established guidelines to respect website owners and legal boundaries.</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Practice</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Respect robots.txt</strong></td>
+                        <td>Check <code>/robots.txt</code> before scraping. It specifies which pages crawlers are allowed or disallowed to access.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rate-limiting</strong></td>
+                        <td>Add delays between requests (e.g., <code>time.sleep(1)</code>) to avoid overwhelming the server.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Identify yourself</strong></td>
+                        <td>Set a descriptive <code>User-Agent</code> header so the server knows who is accessing the data.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Check Terms of Service</strong></td>
+                        <td>Some websites explicitly prohibit scraping in their ToS. Always review legal terms.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prefer APIs</strong></td>
+                        <td>If a site offers an API, use it instead of scraping. APIs are designed for programmatic access.</td>
+                    </tr>
+                </table>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> requests
+<span class="kw">import</span> time
+<span class="kw">from</span> urllib.robotparser <span class="kw">import</span> RobotFileParser
+
+<span class="cm"># Check robots.txt before scraping</span>
+rp = <span class="fn">RobotFileParser</span>()
+rp.<span class="fn">set_url</span>(<span class="str">'https://example.com/robots.txt'</span>)
+rp.<span class="fn">read</span>()
+
+url = <span class="str">'https://example.com/data-page'</span>
+<span class="kw">if</span> rp.<span class="fn">can_fetch</span>(<span class="str">'*'</span>, url):
+    response = requests.<span class="fn">get</span>(url, headers={<span class="str">'User-Agent'</span>: <span class="str">'MyDataBot/1.0'</span>})
+    <span class="cm"># Process the response...</span>
+    time.<span class="fn">sleep</span>(<span class="num">1</span>)  <span class="cm"># Rate limit: wait 1 second before next request</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Scraping this page is disallowed by robots.txt"</span>)</div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-exclamation-circle"></i> Exam Warning</h3>
+                    <p>This course expects you to understand ethical scraping practices. Always check <code>robots.txt</code>, implement rate-limiting, and prefer APIs over scraping when available.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1.4.4: Spreadsheet Best Practices -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="spreadsheet-practices">
+            <h2 class="section-title"><i class="fa-solid fa-table-cells-large"></i> 1.4.4 Spreadsheet Best Practices</h2>
+            <p class="section-desc">Spreadsheets (Excel, Google Sheets) remain a primary data tool in business. Knowing how to manipulate spreadsheets programmatically and follow best practices is an essential skill.</p>
+
+            <div class="subsection" id="layout-adjustments">
+                <h3><i class="fa-solid fa-table-columns"></i> Layout Adjustments</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Good spreadsheet layout makes data easier to analyze and reduces errors:</p>
+                <ul style="color:var(--text2);margin-bottom:16px;">
+                    <li><strong>One header row:</strong> Column headers should be in the first row, with no merged cells or multi-line headers.</li>
+                    <li><strong>One record per row:</strong> Each row should represent a single observation or record.</li>
+                    <li><strong>No empty rows/columns:</strong> Blank rows or columns between data cause issues with sorting, filtering, and importing.</li>
+                    <li><strong>Consistent data per column:</strong> Each column should contain one data type (all numbers, all dates, etc.).</li>
+                    <li><strong>Avoid color-coding as data:</strong> Do not use cell color to represent categories. Use a dedicated column instead.</li>
+                </ul>
+            </div>
+
+            <div class="subsection" id="formatting-practices">
+                <h3><i class="fa-solid fa-paintbrush"></i> Formatting Best Practices</h3>
+                <ul style="color:var(--text2);margin-bottom:16px;">
+                    <li>Use consistent date formats within each column (e.g., YYYY-MM-DD throughout).</li>
+                    <li>Avoid leading/trailing spaces in text values.</li>
+                    <li>Use number formatting (not text) for numeric columns to enable calculations.</li>
+                    <li>Name your sheets descriptively (e.g., "Sales_Q4_2024" instead of "Sheet1").</li>
+                </ul>
+            </div>
+
+            <div class="subsection" id="formulas">
+                <h3><i class="fa-solid fa-calculator"></i> Basic Formula Applications</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">While Python is the primary analysis tool on the exam, understanding common spreadsheet formulas demonstrates data literacy:</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Formula</th>
+                        <th>Purpose</th>
+                        <th>Pandas Equivalent</th>
+                    </tr>
+                    <tr>
+                        <td><code>=SUM(A1:A100)</code></td>
+                        <td>Sum values in a range</td>
+                        <td><code>df['A'].sum()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>=AVERAGE(A1:A100)</code></td>
+                        <td>Calculate mean</td>
+                        <td><code>df['A'].mean()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>=COUNTIF(A:A, "Yes")</code></td>
+                        <td>Count matching values</td>
+                        <td><code>(df['A'] == 'Yes').sum()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>=VLOOKUP()</code></td>
+                        <td>Look up matching data</td>
+                        <td><code>pd.merge()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>=IF(A1&gt;100, "High", "Low")</code></td>
+                        <td>Conditional logic</td>
+                        <td><code>np.where(df['A']&gt;100, 'High', 'Low')</code></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="subsection" id="openpyxl">
+                <h3><i class="fa-solid fa-file-excel"></i> Programmatic Excel Formatting with openpyxl</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">The <code>openpyxl</code> library allows Python to read, write, and format Excel files with full control over styles, formulas, and layouts.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">from</span> openpyxl <span class="kw">import</span> Workbook
+<span class="kw">from</span> openpyxl.styles <span class="kw">import</span> Font, Alignment, PatternFill, Border, Side
+
+<span class="cm"># Create a new workbook</span>
+wb = <span class="fn">Workbook</span>()
+ws = wb.active
+ws.title = <span class="str">"Sales Report"</span>
+
+<span class="cm"># Add headers with formatting</span>
+headers = [<span class="str">'Product'</span>, <span class="str">'Q1'</span>, <span class="str">'Q2'</span>, <span class="str">'Q3'</span>, <span class="str">'Q4'</span>, <span class="str">'Total'</span>]
+<span class="kw">for</span> col, header <span class="kw">in</span> <span class="fn">enumerate</span>(headers, <span class="num">1</span>):
+    cell = ws.<span class="fn">cell</span>(row=<span class="num">1</span>, column=col, value=header)
+    cell.font = <span class="fn">Font</span>(bold=<span class="kw">True</span>, color=<span class="str">"FFFFFF"</span>)
+    cell.fill = <span class="fn">PatternFill</span>(start_color=<span class="str">"2563EB"</span>, fill_type=<span class="str">"solid"</span>)
+    cell.alignment = <span class="fn">Alignment</span>(horizontal=<span class="str">"center"</span>)
+
+<span class="cm"># Add data rows</span>
+data = [
+    [<span class="str">'Widget A'</span>, <span class="num">1200</span>, <span class="num">1500</span>, <span class="num">1800</span>, <span class="num">2100</span>],
+    [<span class="str">'Widget B'</span>, <span class="num">800</span>, <span class="num">950</span>, <span class="num">1100</span>, <span class="num">1300</span>],
+]
+
+<span class="kw">for</span> row_idx, row_data <span class="kw">in</span> <span class="fn">enumerate</span>(data, <span class="num">2</span>):
+    <span class="kw">for</span> col_idx, value <span class="kw">in</span> <span class="fn">enumerate</span>(row_data, <span class="num">1</span>):
+        ws.<span class="fn">cell</span>(row=row_idx, column=col_idx, value=value)
+    <span class="cm"># Add a SUM formula for the Total column</span>
+    ws.<span class="fn">cell</span>(row=row_idx, column=<span class="num">6</span>,
+           value=<span class="str">f"=SUM(B{row_idx}:E{row_idx})"</span>)
+
+<span class="cm"># Auto-adjust column widths</span>
+<span class="kw">for</span> col <span class="kw">in</span> ws.columns:
+    max_length = <span class="fn">max</span>(<span class="fn">len</span>(<span class="fn">str</span>(cell.value <span class="kw">or</span> <span class="str">""</span>)) <span class="kw">for</span> cell <span class="kw">in</span> col)
+    ws.column_dimensions[col[<span class="num">0</span>].column_letter].width = max_length + <span class="num">2</span>
+
+wb.<span class="fn">save</span>(<span class="str">'output/formatted_report.xlsx'</span>)</div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Study Tip</h3>
+                    <p>Know the difference between <code>openpyxl</code> (for .xlsx files with full formatting control) and <code>pandas.to_excel()</code> (for quick data export). The exam may test your understanding of when to use each approach.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1.4.5: Preparing and Pre-processing Data -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="preprocessing">
+            <h2 class="section-title"><i class="fa-solid fa-gears"></i> 1.4.5 Preparing and Pre-processing Data</h2>
+            <p class="section-desc">Data preparation is the most time-consuming phase of the data analysis pipeline &mdash; often accounting for 60-80% of a project. Proper preprocessing ensures accurate, reliable results downstream.</p>
+
+            <div class="subsection" id="context-objectives">
+                <h3><i class="fa-solid fa-bullseye"></i> Understanding Context and Objectives</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Before writing any code, effective data preparation begins with understanding:</p>
+                <ul style="color:var(--text2);margin-bottom:16px;">
+                    <li><strong>Business context:</strong> What problem is the data meant to solve? What decisions will it support?</li>
+                    <li><strong>Analysis objectives:</strong> Are you building a predictive model, generating a report, or exploring for insights?</li>
+                    <li><strong>Stakeholder expectations:</strong> Who will use the results? Technical analysts need different outputs than executive decision-makers.</li>
+                    <li><strong>Data lineage:</strong> Where did the data come from? How was it collected? What biases might it contain?</li>
+                </ul>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Key Point</h3>
+                    <p>The preprocessing steps you choose depend entirely on the analysis objective. Data prepared for a machine learning model (numerical, scaled, split) looks very different from data prepared for a business dashboard (aggregated, well-labeled, human-readable).</p>
+                </div>
+            </div>
+
+            <div class="subsection" id="sorting-preparing">
+                <h3><i class="fa-solid fa-arrow-down-a-z"></i> Sorting, Filtering, and Preparing Data</h3>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/transactions.csv'</span>)
+
+<span class="cm"># Sort by date (most recent first)</span>
+df = df.<span class="fn">sort_values</span>(<span class="str">'transaction_date'</span>, ascending=<span class="kw">False</span>)
+
+<span class="cm"># Reset index after sorting</span>
+df = df.<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
+
+<span class="cm"># Filter out incomplete records</span>
+df = df.<span class="fn">dropna</span>(subset=[<span class="str">'amount'</span>, <span class="str">'customer_id'</span>])
+
+<span class="cm"># Remove duplicates</span>
+df = df.<span class="fn">drop_duplicates</span>(subset=[<span class="str">'transaction_id'</span>], keep=<span class="str">'first'</span>)
+
+<span class="cm"># Create new computed columns</span>
+df[<span class="str">'year'</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="str">'transaction_date'</span>]).dt.year
+df[<span class="str">'amount_category'</span>] = pd.<span class="fn">cut</span>(df[<span class="str">'amount'</span>],
+                                  bins=[<span class="num">0</span>, <span class="num">50</span>, <span class="num">200</span>, <span class="num">1000</span>, np.inf],
+                                  labels=[<span class="str">'small'</span>, <span class="str">'medium'</span>, <span class="str">'large'</span>, <span class="str">'enterprise'</span>])</div>
+            </div>
+
+            <div class="subsection" id="data-formatting">
+                <h3><i class="fa-solid fa-pen-ruler"></i> Proper Data Formatting</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Consistent formatting is essential for accurate analysis, merging, and visualization.</p>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-calendar-days" style="color:var(--primary);margin-right:6px;"></i> Date-Time Consistency</h4>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Convert string dates to datetime objects</span>
+df[<span class="str">'date'</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="str">'date'</span>], format=<span class="str">'%m/%d/%Y'</span>)
+
+<span class="cm"># Handle mixed date formats</span>
+df[<span class="str">'date'</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="str">'date'</span>], infer_datetime_format=<span class="kw">True</span>)
+
+<span class="cm"># Standardize to ISO format (YYYY-MM-DD)</span>
+df[<span class="str">'date_str'</span>] = df[<span class="str">'date'</span>].dt.<span class="fn">strftime</span>(<span class="str">'%Y-%m-%d'</span>)
+
+<span class="cm"># Extract components</span>
+df[<span class="str">'month'</span>] = df[<span class="str">'date'</span>].dt.month
+df[<span class="str">'day_of_week'</span>] = df[<span class="str">'date'</span>].dt.<span class="fn">day_name</span>()
+df[<span class="str">'quarter'</span>] = df[<span class="str">'date'</span>].dt.quarter</div>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-align-left" style="color:var(--primary);margin-right:6px;"></i> Aligning Data Structures</h4>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Standardize column names</span>
+df.columns = df.columns.<span class="fn">str</span>.<span class="fn">lower</span>().<span class="fn">str</span>.<span class="fn">replace</span>(<span class="str">' '</span>, <span class="str">'_'</span>)
+
+<span class="cm"># Standardize string values</span>
+df[<span class="str">'city'</span>] = df[<span class="str">'city'</span>].<span class="fn">str</span>.<span class="fn">strip</span>().<span class="fn">str</span>.<span class="fn">title</span>()
+
+<span class="cm"># Ensure correct data types</span>
+df[<span class="str">'amount'</span>] = pd.<span class="fn">to_numeric</span>(df[<span class="str">'amount'</span>], errors=<span class="str">'coerce'</span>)
+df[<span class="str">'is_active'</span>] = df[<span class="str">'is_active'</span>].<span class="fn">astype</span>(<span class="kw">bool</span>)
+df[<span class="str">'category'</span>] = df[<span class="str">'category'</span>].<span class="fn">astype</span>(<span class="str">'category'</span>)</div>
+            </div>
+
+            <div class="subsection" id="wide-long">
+                <h3><i class="fa-solid fa-arrows-left-right"></i> Dataset Structuring: Wide vs Long Formats</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Understanding wide and long data formats is critical for the exam. Many analysis and visualization tools require one specific format.</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Wide Format</th>
+                        <th>Long Format</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Structure</strong></td>
+                        <td>Each variable has its own column</td>
+                        <td>Variables are stacked into key-value pairs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rows</strong></td>
+                        <td>Fewer rows, more columns</td>
+                        <td>More rows, fewer columns</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Best for</strong></td>
+                        <td>Human reading, spreadsheets, pivot tables</td>
+                        <td>Plotting, statistical modeling, groupby</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Example use</strong></td>
+                        <td>Sales by quarter as separate columns</td>
+                        <td>One row per (product, quarter) combination</td>
+                    </tr>
+                </table>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-arrow-down-wide-short" style="color:var(--primary);margin-right:6px;"></i> Wide to Long with pd.melt()</h4>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Wide format DataFrame</span>
+df_wide = pd.<span class="fn">DataFrame</span>({
+    <span class="str">'product'</span>: [<span class="str">'Widget A'</span>, <span class="str">'Widget B'</span>, <span class="str">'Widget C'</span>],
+    <span class="str">'Q1'</span>: [<span class="num">100</span>, <span class="num">200</span>, <span class="num">150</span>],
+    <span class="str">'Q2'</span>: [<span class="num">120</span>, <span class="num">180</span>, <span class="num">170</span>],
+    <span class="str">'Q3'</span>: [<span class="num">140</span>, <span class="num">220</span>, <span class="num">160</span>],
+    <span class="str">'Q4'</span>: [<span class="num">160</span>, <span class="num">250</span>, <span class="num">190</span>]
+})
+<span class="fn">print</span>(df_wide)
+<span class="cm">#     product   Q1   Q2   Q3   Q4</span>
+<span class="cm"># 0  Widget A  100  120  140  160</span>
+<span class="cm"># 1  Widget B  200  180  220  250</span>
+<span class="cm"># 2  Widget C  150  170  160  190</span>
+
+<span class="cm"># Convert wide to long format using melt</span>
+df_long = pd.<span class="fn">melt</span>(
+    df_wide,
+    id_vars=[<span class="str">'product'</span>],         <span class="cm"># columns to keep as identifiers</span>
+    value_vars=[<span class="str">'Q1'</span>, <span class="str">'Q2'</span>, <span class="str">'Q3'</span>, <span class="str">'Q4'</span>],  <span class="cm"># columns to unpivot</span>
+    var_name=<span class="str">'quarter'</span>,           <span class="cm"># name for the variable column</span>
+    value_name=<span class="str">'sales'</span>            <span class="cm"># name for the value column</span>
+)
+<span class="fn">print</span>(df_long)
+<span class="cm">#      product quarter  sales</span>
+<span class="cm"># 0   Widget A      Q1    100</span>
+<span class="cm"># 1   Widget B      Q1    200</span>
+<span class="cm"># 2   Widget C      Q1    150</span>
+<span class="cm"># 3   Widget A      Q2    120</span>
+<span class="cm"># ...and so on for all 12 rows</span></div>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-arrow-up-wide-short" style="color:var(--primary);margin-right:6px;"></i> Long to Wide with pd.pivot()</h4>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Convert long back to wide format using pivot</span>
+df_back_to_wide = df_long.<span class="fn">pivot</span>(
+    index=<span class="str">'product'</span>,    <span class="cm"># row identifiers</span>
+    columns=<span class="str">'quarter'</span>,  <span class="cm"># values become column names</span>
+    values=<span class="str">'sales'</span>      <span class="cm"># values to fill cells</span>
+).<span class="fn">reset_index</span>()
+
+<span class="cm"># Flatten MultiIndex column names if needed</span>
+df_back_to_wide.columns.name = <span class="kw">None</span>
+<span class="fn">print</span>(df_back_to_wide)
+<span class="cm">#     product   Q1   Q2   Q3   Q4</span>
+<span class="cm"># 0  Widget A  100  120  140  160</span>
+<span class="cm"># 1  Widget B  200  180  220  250</span>
+<span class="cm"># 2  Widget C  150  170  160  190</span></div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Study Tip</h3>
+                    <p>Remember the key difference: <code>pd.melt()</code> converts wide to long (unpivoting), while <code>pd.pivot()</code> converts long to wide (pivoting). If there are duplicate index-column combinations, use <code>pd.pivot_table()</code> with an aggregation function instead.</p>
+                </div>
+            </div>
+
+            <div class="subsection" id="train-test">
+                <h3><i class="fa-solid fa-scissors"></i> Train/Test Splitting for Machine Learning</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Before training a machine learning model, you must split your data into training and testing sets. The training set is used to fit the model, while the test set evaluates its performance on unseen data.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/housing.csv'</span>)
+
+<span class="cm"># Separate features (X) and target (y)</span>
+X = df.<span class="fn">drop</span>(<span class="str">'price'</span>, axis=<span class="num">1</span>)
+y = df[<span class="str">'price'</span>]
+
+<span class="cm"># 80/20 train/test split with random state for reproducibility</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y,
+    test_size=<span class="num">0.2</span>,        <span class="cm"># 20% for testing</span>
+    random_state=<span class="num">42</span>       <span class="cm"># ensures reproducible results</span>
+)
+
+<span class="fn">print</span>(<span class="str">f"Training set: {X_train.shape[0]} samples"</span>)
+<span class="fn">print</span>(<span class="str">f"Test set:     {X_test.shape[0]} samples"</span>)
+
+<span class="cm"># For classification: use stratify to maintain class proportions</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y,
+    test_size=<span class="num">0.2</span>,
+    random_state=<span class="num">42</span>,
+    stratify=y           <span class="cm"># preserves target class ratios in both sets</span>
+)</div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Pitfall</h3>
+                    <p>Never perform feature engineering (scaling, encoding, imputation) before splitting! This causes <strong>data leakage</strong> &mdash; information from the test set influences the training process, producing overly optimistic performance estimates. Always split first, then preprocess each set independently (fitting transformers only on training data).</p>
+                </div>
+            </div>
+
+            <div class="subsection" id="outlier-management">
+                <h3><i class="fa-solid fa-chart-scatter"></i> Outlier Management Impact on Preprocessing</h3>
+                <p style="color:var(--text2);margin-bottom:12px;">Outliers can significantly affect statistical calculations and model performance. Understanding how to detect and handle them is a core preprocessing skill.</p>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-magnifying-glass-chart" style="color:var(--primary);margin-right:6px;"></i> Detecting Outliers</h4>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/salaries.csv'</span>)
+
+<span class="cm"># Method 1: IQR (Interquartile Range) method</span>
+Q1 = df[<span class="str">'salary'</span>].<span class="fn">quantile</span>(<span class="num">0.25</span>)
+Q3 = df[<span class="str">'salary'</span>].<span class="fn">quantile</span>(<span class="num">0.75</span>)
+IQR = Q3 - Q1
+
+lower_bound = Q1 - <span class="num">1.5</span> * IQR
+upper_bound = Q3 + <span class="num">1.5</span> * IQR
+
+outliers = df[(df[<span class="str">'salary'</span>] &lt; lower_bound) | (df[<span class="str">'salary'</span>] &gt; upper_bound)]
+<span class="fn">print</span>(<span class="str">f"Found {len(outliers)} outliers"</span>)
+
+<span class="cm"># Method 2: Z-score method</span>
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+z_scores = np.<span class="fn">abs</span>(stats.<span class="fn">zscore</span>(df[<span class="str">'salary'</span>]))
+outliers_z = df[z_scores &gt; <span class="num">3</span>]  <span class="cm"># values more than 3 std devs from mean</span></div>
+
+                <h4 style="color:var(--text1);margin:18px 0 8px;"><i class="fa-solid fa-wrench" style="color:var(--primary);margin-right:6px;"></i> Handling Outliers</h4>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Option 1: Remove outliers</span>
+df_clean = df[(df[<span class="str">'salary'</span>] &gt;= lower_bound) &amp; (df[<span class="str">'salary'</span>] &lt;= upper_bound)]
+
+<span class="cm"># Option 2: Cap/clip outliers (winsorization)</span>
+df[<span class="str">'salary_capped'</span>] = df[<span class="str">'salary'</span>].<span class="fn">clip</span>(lower=lower_bound, upper=upper_bound)
+
+<span class="cm"># Option 3: Transform to reduce impact (log transformation)</span>
+df[<span class="str">'salary_log'</span>] = np.<span class="fn">log1p</span>(df[<span class="str">'salary'</span>])  <span class="cm"># log(1 + x) handles zeros</span>
+
+<span class="cm"># Option 4: Replace with median (for moderate outliers)</span>
+median_salary = df[<span class="str">'salary'</span>].<span class="fn">median</span>()
+df.<span class="fn">loc</span>[df[<span class="str">'salary'</span>] &gt; upper_bound, <span class="str">'salary'</span>] = median_salary</div>
+
+                <p style="color:var(--text2);margin:16px 0 8px;"><strong>Impact of outlier decisions on preprocessing:</strong></p>
+                <ul style="color:var(--text2);margin-bottom:16px;">
+                    <li><strong>Mean and standard deviation</strong> are highly sensitive to outliers. A few extreme values can skew the mean significantly, while the median is robust.</li>
+                    <li><strong>Normalization (min-max scaling)</strong> compresses all other values when outliers stretch the range. Consider clipping before scaling.</li>
+                    <li><strong>Model training:</strong> Linear regression and k-means clustering are particularly affected by outliers. Tree-based models (Random Forest, Gradient Boosting) are more robust.</li>
+                    <li><strong>Domain knowledge matters:</strong> Not all outliers are errors. A $10 million salary for a CEO is a valid data point, while a negative salary is an error. Always consider the business context before removing data.</li>
+                </ul>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-lightbulb"></i> Key Takeaway</h3>
+                    <p>The choice of outlier handling strategy should be driven by your analysis objective and domain knowledge. Document every decision &mdash; removing or transforming data without justification undermines the credibility of your analysis.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- MCQ QUIZ -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <h2 class="section-title"><i class="fa-solid fa-clipboard-check"></i> Practice Quiz: Data Preparation Techniques</h2>
+            <p class="section-desc">Test your understanding of the concepts covered in Topic 1.4. Click on the option you believe is correct.</p>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: Which pandas function is used to read a comma-separated values file into a DataFrame?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) pd.load_csv()</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">B) pd.read_csv()</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">C) pd.import_csv()</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) pd.open_csv()</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> <code>pd.read_csv()</code> is the standard pandas function for reading CSV files. It also supports custom delimiters via the <code>sep</code> parameter, making it versatile for TSV and other delimited text files as well.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What does the <code>pd.melt()</code> function do?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) Converts a long-format DataFrame to wide format</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">B) Converts a wide-format DataFrame to long format</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">C) Removes duplicate rows from a DataFrame</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) Merges two DataFrames on a common key</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> <code>pd.melt()</code> unpivots a DataFrame from wide to long format. It takes columns and stacks them into rows as key-value pairs using <code>id_vars</code>, <code>value_vars</code>, <code>var_name</code>, and <code>value_name</code> parameters.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q3: Which library is commonly used for parsing HTML content during web scraping in Python?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) html5lib</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">B) lxml</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">C) BeautifulSoup (bs4)</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) Scrapy</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> BeautifulSoup from the <code>bs4</code> package is the most commonly used library for parsing HTML content in Python. It provides intuitive methods like <code>find()</code> and <code>find_all()</code> to navigate and search the HTML document tree. While html5lib, lxml, and Scrapy are also web scraping tools, BeautifulSoup is the one emphasized on the exam.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q4: Before scraping a website, what file should you check to determine which pages you are allowed to crawl?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) sitemap.xml</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">B) robots.txt</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">C) index.html</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) .htaccess</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> The <code>robots.txt</code> file (located at the root of a website, e.g., <code>https://example.com/robots.txt</code>) specifies which pages or sections of the site web crawlers are allowed or disallowed to access. Checking this file is a fundamental ethical web scraping practice.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q5: What is the purpose of setting <code>random_state=42</code> in <code>train_test_split()</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) It sets the test set size to 42%</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">B) It limits the training data to 42 samples</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">C) It ensures the split is reproducible across runs</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) It sets the number of cross-validation folds to 42</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> The <code>random_state</code> parameter seeds the random number generator used for shuffling the data before splitting. Using the same seed (e.g., 42) ensures that you get the exact same train/test split every time you run the code, which is essential for reproducibility.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q6: Which of the following is the correct way to combine multiple boolean filter conditions in pandas?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) <code>df[df['age'] > 30 and df['salary'] > 50000]</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">B) <code>df[(df['age'] > 30) &amp; (df['salary'] > 50000)]</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">C) <code>df[df['age'] > 30 && df['salary'] > 50000]</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) <code>df.filter(age > 30, salary > 50000)</code></div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> In pandas, boolean conditions must use bitwise operators: <code>&amp;</code> (and), <code>|</code> (or), <code>~</code> (not). Each condition must be wrapped in parentheses due to Python's operator precedence rules. Using Python's <code>and</code>/<code>or</code> keywords raises an ambiguity error.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q7: What is "data leakage" in the context of train/test splitting?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) When training data is accidentally deleted</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">B) When the test set is too small to be meaningful</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">C) When information from the test set influences the training process</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) When the model overfits on the training data</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> Data leakage occurs when information from the test set "leaks" into the training process, producing overly optimistic performance estimates. A common cause is performing feature engineering (such as scaling or imputation) on the entire dataset before splitting. Always split first, then preprocess each set independently.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q8: Which file format is best suited for storing hierarchical data with tags and attributes?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) CSV</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">B) JSON</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">C) XML</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) TXT</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> XML (Extensible Markup Language) uses a tree structure with tags and attributes that is purpose-built for hierarchical data. While JSON also supports nesting, XML is specifically designed with a tag-based hierarchy and supports attributes on elements, making it the best choice for complex hierarchical structures.</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q9: In the IQR method for outlier detection, a value is considered an outlier if it falls below <code>Q1 - 1.5 * IQR</code> or above which upper boundary?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) Q3 + 1.0 * IQR</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">B) Q3 + 1.5 * IQR</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">C) Q3 + 2.0 * IQR</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) Q3 + 3.0 * IQR</div>
+                <div class="quiz-explanation"><strong>Correct: B)</strong> The standard IQR method defines outliers as values below <code>Q1 - 1.5 * IQR</code> or above <code>Q3 + 1.5 * IQR</code>, where IQR = Q3 - Q1. The 1.5 multiplier is the conventional threshold. Values beyond <code>3.0 * IQR</code> are sometimes called "extreme outliers."</div>
+            </div>
+
+            <div class="quiz-box" data-section="final">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q10: What does the <code>stratify</code> parameter in <code>train_test_split()</code> accomplish?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">A) It shuffles the data before splitting</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">B) It ensures equal numbers of samples in train and test sets</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'final')">C) It preserves the proportion of target classes in both train and test sets</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'final')">D) It removes outliers before splitting the data</div>
+                <div class="quiz-explanation"><strong>Correct: C)</strong> The <code>stratify</code> parameter ensures that the class distribution of the target variable is preserved in both the training and test sets. This is particularly important for imbalanced datasets &mdash; for example, if 10% of your data is class 1, stratification ensures that both train and test sets contain approximately 10% class 1 samples.</div>
+            </div>
+            <div class="score-summary" id="score-final"></div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic1-3.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 1.3 Data Validation and Integrity</a>
+            <a href="topic2-1.html" class="nav-btn next">Next: 2.1 Core Python Proficiency <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div>
+    </footer>
+
+    <!-- TOC sidebar -->
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#file-formats">1.4.1 File Formats</a>
+        <a class="toc-item" href="#accessing-datasets">1.4.2 Accessing Datasets</a>
+        <a class="toc-item" href="#extracting-data">1.4.3 Extracting Data</a>
+        <a class="toc-item" href="#spreadsheet-practices">1.4.4 Spreadsheet Practices</a>
+        <a class="toc-item" href="#preprocessing">1.4.5 Pre-processing</a>
+        <a class="toc-item" href="#quiz">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        function toggleTheme(){
+            document.body.classList.toggle('light-mode');
+            const isLight=document.body.classList.contains('light-mode');
+            localStorage.setItem('pcad-theme',isLight?'light':'dark');
+            document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+        }
+        (function(){
+            const saved=localStorage.getItem('pcad-theme');
+            if(saved==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}
+        })();
+        window.addEventListener('scroll',()=>{
+            const y=window.scrollY;
+            document.getElementById('scrollTop').classList.toggle('visible',y>500);
+            document.getElementById('toc').classList.toggle('visible',y>500);
+        });
+        // TOC active tracking
+        const sectionIds=['file-formats','accessing-datasets','extracting-data','spreadsheet-practices','preprocessing','quiz'];
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{
+            const y=window.scrollY+150;
+            sectionIds.forEach((s,i)=>{
+                const el=document.getElementById(s);
+                if(!el)return;
+                const top=el.offsetTop,bot=top+el.offsetHeight;
+                if(tocItems[i]) tocItems[i].classList.toggle('active',y>=top&&y<bot);
+            });
+        });
+        // Fade-up animation
+        const obs=new IntersectionObserver((entries)=>{
+            entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+        },{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        // Copy code
+        function copyCode(btn){
+            const code=btn.parentElement.textContent.replace(' Copy','').trim();
+            navigator.clipboard.writeText(code);
+            btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
+            setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
+        }
+        // Quiz
+        const scores={};
+        function checkQuiz(el,correct,section){
+            const box=el.closest('.quiz-box');
+            if(box.dataset.answered) return;
+            box.dataset.answered='true';
+            if(!scores[section]) scores[section]={total:0,correct:0};
+            scores[section].total++;
+            if(correct){
+                el.classList.add('correct');
+                scores[section].correct++;
+            } else {
+                el.classList.add('incorrect');
+                box.querySelectorAll('.quiz-option').forEach(o=>{
+                    if(o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+                });
+            }
+            box.querySelector('.quiz-explanation').classList.add('show');
+            const summary=document.getElementById('score-'+section);
+            if(summary){
+                const s=scores[section];
+                summary.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';
+            }
+        }
+    </script>
+</body>
+</html>

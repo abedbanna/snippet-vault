@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برمجة التطبيق بالإحساس - البرمجة بالإحساس، بمعايير احترافية</title>
+    <meta name="description" content="حلقة البناء الحقيقية: اعمل بشرائح صغيرة، اطلب-راجع-شغّل-أودِع، صحّح الأخطاء مع المساعد، واعرف متى تُمسك زمام الأمور من الذكاء الاصطناعي لبناء ميزاتٍ تعمل فعلًا.">
+    <link rel="alternate" hreflang="en" href="https://albanna-tutorials.com/vibe-coding/05_vibe_coding_the_app.html">
+    <link rel="alternate" hreflang="ar" href="https://albanna-tutorials.com/vibe-coding/ar/05_vibe_coding_the_app.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#ec4899;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#be185d;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#9d174d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-right-color:#be185d}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#be185d;border-right-color:#be185d;background:rgba(236,72,153,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Tajawal','Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.9;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#f472b6}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.9rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-right:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .mobile-menu a{color:var(--text2);padding:10px 12px;border-radius:8px;font-size:.95rem}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.9;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-right:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1.05rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.95rem;line-height:1.9}
+        .info-box ul{padding-right:18px;list-style:disc}
+        .info-box.warning{border-right-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-right-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre-wrap;direction:ltr;text-align:left}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#f472b6;direction:ltr;display:inline-block}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:right;font-weight:600;font-size:.88rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.88rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#be185d;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.85rem}
+        .scroll-top{position:fixed;bottom:28px;left:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;left:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:230px;opacity:0;transform:translateX(-20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.82rem;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.8rem;color:var(--text2);border-right:2px solid transparent;margin:2px 0;border-radius:4px 0 0 4px;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-right-color:var(--primary);background:rgba(236,72,153,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.78rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-wand-magic-sparkles"></i> البرمجة بالإحساس</a>
+            <div class="nav-links">
+                <a href="index.html">كل الوحدات</a>
+                <a href="#loop">الحلقة</a>
+                <a href="#slices">الشرائح الصغيرة</a>
+                <a href="#wheel">أمسِك الزمام</a>
+                <a href="#debug">تصحيح الأخطاء</a>
+                <a href="../05_vibe_coding_the_app.html" lang="en" dir="ltr"><i class="fa-solid fa-globe" style="margin-left:6px"></i>English</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="تبديل السمة"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">كل الوحدات</a>
+        <a href="#loop" onclick="this.parentElement.classList.remove('open')">الحلقة</a>
+        <a href="#slices" onclick="this.parentElement.classList.remove('open')">الشرائح الصغيرة</a>
+        <a href="#wheel" onclick="this.parentElement.classList.remove('open')">أمسِك الزمام</a>
+        <a href="#debug" onclick="this.parentElement.classList.remove('open')">تصحيح الأخطاء</a>
+        <a href="../05_vibe_coding_the_app.html" lang="en" dir="ltr" onclick="this.parentElement.classList.remove('open')">English</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>برمجة التطبيق بالإحساس</h1>
+            <p class="hero-sub">حلقة البناء الحقيقية &mdash; ومعرفة متى تُمسك زمام الأمور من الذكاء الاصطناعي بالضبط.</p>
+            <p class="hero-sub" style="font-size:.98rem;margin-top:4px">الوحدة 5 &middot; حوّل المراحل إلى ميزاتٍ تعمل، شريحةً شريحة.</p>
+            <span class="diff-badge" style="background:#f59e0b">متوسّط</span>
+            <span class="cat-badge"><i class="fa-solid fa-laptop-code" style="margin-left:6px"></i>البناء</span>
+            <span class="cat-badge"><i class="fa-solid fa-flask" style="margin-left:6px"></i>يتضمّن مختبرًا</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-left:6px"></i>~55 دقيقة</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- الأهداف -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> ماذا ستتعلّم</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>تشغيل حلقة البناء الأساسية: <strong>اطلب &rarr; راجع &rarr; شغّل &rarr; أودِع</strong>، وكرّر</li>
+                    <li>لماذا تتفوّق الشرائح الصغيرة على طلبٍ ضخمٍ واحد «ابنِ التطبيق»</li>
+                    <li>الإشارات التي تخبرك أن <strong>تُمسك الزمام</strong> وتقود يدويًّا</li>
+                    <li>تصحيح الأخطاء <em>مع</em> المساعد &mdash; السبب الجذري لا مجرّد رقعة</li>
+                    <li>كيف تتحرّر حين يدور المساعد في حلقة</li>
+                    <li><strong>مختبر عملي:</strong> ابنِ المرحلتين M2 (بحث) وM3 (حذف) بالحلقة، من الطرف إلى الطرف محليًّا</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>المتطلبات المسبقة:</strong> الوحدة 4 &mdash; <code>snippet-vault</code> بمرحلة M1 (إنشاء + عرض) مدموجةً في <code>main</code>.</p>
+        </div>
+
+        <!-- الحلقة -->
+        <div class="section fade-up" id="loop">
+            <h2 class="section-title"><i class="fa-solid fa-arrows-spin"></i> حلقة البناء</h2>
+            <p class="section-desc">البرمجة بالإحساس ليست طلبًا ضخمًا واحدًا &mdash; بل حلقةٌ محكمة تدور بها مرّاتٍ كثيرة في الساعة. كل دورةٍ تضيف قطعةً صغيرةً واحدة مُراجَعةً ومُودَعة:</p>
+            <div class="code-block">   ┌──────────────────────────────────────────────┐
+   │  1. PROMPT  →  ask for ONE small slice         │
+   │  2. REVIEW  →  read the diff (like a PR)        │
+   │  3. RUN     →  does it actually work?          │
+   │  4. COMMIT  →  checkpoint the good state        │
+   └──────────────────────────────────────────────┘
+                     ↺  repeat</div>
+            <p class="section-desc">الحلقة إيقاعك لبقيّة البناء. كل مرحلةٍ في <code>SPEC.md</code> تصير حفنةً من هذه الدورات. ولأنك تُودِع كل حالةٍ جيّدة، فإن دورةً سيّئة تبعد دائمًا <code>git restore</code> واحدًا عن الزوال.</p>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-gauge-high"></i> سريعٌ <em>وآمن</em></h3>
+                <p>يظنّ الناس أن المراجعة والإيداعات تبطئك. والعكس صحيح: الخطوات الصغيرة المُراجَعة تعني أنك نادرًا ما تصحّح لغزًا، لأن ما انكسر في آخر تغييرٍ صغير. السرعة تأتي من <em>عدم</em> التعثّر.</p>
+            </div>
+        </div>
+
+        <!-- الشرائح الصغيرة -->
+        <div class="section fade-up" id="slices">
+            <h2 class="section-title"><i class="fa-solid fa-scissors"></i> اعمل بشرائح صغيرة</h2>
+            <p class="section-desc">أكبر مهارةٍ منفردة في البرمجة بالإحساس هي <strong>تقطيع العمل صغيرًا</strong>. «ابنِ التطبيق كلّه» يعطيك كومةً لا تستطيع مراجعتها. «أضِف صندوق بحثٍ يرشّح القائمة بالعنوان» يعطيك تغييرًا تقرؤه في دقيقة.</p>
+            <table class="dark-table">
+                <thead><tr><th>كبيرٌ جدًّا</th><th>شريحةٌ بالحجم الصحيح</th></tr></thead>
+                <tbody>
+                    <tr><td>«ابنِ خزنة المقتطفات.»</td><td>«أضِف نموذج إنشاء المقتطف وأرسله POST إلى الـAPI.»</td></tr>
+                    <tr><td>«أضِف بحثًا ومرشّحاتٍ وترتيبًا ووسومًا.»</td><td>«أضِف صندوق بحثٍ يرشّح القائمة بالعنوان.»</td></tr>
+                    <tr><td>«اجعله يبدو جميلًا.»</td><td>«نسّق قائمة المقتطفات كبطاقاتٍ بتباعد.»</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-list-check"></i> دع المواصفة تقود</h3>
+                <p>قطّعت العمل بالفعل في الوحدة 3. ابنِ مرحلةً واحدة (أو قصّةً واحدة ضمنها) لكل فرع، بالترتيب. حين تنجح كل معايير قبول القصّة، فقد اكتملت &mdash; انتقل للتالية.</p>
+            </div>
+        </div>
+
+        <!-- أمسِك الزمام -->
+        <div class="section fade-up" id="wheel">
+            <h2 class="section-title"><i class="fa-solid fa-hands"></i> متى تُمسك الزمام</h2>
+            <p class="section-desc">المساعد سائقٌ سريع على الطريق السريع، وعبءٌ في موقفٍ ضيّق. المحترف يعرف متى يكفّ عن التفويض ويحرّر الشيفرة بنفسه. راقب هذه الإشارات:</p>
+            <table class="dark-table">
+                <thead><tr><th>الإشارة</th><th>ماذا تفعل</th></tr></thead>
+                <tbody>
+                    <tr><td>فشل في الإصلاح نفسه مرّتين</td><td>أوقف الحلقة. اقرأ الشيفرة بنفسك وأصلح أو حدّد السطر بالضبط.</td></tr>
+                    <tr><td>منطقٌ حسّاسٌ أمنيًّا أو ماليًّا</td><td>المصادقة، المدفوعات، الصلاحيات &mdash; اكتبها أو تحقّق منها يدويًّا.</td></tr>
+                    <tr><td>منطقٌ دقيق يخطئه قليلًا باستمرار</td><td>اكتب اللبّ الصعب يدويًّا، ودع الذكاء الاصطناعي للقوالب حوله.</td></tr>
+                    <tr><td>لا تفهم مخرجاته</td><td>لا تشحن ما لا تستطيع صيانته. بسّطه بنفسك أو اطلب شرحًا.</td></tr>
+                    <tr><td>التغيير يتضخّم</td><td>تولَّ الأمر، قلّص النطاق، واستأنف الحلقة أصغر.</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-hand"></i> أنت السائق، دائمًا</h3>
+                <p>إمساك الزمام ليس فشلًا &mdash; بل هو المهارة كلها. أفضل مبرمجي الإحساس يسلّمون بسلاسةٍ قطعًا صغيرةً محدّدة للذكاء الاصطناعي ويخطفون الزمام لحظة يبدأ بالتِيه. السيّارة سيّارتك.</p>
+            </div>
+        </div>
+
+        <!-- تصحيح الأخطاء -->
+        <div class="section fade-up" id="debug">
+            <h2 class="section-title"><i class="fa-solid fa-bug-slash"></i> تصحيح الأخطاء مع المساعد</h2>
+            <p class="section-desc">حين ينكسر شيء، يكون المساعد ممتازًا &mdash; إن أحطته كتقرير خطأٍ جيّد بدل «إنه معطّل، أصلحه».</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-clipboard-list"></i> طلب تصحيحٍ جيّد</h3>
+                <ul>
+                    <li>الصق <strong>الخطأ بالضبط</strong> و<strong>أثر التتبّع (stack trace)</strong>.</li>
+                    <li>قل ما <strong>توقّعته</strong> مقابل ما <strong>حدث</strong>.</li>
+                    <li>أعطِ الملف/الملفات ذات الصلة كسياق.</li>
+                    <li>اطلب <strong>السبب الجذري أولًا</strong>، ثم الإصلاح &mdash; لا رقعةً عمياء.</li>
+                </ul>
+            </div>
+            <div class="code-block">This request throws the error below. I expected the new snippet to appear
+in the list; instead the list is empty after reload.
+Error: [paste exact error + stack trace]
+Explain the root cause, then propose the smallest fix.</div>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-rotate"></i> أعِد الإنتاج قبل الإصلاح</h3>
+                <p>تأكّد أولًا أنك تستطيع إطلاق الخطأ بموثوقية. إصلاحٌ لا تستطيع التحقّق منه مقابل إعادة إنتاجٍ هو مجرّد تخمين &mdash; والذكاء الاصطناعي سيولّد تخميناتٍ واثقةً بسرور.</p>
+            </div>
+        </div>
+
+        <!-- التحرّر -->
+        <div class="section fade-up" id="stuck">
+            <h2 class="section-title"><i class="fa-solid fa-life-ring"></i> كيف تتحرّر</h2>
+            <p class="section-desc">حين يدور المساعد أو يظلّ يخطئ، لا تعِد الطلب بشدّةٍ أكبر فحسب. غيّر الموقف:</p>
+            <table class="dark-table">
+                <thead><tr><th>الحركة</th><th>متى</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>أعِد ضبط السياق</strong></td><td>يناقض نفسه &mdash; ابدأ المهمّة من جديد (تآكل السياق من الوحدة 2).</td></tr>
+                    <tr><td><strong>صغّر الطلب</strong></td><td>قسّم الشريحة إلى أصغر منها.</td></tr>
+                    <tr><td><strong>أعطِ مثالًا</strong></td><td>أرِ المدخل/المخرج بالضبط أو ملفًّا مشابهًا يحاكيه.</td></tr>
+                    <tr><td><strong>اكتب اللبّ يدويًّا</strong></td><td>اكتب الأسطر الخمسة الصعبة بنفسك، ثم دع الذكاء الاصطناعي يكمل حولها.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- المختبر العملي -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-flask"></i> مختبر عملي: ابنِ M2 وM3 بالحلقة</h2>
+            <p class="section-desc">ستأخذ خزنة المقتطفات من «إنشاء + عرض» إلى تطبيقٍ حقيقيٍّ يعمل &mdash; بإضافة البحث والحذف عبر حلقة البناء، وإمساك الزمام مرّةً على الأقل، وربط الواجهة بالـAPI من الطرف إلى الطرف.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-screwdriver-wrench"></i> ما تحتاجه</h3>
+                <p>مستودع <code>snippet-vault</code> من الوحدة 4 (M1 مدموجة)، ومساعدك، والتطبيقان يعملان (<code>api/</code> و<code>web/</code>).</p>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>افرَع لـM2 (بحث)</h3>
+                    <div class="code-block">git checkout -b feature/m2-search</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>أدِر الحلقة للبحث</h3>
+                    <p class="section-desc">اطلب شريحةً، راجع التغيير، شغّله، أودِع &mdash; مقابل معايير قبول M2 من <code>SPEC.md</code>:</p>
+                    <div class="code-block">Add M2 search from SPEC.md: GET /snippets?q= filters the list by title
+(case-insensitive) in the API, and a search box in the web UI that filters
+the list live. Small diff. Don't touch create or delete.</div>
+                    <p class="section-desc">تحقّق من كل معيار قبولٍ يدويًّا: الترشيح الحيّ، عدم حساسية حالة الأحرف، حالة الفراغ الودودة. أودِع عند الاخضرار.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>أمسِك الزمام مرّة &mdash; عن قصد</h3>
+                    <p class="section-desc">اعثر على موضعٍ واحد ليست فيه مخرجات الذكاء الاصطناعي صحيحةً تمامًا (حالة حدّية، اسم، جزء أخرق) و<strong>أصلحه بنفسك</strong> يدويًّا بدل إعادة الطلب. دوّن ماذا ولماذا. ثم ادمج M2:</p>
+                    <div class="code-block">git checkout main
+git merge feature/m2-search</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>افرَع وابنِ M3 (حذف)</h3>
+                    <div class="code-block">git checkout -b feature/m3-delete</div>
+                    <p class="section-desc">أدِر الحلقة ثانيةً: <code>DELETE /snippets/:id</code> في الـAPI وزرّ حذفٍ (مع تأكيد) في الواجهة. راجع، شغّل، تحقّق، أودِع، ثم ادمج في <code>main</code>.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>أكّد أنه يعمل من الطرف إلى الطرف</h3>
+                    <p class="section-desc">والتطبيقان يعملان، في المتصفّح: أنشئ مقتطفًا، شاهده مُدرَجًا، ابحث عنه، واحذفه. هذا تطبيقٌ حقيقيٌّ يعمل &mdash; M1 حتى M3، حيًّا محليًّا.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">6</div>
+                <div class="step-body">
+                    <h3>تأمّل</h3>
+                    <p class="section-desc">في <code>REFLECTION.md</code>: أين أمسكت الزمام، ولماذا؟ أيّ معايير قبولٍ تحقّقت منها يدويًّا؟ ثم أودِعه.</p>
+                </div>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-paper-plane"></i> ما الذي تسلّمه</h3>
+                <p>مستودع <code>snippet-vault</code> بتطبيقٍ يعمل. تحقّق من نفسك قبل التسليم:</p>
+                <ul>
+                    <li>M2 (بحث) وM3 (حذف) كلٌّ بُني على فرعٍ ودُمج في <code>main</code></li>
+                    <li>الإنشاء والعرض والبحث والحذف كلّها تعمل في المتصفّح</li>
+                    <li>إيداعٌ واحد على الأقل حرّرت فيه <em>أنت</em> مخرجات الذكاء الاصطناعي يدويًّا</li>
+                    <li><code>REFLECTION.md</code> يدوّن أين أمسكت الزمام وما تحقّقت منه</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- المسرد -->
+        <div class="section fade-up" id="glossary">
+            <h2 class="section-title"><i class="fa-solid fa-book"></i> مسرد مصغّر</h2>
+            <table class="dark-table">
+                <thead><tr><th>المصطلح</th><th>المعنى المبسّط</th></tr></thead>
+                <tbody>
+                    <tr><td>حلقة البناء</td><td>اطلب &rarr; راجع &rarr; شغّل &rarr; أودِع، مكرّرةً بدوراتٍ صغيرة.</td></tr>
+                    <tr><td>الشريحة</td><td>قطعة عملٍ صغيرة قائمة بذاتها تبنيها وتتحقّق منها دفعةً واحدة.</td></tr>
+                    <tr><td>إمساك الزمام</td><td>الكفّ عن التفويض وتحرير الشيفرة يدويًّا حين يكون الذكاء الاصطناعي الأداة الخطأ.</td></tr>
+                    <tr><td>السبب الجذري</td><td>السبب الكامن للعلّة، لا العَرَض فقط.</td></tr>
+                    <tr><td>إعادة الإنتاج</td><td>إطلاق العلّة بموثوقيةٍ لتؤكّد أن الإصلاح يعمل فعلًا.</td></tr>
+                    <tr><td>من الطرف إلى الطرف</td><td>المسار كلّه يعمل معًا &mdash; هنا، الواجهة &rarr; الـAPI &rarr; والعودة.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- الخلاصة -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> الخلاصة وما التالي</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> صار لديك الآن</h3>
+                <p>حلقة البناء طبيعةً ثانية، والحُكم على متى تُمسك الزمام عند الحاجة، ومنهج تصحيحٍ يجد الأسباب الجذرية &mdash; وخزنة مقتطفاتٍ تعمل فعلًا من الطرف إلى الطرف: إنشاء وعرض وبحث وحذف، كلّها مدموجةٌ في <code>main</code> يعمل.</p>
+            </div>
+            <p class="section-desc">التالي: <strong>الوحدة 6 &mdash; اختبار الشيفرة المولّدة</strong>. تطبيقك يعمل حين تنقر فيه يدويًّا &mdash; لكن كيف <em>تعرف</em> أنه ما زال يعمل بعد تغيير الذكاء الاصطناعي التالي؟ نضيف اختباراتٍ آلية، أوّل شبكة أمانٍ حقيقية لـ«يعمل مرّة واحدة».</p>
+        </div>
+
+        <!-- التنقّل -->
+        <div class="page-nav">
+            <a href="04_version_control.html" class="nav-btn prev"><i class="fa-solid fa-arrow-right"></i> الوحدة 4</a>
+            <a href="06_testing.html" class="nav-btn next">الوحدة 6: اختبار الشيفرة المولّدة <i class="fa-solid fa-arrow-left"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">البرمجة بالإحساس، بمعايير احترافية &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>برمجة التطبيق بالإحساس</h4>
+        <a class="toc-item" href="#objectives">الأهداف</a>
+        <a class="toc-item" href="#loop">الحلقة</a>
+        <a class="toc-item" href="#slices">الشرائح الصغيرة</a>
+        <a class="toc-item" href="#wheel">أمسِك الزمام</a>
+        <a class="toc-item" href="#debug">تصحيح الأخطاء</a>
+        <a class="toc-item" href="#stuck">التحرّر</a>
+        <a class="toc-item" href="#lab">المختبر العملي</a>
+        <a class="toc-item" href="#glossary">المسرد</a>
+        <a class="toc-item" href="#recap">الخلاصة</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('vibe-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('vibe-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

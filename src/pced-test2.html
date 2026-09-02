@@ -1,0 +1,1503 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCED Test 2 - Practice Exam</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #4caf50;
+            --accent: #ff9800;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --correct: #4caf50;
+            --wrong: #f44336;
+            --info: #2196f3;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .start-screen .exam-info {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .start-screen .exam-info table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .start-screen .exam-info table th,
+        .start-screen .exam-info table td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .start-screen .exam-info table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: white;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .mode-btn:hover, .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .mode-btn small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .start-btn {
+            padding: 15px 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        /* Quiz area */
+        .quiz-area { display: none; }
+
+        .progress-bar {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .progress-track {
+            flex: 1;
+            min-width: 200px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .timer {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: #e8f5e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .timer.warning { color: var(--accent); background: #fff3e0; }
+        .timer.danger { color: var(--wrong); background: #ffebee; }
+
+        .question-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .question-topic {
+            font-size: 0.75rem;
+            color: white;
+            background: var(--primary);
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .question-type {
+            font-size: 0.75rem;
+            color: var(--info);
+            background: #e3f2fd;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 18px;
+            line-height: 1.7;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin: 12px 0;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+            background: #f0f7f0;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: #e8f5e9;
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background: #e8f5e9;
+        }
+
+        .option.wrong {
+            border-color: var(--wrong);
+            background: #ffebee;
+        }
+
+        .option input {
+            margin-top: 3px;
+            accent-color: var(--primary);
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 20px;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .option-text code {
+            background: #f0f0f0;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.88rem;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .explanation.show { display: block; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.prev { background: #e0e0e0; color: var(--text); }
+        .nav-btn.check { background: var(--accent); color: white; }
+        .nav-btn.next { background: var(--primary); color: white; }
+        .nav-btn.finish { background: var(--primary-dark); color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Question Navigator */
+        .q-navigator {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .q-navigator h4 {
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .q-navigator h4::after {
+            content: '\25B2';
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+
+        .q-navigator.collapsed h4 {
+            margin-bottom: 0;
+        }
+
+        .q-navigator.collapsed h4::after {
+            transform: rotate(180deg);
+        }
+
+        .q-navigator.collapsed .q-nav-grid {
+            display: none;
+        }
+
+        .q-nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .q-nav-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .q-nav-btn.current { border-color: var(--primary); background: #e8f5e9; font-weight: 700; }
+        .q-nav-btn.answered { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-nav-btn.correct-nav { background: var(--correct); color: white; border-color: var(--correct); }
+        .q-nav-btn.wrong-nav { background: var(--wrong); color: white; border-color: var(--wrong); }
+
+        /* Results */
+        .results { display: none; }
+
+        .results-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            border: 8px solid;
+        }
+
+        .score-circle.pass { border-color: var(--correct); color: var(--correct); }
+        .score-circle.fail { border-color: var(--wrong); color: var(--wrong); }
+
+        .score-circle small {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .results-breakdown {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .breakdown-bar {
+            width: 100px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .btn-retry {
+            padding: 12px 35px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-retry:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-review {
+            padding: 12px 35px;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-review:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+
+        .chart-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .chart-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .exam-nav {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .exam-nav h3 {
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+            font-size: 1rem;
+        }
+
+        .exam-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .exam-nav-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .exam-nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .exam-nav-links a.current {
+            background: var(--accent);
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .exam-nav-links a small {
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .question-card { padding: 18px; }
+            .header h1 { font-size: 1.3rem; }
+            .mode-selector { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>PCED Test 2 - Practice Exam</h1>
+    <p>Data Analyst Essentials with Python</p>
+</div>
+
+<div class="container">
+    <div class="exam-nav">
+        <h3>All Practice Exams</h3>
+        <div class="exam-nav-links">
+            <a href="pced-exam.html">Practice Exam <small>(160 Q)</small></a>
+            <a href="pced-test1.html">Test 1 <small>(40 Q)</small></a>
+            <a href="pced-test2.html" class="current">Test 2 <small>(40 Q)</small></a>
+            <a href="pced-exam3.html">Exam 3 <small>(40 Q)</small></a>
+            <a href="pced-exam4.html">Exam 4 <small>(40 Q)</small></a>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <div class="exam-info">
+            <p style="margin-top:10px;font-size:0.9rem;color:var(--text-light);">This practice test contains <strong>40</strong> fixed questions covering all syllabus topics.</p>
+        </div>
+
+        <h3 style="margin:20px 0 10px;">Select Mode</h3>
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('practice')" id="modeP">
+                Practice Mode
+                <small>Instant feedback after each question</small>
+            </button>
+            <button class="mode-btn" onclick="setMode('exam')" id="modeE">
+                Exam Mode
+                <small>65 min timer, results at the end</small>
+            </button>
+        </div>
+
+        <button class="start-btn" onclick="startExam()">Start Exam</button>
+    </div>
+
+    <!-- Quiz Area -->
+    <div class="quiz-area" id="quizArea">
+        <div class="progress-bar">
+            <span class="progress-text" id="progressText">Question 1 / 40</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
+            <span class="timer" id="timer" style="display:none">65:00</span>
+        </div>
+
+        <div class="q-navigator" id="qNavigator">
+            <h4 onclick="toggleNavigator()">Question Navigator</h4>
+            <div class="q-nav-grid" id="qNavGrid"></div>
+        </div>
+
+        <div id="questionContainer"></div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()">Previous</button>
+            <button class="nav-btn check" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+            <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">Next</button>
+            <button class="nav-btn finish" id="finishBtn" onclick="finishExam()" style="display:none">Finish Exam</button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+        <div class="results-card">
+            <h2>Exam Results</h2>
+            <div class="score-circle" id="scoreCircle">
+                <span id="scorePercent">0%</span>
+                <small id="scoreLabel">Score</small>
+            </div>
+            <p id="passFailMsg" style="font-size:1.2rem;font-weight:600;margin:10px 0;"></p>
+            <p id="scoreSummary" style="color:var(--text-light);"></p>
+
+            <div class="results-breakdown" id="resultsBreakdown"></div>
+
+            <button class="btn-retry" onclick="location.reload()">Retry Exam</button>
+            <button class="btn-review" onclick="reviewExam()">Review Answers</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>PCED Test 2 - Practice Exam &mdash; Based on OpenEDG Python Institute Syllabus</p>
+    <p>For educational purposes only. &copy; 2025 Albanna Tutorials</p>
+</div>
+
+<script>
+const questions = [
+// ===== Q1 =====
+{
+    id: 1, topic: "1.1.1", module: 1,
+    text: "Which statement best explains how raw data becomes meaningful and how it relates to information and knowledge?",
+    options: [
+        "Information and knowledge are both forms of raw data used for storage.",
+        "Raw data is already meaningful and does not require processing.",
+        "Raw data is processed into information, which is then interpreted to form knowledge that supports understanding and decisions.",
+        "Knowledge is collected first, then broken down into information and stored as data."
+    ],
+    correct: [2],
+    explanation: "The data-information-knowledge hierarchy: raw data is processed into information, which when interpreted becomes knowledge for decision-making."
+},
+// ===== Q2 =====
+{
+    id: 2, topic: "1.1.2", module: 1,
+    text: "An online retailer collects: number of items purchased, customer comments, and order details in a CSV file. How should this data be classified?",
+    options: [
+        "The number of items is quantitative, the comments are qualitative, and the data is structured.",
+        "The comments are structured, but the number of items is unstructured.",
+        "All data is unstructured because comments are included.",
+        "The number of items is qualitative, the comments are quantitative, and the data is unstructured."
+    ],
+    correct: [0],
+    explanation: "Item count is quantitative (numerical). Comments are qualitative (descriptive text). CSV is a structured format with rows and columns."
+},
+// ===== Q3 =====
+{
+    id: 3, topic: "1.2.1", module: 1,
+    text: "A company wants to monitor user activity on its website without asking users to fill out forms. Which method is most appropriate?",
+    options: [
+        "Observing users through scheduled usability testing sessions.",
+        "Conducting phone interviews with selected users.",
+        "Distributing a survey through email.",
+        "Using an automated system to log user interactions."
+    ],
+    correct: [3],
+    explanation: "Automated logging captures user interactions (clicks, page views, time spent) without requiring user participation or forms."
+},
+// ===== Q4 =====
+{
+    id: 4, topic: "1.2.2", module: 1,
+    text: "A company wants to run regular reports on customer transactions stored in structured tables with defined relationships. Which storage system is most appropriate?",
+    options: [
+        "Relational database",
+        "JSON file system",
+        "Data lake",
+        "Data warehouse"
+    ],
+    correct: [0],
+    explanation: "Relational databases are designed for structured data with defined relationships between tables, supporting regular queries and reports via SQL."
+},
+// ===== Q5 =====
+{
+    id: 5, topic: "1.3.1", module: 1,
+    text: "Select the true statement about how data quality issues can affect analysis and decision-making.",
+    options: [
+        "Large datasets always minimize the impact of small data errors.",
+        "Outdated or duplicate data strengthens conclusions by confirming repeated patterns.",
+        "Errors introduced during data collection or storage can affect analysis outcomes and lead to misleading or incorrect decisions.",
+        "Issues with archived data are irrelevant because archived data is never reused."
+    ],
+    correct: [2],
+    explanation: "Data quality issues at any stage (collection, storage, processing) can cascade through the lifecycle, leading to incorrect analysis and poor decisions."
+},
+// ===== Q6 =====
+{
+    id: 6, topic: "1.3.2", module: 1,
+    text: "A healthcare organization collects, stores, and analyzes patient records, lab results, and treatment histories. Why is strong data management critical throughout the entire data lifecycle?",
+    options: [
+        "To support the visual design of medical dashboards and improve marketing using de-identified data.",
+        "To streamline appointment scheduling and reduce administrative workload.",
+        "To enable faster access to medical imaging and reduce storage costs.",
+        "To ensure patient safety, maintain data accuracy for medical decisions, protect personal health information, and comply with HIPAA."
+    ],
+    correct: [3],
+    explanation: "Healthcare data management is critical for patient safety, accurate decisions, PHI protection, and HIPAA compliance."
+},
+// ===== Q7 =====
+{
+    id: 7, topic: "1.4.1", module: 1,
+    text: "Which example correctly links tasks to their respective fields?",
+    options: [
+        "Surveys and graphs are analytics, web traffic analysis is data science, AI systems is data analysis.",
+        "Creating dashboards is data science, AI is analytics, sorting files is data analysis.",
+        "Calculating averages of customer ratings is data analysis, identifying purchasing patterns is data analytics, developing a recommendation system is data science.",
+        "Collecting sensor data is data science, building charts is analytics, emailing results is data analysis."
+    ],
+    correct: [2],
+    explanation: "Data analysis = calculating averages (examining data). Data analytics = identifying patterns (systematic analysis). Data science = building recommendation systems (ML/AI)."
+},
+// ===== Q8 =====
+{
+    id: 8, topic: "1.4.2", module: 1,
+    text: "A company analyzes customer data to understand past buying behavior, investigate churn causes, predict future trends, and decide on pricing strategy. How do these align with the four analytics types?",
+    options: [
+        "Understanding behavior is prescriptive, predicting trends is diagnostic, pricing is descriptive, churn is predictive.",
+        "Churn causes is prescriptive, forecasting is diagnostic, pricing is descriptive, behavior is predictive.",
+        "Predicting churn is predictive, explaining trends is prescriptive, pricing is diagnostic, behavior is descriptive.",
+        "Understanding behavior is descriptive, identifying churn causes is diagnostic, forecasting trends is predictive, choosing pricing strategy is prescriptive."
+    ],
+    correct: [3],
+    explanation: "Past behavior = descriptive (what happened). Churn causes = diagnostic (why). Future trends = predictive (what will happen). Pricing strategy = prescriptive (what to do)."
+},
+// ===== Q9 =====
+{
+    id: 9, topic: "1.5.1", module: 1,
+    text: "Which two practices best support legal and ethical compliance when working with sensitive user data? (Select TWO)",
+    options: [
+        "Using strong encryption protocols to secure data during transmission and storage.",
+        "Removing or modifying personally identifiable information to anonymize records.",
+        "Using restricted access dashboards that display full personal details.",
+        "Sharing customer data with partners for increased security.",
+        "Allowing analysts to use real user data if they sign a confidentiality agreement.",
+        "Replacing user names with pseudonyms but keeping original data in backup files."
+    ],
+    correct: [0, 1],
+    explanation: "Encryption secures data during transmission/storage. Anonymization removes PII so individuals cannot be identified. Both are standard legal/ethical compliance practices."
+},
+// ===== Q10 =====
+{
+    id: 10, topic: "2.1.1", module: 2,
+    text: "Which code snippet will output True for both print functions by correctly assigning variables, performing a valid operation, and confirming the result's type?",
+    options: [
+        "<code>x = False\ny = 5\nz = x + y\nprint(type(z) == int)\nprint(isinstance(z, int))</code>",
+        "<code>x = \"Hi\"\ny = 1\nz = x + y\nprint(type(z) == str)\nprint(isinstance(z, str))</code>",
+        "<code>x = 3.0\ny = 2\nz = x + y\nprint(type(z) == float)\nprint(isinstance(z, int))</code>",
+        "<code>x = 10\ny = \"2\"\nz = x * y\nprint(type(z) != str)\nprint(isinstance(z, str))</code>"
+    ],
+    correct: [0],
+    explanation: "x=False(=0), y=5, z=0+5=5(int). type(5)==int is True, isinstance(5,int) is True. Option B: str+int raises TypeError. Option C: isinstance(5.0,int) is False. Option D: type('2222222222')!=str is False."
+},
+// ===== Q11 =====
+{
+    id: 11, topic: "2.2.1", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>nums = [10, 5, 7, 3, 5]\n\nnums.remove(5)\nnums.sort()\nnums.reverse()\nsub = nums[1:4]\nmapped = [x * 2 for x in nums]\n\nprint(sub)\nprint(mapped)</div>",
+    options: [
+        "<code>[5, 3, 5]</code> and <code>[20, 14, 10]</code>",
+        "<code>[5, 3, 5]</code> and <code>[20, 6]</code>",
+        "<code>[7, 5, 3]</code> and <code>[20, 14, 10, 6]</code>",
+        "<code>[7, 5, 3]</code> and <code>[14, 10, 6]</code>"
+    ],
+    correct: [2],
+    explanation: "remove(5) removes first 5: [10,7,3,5]. sort(): [3,5,7,10]. reverse(): [10,7,5,3]. sub=[7,5,3]. mapped=[20,14,10,6]."
+},
+// ===== Q12 =====
+{
+    id: 12, topic: "2.2.2", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>a = (1, 2, 3, 4)\nb = (5, 6, 3)\n\nset_a = set(a)\nset_b = set(b)\n\nmerged = set_a.union(set_b)\ndisjoint_check = set_a.isdisjoint(set_b)\n\nprint(sorted(merged))\nprint(disjoint_check)</div>",
+    options: [
+        "<code>[1, 2, 3, 3, 4, 5, 6]</code> and <code>False</code>",
+        "<code>TypeError: sets are immutable and cannot be used in tuple operations</code>",
+        "<code>[1, 2, 3, 4, 5, 6]</code> and <code>False</code>",
+        "<code>[1, 2, 3, 4, 5, 6]</code> and <code>True</code>",
+        "<code>[1, 2, 3, 4]</code> and <code>False</code>"
+    ],
+    correct: [2],
+    explanation: "union combines all unique elements: {1,2,3,4,5,6}. sorted gives [1,2,3,4,5,6]. isdisjoint is False because they share element 3."
+},
+// ===== Q13 =====
+{
+    id: 13, topic: "2.2.3", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>sales = [\n    {\"region\": \"North\", \"amount\": 200},\n    {\"region\": \"South\", \"amount\": 150},\n    {\"region\": \"North\", \"amount\": 300},\n    {\"region\": \"East\", \"amount\": 100},\n    {\"region\": \"South\", \"amount\": 250}\n]\n\ntotals = {}\nfor record in sales:\n    region = record[\"region\"]\n    amount = record[\"amount\"]\n    if region not in totals:\n        totals[region] = 0\n    totals[region] += amount\n\nhigh_regions = {r: a for r, a in totals.items() if a > 400}\nprint(len(high_regions))</div>",
+    options: [
+        "<code>1</code>",
+        "<code>0</code>",
+        "<code>2</code>",
+        "<code>3</code>"
+    ],
+    correct: [0],
+    explanation: "totals: North=500, South=400, East=100. high_regions (a>400): only North(500). South=400 is NOT greater than 400. len=1."
+},
+// ===== Q14 =====
+{
+    id: 14, topic: "2.2.4", module: 2,
+    text: "You are testing a validator. Which email returns True?\n<div class='code-block'>def is_valid(email):\n    if not email.endswith(\"openedg.org\"):\n        return False\n    if not email[0].isalpha():\n        return False\n    if \"@\" not in email:\n        return False\n    if not email.split(\"@\")[0][-1].isdigit():\n        return False\n    return True</div>",
+    options: [
+        "<code>\"9mike@openedg.org\"</code>",
+        "<code>\"mike@openedg.org\"</code>",
+        "<code>\"mike91@openedg.com\"</code>",
+        "<code>\"mike9@openedg.org\"</code>"
+    ],
+    correct: [3],
+    explanation: "mike9@openedg.org: endswith 'openedg.org' \u2713, starts with 'm' (alpha) \u2713, has '@' \u2713, username ends with '9' (digit) \u2713. All checks pass."
+},
+// ===== Q15 =====
+{
+    id: 15, topic: "2.3.1", module: 2,
+    text: "Which statements about Python functions are correct? (Select TWO)",
+    options: [
+        "If a function returns None, it means it didn't run correctly.",
+        "Default parameters allow a function to be called with fewer arguments than it defines.",
+        "All arguments must be passed using keyword syntax.",
+        "Dictionaries and sets cannot be passed as arguments to functions.",
+        "Functions must be called using square brackets, like my_func[5].",
+        "The pass keyword allows you to define a placeholder function that does nothing."
+    ],
+    correct: [1, 5],
+    explanation: "B: Default parameters allow fewer arguments. F: pass creates placeholder functions. All other statements are false."
+},
+// ===== Q16 =====
+{
+    id: 16, topic: "2.3.2", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>x = 0\ny = 0\n\ndef update_x():\n    global x\n    x = 1\n    return x\n\nx = y\nprint(update_x(), x, y)</div>",
+    options: [
+        "<code>0 0 0</code>",
+        "<code>1 0 0</code>",
+        "<code>0 0 0</code>",
+        "<code>1 1 0</code>"
+    ],
+    correct: [3],
+    explanation: "x=y sets x=0. update_x() sets global x=1, returns 1. Then x evaluates to 1, y stays 0. Output: 1 1 0."
+},
+// ===== Q17 =====
+{
+    id: 17, topic: "2.3.3", module: 2,
+    text: "You want to safely convert user input to int, print success message with number, and print 'Done.' once regardless of outcome. Which code is correct?",
+    options: [
+        "<code>value = input()\ntry:\n    score = int(value)\n        print(\"Done.\")\nexcept ValueError:\n    print(\"Invalid input.\")\n        print(\"Done.\")\nelse:\n    print(\"Conversion successful:\", score)\n        print(\"Done.\")</code>",
+        "<code>value = input()\ntry:\n    score = int(value)\nexcept:\n    print(\"Conversion failed:\", score)\nelse:\n    print(\"Conversion successful:\", score)\nfinally:\n    print(\"Done.\")</code>",
+        "<code>value = input()\ntry:\n    score = int(value)\n        print(\"Conversion successful:\", score)\nexcept ValueError:\n    print(\"Invalid input.\")\nelse:\n    print(\"Done.\")</code>",
+        "<code>value = input()\ntry:\n    score = int(value)\n    print(\"Conversion successful:\", score)\nexcept ValueError:\n    print(\"Invalid input.\")\nfinally:\n    print(\"Done.\")</code>"
+    ],
+    correct: [3],
+    explanation: "Option D correctly: try block converts and prints success, except ValueError handles invalid input, finally always prints 'Done.' regardless of outcome."
+},
+// ===== Q18 =====
+{
+    id: 18, topic: "2.4.2", module: 2,
+    text: "You are assigning loyalty tiers. Customer must be >= 16, a member. 0-4 years = Tier 1, exactly 5 = Special Tier, >5 = Tier 2. Which code is correct?",
+    options: [
+        "<code>if age <= 16 and member == True:\n    if years < 0:\n        print(\"Tier 1\")\n    elif years == 5:\n        print(\"Special Tier\")\n    elif years < 5:\n        print(\"Tier 2\")\nelse:\n    print(\"Not eligible\")</code>",
+        "<code>if age >= 16 and member = True:\n    if 0 <= years <= 4:\n        print(\"Tier 1\")\n    elif years = 5:\n        print(\"Special Tier\")\n    elif years > 5:\n        print(\"Tier 2\")\n    else:\n        print(\"Not eligible\")\nelse:\n    print(\"Not eligible\")</code>",
+        "<code>if age >= 16 and member:\n    if 0 <= years <= 4:\n        print(\"Tier 1\")\n    elif years == 5:\n        print(\"Special Tier\")\n    elif years > 5:\n        print(\"Tier 2\")\n    else:\n        print(\"Not eligible\")\nelse:\n    print(\"Not eligible\")</code>",
+        "<code>if age >= 16 and member:\n    if years >= 0 and years <=4:\n        print(\"Tier 1\")\n    elif years is 5:\n        print(\"Special Tier\")\n    elif years > 5:\n        print(\"Tier 2\")\n    else:\n        print(\"Not eligible\")\nelse:\n    print(\"Not eligible\")</code>"
+    ],
+    correct: [2],
+    explanation: "Option C correctly uses >= 16, boolean check on member, proper == comparison, and chained comparison 0 <= years <= 4. Option B uses = (assignment) instead of == (comparison)."
+},
+// ===== Q19 =====
+{
+    id: 19, topic: "2.4.1", module: 2,
+    text: "You are processing AQI readings. None \u2192 'Missing', <0 or >500 \u2192 'Invalid', 0-100 \u2192 'Good', else \u2192 'Poor'. Which version is correct?",
+    options: [
+        "<code>def check_aqi(value):\n    if value == None:\n        return \"Missing\"\n    else:\n        if value < 0 or value > 500:\n            return \"Invalid\"\n        if value <= 100:\n            return \"Good\"\n        else:\n            return \"Poor\"</code>",
+        "<code>def check_aqi(value):\n    if value == None:\n        return \"Missing\"\n    else:\n        if value < 0 or value > 500:\n            return \"Invalid\"\n        elif value < 100 or value = 100:\n            return \"Good\"\n        else:\n            return \"Poor\"</code>",
+        "<code>def check_aqi(value):\n    if value is None:\n        return \"Missing\"\n    if value < 0 and value > 500:\n        return \"Invalid\"\n    elif value < 100:\n        return \"Good\"\n    else:\n        return \"Poor\"</code>",
+        "<code>def check_aqi(value):\n    if value is None:\n        return \"Missing\"\n    else:\n        if value < 0 or value > 500:\n            return \"Invalid\"\n        elif value <= 100:\n            return \"Good\"\n        else:\n            return \"Poor\"</code>"
+    ],
+    correct: [3],
+    explanation: "Option D uses 'is None' (Pythonic), 'or' for range check, '<= 100' for inclusive boundary. Option B has syntax error (=). Option C uses 'and' (impossible condition)."
+},
+// ===== Q20 =====
+{
+    id: 20, topic: "2.4.3", module: 2,
+    text: "You want to stop checking a list of birth years as soon as you find one before 1900. Which code correctly uses while and break?",
+    options: [
+        "<code>i = 0\nwhile i <= len(birth_years):\n    if birth_years[i] < 1900:\n        break\n    i += 1</code>",
+        "<code>i = 0\nwhile i < len(birth_years):\n    if birth_years[i] < 1900:\n        continue\n    i += 1\n    break</code>",
+        "<code>i = 0\nwhile i < len(birth_years):\n    if birth_years[i] < 1900:\n        break\n    i += 1</code>",
+        "<code>i = 0\nwhile i < len(birth_years):\n    if birth_years[i] > 1900:\n        break\n    i += 1</code>"
+    ],
+    correct: [2],
+    explanation: "Option C correctly uses < len() (avoids IndexError), breaks when year < 1900, and increments i otherwise. Option A uses <= which causes IndexError. Option D breaks on > 1900 (wrong condition)."
+},
+// ===== Q21 =====
+{
+    id: 21, topic: "2.5.1", module: 2,
+    text: "You have temperatures = [18.5, 21.0, 19.2, 22.3, 20.1]. Which code correctly uses a standard library function to calculate the mean?",
+    options: [
+        "<code>import math</code> / <code>mean_temp = mean(temperatures)</code>",
+        "<code>import statistics</code> / <code>mean_temp = statistics.mean(temperatures)</code>",
+        "<code>import math</code> / <code>mean_temp = math.mean(temperatures)</code>",
+        "<code>import statistics</code> / <code>mean_temp = mean(temperatures)</code>"
+    ],
+    correct: [1],
+    explanation: "statistics.mean() is the correct function. math module doesn't have mean(). After 'import statistics', you must use the module prefix."
+},
+// ===== Q22 =====
+{
+    id: 22, topic: "2.5.2", module: 2,
+    text: "You want to install numpy and check its version. Which two pip commands should you run?",
+    options: [
+        "from pip install numpy and pip version numpy",
+        "pip install numpy and pip show numpy",
+        "pip install numpy and pip --version numpy",
+        "pip --install numpy and pip --version numpy"
+    ],
+    correct: [1],
+    explanation: "'pip install numpy' installs the package. 'pip show numpy' displays package details including version."
+},
+// ===== Q23 =====
+{
+    id: 23, topic: "3.1.1", module: 3,
+    text: "You want to check if report.txt exists before opening it. Which code correctly uses the os module?",
+    options: [
+        "<code>from os import file\nif file.exists(\"report.txt\"):\n    print(\"The file exists.\")</code>",
+        "<code>import os.path\nif path.exists(\"report.txt\"):\n    print(\"The file exists.\")</code>",
+        "<code>import os\nif os.path.exists(\"report.txt\"):\n    print(\"The file exists.\")</code>",
+        "<code>import os\nif os.exists(\"report.txt\"):\n    print(\"The file exists.\")</code>"
+    ],
+    correct: [2],
+    explanation: "'import os' then 'os.path.exists()' is the correct way. Option A: no 'file' module in os. Option B: 'path' not directly available. Option D: os.exists() doesn't exist."
+},
+// ===== Q24 =====
+{
+    id: 24, topic: "3.1.2", module: 3,
+    text: "Which code correctly uses csv.reader() to read a CSV file line by line?",
+    options: [
+        "<code>import csv\nwith csv.reader(\"data.csv\") as f:\n    for row in f:\n        print(row)</code>",
+        "<code>import csv\nreader = csv.reader(f)\nwith csv.reader(\"data.csv\") as f:\n    for row in reader:\n        print(row)</code>",
+        "<code>import csv\nreader = csv.reader(f)\nwith open(\"data.csv\", \"r\") as f:\n    for row in reader:\n        print(row)</code>",
+        "<code>import csv\nwith open(\"data.csv\", \"r\") as f:\n    reader = csv.reader(f)\n    for row in reader:\n        print(row)</code>"
+    ],
+    correct: [3],
+    explanation: "Open the file first with open(), then pass the file object to csv.reader(). The reader must be created inside the with block after the file is opened."
+},
+// ===== Q25 =====
+{
+    id: 25, topic: "3.2.1", module: 3,
+    text: "You have prices = ['10.99', 'free', '15.50', '', None, '-3.25', True, '5', '1', '0', 'None', 'True', '0.5']. You want only positive float values. Which comprehension works without ValueError?",
+    options: [
+        "<code>cleaned = [float(p) for p in prices if isinstance(p, str) and p.strip() and p.replace(\".\", \"\", 1).isdigit() and float(p) > 0]</code>",
+        "<code>cleaned = [float(p) for p in prices if isinstance(p, str) and float(p) > 0]</code>",
+        "<code>cleaned = [float(p) for p in prices if isinstance(p, str) and p.isdigit() and float(p) > 0]</code>",
+        "<code>cleaned = [(int(p) or float(p)) for p in prices if isinstance(p, str) and p.strip() and p.replace(\".\", \"\", 1).isdigit() and int(p) > 0 or float(p) > 0]</code>"
+    ],
+    correct: [0],
+    explanation: "Option A safely checks: is string, non-empty, looks like a number (replace('.','',1).isdigit() handles decimals), and positive. Option B would crash on 'free'. Option C misses decimals."
+},
+// ===== Q26 =====
+{
+    id: 26, topic: "3.2.2", module: 3,
+    text: "You have names = ['Alice', 'Bob', 'Alice', 'Charlie', 'Bob', 'Diana']. Which TWO correctly remove duplicates while keeping original order? (Select TWO)",
+    options: [
+        "<code>unique = []\n[unique.append(n) for n in names if n not in unique]</code>",
+        "<code>unique = list(set(names))</code>",
+        "<code>unique = [n for n in names if names.count(n) == 1]</code>",
+        "<code>unique = set(names)</code>",
+        "<code>unique = [n for i, n in enumerate(names) if i == names.index(n)]</code>"
+    ],
+    correct: [0, 4],
+    explanation: "A: Side-effect comprehension populates unique list preserving order. E: enumerate+index keeps first occurrence only, preserving order. B/D: set loses order. C: only keeps names appearing exactly once."
+},
+// ===== Q27 =====
+{
+    id: 27, topic: "3.2.3", module: 3,
+    text: "You are standardizing phone numbers. ' (123) 654-7890 ', '123.456.0987', '+1-321-546-0879' should all become just digits. Which code best cleans them?",
+    options: [
+        "<code>cleaned = number.strip().removeprefix(\"+1\").replace(\"(\", \"\").replace(\")\", \"\").replace(\"-\", \"\").replace(\".\", \"\").replace(\" \", \"\")</code>",
+        "<code>cleaned = number.replace(\"+1\", \"\").replace(\"-\", \"\").replace(\"(\", \"\").replace(\")\", \"\").replace(\".\", \"\")</code>",
+        "<code>cleaned = number.strip().removeprefix(\"1+\").replace(\"\", \" (\").replace(\")\", \"-\").replace(\"\", \".\").replace(\" \", \"\")</code>",
+        "<code>cleaned = number.split().removeprefix(\"+1\").replace(\"(\", \"\").replace(\")\", \"\").replace(\"-\", \"\").replace(\".\", \"\").replace(\" \", \"\")</code>"
+    ],
+    correct: [0],
+    explanation: "Option A: strip() removes whitespace, removeprefix('+1') handles country code, then replaces all formatting characters. Option B doesn't strip. Option D: split() returns a list (can't chain string methods)."
+},
+// ===== Q28 =====
+{
+    id: 28, topic: "3.2.4", module: 3,
+    text: "You are processing: '2024-05-22,John,Doe'. Convert date to 'May 22, 2024' and combine name as 'John Doe'. Which code is correct?",
+    options: [
+        "<code>parts = record.split(\",\")\ndate = datetime.strptime(parts[0], \"%Y-%m-%d\").strftime(\"%b %d, %Y\")\nname = parts[1] + parts[2]</code>",
+        "<code>parts = record.split(\",\")\ndate = datetime.strptime(parts[0], \"%Y-%m-%d\").strftime(\"%b %d, %Y\")\nname = \"\".join(parts[1:])</code>",
+        "<code>parts = record.split()\ndate = datetime.strptime(parts[0], \"%Y-%m-%d\").strftime(\"%b %d, %Y\")\nname = parts[1] + \" \" + parts[2]</code>",
+        "<code>parts = record.split(\",\")\ndate = datetime.strptime(parts[0], \"%Y-%m-%d\").strftime(\"%b %d, %Y\")\nname = \" \".join(parts[1:])</code>"
+    ],
+    correct: [3],
+    explanation: "Option D: splits by comma, converts date correctly, joins name parts with space: 'John Doe'. Option A: no space between names. Option B: no space. Option C: splits by whitespace, wrong."
+},
+// ===== Q29 =====
+{
+    id: 29, topic: "3.3.1", module: 3,
+    text: "Given names = ['Alice', 'Bob', 'Alice', 'Dana', 'Bob', 'Alice', 'Peter', 'Greg', 'Greg', 'Alice']. What does the code do that builds a frequency dict, prints each name:count, prints len(freq), and prints max by freq.get?",
+    options: [
+        "Prints names alphabetically, count, and most frequent name.",
+        "Prints how many times each name appears, the number of unique names, and the most frequent name.",
+        "Prints total names, list length, and most frequent name's count.",
+        "Finds shortest and longest name with indices."
+    ],
+    correct: [1],
+    explanation: "The code builds a frequency dictionary, prints each name with its count, len(freq) gives unique count, and max(freq, key=freq.get) returns the most frequent name."
+},
+// ===== Q30 =====
+{
+    id: 30, topic: "3.3.2", module: 3,
+    text: "You have colors = ['blue','green','blue','red','green','blue']. Which snippet correctly computes the most common color, total responses, and average string length?",
+    options: [
+        "<code>from collections import Counter\nfrom statistics import mean\nfreq = Counter(colors)\nmost_common = freq.most_common(1)[0][0]\navg_len = mean([len(c) for c in colors])</code>",
+        "<code>from statistics import median\nfreq = count(colors)\nmost_common = len(colors.count())\navg_len = median([len(c) for c in colors])</code>",
+        "<code>from collections import Counter\nfrom statistics import stdev\nfreq = Counter(colors)\nmost_common = max(freq.values())\navg_len = stdev(mean(colors))</code>",
+        "<code>from math import ceil\nfrom collections import Counter\nfreq = Counter(colors)\nmost_common = ceil(freq.values())\navg_len = Counter(colors)</code>"
+    ],
+    correct: [0],
+    explanation: "Option A correctly uses Counter for frequency, most_common(1)[0][0] for the top color, and mean of string lengths for average length."
+},
+// ===== Q31 =====
+{
+    id: 31, topic: "3.3.3", module: 3,
+    text: "Solar panel output_watts = [120, 135, 150, 165, 140, 130]. You want: numpy array, time sequence every 2h from 6am-4pm, and 5 evenly spaced thresholds between min/max. Which code is correct?",
+    options: [
+        "<code>import numpy as np\narr = np.array(output_watts)\ntimes = np.arange(6, 17, 2)\nthresholds = np.linspace(min(arr), max(arr), 5)</code>",
+        "<code>import numpy as np\narr = np.array(output_watts)\ntimes = np.linspace(6, 16, 2)\nthresholds = np.arange(min(arr), max(arr), 5)</code>",
+        "<code>import numpy as np\narr = np.array(output_watts)\ntimes = np.arange(6, 16, 2)\nthresholds = np.linspace(min(output_watts), max(output_watts), 5)</code>",
+        "<code>import numpy as np\narr = np.array(output_watts)\ntimes = np.arange(output_watts[0], output_watts[-1], 2)\nthresholds = np.linspace(min(arr), max(arr), 5)</code>"
+    ],
+    correct: [0],
+    explanation: "Option A: arange(6,17,2)=[6,8,10,12,14,16] covers 6am-4pm (6 values for 6 readings). linspace for 5 evenly spaced thresholds. Option C: arange(6,16,2) misses 16 (4pm)."
+},
+// ===== Q32 =====
+{
+    id: 32, topic: "3.3.4", module: 3,
+    text: "Survey data: [('Tom','Urban',3),('Lina','Rural',4),('Sam','Urban',5),('Anna','Rural',2),('Zoe','Urban',4)]. Calculate average satisfaction score per area. Which is correct?",
+    options: [
+        "<code>averages = {}\nfor name, area, score in data:\n    averages.setdefault(area, []).append(score)\nfor area in averages:\n    averages[area] = sum(data) / len(data)</code>",
+        "<code>groups = {}\nfor name, area, score in data:\n    if area not in groups:\n        groups[area] = []\n    groups[area].append(score)\naverages = {area: sum(scores) / len(scores) for area, scores in groups.items()}</code>",
+        "<code>scores = {}\nfor name, area, score in data:\n    scores[area] = scores.get(area, 0) + score\naverages = {area: scores[area] / 3 for area in scores}</code>",
+        "<code>groups = {}\nfor name, area, score in data:\n    if area not in groups:\n        groups[area] = 0\n    groups[area] += score\naverages = {area: score / len(area) for area, score in groups.items()}</code>"
+    ],
+    correct: [1],
+    explanation: "Option B correctly groups scores by area in lists, then computes sum/len for each group. Option A: sum(data) is wrong. Option C: hardcodes /3. Option D: len(area) gives string length."
+},
+// ===== Q33 =====
+{
+    id: 33, topic: "3.4.1", module: 3,
+    text: "Student records in a list of dicts. You want the average score of students aged 25 or younger. Which code correctly filters and calculates?",
+    options: [
+        "<code>scores = [x[\"score\"] for x in data if x[\"age\"] <= 25]\navg = sum(scores) / len(scores)</code>",
+        "<code>scores = [x[\"age\"] <= 25 for x in data]\navg = sum(scores) / len(scores)</code>",
+        "<code>avg = sum([x for x in data if x[\"age\"] <= 25]) / len(data)</code>",
+        "<code>avg = sum(x[\"score\"] for x in data if x[\"age\"] <= 25) / len(data)</code>"
+    ],
+    correct: [0],
+    explanation: "Option A correctly filters scores where age <= 25, then divides by the count of filtered students. Option D divides by total students (wrong denominator)."
+},
+// ===== Q34 =====
+{
+    id: 34, topic: "3.4.2", module: 3,
+    text: "Sales data as list of dicts with 'Region' and 'Product'. You want to count how many distinct products appear. Which line is correct?",
+    options: [
+        "<code>num_products = len([row[\"Product\"] for row in data])</code>",
+        "<code>num_products = data[\"Product\"].length()</code>",
+        "<code>num_products = set(row[\"Product\"] for row in data)</code>",
+        "<code>num_products = len(set(row[\"Product\"] for row in data))</code>"
+    ],
+    correct: [3],
+    explanation: "set() extracts unique products, len() counts them. Option A counts all (including duplicates). Option C returns the set itself (not a number)."
+},
+// ===== Q35 =====
+{
+    id: 35, topic: "3.4.3", module: 3,
+    text: "An analyst observes that as weekly working hours increase, job satisfaction generally decreases. What is the most appropriate conclusion?",
+    options: [
+        "There is no correlation between working hours and job satisfaction.",
+        "There is a negative correlation between weekly working hours and job satisfaction.",
+        "There is a positive correlation.",
+        "The correlation is invalid because of possible outliers."
+    ],
+    correct: [1],
+    explanation: "When one variable increases and the other decreases, this indicates a negative (inverse) correlation."
+},
+// ===== Q36 =====
+{
+    id: 36, topic: "4.1.1", module: 4,
+    text: "Look at the chart showing product category market share. What are the main reasons this type of visualization is appropriate? (Select TWO)\n<div class='chart-container'><svg viewBox='0 0 500 350' xmlns='http://www.w3.org/2000/svg'><text x='250' y='25' text-anchor='middle' font-size='16' font-weight='bold' fill='#333'>Market Share by Product Category</text><g transform='translate(200,185)'><path d='M0,-120 A120,120 0 0,1 114.13,-37.08 L0,0 Z' fill='#FF9800'/><text x='70' y='-65' text-anchor='middle' font-size='12' font-weight='bold' fill='#fff'>40%</text><path d='M114.13,-37.08 A120,120 0 0,1 70.53,97.08 L0,0 Z' fill='#E91E63'/><text x='100' y='35' text-anchor='middle' font-size='12' font-weight='bold' fill='#fff'>25%</text><path d='M70.53,97.08 A120,120 0 0,1 -20.84,118.18 L0,0 Z' fill='#FF5722'/><text x='25' y='105' text-anchor='middle' font-size='12' font-weight='bold' fill='#fff'>15%</text><path d='M-20.84,118.18 A120,120 0 0,1 -74.17,94.23 L0,0 Z' fill='#F8BBD0'/><text x='-55' y='100' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>10%</text><path d='M-74.17,94.23 A120,120 0 0,1 0,-120 L0,0 Z' fill='#00BCD4'/><text x='-75' y='-15' text-anchor='middle' font-size='11' font-weight='bold' fill='#fff'>10%</text></g><g transform='translate(370,80)'><rect x='0' y='0' width='14' height='14' fill='#FF9800'/><text x='20' y='12' font-size='12' fill='#333'>Electronics (40%)</text><rect x='0' y='22' width='14' height='14' fill='#E91E63'/><text x='20' y='34' font-size='12' fill='#333'>Clothing (25%)</text><rect x='0' y='44' width='14' height='14' fill='#FF5722'/><text x='20' y='56' font-size='12' fill='#333'>Furniture (15%)</text><rect x='0' y='66' width='14' height='14' fill='#F8BBD0'/><text x='20' y='78' font-size='12' fill='#333'>Books (10%)</text><rect x='0' y='88' width='14' height='14' fill='#00BCD4'/><text x='20' y='100' font-size='12' fill='#333'>Toys (10%)</text></g></svg></div>",
+    options: [
+        "It allows comparison of each category's share of total sales.",
+        "It displays the exact sales numbers for each product.",
+        "It highlights trends and patterns between categories.",
+        "It shows the proportion of each category within the whole.",
+        "It compares detailed differences between individual data points."
+    ],
+    correct: [0, 3],
+    explanation: "Pie charts are ideal for showing proportions of a whole (D) and comparing category shares (A). They don't show exact numbers, trends over time, or detailed comparisons."
+},
+// ===== Q37 =====
+{
+    id: 37, topic: "4.1.2", module: 4,
+    text: "The chart shows items sold by product type over six months. Which statement is true?\n<div class='chart-container'><svg viewBox='0 0 520 380' xmlns='http://www.w3.org/2000/svg'><text x='260' y='22' text-anchor='middle' font-size='16' font-weight='bold' fill='#333'>Monthly Sales by Category</text><text x='260' y='370' text-anchor='middle' font-size='12' fill='#666'>Total Sales (units)</text><text x='15' y='195' text-anchor='middle' font-size='12' fill='#666' transform='rotate(-90,15,195)'>Month</text><g transform='translate(65,40)'><line x1='0' y1='0' x2='0' y2='300' stroke='#ccc' stroke-width='1'/><line x1='0' y1='300' x2='430' y2='300' stroke='#ccc' stroke-width='1'/><text x='-5' y='305' text-anchor='end' font-size='10' fill='#666'>0</text><line x1='123' y1='0' x2='123' y2='300' stroke='#eee' stroke-width='0.5'/><text x='123' y='315' text-anchor='middle' font-size='10' fill='#666'>50</text><line x1='246' y1='0' x2='246' y2='300' stroke='#eee' stroke-width='0.5'/><text x='246' y='315' text-anchor='middle' font-size='10' fill='#666'>100</text><line x1='369' y1='0' x2='369' y2='300' stroke='#eee' stroke-width='0.5'/><text x='369' y='315' text-anchor='middle' font-size='10' fill='#666'>150</text><text x='-8' y='270' text-anchor='end' font-size='11' fill='#333'>Jan</text><rect x='0' y='257' width='49' height='26' fill='#2E7D32'/><rect x='49' y='257' width='49' height='26' fill='#26A69A'/><rect x='98' y='257' width='148' height='26' fill='#81C784'/><text x='-8' y='220' text-anchor='end' font-size='11' fill='#333'>Feb</text><rect x='0' y='207' width='54' height='26' fill='#2E7D32'/><rect x='54' y='207' width='54' height='26' fill='#26A69A'/><rect x='108' y='207' width='160' height='26' fill='#81C784'/><text x='-8' y='170' text-anchor='end' font-size='11' fill='#333'>Mar</text><rect x='0' y='157' width='59' height='26' fill='#2E7D32'/><rect x='59' y='157' width='59' height='26' fill='#26A69A'/><rect x='118' y='157' width='170' height='26' fill='#81C784'/><text x='-8' y='120' text-anchor='end' font-size='11' fill='#333'>Apr</text><rect x='0' y='107' width='64' height='26' fill='#2E7D32'/><rect x='64' y='107' width='64' height='26' fill='#26A69A'/><rect x='128' y='107' width='182' height='26' fill='#81C784'/><text x='-8' y='70' text-anchor='end' font-size='11' fill='#333'>May</text><rect x='0' y='57' width='69' height='26' fill='#2E7D32'/><rect x='69' y='57' width='69' height='26' fill='#26A69A'/><rect x='138' y='57' width='192' height='26' fill='#81C784'/><text x='-8' y='20' text-anchor='end' font-size='11' fill='#333'>Jun</text><rect x='0' y='7' width='74' height='26' fill='#2E7D32'/><rect x='74' y='7' width='74' height='26' fill='#26A69A'/><rect x='148' y='7' width='202' height='26' fill='#81C784'/></g><g transform='translate(170,340)'><rect x='0' y='0' width='14' height='14' fill='#2E7D32'/><text x='18' y='12' font-size='11' fill='#333'>Electronics</text><rect x='100' y='0' width='14' height='14' fill='#26A69A'/><text x='118' y='12' font-size='11' fill='#333'>Furniture</text><rect x='195' y='0' width='14' height='14' fill='#81C784'/><text x='213' y='12' font-size='11' fill='#333'>Clothing</text></g></svg></div>",
+    options: [
+        "Sales for Electronics decreased over time.",
+        "Furniture had the highest sales overall.",
+        "Furniture sales stayed the same throughout the six months.",
+        "Clothing was consistently the highest-selling category each month."
+    ],
+    correct: [3],
+    explanation: "The chart shows Clothing (light green) as the largest segment in every month's bar, making it consistently the highest-selling category."
+},
+// ===== Q38 =====
+{
+    id: 38, topic: "4.2.1", module: 4,
+    text: "A data analyst presents: chart first, then analysis process, then background on the survey. What is the main flaw?",
+    options: [
+        "Should start with tools used and end with chart.",
+        "Should begin with background information and conclude with key insights.",
+        "Should start with chart and end with survey background.",
+        "Should begin with the key insight, followed by supporting data and context."
+    ],
+    correct: [3],
+    explanation: "The best data communication structure leads with the key insight (declining satisfaction), then supports it with data and context. Starting with a chart without context is ineffective."
+},
+// ===== Q39 =====
+{
+    id: 39, topic: "4.3.1", module: 4,
+    text: "You completed a customer churn analysis. Which report structure best communicates the insights?",
+    options: [
+        "Start with the business problem, present churn analysis, highlight patterns, then offer recommendations.",
+        "Start with visuals, then churn rate, followed by possible causes.",
+        "Begin with churn analysis, followed by the problem, and code summary.",
+        "Describe data source, list all variables, then show code."
+    ],
+    correct: [0],
+    explanation: "Problem \u2192 Analysis \u2192 Patterns \u2192 Recommendations follows the structured approach: Problem, Analysis, Insight, Recommendation."
+},
+// ===== Q40 =====
+{
+    id: 40, topic: "4.4.1", module: 4,
+    text: "You are presenting product survey results to senior leadership. What is the most effective approach?",
+    options: [
+        "Show summary visuals, explain key patterns in plain language, and answer questions using numbers from the results.",
+        "Present the final chart and let it speak for itself.",
+        "Walk through the entire data table and let audience interpret.",
+        "Describe the survey method in detail with all statistical formulas."
+    ],
+    correct: [0],
+    explanation: "Summary visuals + plain language explanation + data-backed answers is the most effective approach for non-technical senior leadership."
+}
+];
+
+// ==================== APPLICATION LOGIC ====================
+let currentMode = 'practice';
+let currentQuestionIndex = 0;
+let activeQuestions = [];
+let userAnswers = {};
+let answeredStatus = {};
+let timerInterval = null;
+let timeLeft = 65 * 60;
+let examFinished = false;
+
+function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(mode === 'practice' ? 'modeP' : 'modeE').classList.add('active');
+}
+
+function startExam() {
+    // Fixed 40-question test, always in order 1-40
+    activeQuestions = [...questions];
+    currentQuestionIndex = 0;
+    userAnswers = {};
+    answeredStatus = {};
+    examFinished = false;
+
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+
+    if (currentMode === 'exam') {
+        timeLeft = 65 * 60;
+        document.getElementById('timer').style.display = 'inline-block';
+        document.getElementById('checkBtn').style.display = 'none';
+        startTimer();
+    } else {
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('checkBtn').style.display = 'inline-block';
+    }
+
+    buildNavigator();
+    renderQuestion();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        timerEl.className = 'timer' + (mins < 5 ? ' danger' : mins < 15 ? ' warning' : '');
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            finishExam();
+        }
+    }, 1000);
+}
+
+function toggleNavigator() {
+    document.getElementById('qNavigator').classList.toggle('collapsed');
+}
+
+function buildNavigator() {
+    const grid = document.getElementById('qNavGrid');
+    grid.innerHTML = '';
+    activeQuestions.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'q-nav-btn' + (i === currentQuestionIndex ? ' current' : '');
+        btn.textContent = i + 1;
+        btn.onclick = () => { currentQuestionIndex = i; renderQuestion(); };
+        grid.appendChild(btn);
+    });
+}
+
+function updateNavigator() {
+    const btns = document.querySelectorAll('.q-nav-btn');
+    btns.forEach((btn, i) => {
+        btn.className = 'q-nav-btn';
+        if (i === currentQuestionIndex) btn.classList.add('current');
+        const qId = activeQuestions[i].id;
+        if (answeredStatus[qId] === 'correct') btn.classList.add('correct-nav');
+        else if (answeredStatus[qId] === 'wrong') btn.classList.add('wrong-nav');
+        else if (userAnswers[qId] !== undefined) btn.classList.add('answered');
+    });
+}
+
+function renderQuestion() {
+    const q = activeQuestions[currentQuestionIndex];
+    const container = document.getElementById('questionContainer');
+    const isMulti = q.correct.length > 1;
+    const inputType = isMulti ? 'checkbox' : 'radio';
+
+    let html = `<div class="question-card">
+        <div class="question-meta">
+            <span class="question-topic">Topic ${q.topic}</span>
+            <span class="question-type">${isMulti ? 'Multiple Select' : 'Single Select'}</span>
+        </div>
+        <div class="question-text">${q.text}</div>
+        <div class="options">`;
+
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    q.options.forEach((opt, i) => {
+        const selected = userAnswers[q.id] && userAnswers[q.id].includes(i);
+        let optClass = 'option' + (selected ? ' selected' : '');
+
+        if (answeredStatus[q.id]) {
+            if (q.correct.includes(i)) optClass += ' correct';
+            else if (selected) optClass += ' wrong';
+        }
+
+        html += `<div class="${optClass}" onclick="selectOption(${q.id}, ${i}, '${inputType}')">
+            <input type="${inputType}" name="q${q.id}" ${selected ? 'checked' : ''} ${answeredStatus[q.id] ? 'disabled' : ''}>
+            <span class="option-label">${letters[i]}.</span>
+            <span class="option-text">${opt.replace(/<code>([\s\S]*?)<\/code>/g, (m, c) => c.includes('\\n') || c.includes('\n') ? "<div class='code-block'>" + c + "</div>" : m)}</span>
+        </div>`;
+    });
+
+    html += `</div>
+        <div class="explanation ${answeredStatus[q.id] ? 'show' : ''}" id="explanation">
+            <strong>${answeredStatus[q.id] === 'correct' ? 'Correct!' : answeredStatus[q.id] === 'wrong' ? 'Incorrect.' : ''}</strong> ${q.explanation}
+        </div>
+    </div>`;
+
+    container.innerHTML = html;
+
+    // Update progress
+    const total = activeQuestions.length;
+    document.getElementById('progressText').textContent = `Question ${currentQuestionIndex + 1} / ${total}`;
+    document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / total) * 100}%`;
+
+    // Update buttons
+    document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+    const isLast = currentQuestionIndex === total - 1;
+    document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-block';
+    document.getElementById('finishBtn').style.display = isLast ? 'inline-block' : 'none';
+
+    if (currentMode === 'practice') {
+        document.getElementById('checkBtn').style.display = answeredStatus[q.id] ? 'none' : 'inline-block';
+    }
+
+    updateNavigator();
+}
+
+function selectOption(qId, optIndex, inputType) {
+    if (answeredStatus[qId]) return;
+
+    if (inputType === 'radio') {
+        userAnswers[qId] = [optIndex];
+    } else {
+        if (!userAnswers[qId]) userAnswers[qId] = [];
+        const idx = userAnswers[qId].indexOf(optIndex);
+        if (idx > -1) userAnswers[qId].splice(idx, 1);
+        else userAnswers[qId].push(optIndex);
+    }
+    renderQuestion();
+}
+
+function checkAnswer() {
+    const q = activeQuestions[currentQuestionIndex];
+    if (!userAnswers[q.id] || userAnswers[q.id].length === 0) {
+        alert('Please select an answer before checking.');
+        return;
+    }
+
+    const selected = [...userAnswers[q.id]].sort();
+    const correct = [...q.correct].sort();
+    const isCorrect = JSON.stringify(selected) === JSON.stringify(correct);
+    answeredStatus[q.id] = isCorrect ? 'correct' : 'wrong';
+    renderQuestion();
+}
+
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+}
+
+function nextQuestion() {
+    const q = activeQuestions[currentQuestionIndex];
+    // In practice mode, auto-check the answer before moving on
+    if (currentMode === 'practice' && !answeredStatus[q.id]) {
+        if (userAnswers[q.id] && userAnswers[q.id].length > 0) {
+            const selected = [...userAnswers[q.id]].sort();
+            const correct = [...q.correct].sort();
+            answeredStatus[q.id] = JSON.stringify(selected) === JSON.stringify(correct) ? 'correct' : 'wrong';
+            renderQuestion();
+            return; // Show the result first, user clicks Next again to proceed
+        }
+    }
+    if (currentMode === 'exam' && !userAnswers[q.id]) {
+        userAnswers[q.id] = [];
+    }
+    if (currentQuestionIndex < activeQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    }
+}
+
+function finishExam() {
+    clearInterval(timerInterval);
+    examFinished = true;
+
+    // Auto-check all unanswered
+    activeQuestions.forEach(q => {
+        if (!answeredStatus[q.id]) {
+            const selected = userAnswers[q.id] ? [...userAnswers[q.id]].sort() : [];
+            const correct = [...q.correct].sort();
+            answeredStatus[q.id] = JSON.stringify(selected) === JSON.stringify(correct) ? 'correct' : 'wrong';
+        }
+    });
+
+    showResults();
+}
+
+function showResults() {
+    document.getElementById('quizArea').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+
+    let correct = 0;
+    let total = activeQuestions.length;
+    const moduleScores = {};
+
+    activeQuestions.forEach(q => {
+        if (!moduleScores[q.module]) moduleScores[q.module] = { correct: 0, total: 0 };
+        moduleScores[q.module].total++;
+        if (answeredStatus[q.id] === 'correct') {
+            correct++;
+            moduleScores[q.module].correct++;
+        }
+    });
+
+    const percent = Math.round((correct / total) * 100);
+    const passed = percent >= 75;
+
+    document.getElementById('scorePercent').textContent = percent + '%';
+    document.getElementById('scoreCircle').className = 'score-circle ' + (passed ? 'pass' : 'fail');
+    document.getElementById('passFailMsg').textContent = passed ? 'PASSED' : 'FAILED';
+    document.getElementById('passFailMsg').style.color = passed ? 'var(--correct)' : 'var(--wrong)';
+    document.getElementById('scoreSummary').textContent = `You answered ${correct} out of ${total} questions correctly.`;
+
+    const moduleNames = {
+        1: 'Block 1: Data & Analysis Concepts',
+        2: 'Block 2: Python Basics',
+        3: 'Block 3: Working with Data',
+        4: 'Block 4: Communicating Insights'
+    };
+
+    let breakdownHTML = '';
+    Object.keys(moduleScores).sort().forEach(m => {
+        const ms = moduleScores[m];
+        const mp = Math.round((ms.correct / ms.total) * 100);
+        const color = mp >= 75 ? 'var(--correct)' : 'var(--wrong)';
+        breakdownHTML += `<div class="breakdown-row">
+            <span>${moduleNames[m] || 'Module ' + m}</span>
+            <span>${ms.correct}/${ms.total} (${mp}%)</span>
+            <div class="breakdown-bar"><div class="breakdown-fill" style="width:${mp}%;background:${color}"></div></div>
+        </div>`;
+    });
+
+    document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+}
+
+function reviewExam() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('checkBtn').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    currentQuestionIndex = 0;
+
+    // Show all explanations
+    activeQuestions.forEach(q => {
+        if (!answeredStatus[q.id]) {
+            answeredStatus[q.id] = 'wrong';
+        }
+    });
+
+    renderQuestion();
+}
+</script>
+
+</body>
+</html>

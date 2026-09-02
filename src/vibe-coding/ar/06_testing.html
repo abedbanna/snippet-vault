@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الشيفرة المولّدة - البرمجة بالإحساس، بمعايير احترافية</title>
+    <meta name="description" content="الاختبارات الآلية أوّل شبكة أمانٍ حقيقية لـ«يعمل مرّة واحدة». حوّل معايير القبول إلى اختبارات، ومارِس TDD مع الذكاء الاصطناعي، ولا تثق بالشيفرة المولّدة عمياءً.">
+    <link rel="alternate" hreflang="en" href="https://albanna-tutorials.com/vibe-coding/06_testing.html">
+    <link rel="alternate" hreflang="ar" href="https://albanna-tutorials.com/vibe-coding/ar/06_testing.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#ec4899;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#be185d;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#9d174d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-right-color:#be185d}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#be185d;border-right-color:#be185d;background:rgba(236,72,153,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Tajawal','Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.9;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#f472b6}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.9rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-right:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .mobile-menu a{color:var(--text2);padding:10px 12px;border-radius:8px;font-size:.95rem}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.9;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-right:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1.05rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.95rem;line-height:1.9}
+        .info-box ul{padding-right:18px;list-style:disc}
+        .info-box.warning{border-right-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-right-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre-wrap;direction:ltr;text-align:left}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#f472b6;direction:ltr;display:inline-block}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:right;font-weight:600;font-size:.88rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.88rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#be185d;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.85rem}
+        .scroll-top{position:fixed;bottom:28px;left:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;left:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:230px;opacity:0;transform:translateX(-20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.82rem;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.8rem;color:var(--text2);border-right:2px solid transparent;margin:2px 0;border-radius:4px 0 0 4px;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-right-color:var(--primary);background:rgba(236,72,153,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.78rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-wand-magic-sparkles"></i> البرمجة بالإحساس</a>
+            <div class="nav-links">
+                <a href="index.html">كل الوحدات</a>
+                <a href="#why">لماذا الاختبار</a>
+                <a href="#types">أنواع الاختبار</a>
+                <a href="#tdd">TDD مع الذكاء الاصطناعي</a>
+                <a href="#trust">لا تثق عمياءً</a>
+                <a href="../06_testing.html" lang="en" dir="ltr"><i class="fa-solid fa-globe" style="margin-left:6px"></i>English</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="تبديل السمة"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">كل الوحدات</a>
+        <a href="#why" onclick="this.parentElement.classList.remove('open')">لماذا الاختبار</a>
+        <a href="#types" onclick="this.parentElement.classList.remove('open')">أنواع الاختبار</a>
+        <a href="#tdd" onclick="this.parentElement.classList.remove('open')">TDD مع الذكاء الاصطناعي</a>
+        <a href="#trust" onclick="this.parentElement.classList.remove('open')">لا تثق عمياءً</a>
+        <a href="../06_testing.html" lang="en" dir="ltr" onclick="this.parentElement.classList.remove('open')">English</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>اختبار الشيفرة المولّدة</h1>
+            <p class="hero-sub">أوّل شبكة أمانٍ حقيقية لـ«يعمل مرّة واحدة» &mdash; كي لا يكسر تغيير الذكاء الاصطناعي التالي ما سبقه بصمت.</p>
+            <p class="hero-sub" style="font-size:.98rem;margin-top:4px">الوحدة 6 &middot; حوّل معايير القبول إلى اختباراتٍ آلية.</p>
+            <span class="diff-badge" style="background:#f59e0b">متوسّط</span>
+            <span class="cat-badge"><i class="fa-solid fa-vials" style="margin-left:6px"></i>الاختبار</span>
+            <span class="cat-badge"><i class="fa-solid fa-flask" style="margin-left:6px"></i>يتضمّن مختبرًا</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-left:6px"></i>~50 دقيقة</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- الأهداف -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> ماذا ستتعلّم</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>لماذا تهمّ الاختبارات <em>أكثر</em> حين يغيّر الذكاء الاصطناعي شيفرتك باستمرار</li>
+                    <li>أنواع الاختبار التي تحتاجها فعلًا لتطبيقٍ صغير: الوحدة وتكامل الـAPI</li>
+                    <li>TDD مع الذكاء الاصطناعي: حوّل معايير القبول إلى اختبارات، ثم اجعلها تنجح</li>
+                    <li>لماذا التغطية ليست صحّةً &mdash; وكيف تقرأ اختبارات الذكاء الاصطناعي بعينٍ ناقدة</li>
+                    <li><strong>مختبر عملي:</strong> أضِف مُشغّل اختباراتٍ وغطِّ M1&ndash;M3، والتقط خطأً مقصودًا</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>المتطلبات المسبقة:</strong> الوحدة 5 &mdash; خزنة مقتطفاتٍ تعمل (إنشاء، عرض، بحث، حذف).</p>
+        </div>
+
+        <!-- لماذا -->
+        <div class="section fade-up" id="why">
+            <h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> لماذا الاختبارات، ولماذا الآن</h2>
+            <p class="section-desc">موطن الفشل رقم 1 من الوحدة 1 كان <strong>«يعمل مرّة واحدة»</strong>: العرض يعمل، لكن التغيير التالي يكسر شيئًا بصمت دون انتباه. وحين يعيد الذكاء الاصطناعي كتابة شيفرتك مرّاتٍ في اليوم، يتضاعف الخطر. الاختبارات الآلية هي العلاج &mdash; تعيد فحص معايير قبولك في ثوانٍ، كل مرّة.</p>
+            <table class="dark-table">
+                <thead><tr><th>بلا اختبارات</th><th>مع اختبارات</th></tr></thead>
+                <tbody>
+                    <tr><td>تنقر في التطبيق آملًا ألّا شيء انكسر</td><td>أمرٌ واحد يؤكّد أن كل ميزةٍ ما زالت تعمل</td></tr>
+                    <tr><td>الانحدارات تُشحن بصمت</td><td>الميزة المكسورة تُفشل البناء بصوتٍ عالٍ</td></tr>
+                    <tr><td>«الاكتمال» إحساس</td><td>«الاكتمال» = نجاح اختبارات معايير القبول</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-link"></i> مواصفتك كتبت الاختبارات بالفعل</h3>
+                <p>أتذكر معايير القبول التي كتبتها في الوحدة 3؟ «يُرفض العنوان الفارغ»، «البحث غير حسّاسٍ لحالة الأحرف»&hellip; كلٌّ منها اختبارٌ ينتظر الكتابة. الاختبارات ما هي إلا مواصفتك مصيّرةً قابلةً للتنفيذ.</p>
+            </div>
+        </div>
+
+        <!-- الأنواع -->
+        <div class="section fade-up" id="types">
+            <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> الاختبارات التي تحتاجها فعلًا</h2>
+            <p class="section-desc">لا تغرق في نظرية الاختبار. لتطبيقٍ صغير، نوعان يحملان الثقل:</p>
+            <table class="dark-table">
+                <thead><tr><th>النوع</th><th>يفحص</th><th>مثالٌ للخزنة</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>الوحدة</strong></td><td>دالّةً صغيرةً واحدة بمعزل</td><td>مرشّح البحث يعيد المطابقات دون حساسية حالة الأحرف</td></tr>
+                    <tr><td><strong>تكامل الـAPI</strong></td><td>نقطة نهايةٍ من الطرف إلى الطرف</td><td><code>POST /snippets</code> ينشئ ويعيد مقتطفًا؛ ويُرفض العنوان الفارغ</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning)"></i> تجاوز جدل الهرم</h3>
+                <p>ستسمع عن نِسَب الوحدة مقابل التكامل مقابل الطرف-إلى-الطرف. الآن: اكتب اختبارًا لكل معيار قبولٍ عند المستوى الأرخص فحصًا. غالبًا يكون ذلك اختبارات تكامل الـAPI لنقاط النهاية، وبضعة اختبارات وحدةٍ للمنطق الصعب.</p>
+            </div>
+        </div>
+
+        <!-- TDD -->
+        <div class="section fade-up" id="tdd">
+            <h2 class="section-title"><i class="fa-solid fa-arrows-spin"></i> TDD مع الذكاء الاصطناعي</h2>
+            <p class="section-desc">يتزاوج التطوير المقاد بالاختبار جميلًا مع المساعد: <strong>اكتب الاختبار أولًا</strong> (من معيار قبول)، شاهده يفشل، ثم دع الذكاء الاصطناعي يجعله ينجح. الاختبار الفاشل هدفٌ واضحٌ لا يستطيع المساعد التِيه عنه.</p>
+            <div class="code-block">1. Pick an acceptance criterion   → "empty title is rejected with 400"
+2. Write (or have AI write) a test → expect POST {title:""} to return 400
+3. Run it → it fails (red)
+4. Ask the AI to implement until it passes → green
+5. Commit. Next criterion.</div>
+            <p class="section-desc">تفضّل الاختبار-بعد؟ لا بأس أيضًا &mdash; فقط لا تتخطّاه. القاعدة ببساطة: <strong>كل معيار قبولٍ ينتهي باختبار</strong>، سواء كتبته قبل الشيفرة أو بعدها.</p>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-robot"></i> طلبٌ ممتاز</h3>
+                <p>«اكتب اختبارات تكامل API لمعايير قبول القصص M1&ndash;M3 في SPEC.md. اختبارٌ واحد لكل معيار، بأسماءٍ واضحة. لا تغيّر شيفرة التطبيق &mdash; الاختبارات فقط.» ثم تراجعها، وتشغّلها، وعندها فقط تدعه يصلح الإخفاقات.</p>
+            </div>
+        </div>
+
+        <!-- لا تثق -->
+        <div class="section fade-up" id="trust">
+            <h2 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> لا تثق عمياءً أبدًا</h2>
+            <p class="section-desc">لاختبارات الذكاء الاصطناعي فخّ: قد يكتب المساعد اختبارًا <em>ينجح دائمًا</em>، أو يختبر الشيء الخطأ، ويبلّغ بفخرٍ «كل شيءٍ أخضر». الأخضر ذو معنًى فقط إن كانت الاختبارات حقيقية.</p>
+            <table class="dark-table">
+                <thead><tr><th>الفخّ</th><th>الحارس</th></tr></thead>
+                <tbody>
+                    <tr><td>اختبارٌ لا يؤكّد شيئًا ذا معنى</td><td>اقرأ كل اختبار &mdash; هل يفحص السلوك فعلًا؟</td></tr>
+                    <tr><td>تغطية 100%، ثقة 0%</td><td>التغطية تقيس الأسطر المُشغّلة، لا الصحّة. لا تطارِد الرقم.</td></tr>
+                    <tr><td>ينجح لأنه يحاكي كل شيء</td><td>أبقِ بعض الاختبارات على الأقل تضرب نقطة النهاية الحقيقية.</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-bug"></i> البرهان: اكسره عن قصد</h3>
+                <p>السبيل الوحيد للوثوق باختبارٍ هو رؤيته يفشل للسبب الصحيح. أدخِل خطأً مؤقّتًا (مثلًا اقبل عنوانًا فارغًا) وأكّد أن اختبارًا يحمرّ. إن لم يفشل شيء، فاختبارك لم يكن يختبر شيئًا.</p>
+            </div>
+        </div>
+
+        <!-- المختبر العملي -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-flask"></i> مختبر عملي: غطِّ M1&ndash;M3 باختبارات</h2>
+            <p class="section-desc">ستضيف مُشغّل اختبارات، وتحوّل معايير قبولك إلى اختباراتٍ آلية، وتُثبت أنها تعمل بالتقاط خطأٍ مقصود.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-screwdriver-wrench"></i> ما تحتاجه</h3>
+                <p>مستودع <code>snippet-vault</code> من الوحدة 5 وM1&ndash;M3 تعمل.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>افرَع وأضِف مُشغّل اختبارات</h3>
+                    <div class="code-block">git checkout -b feature/tests</div>
+                    <p class="section-desc">اطلب من المساعد إعداد مُشغّل اختباراتٍ في <code>api/</code> (Jest أو Vitest مع Supertest لـHTTP). راجع تغيير الإعداد؛ وأودِعه.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>حوّل معايير القبول إلى اختبارات</h3>
+                    <div class="code-block">Write API integration tests for the acceptance criteria of M1–M3 in
+SPEC.md: create returns the snippet, empty title → 400, list returns all,
+search filters case-insensitively, delete removes one. One test per
+criterion, clear names. Tests only — don't touch app code.</div>
+                    <p class="section-desc">اقرأ كل اختبار. هل يؤكّد كلٌّ السلوك الحقيقي؟</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>شغّلها خضراء</h3>
+                    <div class="code-block">cd api &amp;&amp; npm test</div>
+                    <p class="section-desc">إن فشل أيٌّ منها، قرّر: أهو الاختبار خطأ أم الشيفرة؟ أصلح الصحيح. أودِع عند الاخضرار.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>أثبِت أن اختبارًا يعضّ</h3>
+                    <p class="section-desc">اسمح مؤقّتًا لنقطة الإنشاء بقبول عنوانٍ فارغ. شغّل الاختبارات &mdash; يجب أن يحمرّ اختبار «يُرفض العنوان الفارغ». إن لم يفعل، فاختبارك زائف؛ أصلحه. ثم تراجَع عن الخطأ.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>ادمج وتأمّل</h3>
+                    <div class="code-block">git add .
+git commit -m "Add tests for M1–M3 acceptance criteria"
+git checkout main &amp;&amp; git merge feature/tests</div>
+                    <p class="section-desc">في <code>REFLECTION.md</code>: أيّ اختبارٍ التقط الخطأ المقصود، وهل تبيّن أن اختبارًا كتبه الذكاء الاصطناعي لا يؤكّد شيئًا؟ أودِعه.</p>
+                </div>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-paper-plane"></i> ما الذي تسلّمه</h3>
+                <p>مستودع <code>snippet-vault</code>. تحقّق من نفسك:</p>
+                <ul>
+                    <li><code>npm test</code> يعمل وينجح في <code>api/</code></li>
+                    <li>هناك اختبارٌ لكل معيار قبولٍ لـM1&ndash;M3</li>
+                    <li>أكّدت أن اختبارًا يحمرّ حين تكسر الشيفرة</li>
+                    <li><code>REFLECTION.md</code> يدوّن الخطأ الذي التقطه اختبار</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- المسرد -->
+        <div class="section fade-up" id="glossary">
+            <h2 class="section-title"><i class="fa-solid fa-book"></i> مسرد مصغّر</h2>
+            <table class="dark-table">
+                <thead><tr><th>المصطلح</th><th>المعنى المبسّط</th></tr></thead>
+                <tbody>
+                    <tr><td>اختبار الوحدة</td><td>يفحص دالّةً صغيرةً واحدة بمعزل.</td></tr>
+                    <tr><td>اختبار التكامل</td><td>يفحص أجزاءً تعمل معًا &mdash; مثلًا نقطة API كاملة.</td></tr>
+                    <tr><td>TDD</td><td>اكتب الاختبار الفاشل أولًا، ثم برمِج حتى ينجح.</td></tr>
+                    <tr><td>الانحدار</td><td>ميزةٌ كانت تعمل فكسرها تغييرٌ جديد.</td></tr>
+                    <tr><td>التغطية</td><td>نسبة أسطر الشيفرة التي تشغّلها اختباراتك &mdash; مفيدة، لا برهان صحّة.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- الخلاصة -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> الخلاصة وما التالي</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> صار لديك الآن</h3>
+                <p>مجموعة اختباراتٍ تحوّل معايير قبولك إلى شبكة أمانٍ قابلة للتنفيذ &mdash; تعمل بأمرٍ واحد، ومثبتٌ أنها تلتقط خطأً حقيقيًّا. «يعمل مرّة واحدة» صار «يبقى يعمل».</p>
+            </div>
+            <p class="section-desc">التالي: <strong>الوحدة 7 &mdash; بوابات الجودة والأمان</strong>. الاختبارات تلتقط السلوك المكسور؛ الآن نضيف البوابات التي تلتقط <em>الأسلوب</em> السيّئ و<em>الثغرات الأمنية</em> الخطيرة &mdash; التدقيق، وفحص الأسرار، والتحقّق &mdash; قبل وصولها إلى <code>main</code>.</p>
+        </div>
+
+        <!-- التنقّل -->
+        <div class="page-nav">
+            <a href="05_vibe_coding_the_app.html" class="nav-btn prev"><i class="fa-solid fa-arrow-right"></i> الوحدة 5</a>
+            <a href="07_quality_security.html" class="nav-btn next">الوحدة 7: بوابات الجودة والأمان <i class="fa-solid fa-arrow-left"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">البرمجة بالإحساس، بمعايير احترافية &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>اختبار الشيفرة المولّدة</h4>
+        <a class="toc-item" href="#objectives">الأهداف</a>
+        <a class="toc-item" href="#why">لماذا الاختبار</a>
+        <a class="toc-item" href="#types">أنواع الاختبار</a>
+        <a class="toc-item" href="#tdd">TDD</a>
+        <a class="toc-item" href="#trust">لا تثق عمياءً</a>
+        <a class="toc-item" href="#lab">المختبر العملي</a>
+        <a class="toc-item" href="#glossary">المسرد</a>
+        <a class="toc-item" href="#recap">الخلاصة</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('vibe-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('vibe-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

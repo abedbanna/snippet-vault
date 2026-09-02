@@ -1,0 +1,1525 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analyst Essentials with Python — Test 1 Practice Exam</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #4caf50;
+            --accent: #ff9800;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --correct: #4caf50;
+            --wrong: #f44336;
+            --info: #2196f3;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .start-screen .exam-info {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .start-screen .exam-info table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .start-screen .exam-info table th,
+        .start-screen .exam-info table td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .start-screen .exam-info table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: white;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .mode-btn:hover, .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .mode-btn small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .start-btn {
+            padding: 15px 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        /* Quiz area */
+        .quiz-area { display: none; }
+
+        .progress-bar {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .progress-track {
+            flex: 1;
+            min-width: 200px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .timer {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: #e8f5e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .timer.warning { color: var(--accent); background: #fff3e0; }
+        .timer.danger { color: var(--wrong); background: #ffebee; }
+
+        .question-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .question-topic {
+            font-size: 0.75rem;
+            color: white;
+            background: var(--primary);
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .question-type {
+            font-size: 0.75rem;
+            color: var(--info);
+            background: #e3f2fd;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 18px;
+            line-height: 1.7;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin: 12px 0;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+            background: #f0f7f0;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: #e8f5e9;
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background: #e8f5e9;
+        }
+
+        .option.wrong {
+            border-color: var(--wrong);
+            background: #ffebee;
+        }
+
+        .option input {
+            margin-top: 3px;
+            accent-color: var(--primary);
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 20px;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .option-text code {
+            background: #f0f0f0;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.88rem;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .explanation.show { display: block; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.prev { background: #e0e0e0; color: var(--text); }
+        .nav-btn.check { background: var(--accent); color: white; }
+        .nav-btn.next { background: var(--primary); color: white; }
+        .nav-btn.finish { background: var(--primary-dark); color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Question Navigator */
+        .q-navigator {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .q-navigator h4 {
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .q-navigator h4::after {
+            content: '\25B2';
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+
+        .q-navigator.collapsed h4 {
+            margin-bottom: 0;
+        }
+
+        .q-navigator.collapsed h4::after {
+            transform: rotate(180deg);
+        }
+
+        .q-navigator.collapsed .q-nav-grid {
+            display: none;
+        }
+
+        .q-nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .q-nav-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .q-nav-btn.current { border-color: var(--primary); background: #e8f5e9; font-weight: 700; }
+        .q-nav-btn.answered { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-nav-btn.correct-nav { background: var(--correct); color: white; border-color: var(--correct); }
+        .q-nav-btn.wrong-nav { background: var(--wrong); color: white; border-color: var(--wrong); }
+
+        /* Results */
+        .results { display: none; }
+
+        .results-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            border: 8px solid;
+        }
+
+        .score-circle.pass { border-color: var(--correct); color: var(--correct); }
+        .score-circle.fail { border-color: var(--wrong); color: var(--wrong); }
+
+        .score-circle small {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .results-breakdown {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .breakdown-bar {
+            width: 100px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .btn-retry {
+            padding: 12px 35px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-retry:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-review {
+            padding: 12px 35px;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-review:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+
+        .exam-nav {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .exam-nav h3 {
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+            font-size: 1rem;
+        }
+
+        .exam-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .exam-nav-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .exam-nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .exam-nav-links a.current {
+            background: var(--accent);
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .exam-nav-links a small {
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .chart-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .chart-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .question-card { padding: 18px; }
+            .header h1 { font-size: 1.3rem; }
+            .mode-selector { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>PCED Test 1 - Practice Exam</h1>
+    <p>Data Analyst Essentials with Python</p>
+</div>
+
+<div class="container">
+    <div class="exam-nav">
+        <h3>All Practice Exams</h3>
+        <div class="exam-nav-links">
+            <a href="pced-exam.html">Practice Exam <small>(160 Q)</small></a>
+            <a href="pced-test1.html" class="current">Test 1 <small>(40 Q)</small></a>
+            <a href="pced-test2.html">Test 2 <small>(40 Q)</small></a>
+            <a href="pced-exam3.html">Exam 3 <small>(40 Q)</small></a>
+            <a href="pced-exam4.html">Exam 4 <small>(40 Q)</small></a>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <div class="exam-info">
+            <p style="margin-top:10px;font-size:0.9rem;color:var(--text-light);">This practice test contains <strong>40</strong> fixed questions in order.</p>
+        </div>
+
+        <h3 style="margin:20px 0 10px;">Select Mode</h3>
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('practice')" id="modeP">
+                Practice Mode
+                <small>Instant feedback after each question</small>
+            </button>
+            <button class="mode-btn" onclick="setMode('exam')" id="modeE">
+                Exam Mode
+                <small>65 min timer, results at the end</small>
+            </button>
+        </div>
+
+        <button class="start-btn" onclick="startExam()">Start Test</button>
+    </div>
+
+    <!-- Quiz Area -->
+    <div class="quiz-area" id="quizArea">
+        <div class="progress-bar">
+            <span class="progress-text" id="progressText">Question 1 / 40</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
+            <span class="timer" id="timer" style="display:none">65:00</span>
+        </div>
+
+        <div class="q-navigator" id="qNavigator">
+            <h4 onclick="toggleNavigator()">Question Navigator</h4>
+            <div class="q-nav-grid" id="qNavGrid"></div>
+        </div>
+
+        <div id="questionContainer"></div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()">Previous</button>
+            <button class="nav-btn check" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+            <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">Next</button>
+            <button class="nav-btn finish" id="finishBtn" onclick="finishExam()" style="display:none">Finish Exam</button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+        <div class="results-card">
+            <h2>Test 1 Results</h2>
+            <div class="score-circle" id="scoreCircle">
+                <span id="scorePercent">0%</span>
+                <small id="scoreLabel">Score</small>
+            </div>
+            <p id="passFailMsg" style="font-size:1.2rem;font-weight:600;margin:10px 0;"></p>
+            <p id="scoreSummary" style="color:var(--text-light);"></p>
+
+            <div class="results-breakdown" id="resultsBreakdown"></div>
+
+            <button class="btn-retry" onclick="location.reload()">Retry Test</button>
+            <button class="btn-review" onclick="reviewExam()">Review Answers</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>Data Analyst Essentials with Python — Test 1 Practice Exam</p>
+    <p>For educational purposes only. &copy; 2025 Albanna Tutorials</p>
+</div>
+
+<script>
+const questions = [
+// ===== Q1 =====
+{
+    id: 1, topic: "1.1.1", module: 1,
+    text: "A retail company collects daily sales numbers from its stores. What is the best example of turning this raw data into insights that support business decisions?",
+    options: [
+        "Analyzing the sales data to identify top-selling products and adjusting inventory based on trends.",
+        "Sharing all raw data with every employee to improve transparency.",
+        "Archiving the data for tax reporting and legal purposes.",
+        "Saving the sales numbers into a spreadsheet for record-keeping."
+    ],
+    correct: [0],
+    explanation: "Analyzing data to identify trends and adjust business decisions transforms raw data into actionable insights."
+},
+// ===== Q2 =====
+{
+    id: 2, topic: "1.1.2", module: 1,
+    text: "A company collects customer ratings (on a scale of 1 to 5), written feedback, and timestamps using an online form stored in a JSON file. Which of the following best describes the type and structure of this data?",
+    options: [
+        "The ratings are quantitative, the written feedback is qualitative, and the data is semi-structured.",
+        "The ratings are qualitative, the feedback is unstructured, and the data is structured.",
+        "The feedback is quantitative, the timestamps are qualitative, and the data is unstructured.",
+        "All parts of the data are quantitative and stored in a structured format."
+    ],
+    correct: [0],
+    explanation: "Ratings (1-5) are quantitative (numerical), feedback is qualitative (descriptive text), and JSON is semi-structured (has some organization but no rigid schema)."
+},
+// ===== Q3 =====
+{
+    id: 3, topic: "1.2.1", module: 1,
+    text: "Which method of data collection is best suited for gathering personal opinions from a large group of people efficiently?",
+    options: [
+        "Collecting log files from automated systems.",
+        "Using surveys with structured questions.",
+        "Conducting one-on-one interviews.",
+        "Observing behavior in a natural setting."
+    ],
+    correct: [1],
+    explanation: "Surveys with structured questions can reach large groups efficiently and gather personal opinions systematically."
+},
+// ===== Q4 =====
+{
+    id: 4, topic: "1.2.2", module: 1,
+    text: "What is a key difference between CSV and JSON file formats? Select the best answer.",
+    options: [
+        "CSV is readable only by databases, while JSON is readable only by spreadsheets.",
+        "CSV is designed for storing hierarchical, nested data structures, while JSON is for storing complex tabular data.",
+        "CSV stores data as plain text, while JSON stores it as key-value pairs.",
+        "CSV is used to store flat, tabular data, while JSON can store nested, hierarchical data structures."
+    ],
+    correct: [3],
+    explanation: "CSV stores flat, tabular data in rows/columns. JSON supports nested, hierarchical data structures using key-value pairs."
+},
+// ===== Q5 =====
+{
+    id: 5, topic: "1.3.1", module: 1,
+    text: "Which of the following correctly describes the typical sequence of stages in the data lifecycle?",
+    options: [
+        "Data is stored first, then collected and analyzed for reporting and archiving.",
+        "Data is collected, then processed, stored, and visualized before deletion or being archived.",
+        "Data is collected, stored, processed, analyzed, visualized or reported, then archived or deleted.",
+        "Data is analyzed first, then stored and collected for reporting and deletion."
+    ],
+    correct: [2],
+    explanation: "The correct lifecycle order: Collection \u2192 Storage \u2192 Processing \u2192 Analysis \u2192 Visualization/Reporting \u2192 Archiving \u2192 Deletion."
+},
+// ===== Q6 =====
+{
+    id: 6, topic: "1.3.2", module: 1,
+    text: "A financial institution collects and processes customer transaction data. Why is rigorous data management essential across all stages of its lifecycle for this type of data? Select the best answer.",
+    options: [
+        "To facilitate the smooth exchange of financial data between disparate technological platforms and organizational departments.",
+        "To accelerate the computational processing of large datasets, enabling timely generation of analytical reports and business intelligence.",
+        "To ensure the accuracy and reliability of financial records, protect sensitive customer information from fraud, and adhere to strict regulatory requirements.",
+        "To present summarized financial insights through clear and concise visual representations for stakeholder understanding."
+    ],
+    correct: [2],
+    explanation: "Financial data management must ensure accuracy, protect sensitive information, and comply with regulations - these are the most critical reasons."
+},
+// ===== Q7 =====
+{
+    id: 7, topic: "1.4.1", module: 1,
+    text: "Which of the following correctly matches each field to a typical task? Select the best answer.",
+    options: [
+        "Data analysis focuses on building AI systems, data analytics handles raw file storage, and data science summarizes reports and generates visualizations.",
+        "Data analysis is mostly about coding, data analytics is about designing data workflow, and data science is focused on managing the data lifecycle.",
+        "Data analysis involves creating statistical summaries, data analytics focuses on identifying trends and patterns to solve problems, and data science includes building machine learning models for predictions.",
+        "Data analysis, analytics, and science are different names for creating dashboards from raw data."
+    ],
+    correct: [2],
+    explanation: "Data analysis = statistical summaries, Data analytics = identifying trends/patterns, Data science = ML models/predictions."
+},
+// ===== Q8 =====
+{
+    id: 8, topic: "1.4.2", module: 1,
+    text: "Which option correctly describes the four main types of analytics along with the key questions they answer and their role in business decision-making?",
+    options: [
+        "Descriptive and diagnostic analytics are used for decision-making, while predictive and prescriptive analytics are mainly used for formatting and presentation.",
+        "Descriptive analytics shows what to do next, diagnostic analytics focuses on reporting, predictive analytics explains the past, and prescriptive analytics stores the results.",
+        "Descriptive analytics shows what happened, diagnostic analytics explains why it happened, predictive analytics forecasts what could happen, and prescriptive analytics recommends what actions to take.",
+        "Descriptive analytics tells why something occurred, diagnostic analytics focuses on future events, predictive analytics selects the best visuals, and prescriptive analytics creates summaries."
+    ],
+    correct: [2],
+    explanation: "Descriptive (what happened), Diagnostic (why), Predictive (what could happen), Prescriptive (what to do)."
+},
+// ===== Q9 =====
+{
+    id: 9, topic: "1.5.1", module: 1,
+    text: "Which two practices are commonly used to protect sensitive data and meet legal or ethical data privacy standards? (Select TWO)",
+    options: [
+        "Replacing real user IDs with pseudonyms and storing the mapping in the same system.",
+        "Restricting access to sensitive data to department managers without additional controls.",
+        "Encrypting personal data during storage and transmission.",
+        "Anonymizing datasets so individuals cannot be identified.",
+        "Backing up sensitive data to multiple devices for convenience.",
+        "Archiving sensitive data in password-protected spreadsheets."
+    ],
+    correct: [2, 3],
+    explanation: "Encryption protects data during storage/transmission, and anonymization removes PII so individuals cannot be identified. Both are standard privacy practices."
+},
+// ===== Q10 =====
+{
+    id: 10, topic: "2.1.1", module: 2,
+    text: "Which of the following code snippets will output True twice, based on correct variable assignments, valid operations, and accurate type checks?",
+    options: [
+        "<code>x = True\ny = 5\nz = x + y\nprint(isinstance(z, bool))\nprint(type(z) == int)</code>",
+        "<code>x = 2\ny = 3.5\nz = x + y\nprint(isinstance(z, float))\nprint(type(x) != int)</code>",
+        "<code>x = \"False\"\ny = False\nz = x + y\nprint(isinstance(z, str))\nprint(type(y) == str)</code>",
+        "<code>x = \"4\"\ny = 2\nz = x * y\nprint(type(z) == str)\nprint(isinstance(z, str))</code>"
+    ],
+    correct: [3],
+    explanation: "x='4', y=2, z='4'*2='44' (string repetition). type('44')==str is True, isinstance('44',str) is True. Both print True. Option A: isinstance(6,bool)=False. Option B: type(2)!=int is False. Option C: str+bool raises TypeError."
+},
+// ===== Q11 =====
+{
+    id: 11, topic: "2.2.1", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>nums = [3, 1, 4, 1, 5]\nnums.append(9)\nnums.pop(2)\npart = nums[1:4]\nnums.insert(0, 2)\nfiltered = [x for x in nums if x > 3]\n\nprint(part)\nprint(filtered)</div>",
+    options: [
+        "<code>[1, 1, 5]</code> and <code>[5, 9]</code>",
+        "<code>[1, 4, 1]</code> and <code>[5, 9]</code>",
+        "<code>[1, 4, 5]</code> and <code>[4, 5, 9]</code>",
+        "<code>[1, 5, 9]</code> and <code>[4, 5, 9]</code>"
+    ],
+    correct: [0],
+    explanation: "After append(9): [3,1,4,1,5,9]. After pop(2) removes index 2 (value 4): [3,1,1,5,9]. part=nums[1:4]=[1,1,5]. After insert(0,2): [2,3,1,1,5,9]. filtered=[x for x if x>3]=[5,9]."
+},
+// ===== Q12 =====
+{
+    id: 12, topic: "2.2.2", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>a = (10, 20, 30, 40, 40)\nb = (30, 40, 50)\n\nset_a = set(a)\nset_b = set(b)\n\ncommon = set_a.intersection(set_b)\nunique = set_b.difference(set_a)\n\nprint(sorted(common))\nprint(len(unique))</div>",
+    options: [
+        "<code>(10, 20)</code> and <code>1</code>",
+        "<code>[10, 20, 50]</code> and <code>1</code>",
+        "<code>TypeError: tuples are immutable and cannot be used in set operations</code>",
+        "<code>[30, 40]</code> and <code>1</code>",
+        "<code>[30, 40]</code> and <code>2</code>"
+    ],
+    correct: [3],
+    explanation: "set_a={10,20,30,40}, set_b={30,40,50}. intersection={30,40}, sorted=[30,40]. difference=set_b-set_a={50}, len=1."
+},
+// ===== Q13 =====
+{
+    id: 13, topic: "2.2.3", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>students = [\n    {\"id\": 1, \"name\": \"Anna\", \"grade\": \"A\"},\n    {\"id\": 2, \"name\": \"Ben\", \"grade\": \"C\"},\n    {\"id\": 3, \"name\": \"Anna\", \"grade\": \"B\"},\n    {\"id\": 4, \"name\": \"Anna\", \"grade\": \"A\"},\n    {\"id\": 5, \"name\": \"John\", \"grade\": \"B\"}\n]\n\ngrades = {}\nfor student in students:\n    name = student[\"name\"]\n    grade = student[\"grade\"]\n    if name not in grades:\n        grades[name] = []\n    grades[name].append(grade)\n\npassed = {k: v for k, v in grades.items() if \"A\" in v or \"B\" in v}\nprint(len(passed))</div>",
+    options: [
+        "<code>3</code>",
+        "<code>0</code>",
+        "<code>2</code>",
+        "<code>1</code>"
+    ],
+    correct: [2],
+    explanation: "grades={'Anna':['A','B','A'], 'Ben':['C'], 'John':['B']}. passed includes Anna (has A and B) and John (has B), but not Ben (only C). len=2."
+},
+// ===== Q14 =====
+{
+    id: 14, topic: "2.2.4", module: 2,
+    text: "You are building an email validator. The validator must return True if: the domain name is school.org, the address starts with letters, it contains @, the part before the @ ends with a digit, and False otherwise. Which of the following code snippets correctly implements this validator?",
+    options: [
+        "<code>def is_valid(email):\n    parts = email.split(\"@\")\n    if len(parts) != 2:\n        return False\n    if not parts[1].startswith(\"school.org\"):\n        return False\n    if not parts[0].isalpha():\n        return False\n    return True</code>",
+        "<code>def is_valid(email):\n    if email.find(\"@\") == -1:\n        return False\n    if not email.endswith(\"school.org\"):\n        return False\n    if not email[0].isdigit():\n        return False\n    if not email[:].isalpha():\n        return False\n    return True</code>",
+        "<code>def is_valid(email):\n    if \"school.org\" not in email:\n        return False\n    if not email[0].isalpha():\n        return False\n    if \"@\" not in email:\n        return False\n    if not email.split(\"@\")[-1].isdigit():\n        return False\n    return True</code>",
+        "<code>def is_valid(email):\n    if not email.endswith(\"@school.org\"):\n        return False\n    username = email.split(\"@\")[0]\n    if not username[0].isalpha():\n        return False\n    if not username[-1].isdigit():\n        return False\n    return True</code>"
+    ],
+    correct: [3],
+    explanation: "Option D correctly checks: endswith('@school.org') for domain, username[0].isalpha() for starting with letters, and username[-1].isdigit() for ending with a digit."
+},
+// ===== Q15 =====
+{
+    id: 15, topic: "2.3.1", module: 2,
+    text: "Which of the following statements about Python functions are correct? (Select TWO)",
+    options: [
+        "You cannot define a function inside another function in Python.",
+        "Keyword arguments make function calls more readable and allow arguments to be specified out of order.",
+        "Once a function is defined, it cannot be redefined later in the same script.",
+        "A function can be called only once in a program.",
+        "You can assign a function to a variable and call it using that variable.",
+        "The return statement is required, and without it the function will crash."
+    ],
+    correct: [1, 4],
+    explanation: "B: Keyword arguments allow out-of-order specification. E: Functions are first-class objects and can be assigned to variables. All other statements are false."
+},
+// ===== Q16 =====
+{
+    id: 16, topic: "2.3.2", module: 2,
+    text: "What will be the output of the following code?\n<div class='code-block'>x = 0\n\ndef update_x():\n    global x\n    x = 1\n    return x\n\nx = x - 1\nprint(update_x(), x)</div>",
+    options: [
+        "<code>0 -1</code>",
+        "<code>1 1</code>",
+        "<code>1 -1</code>",
+        "<code>1 0</code>"
+    ],
+    correct: [1],
+    explanation: "x starts at 0. x = x-1 makes x=-1. update_x() sets global x=1 and returns 1. Then x is evaluated as 1. Output: 1 1."
+},
+// ===== Q17 =====
+{
+    id: 17, topic: "2.3.3", module: 2,
+    text: "You are writing a program to process test scores from a file. What is the main purpose of the following code?\n<div class='code-block'>try:\n    with open(\"grades.txt\") as f:\n        data = f.readlines()\n    scores = [int(x.strip()) for x in data]\n    print(scores[5])\nexcept FileNotFoundError:\n    print(\"The file was not found.\")\nexcept ValueError:\n    print(\"Some lines could not be converted to integers.\")\nexcept IndexError:\n    print(\"Not enough data in the list.\")</div>",
+    options: [
+        "The code only checks for missing values but assumes all lines are valid integers.",
+        "The code ensures missing data is replaced with fives and prevents all list errors automatically.",
+        "The code processes file data and uses exception handling to catch errors related to file access, value conversion, and list indexing.",
+        "The code guarantees the file is created if it doesn't exist and fills in missing scores."
+    ],
+    correct: [2],
+    explanation: "The code uses try-except to handle three specific exceptions: FileNotFoundError, ValueError, and IndexError, making the script robust against common data processing errors."
+},
+// ===== Q18 =====
+{
+    id: 18, topic: "2.4.1", module: 2,
+    text: "You are writing a program to validate input data. A score is valid only if it is >= 0 and <= 100, AND not equal to 50. Which of the following code snippets correctly implements this validation?",
+    options: [
+        "<code>score = int(input())\nif score > 0 or score = 0 and score < 100 and score = 0 and score != 50:\n    print(\"Valid score\")\nelse:\n    print(\"Invalid score\")</code>",
+        "<code>score = int(input())\nif (score >= 0 and score <= 100):\n    print(\"Valid score\")\nelif score != 50:\n    print(\"Valid score\")\nelse:\n    print(\"Invalid score\")</code>",
+        "<code>score = int(input())\nif score >= 0 and score <= 100 and score != 50:\n    print(\"Valid score\")\nelse:\n    print(\"Invalid score\")</code>",
+        "<code>score = int(input())\nif score > 0 or score == 0 and score < 100 and score == 0 and score != 50:\n    print(\"Valid score\")\nelse:\n    print(\"Invalid score\")</code>"
+    ],
+    correct: [2],
+    explanation: "Option C correctly combines all three conditions with 'and': score >= 0, score <= 100, and score != 50. Option A has syntax errors (= instead of ==). Option B doesn't properly combine the conditions."
+},
+// ===== Q19 =====
+{
+    id: 19, topic: "2.4.2", module: 2,
+    text: "You are writing a function to process temperature sensor data. Rules: 'N/A' or None \u2192 'Missing', below -50 or above 60 \u2192 'Outlier', otherwise \u2192 'OK'. Which version correctly implements this logic?",
+    options: [
+        "<code>def check_temp(value):\n    if value == \"N/A\" or value is None:\n        return \"Missing\"\n    elif value < -50 or value > 60:\n        return \"Outlier\"\n    else:\n        return \"OK\"</code>",
+        "<code>def check_temp(value):\n    if value == \"N/A\":\n        return \"Missing\"\n    if value is None:\n        return \"Missing\"\n    elif value < -50 and value > 60:\n        return \"Outlier\"\n    else:\n        return \"OK\"</code>",
+        "<code>def check_temp(value):\n    if value is \"N/A\":\n        return \"Missing\"\n    elif value == None:\n        return \"Missing\"\n    if value < -50:\n        return \"Outlier\"\n    elif value > 60:\n        return \"Outlier\"\n    else:\n        return \"OK\"</code>",
+        "<code>def check_temp(value):\n    if value is \"N/A\" or value is None:\n        return \"OK\"\n    elif value < -50 or value > 60:\n        return \"Outlier\"\n    else:\n        return \"Missing\"</code>"
+    ],
+    correct: [0],
+    explanation: "Option A correctly checks for N/A or None first (returns Missing), then checks outlier range with 'or' (not 'and' like B), and returns OK otherwise. Option D has reversed return values."
+},
+// ===== Q20 =====
+{
+    id: 20, topic: "2.4.3", module: 2,
+    text: "You are working with a list of birth years. A valid birth year must be an integer between 1900 and 2020. Which code correctly adds only valid birth years to a new list called cleaned?",
+    options: [
+        "<code>cleaned = []\nfor year in birth_years:\n    if isinstance(year, str):\n        continue\n    cleaned.append(year)</code>",
+        "<code>cleaned = []\nfor year in birth_years:\n    if year >= 1900 or year <= 2020:\n        cleaned.append(year)</code>",
+        "<code>cleaned = []\nfor year in birth_years:\n    if isinstance(year, int) and (year < 1900 or year > 2020):\n        cleaned.append(year)</code>",
+        "<code>cleaned = []\nfor year in birth_years:\n    if not isinstance(year, int) or year < 1900 or year > 2020:\n        continue\n    cleaned.append(year)</code>"
+    ],
+    correct: [3],
+    explanation: "Option D correctly skips (continue) any year that is not an int OR is outside the valid range [1900, 2020]. Option B uses 'or' instead of 'and', making the condition always true."
+},
+// ===== Q21 =====
+{
+    id: 21, topic: "2.5.1", module: 2,
+    text: "You are reading the official Python documentation and see that math provides mathematical functions. Based on this, how should you correctly use sqrt() from the math module?",
+    options: [
+        "First write import math, then use math.sqrt(x) in your code.",
+        "Use import math.sqrt and call sqrt(x).",
+        "You can call sqrt(x) directly without importing anything, because it's a built-in function.",
+        "First write import math, then use sqrt(x) in your code."
+    ],
+    correct: [0],
+    explanation: "After 'import math', you must use the module prefix: math.sqrt(x). Without 'from math import sqrt', sqrt() alone is not available."
+},
+// ===== Q22 =====
+{
+    id: 22, topic: "2.5.2", module: 2,
+    text: "You want to use the numpy library in your project. It is not yet installed. Which steps should you follow?",
+    options: [
+        "Write import numpy as np in your script, and it will be installed automatically.",
+        "Run pip install numpy in the terminal, then write import numpy as np in your Python script.",
+        "Run from pip install numpy in the terminal, then write import numpy.",
+        "Use python install numpy in the terminal, then import it with import numpy."
+    ],
+    correct: [1],
+    explanation: "pip install numpy installs the package. Then import numpy as np makes it available in your script with the alias np."
+},
+// ===== Q23 =====
+{
+    id: 23, topic: "3.1.1", module: 3,
+    text: "You want to save a list of names to a text file called names.txt. What is the best way to write them, ensuring the file is closed properly?",
+    options: [
+        "<code>with open(\"names.txt\", \"r\") as f:\n    f.write(names)</code>",
+        "<code>f = open(\"names.txt\", \"w\")\nf.writelines(names)</code>",
+        "<code>open(\"names.txt\", \"w\").write(names)</code>",
+        "<code>with open(\"names.txt\", \"w\") as f:\n    f.writelines(names)</code>"
+    ],
+    correct: [3],
+    explanation: "Option D uses 'with' for automatic file closing, opens in write mode ('w'), and uses writelines() for a list. Option A opens in read mode. Option B doesn't close the file. Option C doesn't guarantee closing."
+},
+// ===== Q24 =====
+{
+    id: 24, topic: "3.1.2", module: 3,
+    text: "You are reading CSV data where each line is like 'John,30'. You want to format it as 'Name: John | Age: 30'. Which line correctly uses an f-string?",
+    options: [
+        "<code>summary = f\"Name: {fields[0]} | Age: {fields[1]}\"</code>",
+        "<code>summary = f\"Name: fields[0] | Age: fields[1]\"</code>",
+        "<code>summary = f\"Name: \" + fields[0] + f\" | Age: \" + fields[1]</code>",
+        "<code>summary = f-string(\"Name: {} | Age: {}\", fields[0], fields[1])</code>"
+    ],
+    correct: [0],
+    explanation: "f-strings use curly braces {expression} to embed variables. Option A correctly references fields[0] and fields[1] inside braces."
+},
+// ===== Q25 =====
+{
+    id: 25, topic: "3.2.1", module: 3,
+    text: "You have a list: names = ['Alice', '', 'Bob', None, '  ', 'Charlie', False]. You want to keep only non-empty, non-None names with at least one non-whitespace character. Which list comprehension correctly filters?",
+    options: [
+        "<code>clean_names = [for name in names if name.strip() and name is not None]</code>",
+        "<code>clean_names = [name for name in names if name and name.strip()]</code>",
+        "<code>clean_names = [name if name != None and len(name) > 0 for name in names]</code>",
+        "<code>clean_names = [name for name in names if name != \"\" and name != None and name != \" \"]</code>"
+    ],
+    correct: [1],
+    explanation: "Option B: 'name' filters out None, False, and '' (falsy values). 'name.strip()' filters out whitespace-only strings. Option A has invalid syntax. Option C has wrong syntax. Option D doesn't handle all whitespace patterns."
+},
+// ===== Q26 =====
+{
+    id: 26, topic: "3.2.2", module: 3,
+    text: "You want to print each username with its position number starting from 1. Which code correctly uses enumerate()? (Select TWO)",
+    options: [
+        "<code>for name in usernames:\n    print(f\"{id}. {name}\")</code>",
+        "<code>for i, name in enumerate(usernames):\n    print(f\"{name}: {i+1}\")</code>",
+        "<code>for name in usernames:\n    print(f\"{usernames.index(name) + 1}. {name}\")</code>",
+        "<code>for n, name in enumerate(usernames):\n    print(f\"{name}: {n}\")</code>",
+        "<code>for i, name in enumerate(usernames, start=1):\n    print(f\"{i}. {name}\")</code>"
+    ],
+    correct: [1, 4],
+    explanation: "B uses enumerate with i+1 to start from 1. E uses enumerate(start=1) directly. A doesn't use enumerate. C uses .index() which is fragile with duplicates. D starts from 0."
+},
+// ===== Q27 =====
+{
+    id: 27, topic: "3.2.3", module: 3,
+    text: "You are cleaning the email: '  EXAMPLE_email@Domain.Com  ' to get 'example.email@domain.com'. Which line produces this result?",
+    options: [
+        "<code>cleaned = \" EXAMPLE_email@Domain.Com \".lower().replace(\"_\", \".\").split()</code>",
+        "<code>cleaned = \" EXAMPLE_email@Domain.Com \".strip().lower().replace(\" \", \"\")</code>",
+        "<code>cleaned = \" EXAMPLE_email@Domain.Com \".strip().replace(\"_\", \".\")</code>",
+        "<code>cleaned = \" EXAMPLE_email@Domain.Com \".strip().lower().replace(\"_\", \".\")</code>"
+    ],
+    correct: [3],
+    explanation: "strip() removes whitespace, lower() converts to lowercase, replace('_', '.') replaces underscores with dots. Result: 'example.email@domain.com'."
+},
+// ===== Q28 =====
+{
+    id: 28, topic: "3.2.4", module: 3,
+    text: "You are processing payment amounts stored as strings. You want to convert to float and format to 2 decimal places. For example, '45.5721' should become '45.57'. Which line performs both tasks correctly?",
+    options: [
+        "<code>formatted = float(value):.2f</code>",
+        "<code>formatted = float(round(value, 2))</code>",
+        "<code>formatted = float(f\"{value:.2f}\")</code>",
+        "<code>formatted = f\"{float(value):.2f}\"</code>"
+    ],
+    correct: [3],
+    explanation: "f\"{float(value):.2f}\" first converts the string to float, then formats it to exactly 2 decimal places using the f-string format specifier."
+},
+// ===== Q29 =====
+{
+    id: 29, topic: "3.3.1", module: 3,
+    text: "You have daily sales: sales = [210.522, 189.242, 243.251, 310.105, 198.755, 264.409, 185.837]. Which code gives total, average, and highest daily sale, all rounded to 2 decimal places?",
+    options: [
+        "<code>print(round(sum(sales), 2), round(sum(sales)//7, 2), round(max(sales), 2))</code>",
+        "<code>print(round(sum(sales)), (sum(sales)/7), (max(sales)), 2)</code>",
+        "<code>print(round(sum(sales[:]), 2), round(sum(sales[0:])/7, 2), round(max(sales[0:6]), 2))</code>",
+        "<code>print(round(sum(sales[:]), 2), round(sum(sales[:])//7, 2), round(max(sales[:1]), 2))</code>"
+    ],
+    correct: [2],
+    explanation: "Option C uses proper division (/) for average and rounds all values. Options A and D use integer division (//). Option B has wrong syntax. Note: sales[0:6] happens to contain the max value for this data."
+},
+// ===== Q30 =====
+{
+    id: 30, topic: "3.3.2", module: 3,
+    text: "You are reviewing test scores: scores = [82, 76, 91, 67, 88, 95, 79]. Which snippet correctly calculates the median, square root of highest score, and frequency counts?",
+    options: [
+        "<code>from statistics import median\nfrom math import sqrt\nfrom collections import Counter\n\nmed = median(scores)\ntop = sqrt(max(scores))\nfreq = Counter(scores)</code>",
+        "<code>from statistics import median\nfrom math import floor, count\n\nmed = median(avg(scores))\ntop = floor(max(scores))\nfreq = scores.count()</code>",
+        "<code>from math import median, ceil\nfrom collections import Counter\n\nmed = median(scores)\ntop = ceil(max(scores))\nfreq = scores.Counter()</code>",
+        "<code>from statistics import median\nfrom math import sqrt, ceil\nfrom collections import count\n\nmed = median(scores)\ntop = sqrt(ceil(scores))\nfreq = count(scores)</code>"
+    ],
+    correct: [0],
+    explanation: "Option A correctly imports median from statistics, sqrt from math, and Counter from collections, then applies them properly."
+},
+// ===== Q31 =====
+{
+    id: 31, topic: "3.3.3", module: 3,
+    text: "You are analyzing sensor readings: readings = [12.5, 13.2, 11.8, 12.9, 13.0]. You want to convert to NumPy array, compute mean/median/std/sum, and generate 10 evenly spaced values between min and max. Which code is correct?",
+    options: [
+        "<code>import numpy as np\narr = np.array(readings)\navg = np.mean(arr)\nmed = np.median(arr)\nstd = np.std(arr)\ntotal = np.sum(arr)\nseq = np.arange(min(arr), max(arr), 10)</code>",
+        "<code>import numpy as np\narr = np.list(readings)\navg = np.arr.mean()\nmed = np.arr.median()\nstd = np.arr.std()\ntotal = np.arr.sum()\nseq = np.arange(min(arr), max(arr), 10)</code>",
+        "<code>import numpy as np\narr = np.array(readings)\navg = np.mean(arr)\nmed = np.median(arr)\nstd = np.std(arr)\ntotal = np.sum(arr)\nseq = np.linspace(min(arr), max(arr), 10)</code>",
+        "<code>import numpy as np\narr = np.array(readings)\navg = np.mean(readings)\nmed = np.median(readings)\nstd = np.std(readings)\ntotal = np.sum(readings)\nseq = np.linspace(arr[(min)], arr[(max)], 10)</code>"
+    ],
+    correct: [2],
+    explanation: "Option C correctly uses np.array(), numpy stats functions, and np.linspace() for evenly spaced values. np.arange uses step size, not count. np.linspace generates a specified number of values."
+},
+// ===== Q32 =====
+{
+    id: 32, topic: "3.3.4", module: 3,
+    text: "You are analyzing test scores stored as tuples: data = [('Alice','North',85), ('Bob','South',72), ('Clara','North',90), ('Dan','South',68), ('Eva','North',77)]. You want the average score per region. Which implementation is correct?",
+    options: [
+        "<code>groups = {}\nfor name, region, score in data:\n    if region in groups:\n        groups[region] += score\n    else:\n        groups[region] = score\naverages = {region: total / len(groups[region]) for region, total in groups.items()}</code>",
+        "<code>groups = {}\nfor name, region, score in data:\n    if region not in groups:\n        groups[region] = []\n    groups[region].append(score)\naverages = {region: sum(scores) / len(scores) for region, scores in groups.items()}</code>",
+        "<code>averages = {}\nfor name, region, score in data:\n    averages[region] = sum(score) / len(score)</code>",
+        "<code>averages = {}\nfor name, region, score in data:\n    averages.setdefault(region, []).append(score)\nfor region in averages:\n    averages[region] = max(averages[region])</code>"
+    ],
+    correct: [1],
+    explanation: "Option B correctly groups scores by region using a dictionary of lists, then computes the average for each group using sum/len."
+},
+// ===== Q33 =====
+{
+    id: 33, topic: "3.4.1", module: 3,
+    text: "You store student records (Name, Age, Score) in a list of dictionaries. Which line creates a list of names of students who scored 85 or more?",
+    options: [
+        "<code>[name for record in data if record[\"score\"] >= 85]</code>",
+        "<code>[record[\"name\"] for record in data if record[\"score\"] >= 85]</code>",
+        "<code>[record.name for record in data if record.score >= 85]</code>",
+        "<code>[name for name, age, score in data if score >= 85]</code>"
+    ],
+    correct: [1],
+    explanation: "Option B correctly accesses dict keys with bracket notation: record['name'] for the value and record['score'] for filtering. Option A doesn't define 'name'. Option C uses dot notation (for objects, not dicts)."
+},
+// ===== Q34 =====
+{
+    id: 34, topic: "3.4.3", module: 3,
+    text: "While exploring employee working hours, a data analyst notices one entry showing 110 hours while most fall between 35-45. What is the most appropriate interpretation?",
+    options: [
+        "It is likely a data entry error, but does not affect correlation between variables.",
+        "It is a valid observation that should be kept without review.",
+        "It is a high value that improves accuracy of the dataset.",
+        "It is an outlier that may distort overall patterns and summary statistics."
+    ],
+    correct: [3],
+    explanation: "110 hours is far outside the normal range (35-45) and is an outlier. Outliers can significantly distort means, standard deviations, and other summary statistics."
+},
+// ===== Q35 =====
+{
+    id: 35, topic: "3.4.3", module: 3,
+    text: "While exploring a dataset of employee working hours per week, a data analyst notices one entry showing 110 hours, while most others fall between 35 and 45. What is the most appropriate interpretation of this value?",
+    options: [
+        "It is likely a data entry error, but does not affect the correlation between variables.",
+        "It is a valid observation that should be kept in the analysis without review.",
+        "It is a high value that improves the accuracy of the dataset.",
+        "It is an outlier that may distort overall patterns and summary statistics."
+    ],
+    correct: [3],
+    explanation: "110 hours is far outside the normal range and is an outlier that could distort summary statistics like mean and standard deviation."
+},
+// ===== Q36 =====
+{
+    id: 36, topic: "4.1.1", module: 4,
+    text: "Look at the following chart, which displays sales for five product categories in the current quarter. Based on the image and the type of chart shown, what is the main reason this type of visualization is appropriate for this data?\n<div class='chart-container'><svg width='460' height='320' viewBox='0 0 460 320' xmlns='http://www.w3.org/2000/svg'><rect width='460' height='320' fill='#f8f9fa' rx='8'/><text x='230' y='28' text-anchor='middle' font-size='15' font-weight='bold' fill='#333'>Sales by Product Category</text><line x1='70' y1='40' x2='70' y2='260' stroke='#999' stroke-width='1'/><line x1='70' y1='260' x2='440' y2='260' stroke='#999' stroke-width='1'/><text x='15' y='155' text-anchor='middle' font-size='11' fill='#666' transform='rotate(-90,15,155)'>Total Products</text><text x='65' y='264' text-anchor='end' font-size='10' fill='#666'>0</text><line x1='66' y1='238' x2='70' y2='238' stroke='#999'/><text x='65' y='242' text-anchor='end' font-size='10' fill='#666'>25</text><line x1='66' y1='216' x2='70' y2='216' stroke='#999'/><text x='65' y='220' text-anchor='end' font-size='10' fill='#666'>50</text><line x1='66' y1='194' x2='70' y2='194' stroke='#999'/><text x='65' y='198' text-anchor='end' font-size='10' fill='#666'>75</text><line x1='66' y1='172' x2='70' y2='172' stroke='#999'/><text x='65' y='176' text-anchor='end' font-size='10' fill='#666'>100</text><rect x='96' y='62' width='50' height='198' fill='#4285f4' rx='3'/><text x='121' y='55' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>90</text><text x='121' y='280' text-anchor='middle' font-size='10' fill='#666'>Electronics</text><rect x='170' y='123.6' width='50' height='136.4' fill='#4285f4' rx='3'/><text x='195' y='117' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>62</text><text x='195' y='280' text-anchor='middle' font-size='10' fill='#666'>Clothing</text><rect x='244' y='154.4' width='50' height='105.6' fill='#4285f4' rx='3'/><text x='269' y='148' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>48</text><text x='269' y='280' text-anchor='middle' font-size='10' fill='#666'>Furniture</text><rect x='318' y='183' width='50' height='77' fill='#4285f4' rx='3'/><text x='343' y='177' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>35</text><text x='343' y='280' text-anchor='middle' font-size='10' fill='#666'>Books</text><rect x='392' y='143.4' width='50' height='116.6' fill='#4285f4' rx='3'/><text x='417' y='137' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>53</text><text x='417' y='280' text-anchor='middle' font-size='10' fill='#666'>Toys</text></svg></div>",
+    options: [
+        "It is used to visualize data distribution and variability within categories.",
+        "It displays the exact sales numbers for each product.",
+        "It shows differences in quantity between categories at a glance.",
+        "It emphasizes the correlation between product types."
+    ],
+    correct: [2],
+    explanation: "Bar charts are ideal for comparing values across categories at a glance. The varying bar heights make it easy to see which categories have higher or lower sales."
+},
+// ===== Q37 =====
+{
+    id: 37, topic: "4.1.2", module: 4,
+    text: "Consider the following chart. What is the most likely reason the chart is visually misleading?\n<div class='chart-container'><svg width='400' height='320' viewBox='0 0 400 320' xmlns='http://www.w3.org/2000/svg'><rect width='400' height='320' fill='#f8f9fa' rx='8'/><text x='200' y='28' text-anchor='middle' font-size='15' font-weight='bold' fill='#333'>Department Sales Comparison</text><line x1='80' y1='40' x2='80' y2='260' stroke='#999' stroke-width='1'/><line x1='80' y1='260' x2='370' y2='260' stroke='#999' stroke-width='1'/><text x='75' y='264' text-anchor='end' font-size='10' fill='#c00' font-weight='bold'>100</text><line x1='76' y1='223.3' x2='80' y2='223.3' stroke='#999'/><text x='75' y='227' text-anchor='end' font-size='10' fill='#666'>102</text><line x1='76' y1='186.7' x2='80' y2='186.7' stroke='#999'/><text x='75' y='190' text-anchor='end' font-size='10' fill='#666'>104</text><line x1='76' y1='150' x2='80' y2='150' stroke='#999'/><text x='75' y='154' text-anchor='end' font-size='10' fill='#666'>106</text><rect x='118' y='77.7' width='60' height='182.3' fill='#ff9800' rx='3'/><text x='148' y='71' text-anchor='middle' font-size='12' font-weight='bold' fill='#333'>105</text><text x='148' y='280' text-anchor='middle' font-size='11' fill='#666'>Dept A</text><rect x='210' y='187' width='60' height='73' fill='#ff9800' rx='3'/><text x='240' y='181' text-anchor='middle' font-size='12' font-weight='bold' fill='#333'>102</text><text x='240' y='280' text-anchor='middle' font-size='11' fill='#666'>Dept B</text><rect x='302' y='223.5' width='60' height='36.5' fill='#ff9800' rx='3'/><text x='332' y='217' text-anchor='middle' font-size='12' font-weight='bold' fill='#333'>101</text><text x='332' y='280' text-anchor='middle' font-size='11' fill='#666'>Dept C</text><text x='75' y='300' text-anchor='end' font-size='9' fill='#c00'>* Y-axis starts at 100, not 0</text></svg></div>",
+    options: [
+        "The bars use the same color, which hides category differences.",
+        "The chart shows cumulative totals instead of individual department sales.",
+        "The chart uses bars instead of a line graph, which distorts the data.",
+        "The vertical scale of the chart exaggerates small differences."
+    ],
+    correct: [3],
+    explanation: "The Y-axis starts at 100 instead of 0, which visually exaggerates the small differences between departments. The actual difference is tiny (101-105) but appears dramatic."
+},
+// ===== Q38 =====
+{
+    id: 38, topic: "4.2.1", module: 4,
+    text: "You've created a line chart to show website traffic over 12 months. When presenting to a non-technical marketing team, which approach best ensures the audience understands the insight?",
+    options: [
+        "Present the raw data table and invite the team to interpret the chart themselves.",
+        "Show the code and describe the syntax used to create the line chart.",
+        "Explain the chart code and show traffic variation using statistical terminology.",
+        "Lead with a summary of the key trend and use clear visuals and plain language to explain the changes."
+    ],
+    correct: [3],
+    explanation: "Leading with the key message in plain language, supported by clear visuals, is the most effective way to communicate with non-technical audiences."
+},
+// ===== Q39 =====
+{
+    id: 39, topic: "4.3.1", module: 4,
+    text: "You analyzed student survey responses on screen time. Average was 4.5 hours/day. 60% watch videos, 25% for schoolwork. Which is the best summary?",
+    options: [
+        "\"Students spend about 4.5 hours a day on screens, mostly watching videos. Only one in four use that time for schoolwork.\"",
+        "\"Some students use screens for school, others for fun. It's hard to say how much.\"",
+        "\"Screen habits vary a lot. The results are not very consistent, so we can't make strong conclusions.\"",
+        "\"More students use screens than we expected. A few watch videos, but the rest are focused on learning.\""
+    ],
+    correct: [0],
+    explanation: "Option A provides a clear, concise summary with specific supporting data (4.5 hours, video watching, 1 in 4 for schoolwork). It is accurate and easy to understand."
+},
+// ===== Q40 =====
+{
+    id: 40, topic: "4.4.1", module: 4,
+    text: "You are presenting a chart comparing average response times between four customer service teams. Which approach best follows design principles for clear communication?",
+    options: [
+        "Use a colorful palette, remove axis labels for minimalism, and summarize in the chart title.",
+        "Use consistent colors, clearly labeled axes, a descriptive title, and explain the key takeaway aloud.",
+        "Use abbreviations in labels to keep the chart compact and let the audience interpret from the bars.",
+        "Focus on color-coding each bar, keep labels small to maximize space, and emphasize chart design."
+    ],
+    correct: [1],
+    explanation: "Clear labels, consistent colors, descriptive title, and verbal explanation of key takeaways follow best practices for accessible chart design and effective presentation."
+}
+];
+
+// ==================== APPLICATION LOGIC ====================
+let currentMode = 'practice';
+let currentQuestionIndex = 0;
+let activeQuestions = [];
+let userAnswers = {};
+let answeredStatus = {};
+let timerInterval = null;
+let timeLeft = 65 * 60;
+let examFinished = false;
+
+const topicNames = {
+    '1.1.1': '1.1.1 Define data', '1.1.2': '1.1.2 Classify data',
+    '1.2.1': '1.2.1 Data sources & collection', '1.2.2': '1.2.2 Data storage',
+    '1.3.1': '1.3.1 Data lifecycle', '1.3.2': '1.3.2 Lifecycle management',
+    '1.4.1': '1.4.1 Analysis vs Analytics vs Science', '1.4.2': '1.4.2 Analytics workflow',
+    '1.5.1': '1.5.1 Ethics & legal',
+    '2.1.1': '2.1.1 Variables & data types',
+    '2.2.1': '2.2.1 Lists', '2.2.2': '2.2.2 Tuples & sets', '2.2.3': '2.2.3 Dictionaries', '2.2.4': '2.2.4 Strings',
+    '2.3.1': '2.3.1 Functions', '2.3.2': '2.3.2 Scope & variables', '2.3.3': '2.3.3 Error handling',
+    '2.4.1': '2.4.1 Boolean logic', '2.4.2': '2.4.2 Conditionals', '2.4.3': '2.4.3 Loops',
+    '2.5.1': '2.5.1 Modules & packages', '2.5.2': '2.5.2 External libraries',
+    '3.1.1': '3.1.1 Text files', '3.1.2': '3.1.2 CSV files',
+    '3.2.1': '3.2.1 Missing/invalid data', '3.2.2': '3.2.2 Duplicates & normalization',
+    '3.2.3': '3.2.3 String cleaning', '3.2.4': '3.2.4 Data conversion',
+    '3.3.1': '3.3.1 Aggregations', '3.3.2': '3.3.2 Descriptive statistics',
+    '3.3.3': '3.3.3 NumPy operations', '3.3.4': '3.3.4 Conditional metrics',
+    '3.4.1': '3.4.1 Sorting & filtering', '3.4.3': '3.4.3 Correlation & outliers',
+    '4.1.1': '4.1.1 Chart types', '4.1.2': '4.1.2 Interpret visualizations',
+    '4.2.1': '4.2.1 Data storytelling', '4.3.1': '4.3.1 Analytical reports',
+    '4.4.1': '4.4.1 Presentations'
+};
+
+function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(mode === 'practice' ? 'modeP' : 'modeE').classList.add('active');
+}
+
+function startExam() {
+    // Fixed 40 questions, always in order 1-40
+    activeQuestions = [...questions];
+    currentQuestionIndex = 0;
+    userAnswers = {};
+    answeredStatus = {};
+    examFinished = false;
+
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+
+    // Timer for exam mode
+    if (currentMode === 'exam') {
+        timeLeft = 65 * 60;
+        document.getElementById('timer').style.display = 'inline-block';
+        document.getElementById('checkBtn').style.display = 'none';
+        startTimer();
+    } else {
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('checkBtn').style.display = 'inline-block';
+    }
+
+    buildNavigator();
+    renderQuestion();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        timerEl.className = 'timer' + (mins < 5 ? ' danger' : mins < 15 ? ' warning' : '');
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            finishExam();
+        }
+    }, 1000);
+}
+
+function toggleNavigator() {
+    document.getElementById('qNavigator').classList.toggle('collapsed');
+}
+
+function buildNavigator() {
+    const grid = document.getElementById('qNavGrid');
+    grid.innerHTML = '';
+    activeQuestions.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'q-nav-btn' + (i === currentQuestionIndex ? ' current' : '');
+        btn.textContent = i + 1;
+        btn.onclick = () => { currentQuestionIndex = i; renderQuestion(); };
+        grid.appendChild(btn);
+    });
+}
+
+function updateNavigator() {
+    const btns = document.querySelectorAll('.q-nav-btn');
+    btns.forEach((btn, i) => {
+        btn.className = 'q-nav-btn';
+        if (i === currentQuestionIndex) btn.classList.add('current');
+        const qId = activeQuestions[i].id;
+        if (answeredStatus[qId] === 'correct') btn.classList.add('correct-nav');
+        else if (answeredStatus[qId] === 'wrong') btn.classList.add('wrong-nav');
+        else if (userAnswers[qId] !== undefined) btn.classList.add('answered');
+    });
+}
+
+function renderQuestion() {
+    const q = activeQuestions[currentQuestionIndex];
+    const container = document.getElementById('questionContainer');
+    const isMulti = q.correct.length > 1;
+    const inputType = isMulti ? 'checkbox' : 'radio';
+
+    let html = `<div class="question-card">
+        <div class="question-meta">
+            <span class="question-topic">Topic ${q.topic}</span>
+            <span class="question-type">${isMulti ? 'Multiple Select' : 'Single Select'}</span>
+        </div>
+        <div class="question-text">${q.text}</div>
+        <div class="options">`;
+
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    q.options.forEach((opt, i) => {
+        const selected = userAnswers[q.id] && userAnswers[q.id].includes(i);
+        let optClass = 'option' + (selected ? ' selected' : '');
+
+        if (answeredStatus[q.id]) {
+            if (q.correct.includes(i)) optClass += ' correct';
+            else if (selected) optClass += ' wrong';
+        }
+
+        html += `<div class="${optClass}" onclick="selectOption(${q.id}, ${i}, '${inputType}')">
+            <input type="${inputType}" name="q${q.id}" ${selected ? 'checked' : ''} ${answeredStatus[q.id] ? 'disabled' : ''}>
+            <span class="option-label">${letters[i]}.</span>
+            <span class="option-text">${opt.replace(/<code>([\s\S]*?)<\/code>/g, (m, c) => c.includes('\\n') || c.includes('\n') ? "<div class='code-block'>" + c + "</div>" : m)}</span>
+        </div>`;
+    });
+
+    html += `</div>
+        <div class="explanation ${answeredStatus[q.id] ? 'show' : ''}" id="explanation">
+            <strong>${answeredStatus[q.id] === 'correct' ? 'Correct!' : answeredStatus[q.id] === 'wrong' ? 'Incorrect.' : ''}</strong> ${q.explanation}
+        </div>
+    </div>`;
+
+    container.innerHTML = html;
+
+    // Update progress
+    const total = activeQuestions.length;
+    document.getElementById('progressText').textContent = `Question ${currentQuestionIndex + 1} / ${total}`;
+    document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / total) * 100}%`;
+
+    // Update buttons
+    document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+    const isLast = currentQuestionIndex === total - 1;
+    document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-block';
+    document.getElementById('finishBtn').style.display = isLast ? 'inline-block' : 'none';
+
+    if (currentMode === 'practice') {
+        document.getElementById('checkBtn').style.display = answeredStatus[q.id] ? 'none' : 'inline-block';
+    }
+
+    updateNavigator();
+}
+
+function selectOption(qId, optIndex, inputType) {
+    if (answeredStatus[qId]) return;
+
+    if (inputType === 'radio') {
+        userAnswers[qId] = [optIndex];
+    } else {
+        if (!userAnswers[qId]) userAnswers[qId] = [];
+        const idx = userAnswers[qId].indexOf(optIndex);
+        if (idx > -1) userAnswers[qId].splice(idx, 1);
+        else userAnswers[qId].push(optIndex);
+    }
+    renderQuestion();
+}
+
+function checkAnswer() {
+    const q = activeQuestions[currentQuestionIndex];
+    if (!userAnswers[q.id] || userAnswers[q.id].length === 0) {
+        alert('Please select an answer before checking.');
+        return;
+    }
+
+    const selected = [...userAnswers[q.id]].sort();
+    const correct = [...q.correct].sort();
+    const isCorrect = JSON.stringify(selected) === JSON.stringify(correct);
+    answeredStatus[q.id] = isCorrect ? 'correct' : 'wrong';
+    renderQuestion();
+}
+
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+}
+
+function nextQuestion() {
+    const q = activeQuestions[currentQuestionIndex];
+    // In practice mode, auto-check the answer before moving on
+    if (currentMode !== 'exam' && !answeredStatus[q.id]) {
+        if (userAnswers[q.id] && userAnswers[q.id].length > 0) {
+            const selected = [...userAnswers[q.id]].sort();
+            const correct = [...q.correct].sort();
+            answeredStatus[q.id] = JSON.stringify(selected) === JSON.stringify(correct) ? 'correct' : 'wrong';
+            renderQuestion();
+            return; // Show the result first, user clicks Next again to proceed
+        }
+    }
+    if (currentMode === 'exam' && !userAnswers[q.id]) {
+        userAnswers[q.id] = [];
+    }
+    if (currentQuestionIndex < activeQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    }
+}
+
+function finishExam() {
+    clearInterval(timerInterval);
+    examFinished = true;
+
+    // Auto-check all unanswered in exam mode
+    activeQuestions.forEach(q => {
+        if (!answeredStatus[q.id]) {
+            const selected = userAnswers[q.id] ? [...userAnswers[q.id]].sort() : [];
+            const correct = [...q.correct].sort();
+            answeredStatus[q.id] = JSON.stringify(selected) === JSON.stringify(correct) ? 'correct' : 'wrong';
+        }
+    });
+
+    showResults();
+}
+
+function showResults() {
+    document.getElementById('quizArea').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+
+    let correct = 0;
+    let total = activeQuestions.length;
+    const moduleScores = {};
+
+    activeQuestions.forEach(q => {
+        if (!moduleScores[q.module]) moduleScores[q.module] = { correct: 0, total: 0 };
+        moduleScores[q.module].total++;
+        if (answeredStatus[q.id] === 'correct') {
+            correct++;
+            moduleScores[q.module].correct++;
+        }
+    });
+
+    const percent = Math.round((correct / total) * 100);
+    const passed = percent >= 75;
+
+    document.getElementById('scorePercent').textContent = percent + '%';
+    document.getElementById('scoreCircle').className = 'score-circle ' + (passed ? 'pass' : 'fail');
+    document.getElementById('passFailMsg').textContent = passed ? 'PASSED' : 'FAILED';
+    document.getElementById('passFailMsg').style.color = passed ? 'var(--correct)' : 'var(--wrong)';
+    document.getElementById('scoreSummary').textContent = `You answered ${correct} out of ${total} questions correctly.`;
+
+    const moduleNames = {
+        1: 'Block 1: Data & Analysis Concepts',
+        2: 'Block 2: Python Basics',
+        3: 'Block 3: Working with Data',
+        4: 'Block 4: Communicating Insights'
+    };
+
+    let breakdownHTML = '';
+    Object.keys(moduleScores).sort().forEach(m => {
+        const ms = moduleScores[m];
+        const mp = Math.round((ms.correct / ms.total) * 100);
+        const color = mp >= 75 ? 'var(--correct)' : 'var(--wrong)';
+        breakdownHTML += `<div class="breakdown-row">
+            <span>${moduleNames[m] || 'Module ' + m}</span>
+            <span>${ms.correct}/${ms.total} (${mp}%)</span>
+            <div class="breakdown-bar"><div class="breakdown-fill" style="width:${mp}%;background:${color}"></div></div>
+        </div>`;
+    });
+
+    document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+}
+
+function reviewExam() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('checkBtn').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    currentQuestionIndex = 0;
+
+    // Show all explanations
+    activeQuestions.forEach(q => {
+        if (!answeredStatus[q.id]) {
+            answeredStatus[q.id] = 'wrong';
+        }
+    });
+
+    renderQuestion();
+}
+</script>
+
+</body>
+</html>

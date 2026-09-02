@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 5.1: Data Visualization Techniques | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>5.1 Data Visualization Techniques</h1>
+        <p class="hero-sub">Block 5: Data Communication and Visualization</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- Objectives Overview -->
+        <div class="section fade-up">
+            <h2><i class="fa-solid fa-bullseye"></i> Objectives Overview</h2>
+            <div class="info-box">
+                <ul style="margin:0;padding-left:1.2rem;">
+                    <li><strong>5.1.1</strong> &mdash; Matplotlib and Seaborn Proficiency</li>
+                    <li><strong>5.1.2</strong> &mdash; Pros and Cons of Data Representations</li>
+                    <li><strong>5.1.3</strong> &mdash; Labeling, Annotating, and Refining</li>
+                </ul>
+            </div>
+            <p>Master Matplotlib and Seaborn to create, customize, and interpret data visualizations for analysis and communication.</p>
+            <p><strong>Objectives:</strong> 3 &nbsp;|&nbsp; <strong>Weight:</strong> 10.4% of exam</p>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- OBJECTIVE 5.1.1 -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj1">
+            <h2><i class="fa-solid fa-chart-bar"></i> 5.1.1 Matplotlib and Seaborn Proficiency</h2>
+            <p>Matplotlib is the foundational plotting library in Python. Seaborn is built on top of Matplotlib and provides a higher-level, more aesthetically pleasing interface with built-in support for statistical visualizations. Together they cover virtually every visualization need a data analyst encounters.</p>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-circle-info"></i> Exam Focus</strong><br>
+                Know the correct function calls for each chart type, understand what each visualization reveals about the data, and be comfortable with both the Matplotlib and Seaborn syntax for creating them.
+            </div>
+
+            <!-- Boxplots -->
+            <div class="subsection" id="boxplots">
+                <h3>Creating Boxplots</h3>
+                <p>Boxplots (box-and-whisker plots) display the <strong>five-number summary</strong> of a dataset: minimum, first quartile (Q1), median (Q2), third quartile (Q3), and maximum. They are ideal for detecting <strong>outliers</strong> and comparing distributions across categories.</p>
+                <ul>
+                    <li><strong>Box:</strong> spans from Q1 to Q3 (the interquartile range, IQR)</li>
+                    <li><strong>Line inside box:</strong> the median</li>
+                    <li><strong>Whiskers:</strong> extend up to 1.5 &times; IQR from Q1 and Q3</li>
+                    <li><strong>Points beyond whiskers:</strong> outliers</li>
+                </ul>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import pandas as pd
+
+# Generate sample data
+np.random.seed(42)
+data_a = np.random.normal(50, 10, 200)
+data_b = np.random.normal(60, 15, 200)
+data_c = np.random.normal(45, 8, 200)
+
+# --- Matplotlib boxplot ---
+fig, ax = plt.subplots(figsize=(8, 5))
+bp = ax.boxplot([data_a, data_b, data_c],
+                labels=['Group A', 'Group B', 'Group C'],
+                patch_artist=True,          # fill boxes with color
+                notch=True,                  # add confidence notch
+                medianprops={'color': 'black', 'linewidth': 2})
+
+colors = ['#dbeafe', '#d1fae5', '#ede9fe']
+for patch, color in zip(bp['boxes'], colors):
+    patch.set_facecolor(color)
+
+ax.set_title('Score Distribution by Group', fontweight='bold')
+ax.set_ylabel('Score')
+ax.grid(axis='y', alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# --- Seaborn boxplot ---
+df = pd.DataFrame({
+    'Score': np.concatenate([data_a, data_b, data_c]),
+    'Group': ['A']*200 + ['B']*200 + ['C']*200
+})
+sns.boxplot(x='Group', y='Score', data=df, palette='pastel')
+plt.title('Seaborn Boxplot')
+plt.show()</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> When to Use a Boxplot</strong><br>
+                    Use boxplots to compare distributions across categories, identify outliers, and quickly assess whether groups differ in central tendency or spread. They are more informative than bar charts for continuous data.
+                </div>
+            </div>
+
+            <!-- Histograms -->
+            <div class="subsection" id="histograms">
+                <h3>Creating Histograms</h3>
+                <p>Histograms show the <strong>distribution shape</strong> of a single numeric variable by grouping values into bins and counting frequencies. They reveal skewness, modality (unimodal, bimodal), and spread.</p>
+                <ul>
+                    <li><strong>Bin selection matters:</strong> too few bins over-smooth; too many create noise</li>
+                    <li><strong>KDE (Kernel Density Estimate):</strong> a smooth curve overlay that estimates the probability density function</li>
+                </ul>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Histogram with KDE overlay ---
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+# Matplotlib histogram
+axes[0].hist(data_a, bins=20, color='#93c5fd', edgecolor='white', alpha=0.8)
+axes[0].set_title('Matplotlib Histogram (20 bins)')
+axes[0].set_xlabel('Value')
+axes[0].set_ylabel('Frequency')
+
+# Seaborn histplot with KDE
+sns.histplot(data_a, bins=25, kde=True, color='#7c3aed', ax=axes[1])
+axes[1].set_title('Seaborn histplot with KDE')
+axes[1].set_xlabel('Value')
+
+plt.tight_layout()
+plt.show()
+
+# Comparing multiple distributions on one histogram
+plt.hist(data_a, bins=20, alpha=0.5, label='Group A', color='#2563eb')
+plt.hist(data_b, bins=20, alpha=0.5, label='Group B', color='#059669')
+plt.legend()
+plt.title('Overlapping Histograms')
+plt.xlabel('Value')
+plt.ylabel('Frequency')
+plt.show()</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Exam Pitfall: Histograms vs Bar Charts</strong><br>
+                    Histograms are for <em>continuous</em> numeric data and have no gaps between bars. Bar charts are for <em>categorical</em> data and have gaps between bars. Do not confuse them on the exam.
+                </div>
+            </div>
+
+            <!-- Scatterplots -->
+            <div class="subsection" id="scatterplots">
+                <h3>Creating Scatterplots</h3>
+                <p>Scatterplots show the <strong>relationship between two continuous variables</strong>. Each point represents an observation. They are essential for identifying correlations, clusters, and outliers.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Scatterplot with color mapping and size ---
+np.random.seed(42)
+n = 100
+df_scatter = pd.DataFrame({
+    'Hours_Studied': np.random.uniform(1, 10, n),
+    'Exam_Score': np.random.uniform(40, 100, n),
+    'Attendance': np.random.uniform(50, 100, n),
+    'Grade': np.random.choice(['A', 'B', 'C'], n)
+})
+df_scatter['Exam_Score'] = df_scatter['Hours_Studied'] * 7 + np.random.normal(0, 8, n)
+
+# Matplotlib scatter with color and size
+fig, ax = plt.subplots(figsize=(8, 6))
+scatter = ax.scatter(
+    df_scatter['Hours_Studied'],
+    df_scatter['Exam_Score'],
+    c=df_scatter['Attendance'],      # color mapped to attendance
+    s=df_scatter['Attendance'],      # size mapped to attendance
+    cmap='viridis',
+    alpha=0.7,
+    edgecolors='white'
+)
+plt.colorbar(scatter, label='Attendance %')
+ax.set_xlabel('Hours Studied')
+ax.set_ylabel('Exam Score')
+ax.set_title('Study Hours vs Exam Score', fontweight='bold')
+plt.tight_layout()
+plt.show()
+
+# Seaborn scatterplot with hue
+sns.scatterplot(x='Hours_Studied', y='Exam_Score',
+                hue='Grade', size='Attendance',
+                data=df_scatter, palette='Set2', alpha=0.8)
+plt.title('Seaborn Scatterplot with Hue and Size')
+plt.show()</div>
+            </div>
+
+            <!-- Line Plots -->
+            <div class="subsection" id="lineplots">
+                <h3>Creating Line Plots</h3>
+                <p>Line plots display <strong>trends over time</strong> or ordered sequences. They connect data points with lines, making it easy to see increases, decreases, and patterns like seasonality.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Line plot with multiple series ---
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+product_a = [120, 135, 148, 162, 155, 170, 190, 210, 198, 220, 235, 250]
+product_b = [80, 95, 110, 105, 115, 130, 125, 140, 155, 160, 170, 185]
+
+# Matplotlib line plot
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.plot(months, product_a, marker='o', linewidth=2, label='Product A', color='#2563eb')
+ax.plot(months, product_b, marker='s', linewidth=2, label='Product B', color='#059669')
+ax.set_xlabel('Month')
+ax.set_ylabel('Sales (units)')
+ax.set_title('Monthly Sales Comparison', fontweight='bold')
+ax.legend()
+ax.grid(alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Seaborn lineplot (long-form data)
+df_sales = pd.DataFrame({
+    'Month': months * 2,
+    'Sales': product_a + product_b,
+    'Product': ['A']*12 + ['B']*12
+})
+sns.lineplot(x='Month', y='Sales', hue='Product', data=df_sales, marker='o')
+plt.title('Seaborn Line Plot')
+plt.show()</div>
+            </div>
+
+            <!-- Heatmaps -->
+            <div class="subsection" id="heatmaps">
+                <h3>Correlation Heatmaps</h3>
+                <p>Heatmaps use color intensity to represent values in a matrix. The most common analytical use is displaying a <strong>correlation matrix</strong>, which shows pairwise correlation coefficients between all numeric columns.</p>
+                <ul>
+                    <li><strong>+1:</strong> perfect positive correlation</li>
+                    <li><strong>0:</strong> no linear correlation</li>
+                    <li><strong>-1:</strong> perfect negative correlation</li>
+                </ul>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Correlation Heatmap ---
+df_corr = pd.DataFrame({
+    'Math': np.random.normal(75, 10, 200),
+    'Science': np.random.normal(70, 12, 200),
+    'English': np.random.normal(68, 15, 200),
+    'Hours_Study': np.random.normal(5, 2, 200),
+})
+# Add realistic correlations
+df_corr['Science'] = df_corr['Math'] * 0.8 + np.random.normal(0, 8, 200)
+df_corr['Hours_Study'] = df_corr['Math'] * 0.05 + np.random.normal(0, 2, 200)
+
+# Compute correlation matrix
+corr_matrix = df_corr.corr()
+
+# Plot heatmap with annotations
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.heatmap(corr_matrix,
+            annot=True,          # show correlation values
+            fmt='.2f',            # format to 2 decimal places
+            cmap='coolwarm',       # diverging colormap
+            center=0,              # center colormap at 0
+            vmin=-1, vmax=1,       # full correlation range
+            square=True,           # square cells
+            linewidths=0.5,
+            ax=ax)
+ax.set_title('Correlation Heatmap', fontweight='bold', pad=15)
+plt.tight_layout()
+plt.show()</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Key Parameters for sns.heatmap()</strong><br>
+                    <code>annot=True</code> displays numeric values in each cell. <code>fmt='.2f'</code> controls decimal places. <code>cmap='coolwarm'</code> uses a diverging color scale (red for negative, blue for positive). <code>center=0</code> ensures the color midpoint is at zero correlation.
+                </div>
+            </div>
+
+            <!-- Subplots -->
+            <div class="subsection" id="subplots">
+                <h3>Figure, Axes, and Subplot Layouts</h3>
+                <p>Matplotlib uses a <strong>Figure</strong> (the entire canvas) and <strong>Axes</strong> (individual plots) model. The function <code>plt.subplots()</code> creates both at once and is the recommended approach for multi-panel figures.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Subplot layouts ---
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Top-left: Histogram
+axes[0, 0].hist(data_a, bins=20, color='#93c5fd', edgecolor='white')
+axes[0, 0].set_title('Distribution of Scores')
+axes[0, 0].set_xlabel('Score')
+axes[0, 0].set_ylabel('Frequency')
+
+# Top-right: Boxplot
+axes[0, 1].boxplot([data_a, data_b], labels=['A', 'B'], patch_artist=True)
+axes[0, 1].set_title('Group Comparison')
+
+# Bottom-left: Scatter
+axes[1, 0].scatter(df_scatter['Hours_Studied'], df_scatter['Exam_Score'],
+                   alpha=0.6, color='#7c3aed')
+axes[1, 0].set_title('Study Hours vs Score')
+axes[1, 0].set_xlabel('Hours')
+axes[1, 0].set_ylabel('Score')
+
+# Bottom-right: Line plot
+axes[1, 1].plot(months, product_a, marker='o', label='A')
+axes[1, 1].plot(months, product_b, marker='s', label='B')
+axes[1, 1].set_title('Monthly Trend')
+axes[1, 1].legend()
+axes[1, 1].tick_params(axis='x', rotation=45)
+
+# Adjust spacing between subplots
+fig.suptitle('Dashboard: Multiple Visualization Types', fontsize=14, fontweight='bold')
+plt.tight_layout()
+plt.show()</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-info"></i> fig, ax = plt.subplots()</strong><br>
+                    This is the standard pattern. <code>fig</code> controls the overall figure (size, title, saving). <code>ax</code> (or <code>axes</code> for multi-plot) controls individual charts. When you have a 2D array of axes, access them with <code>axes[row, col]</code>.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- OBJECTIVE 5.1.2 -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj2">
+            <h2><i class="fa-solid fa-scale-balanced"></i> 5.1.2 Pros and Cons of Data Representations</h2>
+            <p>Choosing the right visualization is just as important as creating one. The wrong chart can mislead, confuse, or hide key insights. This section covers when to use each chart type and how to critically evaluate visualization effectiveness.</p>
+
+            <div class="subsection" id="chart-selection">
+                <h3>Choosing the Right Chart</h3>
+
+                <h4>Bar Charts vs Histograms</h4>
+                <div class="dark-table"><table>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Bar Chart</th>
+                        <th>Histogram</th>
+                    </tr>
+                    <tr>
+                        <td>Data type</td>
+                        <td>Categorical</td>
+                        <td>Continuous / numeric</td>
+                    </tr>
+                    <tr>
+                        <td>X-axis</td>
+                        <td>Discrete categories</td>
+                        <td>Numeric ranges (bins)</td>
+                    </tr>
+                    <tr>
+                        <td>Bar spacing</td>
+                        <td>Gaps between bars</td>
+                        <td>No gaps (adjacent bins)</td>
+                    </tr>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Compare counts/values across categories</td>
+                        <td>Show distribution shape</td>
+                    </tr>
+                    <tr>
+                        <td>Example</td>
+                        <td>Sales by region</td>
+                        <td>Distribution of student ages</td>
+                    </tr>
+                </table></div>
+
+                <h4>Scatter Plots vs Line Plots</h4>
+                <div class="dark-table"><table>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Scatter Plot</th>
+                        <th>Line Plot</th>
+                    </tr>
+                    <tr>
+                        <td>Best for</td>
+                        <td>Relationship between two variables</td>
+                        <td>Trends over time or ordered data</td>
+                    </tr>
+                    <tr>
+                        <td>X-axis</td>
+                        <td>Any continuous variable</td>
+                        <td>Typically time or sequential order</td>
+                    </tr>
+                    <tr>
+                        <td>Data points</td>
+                        <td>Individual points, not connected</td>
+                        <td>Connected by lines</td>
+                    </tr>
+                    <tr>
+                        <td>Reveals</td>
+                        <td>Correlations, clusters, outliers</td>
+                        <td>Trends, seasonality, rate of change</td>
+                    </tr>
+                    <tr>
+                        <td>Example</td>
+                        <td>Height vs weight</td>
+                        <td>Stock price over months</td>
+                    </tr>
+                </table></div>
+
+                <h4>Comprehensive Chart Selection Guide</h4>
+                <div class="dark-table"><table>
+                    <tr>
+                        <th>Data Scenario</th>
+                        <th>Best Chart</th>
+                        <th>Why</th>
+                    </tr>
+                    <tr>
+                        <td>Distribution of one variable</td>
+                        <td>Histogram / KDE plot</td>
+                        <td>Shows shape, central tendency, spread</td>
+                    </tr>
+                    <tr>
+                        <td>Comparing groups</td>
+                        <td>Boxplot / Violin plot</td>
+                        <td>Shows median, quartiles, outliers per group</td>
+                    </tr>
+                    <tr>
+                        <td>Relationship between two numeric variables</td>
+                        <td>Scatterplot</td>
+                        <td>Shows correlation, clusters, outliers</td>
+                    </tr>
+                    <tr>
+                        <td>Trend over time</td>
+                        <td>Line plot</td>
+                        <td>Connects points to show change over time</td>
+                    </tr>
+                    <tr>
+                        <td>Comparing categorical counts</td>
+                        <td>Bar chart</td>
+                        <td>Clear comparison of discrete categories</td>
+                    </tr>
+                    <tr>
+                        <td>Pairwise correlations</td>
+                        <td>Heatmap</td>
+                        <td>Color-coded matrix of all variable pairs</td>
+                    </tr>
+                    <tr>
+                        <td>Part-of-whole (few categories)</td>
+                        <td>Stacked bar chart (preferred over pie)</td>
+                        <td>Easier to compare proportions</td>
+                    </tr>
+                </table></div>
+            </div>
+
+            <div class="subsection" id="pie-charts">
+                <h3>Pie Charts: Limitations and Alternatives</h3>
+                <p>Pie charts show proportions of a whole, but they have significant <strong>limitations</strong>:</p>
+                <ul>
+                    <li><strong>Hard to compare:</strong> humans are poor at judging angles and areas accurately</li>
+                    <li><strong>Too many slices:</strong> more than 5-6 categories makes pie charts nearly unreadable</li>
+                    <li><strong>No precise comparison:</strong> it is difficult to compare slices of similar size</li>
+                    <li><strong>3D pie charts:</strong> distort proportions further and should always be avoided</li>
+                </ul>
+                <p><strong>Better alternatives:</strong></p>
+                <ul>
+                    <li><strong>Horizontal bar chart:</strong> easy to compare exact values</li>
+                    <li><strong>Stacked bar chart:</strong> shows part-of-whole while allowing comparison across groups</li>
+                    <li><strong>Treemap:</strong> good for hierarchical part-of-whole data</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Exam Tip</strong><br>
+                    The exam may ask you to identify which chart type is most appropriate for a given scenario. Remember: pie charts are rarely the best answer. Bar charts, histograms, boxplots, and scatterplots each serve a specific purpose &mdash; match the chart to the data type and the question you are trying to answer.
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h4>Critically Analyzing Visualization Effectiveness</h4>
+                <p>When evaluating a visualization, ask:</p>
+                <ul>
+                    <li>Does the chart type match the data type (categorical, continuous, time-series)?</li>
+                    <li>Is the y-axis starting from zero? (Truncated axes can exaggerate differences.)</li>
+                    <li>Are axes labeled and units included?</li>
+                    <li>Is the color scheme accessible (colorblind-friendly)?</li>
+                    <li>Does the visualization answer the intended question clearly?</li>
+                    <li>Is there unnecessary "chart junk" (3D effects, excessive gridlines, decorative elements)?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- OBJECTIVE 5.1.3 -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj3">
+            <h2><i class="fa-solid fa-pen-ruler"></i> 5.1.3 Labeling, Annotating, and Refining</h2>
+            <p>A visualization without proper labels, annotations, and styling is incomplete. This section covers how to transform raw plots into publication-quality, professional visualizations that communicate data insights effectively.</p>
+
+            <!-- Labels -->
+            <div class="subsection" id="labels">
+                <h3>Labels and Titles</h3>
+                <p>Every chart should have at minimum: a <strong>title</strong>, <strong>x-axis label</strong>, and <strong>y-axis label</strong>. These provide essential context so the viewer can interpret the chart without additional explanation.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Basic labeling ---
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.plot(months, product_a, marker='o')
+
+# Title and labels
+ax.set_title('Monthly Sales for Product A', fontsize=14, fontweight='bold', pad=15)
+ax.set_xlabel('Month', fontsize=12, labelpad=10)
+ax.set_ylabel('Units Sold', fontsize=12, labelpad=10)
+
+# Alternative: plt-level functions (for single plot)
+# plt.title('Monthly Sales'), plt.xlabel('Month'), plt.ylabel('Units Sold')
+
+plt.tight_layout()
+plt.show()</div>
+            </div>
+
+            <!-- Annotations -->
+            <div class="subsection" id="annotations">
+                <h3>Annotations</h3>
+                <p>Annotations highlight specific data points with text and arrows, drawing the viewer's attention to important findings.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Annotations ---
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.plot(months, product_a, marker='o', linewidth=2, color='#2563eb')
+
+# plt.annotate() - adds text with an arrow pointing to data
+ax.annotate('Peak Sales',
+            xy=(11, 250),                # point to annotate (x, y)
+            xytext=(8, 260),              # text position
+            fontsize=11,
+            fontweight='bold',
+            arrowprops=dict(
+                arrowstyle='->',
+                color='#dc2626',
+                linewidth=2
+            ),
+            color='#dc2626')
+
+# plt.text() - adds text at a specific position (no arrow)
+ax.text(3, 145, 'Growth Phase', fontsize=10,
+        fontstyle='italic', color='gray',
+        bbox=dict(boxstyle='round,pad=0.3', facecolor='#fef3c7', alpha=0.8))
+
+ax.set_title('Sales Trend with Annotations', fontweight='bold')
+ax.set_xlabel('Month')
+ax.set_ylabel('Units Sold')
+plt.tight_layout()
+plt.show()</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-info"></i> annotate() vs text()</strong><br>
+                    <code>plt.annotate()</code> supports <code>arrowprops</code> to draw an arrow from the text to the data point. <code>plt.text()</code> places text at coordinates but has no arrow. Use <code>annotate()</code> when you need to point at a specific data value.
+                </div>
+            </div>
+
+            <!-- Customization -->
+            <div class="subsection" id="customization">
+                <h3>Colors, Legends, and Full Customization</h3>
+
+                <h4>Color Customization</h4>
+                <p>Colors convey meaning and improve readability. Matplotlib supports named colors, hex codes, RGB tuples, and colormaps.</p>
+
+                <h4>Legend Manipulation</h4>
+                <p>Legends identify data series. You can control their position, font size, background, and border.</p>
+
+                <h4>Axes and Tick Formatting</h4>
+                <p>Customize axis limits, tick positions, tick labels, and gridlines for clarity.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Full customization example ---
+import matplotlib.ticker as mticker
+
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Plot data with custom colors
+ax.plot(months, product_a, marker='o', linewidth=2.5,
+        color='#2563eb', markersize=8, label='Product A',
+        markerfacecolor='white', markeredgewidth=2)
+ax.plot(months, product_b, marker='s', linewidth=2.5,
+        color='#059669', markersize=8, label='Product B',
+        markerfacecolor='white', markeredgewidth=2)
+
+# Title and labels
+ax.set_title('2024 Monthly Sales Comparison', fontsize=16, fontweight='bold', pad=20)
+ax.set_xlabel('Month', fontsize=12)
+ax.set_ylabel('Units Sold', fontsize=12)
+
+# Legend customization
+ax.legend(
+    loc='upper left',           # position
+    fontsize=11,                 # font size
+    framealpha=0.9,              # background transparency
+    edgecolor='#e2e8f0',         # border color
+    facecolor='white',           # background color
+    shadow=True,                 # drop shadow
+    title='Products',            # legend title
+    title_fontsize=12
+)
+
+# Gridlines
+ax.grid(True, linestyle='--', alpha=0.4, color='gray')
+ax.set_axisbelow(True)  # grid behind data
+
+# Axes formatting
+ax.set_ylim(0, 300)
+ax.yaxis.set_major_locator(mticker.MultipleLocator(50))
+ax.tick_params(axis='both', labelsize=10)
+
+# Annotation on peak
+ax.annotate('Record High: 250 units',
+            xy=(11, 250), xytext=(7, 270),
+            fontsize=10, fontweight='bold', color='#dc2626',
+            arrowprops=dict(arrowstyle='->', color='#dc2626', lw=1.5))
+
+# Remove top and right spines for cleaner look
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
+plt.tight_layout()
+plt.show()</div>
+            </div>
+
+            <!-- Seaborn Styles -->
+            <div class="subsection" id="styles">
+                <h3>Seaborn Styles and Palettes</h3>
+                <p>Seaborn provides built-in style presets and color palettes that instantly improve the appearance of all Matplotlib and Seaborn plots.</p>
+
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># --- Seaborn styles and palettes ---
+
+# Set the overall style
+sns.set_style('whitegrid')    # Options: white, dark, whitegrid, darkgrid, ticks
+
+# Set a color palette globally
+sns.set_palette('Set2')       # Options: deep, muted, bright, pastel, dark, Set1, Set2...
+
+# Use a specific palette in a single plot
+sns.boxplot(x='Group', y='Score', data=df, palette='husl')
+
+# Custom color palette
+custom_palette = ['#2563eb', '#059669', '#7c3aed', '#d97706']
+sns.set_palette(custom_palette)
+
+# Available built-in styles:
+# 'white'     - clean white background, no grid
+# 'dark'      - dark gray background
+# 'whitegrid' - white background with grid lines
+# 'darkgrid'  - gray background with grid lines (default)
+# 'ticks'     - white background with ticks on axes
+
+# Reset to defaults
+sns.reset_defaults()</div>
+
+                <div class="dark-table"><table>
+                    <tr>
+                        <th>Style</th>
+                        <th>Best For</th>
+                    </tr>
+                    <tr>
+                        <td><code>whitegrid</code></td>
+                        <td>Quantitative data that benefits from gridlines for reading values</td>
+                    </tr>
+                    <tr>
+                        <td><code>darkgrid</code></td>
+                        <td>Default style; good for presentations with many plot elements</td>
+                    </tr>
+                    <tr>
+                        <td><code>white</code></td>
+                        <td>Minimalist look for publication-quality figures</td>
+                    </tr>
+                    <tr>
+                        <td><code>ticks</code></td>
+                        <td>Clean look with axis ticks for precise reading</td>
+                    </tr>
+                    <tr>
+                        <td><code>dark</code></td>
+                        <td>Dark background; rarely used in print</td>
+                    </tr>
+                </table></div>
+            </div>
+
+            <!-- Hypotheses and Decisions -->
+            <div class="subsection" id="hypotheses">
+                <h3>Visual Exploration and Data-Driven Decisions</h3>
+                <p>Visualizations are not just for presenting results &mdash; they are a critical tool during exploratory data analysis (EDA). Before running statistical tests or building models, use plots to:</p>
+                <ul>
+                    <li><strong>Generate hypotheses:</strong> a scatterplot may reveal a correlation you did not expect, leading to a new research question</li>
+                    <li><strong>Detect data quality issues:</strong> histograms can reveal unexpected gaps or spikes, boxplots expose outliers</li>
+                    <li><strong>Understand distributions:</strong> check normality assumptions before applying parametric tests</li>
+                    <li><strong>Guide feature selection:</strong> heatmaps highlight which variables are strongly correlated</li>
+                    <li><strong>Communicate findings:</strong> the right visualization makes complex data accessible to non-technical stakeholders</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Making Data-Driven Decisions</strong><br>
+                    Always let the data guide your conclusions, not the other way around. A well-constructed visualization helps you see patterns objectively. When presenting, pair each visualization with a clear interpretation statement: "This chart shows that X increased by Y% during Z period, suggesting..."
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUIZ SECTION -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <h2><i class="fa-solid fa-circle-question"></i> Practice Quiz: Data Visualization Techniques</h2>
+            <div id="score-quiz51"></div>
+
+            <!-- Question 1 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q1. Which component of a boxplot represents the interquartile range (IQR)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) The whiskers extending from the box</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) The box itself, spanning from Q1 to Q3</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) The line inside the box</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) The individual points beyond the whiskers</div>
+                <div class="quiz-explanation">The box in a boxplot spans from the first quartile (Q1) to the third quartile (Q3). The distance between Q1 and Q3 is the interquartile range (IQR). The line inside the box is the median, the whiskers extend up to 1.5 &times; IQR, and points beyond the whiskers are outliers.</div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q2. What is the primary difference between a histogram and a bar chart?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) Histograms use vertical bars; bar charts use horizontal bars</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">B) Histograms have colors; bar charts are grayscale</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">C) Histograms display continuous numeric data with adjacent bins; bar charts display categorical data with gaps between bars</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) There is no meaningful difference; the terms are interchangeable</div>
+                <div class="quiz-explanation">Histograms are used for continuous numeric data. Values are grouped into bins and bars touch each other because the data is continuous. Bar charts represent discrete categorical data, and the bars have gaps between them to emphasize that categories are separate.</div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q3. Which Seaborn function is used to create a correlation heatmap from a DataFrame?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) <code>sns.corrplot(df)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) <code>sns.heatmap(df.corr())</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) <code>sns.correlation(df)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) <code>sns.pairplot(df.corr())</code></div>
+                <div class="quiz-explanation">To create a correlation heatmap, first compute the correlation matrix with <code>df.corr()</code>, then pass it to <code>sns.heatmap()</code>. Common parameters include <code>annot=True</code> to show values and <code>cmap='coolwarm'</code> for a diverging color scheme.</div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q4. You want to visualize the trend of monthly revenue over two years. Which chart type is most appropriate?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) Pie chart</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">B) Boxplot</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">C) Line plot</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) Histogram</div>
+                <div class="quiz-explanation">Line plots are the best choice for showing trends over time. They connect data points chronologically, making it easy to see increases, decreases, and seasonal patterns. A pie chart shows proportions, a boxplot shows distribution summaries, and a histogram shows frequency distributions.</div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q5. What does the <code>annot=True</code> parameter do in <code>sns.heatmap()</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) Adds a title annotation above the heatmap</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">B) Adds axis labels automatically</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">C) Displays the numeric value inside each cell of the heatmap</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) Annotates outlier values with arrows</div>
+                <div class="quiz-explanation">Setting <code>annot=True</code> in <code>sns.heatmap()</code> writes the numeric value of each cell directly on the heatmap. This makes it easier to read exact correlation coefficients. Use <code>fmt='.2f'</code> to control the number of decimal places displayed.</div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q6. Which function adds text with an arrow pointing to a specific data point on a Matplotlib plot?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) <code>plt.text()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) <code>plt.annotate()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) <code>plt.label()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) <code>plt.arrow()</code></div>
+                <div class="quiz-explanation"><code>plt.annotate()</code> (or <code>ax.annotate()</code>) is used to add text with an arrow pointing to a specific data point. It uses the <code>xy</code> parameter for the point location and <code>xytext</code> for the text position. <code>plt.text()</code> places text at coordinates but does not support arrows via <code>arrowprops</code>.</div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q7. What is the correct way to create a 2-row, 3-column grid of subplots in Matplotlib?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) <code>fig, ax = plt.subplot(2, 3)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) <code>fig, axes = plt.subplots(2, 3)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) <code>fig = plt.figure(2, 3)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) <code>fig, axes = plt.grid(2, 3)</code></div>
+                <div class="quiz-explanation"><code>plt.subplots(nrows, ncols)</code> creates a Figure and an array of Axes objects. For a 2&times;3 grid, <code>fig, axes = plt.subplots(2, 3)</code> returns <code>axes</code> as a 2D numpy array where you access individual plots with <code>axes[row, col]</code>. Note the plural "subplots" (not "subplot").</div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q8. Which of the following is a major limitation of pie charts?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) They cannot display more than two categories</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) Humans find it difficult to accurately compare angles and areas, especially for similar-sized slices</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) They can only display continuous numerical data</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) They require more computational resources than other chart types</div>
+                <div class="quiz-explanation">The primary limitation of pie charts is that humans are poor at judging and comparing angles and areas. When slices are similar in size, it becomes nearly impossible to determine which is larger. This is why bar charts are generally preferred &mdash; the human visual system is much better at comparing lengths.</div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q9. What does <code>sns.set_style('whitegrid')</code> do?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) Sets the background color of all plots to white</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) Applies a Seaborn theme with a white background and visible grid lines to all subsequent plots</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) Adds a white grid overlay on top of the current plot only</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) Resets all Seaborn settings to default</div>
+                <div class="quiz-explanation"><code>sns.set_style('whitegrid')</code> sets a global aesthetic theme for all subsequent plots. The 'whitegrid' style provides a clean white background with horizontal and vertical grid lines, which is excellent for quantitative data where precise value reading is important.</div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="quiz-box" data-section="quiz51">
+                <div class="quiz-question">Q10. You want to explore the relationship between two numeric variables and also encode a third categorical variable using color. Which approach is best?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">A) <code>plt.hist(x, color=category)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'quiz51')">B) <code>sns.scatterplot(x='var1', y='var2', hue='category', data=df)</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">C) <code>sns.heatmap(df[['var1', 'var2']])</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'quiz51')">D) <code>plt.pie(df['var1'], labels=df['category'])</code></div>
+                <div class="quiz-explanation">A scatterplot shows the relationship between two numeric variables, and the <code>hue</code> parameter in <code>sns.scatterplot()</code> maps a categorical variable to point color. This lets you see both the bivariate relationship and how it differs across groups &mdash; all in a single chart.</div>
+            </div>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="page-nav">
+            <a href="topic4-2.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 4.2 Statistical Methods</a>
+            <a href="topic5-2.html" class="nav-btn next">Next: 5.2 Communication of Insights <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#obj1">5.1.1 Matplotlib &amp; Seaborn</a>
+        <a class="toc-item" href="#obj2">5.1.2 Chart Selection</a>
+        <a class="toc-item" href="#obj3">5.1.3 Labels &amp; Annotations</a>
+        <a class="toc-item" href="#quiz">Practice Quiz</a>
+    </div>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

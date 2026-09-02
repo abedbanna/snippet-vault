@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReAct Agent Architecture - Visual Guide</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Prism for code highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #10b981;
+            --dark-color: #111827;
+            --light-color: #f9fafb;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 30px 0 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 25px 0 15px;
+            color: var(--dark-color);
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        .subheader {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .code-block {
+            margin: 20px 0 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-title {
+            background-color: #1a202c;
+            color: white;
+            padding: 10px 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-block pre {
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        .section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .flow-diagram {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flow-step {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px;
+            min-width: 150px;
+        }
+
+        .flow-arrow {
+            display: inline-block;
+            font-size: 24px;
+            margin: 0 5px;
+            color: #64748b;
+        }
+
+        .cycle-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .cycle-step {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .cycle-step.thought {
+            background-color: #10b981;
+        }
+
+        .cycle-step.action {
+            background-color: #f59e0b;
+        }
+
+        .cycle-step.observation {
+            background-color: #ef4444;
+        }
+
+        .note {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .card.tool {
+            border-top-color: #f59e0b;
+        }
+
+        .card.agent {
+            border-top-color: #10b981;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-diagram {
+                flex-direction: column;
+            }
+
+            .cycle-step {
+                width: 90px;
+                height: 90px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style id="dark-theme-override">
+:root {
+    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+    --text:#f1f5f9;--text2:#94a3b8;
+    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+    --code:#0d1117;
+}
+body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
+.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
+.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
+.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
+h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
+.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
+pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
+table, th, td { border-color:var(--border2)!important; }
+th { background:var(--surface2)!important; color:var(--text)!important; }
+td { background:var(--surface)!important; color:var(--text2)!important; }
+tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
+a { color:var(--primary)!important; }
+a:hover { color:#60a5fa!important; }
+.badge { opacity:0.9; }
+nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
+nav a, .navbar a, .nav-link { color:var(--text2)!important; }
+nav a:hover, .navbar a:hover { color:var(--text)!important; }
+.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
+.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
+.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
+.sidebar a, aside a { color:var(--text2)!important; }
+.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
+.sidebar a.active, aside a.active { color:var(--primary)!important; }
+footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
+::-webkit-scrollbar { width:8px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
+img { border-radius:8px; }
+.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
+/* Light mode */
+body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
+body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
+body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
+body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
+body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
+body.light-mode footer { background:#e2e8f0!important; }
+body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
+</style>
+</head>
+<body>
+<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
+    <header>
+        <div class="container">
+            <h1>ReAct Agent Architecture</h1>
+            <p class="subheader">A visual guide to building a Reasoning and Acting agent from scratch</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>1. Introduction to ReAct Agents</h2>
+            <p>ReAct (Reasoning + Acting) is a powerful framework that enables language models to solve complex tasks through an iterative process of reasoning and acting. This pattern allows an AI agent to break down problems, take appropriate actions, and use the results to inform its subsequent reasoning.</p>
+
+            <div class="cycle-diagram">
+                <div class="cycle-step thought">Thought</div>
+                <div class="flow-arrow">→</div>
+                <div class="cycle-step action">Action</div>
+                <div class="flow-arrow">→</div>
+                <div class="cycle-step observation">Observation</div>
+                <div class="flow-arrow">→</div>
+                <div class="cycle-step thought">Thought</div>
+                <div class="flow-arrow">→</div>
+                <div class="cycle-step">Answer</div>
+            </div>
+
+            <p>The ReAct pattern follows this simple cycle:</p>
+            <ol>
+                <li><strong>Thought</strong>: The agent reasons about the current state and decides what to do next.</li>
+                <li><strong>Action</strong>: The agent selects and executes an appropriate action.</li>
+                <li><strong>Observation</strong>: The agent receives feedback from the action.</li>
+                <li>This cycle repeats until the agent is ready to provide a final answer.</li>
+            </ol>
+
+            <div class="note">
+                <p><strong>Key Insight:</strong> By separating reasoning (thoughts) from acting (tool use), ReAct enables language models to solve much more complex problems than they could with either capability alone.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>2. Setting Up the Environment</h2>
+            <p>To build a ReAct agent, we'll first need to set up our environment and import the necessary libraries.</p>
+
+            <div class="code-block">
+                <div class="code-title">environment_setup.py</div>
+<pre><code class="language-python">import openai
+import re
+import httpx
+import os
+from dotenv import load_dotenv
+
+_ = load_dotenv()
+from openai import OpenAI
+
+client = OpenAI()
+
+# Test the OpenAI client
+chat_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[{"role": "user", "content": "Hello world"}]
+)
+
+print(chat_completion.choices[0].message.content)</code></pre>
+            </div>
+
+            <p>This code does several important things:</p>
+            <ul>
+                <li>Imports necessary libraries including the OpenAI SDK</li>
+                <li>Loads environment variables (including your API key) from a .env file</li>
+                <li>Creates an OpenAI client for making API calls</li>
+                <li>Tests the connection with a simple "Hello world" message</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>3. Creating the Basic Agent Class</h2>
+            <p>Next, we'll create a simple Agent class that can maintain a conversation with the language model.</p>
+
+            <div class="code-block">
+                <div class="code-title">agent.py</div>
+<pre><code class="language-python">class Agent:
+    def __init__(self, system=""):
+        self.system = system
+        self.messages = []
+        if self.system:
+            self.messages.append({"role": "system", "content": system})
+
+    def __call__(self, message):
+        self.messages.append({"role": "user", "content": message})
+        result = self.execute()
+        self.messages.append({"role": "assistant", "content": result})
+        return result
+
+    def execute(self):
+        completion = client.chat.completions.create(
+                        model="gpt-4o",
+                        temperature=0,
+                        messages=self.messages)
+        return completion.choices[0].message.content</code></pre>
+            </div>
+
+            <p>The Agent class has three main components:</p>
+            <div class="grid">
+                <div class="card agent">
+                    <h3>Constructor</h3>
+                    <p>Initializes the conversation history and sets an optional system message that provides instructions to the model.</p>
+                </div>
+                <div class="card agent">
+                    <h3>Call Method</h3>
+                    <p>Makes the agent callable. It adds the user's message to the history, gets a response from the model, and adds that response to the history.</p>
+                </div>
+                <div class="card agent">
+                    <h3>Execute Method</h3>
+                    <p>Makes the actual API call to OpenAI, passing along the entire conversation history, and returns the model's response.</p>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Design Pattern:</strong> This implementation follows a stateful conversation pattern, where the agent maintains the full conversation history internally.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>4. Defining the ReAct Prompt</h2>
+            <p>The key to implementing the ReAct pattern is a well-crafted system prompt that instructs the model on how to think and act.</p>
+
+            <div class="code-block">
+                <div class="code-title">react_prompt.py</div>
+<pre><code class="language-python">prompt = """
+You run in a loop of Thought, Action, PAUSE, Observation.
+At the end of the loop you output an Answer
+Use Thought to describe your thoughts about the question you have been asked.
+Use Action to run one of the actions available to you - then return PAUSE.
+Observation will be the result of running those actions.
+
+Your available actions are:
+
+calculate:
+e.g. calculate: 4 * 7 / 3
+Runs a calculation and returns the number - uses Python so be sure to use floating point syntax if necessary
+
+average_dog_weight:
+e.g. average_dog_weight: Collie
+returns average weight of a dog when given the breed
+
+Example session:
+
+Question: How much does a Bulldog weigh?
+Thought: I should look the dogs weight using average_dog_weight
+Action: average_dog_weight: Bulldog
+PAUSE
+
+You will be called again with this:
+
+Observation: A Bulldog weights 51 lbs
+
+You then output:
+
+Answer: A bulldog weights 51 lbs
+""".strip()</code></pre>
+            </div>
+
+            <p>This prompt is carefully designed to implement the ReAct pattern:</p>
+            <ul>
+                <li><strong>Instruction Format</strong>: It explains the Thought-Action-Observation loop structure.</li>
+                <li><strong>Available Actions</strong>: It defines the tools the agent can use (calculate and average_dog_weight).</li>
+                <li><strong>Example</strong>: It provides a concrete example of the expected interaction pattern.</li>
+                <li><strong>PAUSE Mechanism</strong>: The PAUSE keyword signals where execution should stop to await tool results.</li>
+            </ul>
+
+            <div class="note">
+                <p><strong>Important:</strong> The PAUSE keyword is crucial - it tells the agent to stop generating text after specifying an action, allowing the system to execute the tool and provide observations.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>5. Implementing the Tools</h2>
+            <p>Next, we'll implement the tools that our agent can use to interact with the world.</p>
+
+            <div class="code-block">
+                <div class="code-title">tools.py</div>
+<pre><code class="language-python">def calculate(what):
+    return eval(what)
+
+def average_dog_weight(name):
+    if name in "Scottish Terrier":
+        return("Scottish Terriers average 20 lbs")
+    elif name in "Border Collie":
+        return("a Border Collies average weight is 37 lbs")
+    elif name in "Toy Poodle":
+        return("a toy poodles average weight is 7 lbs")
+    else:
+        return("An average dog weights 50 lbs")
+
+known_actions = {
+    "calculate": calculate,
+    "average_dog_weight": average_dog_weight
+}</code></pre>
+            </div>
+
+            <div class="grid">
+                <div class="card tool">
+                    <h3>calculate</h3>
+                    <p>A simple calculator tool that uses Python's eval() function to perform mathematical operations.</p>
+                </div>
+                <div class="card tool">
+                    <h3>average_dog_weight</h3>
+                    <p>A specialized tool that returns the average weight for different dog breeds. Has predefined values for certain breeds.</p>
+                </div>
+                <div class="card tool">
+                    <h3>known_actions</h3>
+                    <p>A dictionary that maps tool names to their corresponding functions. This allows the agent to call the right function based on the action name.</p>
+                </div>
+            </div>
+
+            <p>These tools are simple but demonstrate the concept. In a real application, tools might interact with APIs, databases, or other external systems.</p>
+        </section>
+
+        <section class="section">
+            <h2>6. Creating the Agent Loop</h2>
+            <p>Now we'll implement the core loop that manages the interaction between the agent and the tools.</p>
+
+            <div class="flow-diagram">
+                <div class="flow-step">User Question</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Agent Reasoning</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Action Extraction</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Tool Execution</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Return Observation</div>
+                <div class="flow-arrow">↩</div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-title">agent_loop.py</div>
+<pre><code class="language-python">action_re = re.compile('^Action: (\w+): (.*)$')   # python regular expression to select action
+
+def query(question, max_turns=5):
+    i = 0
+    bot = Agent(prompt)
+    next_prompt = question
+    while i < max_turns:
+        i += 1
+        result = bot(next_prompt)
+        print(result)
+        actions = [
+            action_re.match(a)
+            for a in result.split('\n')
+            if action_re.match(a)
+        ]
+        if actions:
+            # There is an action to run
+            action, action_input = actions[0].groups()
+            if action not in known_actions:
+                raise Exception("Unknown action: {}: {}".format(action, action_input))
+            print(" -- running {} {}".format(action, action_input))
+            observation = known_actions[action](action_input)
+            print("Observation:", observation)
+            next_prompt = "Observation: {}".format(observation)
+        else:
+            return</code></pre>
+            </div>
+
+            <p>The query function implements the ReAct agent loop:</p>
+            <ol>
+                <li><strong>Initialize the agent</strong> with our ReAct prompt</li>
+                <li><strong>Send the user's question</strong> to the agent</li>
+                <li><strong>Parse the response</strong> using regex to extract any actions</li>
+                <li><strong>Execute the tool</strong> if an action is found</li>
+                <li><strong>Format the result</strong> as an observation</li>
+                <li><strong>Send the observation</strong> back to the agent</li>
+                <li><strong>Repeat</strong> until the agent gives a final answer (no more actions)</li>
+            </ol>
+
+            <div class="note">
+                <p><strong>Safety Feature:</strong> The max_turns parameter prevents infinite loops by limiting the maximum number of iterations.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>7. Complete Example</h2>
+            <p>Let's see how our ReAct agent handles a more complex question that requires multiple steps:</p>
+
+            <div class="code-block">
+                <div class="code-title">complex_example.py</div>
+<pre><code class="language-python">question = """I have 2 dogs, a border collie and a scottish terrier. \
+What is their combined weight"""
+
+query(question)
+# The agent will:
+# 1. Look up the weight of a border collie
+# 2. Look up the weight of a scottish terrier
+# 3. Calculate the sum of the weights
+# 4. Provide the final answer</code></pre>
+            </div>
+
+            <p>Here's the expected interaction flow:</p>
+            <ol>
+                <li><strong>User Question:</strong> "I have 2 dogs, a border collie and a scottish terrier. What is their combined weight?"</li>
+                <li><strong>Agent Thought:</strong> "I need to find the weight of a border collie and a scottish terrier, then add them together."</li>
+                <li><strong>Agent Action:</strong> "average_dog_weight: Border Collie"</li>
+                <li><strong>Observation:</strong> "a Border Collies average weight is 37 lbs"</li>
+                <li><strong>Agent Thought:</strong> "Now I need to find the weight of a scottish terrier."</li>
+                <li><strong>Agent Action:</strong> "average_dog_weight: Scottish Terrier"</li>
+                <li><strong>Observation:</strong> "Scottish Terriers average 20 lbs"</li>
+                <li><strong>Agent Thought:</strong> "Now I can calculate the total weight by adding the two weights together: 37 + 20 = 57 lbs."</li>
+                <li><strong>Agent Action:</strong> "calculate: 37 + 20"</li>
+                <li><strong>Observation:</strong> "57"</li>
+                <li><strong>Agent Answer:</strong> "The combined weight of your border collie and scottish terrier is 57 lbs."</li>
+            </ol>
+
+            <p>This example demonstrates the power of the ReAct pattern - the agent breaks down the complex problem into a series of steps, gathers the necessary information using tools, and combines that information to produce a final answer.</p>
+        </section>
+
+        <section class="section">
+            <h2>8. Complete Code Architecture</h2>
+            <p>Here's the complete code for our ReAct agent implementation:</p>
+
+            <div class="code-block">
+                <div class="code-title">react_agent.py</div>
+<pre><code class="language-python">import openai
+import re
+import os
+from dotenv import load_dotenv
+
+_ = load_dotenv()
+from openai import OpenAI
+
+client = OpenAI()
+
+class Agent:
+    def __init__(self, system=""):
+        self.system = system
+        self.messages = []
+        if self.system:
+            self.messages.append({"role": "system", "content": system})
+
+    def __call__(self, message):
+        self.messages.append({"role": "user", "content": message})
+        result = self.execute()
+        self.messages.append({"role": "assistant", "content": result})
+        return result
+
+    def execute(self):
+        completion = client.chat.completions.create(
+                        model="gpt-4o",
+                        temperature=0,
+                        messages=self.messages)
+        return completion.choices[0].message.content
+
+prompt = """
+You run in a loop of Thought, Action, PAUSE, Observation.
+At the end of the loop you output an Answer
+Use Thought to describe your thoughts about the question you have been asked.
+Use Action to run one of the actions available to you - then return PAUSE.
+Observation will be the result of running those actions.
+
+Your available actions are:
+
+calculate:
+e.g. calculate: 4 * 7 / 3
+Runs a calculation and returns the number - uses Python so be sure to use floating point syntax if necessary
+
+average_dog_weight:
+e.g. average_dog_weight: Collie
+returns average weight of a dog when given the breed
+
+Example session:
+
+Question: How much does a Bulldog weigh?
+Thought: I should look the dogs weight using average_dog_weight
+Action: average_dog_weight: Bulldog
+PAUSE
+
+You will be called again with this:
+
+Observation: A Bulldog weights 51 lbs
+
+You then output:
+
+Answer: A bulldog weights 51 lbs
+""".strip()
+
+def calculate(what):
+    return eval(what)
+
+def average_dog_weight(name):
+    if name in "Scottish Terrier":
+        return("Scottish Terriers average 20 lbs")
+    elif name in "Border Collie":
+        return("a Border Collies average weight is 37 lbs")
+    elif name in "Toy Poodle":
+        return("a toy poodles average weight is 7 lbs")
+    else:
+        return("An average dog weights 50 lbs")
+
+known_actions = {
+    "calculate": calculate,
+    "average_dog_weight": average_dog_weight
+}
+
+action_re = re.compile('^Action: (\w+): (.*)$')   # python regular expression to select action
+
+def query(question, max_turns=5):
+    i = 0
+    bot = Agent(prompt)
+    next_prompt = question
+    while i < max_turns:
+        i += 1
+        result = bot(next_prompt)
+        print(result)
+        actions = [
+            action_re.match(a)
+            for a in result.split('\n')
+            if action_re.match(a)
+        ]
+        if actions:
+            # There is an action to run
+            action, action_input = actions[0].groups()
+            if action not in known_actions:
+                raise Exception("Unknown action: {}: {}".format(action, action_input))
+            print(" -- running {} {}".format(action, action_input))
+            observation = known_actions[action](action_input)
+            print("Observation:", observation)
+            next_prompt = "Observation: {}".format(observation)
+        else:
+            return
+
+# Example usage
+if __name__ == "__main__":
+    question = """I have 2 dogs, a border collie and a scottish terrier. \
+    What is their combined weight"""
+    query(question)</code></pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>9. Extending the Architecture</h2>
+            <p>This basic ReAct agent can be extended in several ways to create more powerful applications:</p>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>Add More Tools</h3>
+                    <p>Integrate additional tools like web search, API calls, database queries, etc. to expand the agent's capabilities.</p>
+                </div>
+                <div class="card">
+                    <h3>Improve Error Handling</h3>
+                    <p>Add robust error handling for tool execution failures, invalid inputs, and other edge cases.</p>
+                </div>
+                <div class="card">
+                    <h3>Implement Memory</h3>
+                    <p>Add persistent memory to allow the agent to remember information across multiple conversations.</p>
+                </div>
+                <div class="card">
+                    <h3>Enhance the Prompt</h3>
+                    <p>Refine the system prompt to improve the agent's reasoning capabilities and to help it use tools more effectively.</p>
+                </div>
+                <div class="card">
+                    <h3>Add Tool Selection Logic</h3>
+                    <p>Implement more sophisticated logic for selecting which tools to use based on the context and question.</p>
+                </div>
+                <div class="card">
+                    <h3>Support Multiple Actions</h3>
+                    <p>Allow the agent to specify multiple actions at once for more efficient processing.</p>
+                </div>
+            </div>
+
+            <div class="note">
+                <p><strong>Advanced Implementation:</strong> For more sophisticated agent architectures, consider using LangChain's agent frameworks which provide many of these extensions out of the box.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>10. Key Takeaways</h2>
+            <ol>
+                <li><strong>ReAct Pattern</strong>: Combining reasoning (thoughts) and acting (tools) creates a powerful problem-solving architecture.</li>
+                <li><strong>Iterative Process</strong>: The Thought-Action-Observation loop allows the agent to break down complex problems into manageable steps.</li>
+                <li><strong>Prompt Engineering</strong>: A well-crafted system prompt is crucial for guiding the model's behavior.</li>
+                <li><strong>Tool Integration</strong>: External tools significantly extend what language models can accomplish.</li>
+                <li><strong>Action Parsing</strong>: Regular expressions provide a simple way to extract actions from the model's output.</li>
+                <li><strong>Conversation Management</strong>: The Agent class maintains the conversation state throughout the interaction.</li>
+            </ol>
+
+            <p>The ReAct pattern is a powerful framework for building AI agents that can solve complex problems by breaking them down into manageable steps and using tools to gather information and perform actions.</p>
+        </section>
+    </main>
+<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+<script>
+function toggleTheme(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
+    const btn=document.getElementById('themeToggleBtn');
+    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
+    const back=document.querySelector('a[href="/cs/index.html"]');
+    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
+}
+(function(){
+    const saved=localStorage.getItem('theme');
+    if(saved==='light'){
+        document.body.classList.add('light-mode');
+        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
+        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
+    }
+})();
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
+        if(pre.querySelector('.copy-btn'))return;
+        pre.classList.add('has-copy');pre.style.position='relative';
+        var btn=document.createElement('button');btn.className='copy-btn';
+        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
+        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
+        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
+        pre.appendChild(btn);
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 2.2: Module Management and Exception Handling | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Module Management and Exception Handling</h1>
+        <p class="hero-sub">Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">Topic 2.2 &middot; 2 Objectives</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- ============================================================ -->
+        <!-- OBJECTIVE 1: Import Modules and Manage Packages with PIP     -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj1">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-puzzle-piece"></i> 2.2.1 Import Modules and Manage Packages with PIP</h2>
+                <p>Python's power is amplified by its extensive ecosystem of modules and packages. A <strong>module</strong> is a single <code>.py</code> file containing definitions and statements. A <strong>package</strong> is a directory of modules organized with an <code>__init__.py</code> file. Understanding how to import, manage, and create modules is fundamental to effective Python development.</p>
+
+                <!-- Import Styles -->
+                <h3 id="import-styles"><i class="fa-solid fa-file-import"></i> Standard, Selective, and Aliased Imports</h3>
+                <p>Python provides several import styles, each suited for different scenarios:</p>
+
+                <h4>1. Standard Import: <code>import module</code></h4>
+                <p>Imports the entire module. You access its contents with dot notation.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Standard import &mdash; import the entire module</span>
+<span class="kw">import</span> math
+
+<span class="cm"># Access functions via dot notation</span>
+result = math.<span class="fn">sqrt</span>(<span class="num">144</span>)    <span class="cm"># 12.0</span>
+pi_val = math.pi             <span class="cm"># 3.141592653589793</span>
+log_val = math.<span class="fn">log</span>(<span class="num">100</span>, <span class="num">10</span>)  <span class="cm"># 2.0</span>
+
+<span class="kw">import</span> os
+cwd = os.<span class="fn">getcwd</span>()            <span class="cm"># Current working directory</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-graduation-cap"></i> Exam Tip:</strong>
+                    <p>With a standard import, you must always prefix function calls with the module name (e.g., <code>math.sqrt()</code>). Calling <code>sqrt()</code> alone will raise a <code>NameError</code>.</p>
+                </div>
+
+                <h4>2. Selective Import: <code>from module import name</code></h4>
+                <p>Imports specific functions, classes, or variables directly into the current namespace.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Selective import &mdash; import specific names</span>
+<span class="kw">from</span> math <span class="kw">import</span> sqrt, pi, ceil
+
+result = <span class="fn">sqrt</span>(<span class="num">144</span>)   <span class="cm"># 12.0 (no prefix needed)</span>
+rounded = <span class="fn">ceil</span>(<span class="num">4.2</span>)   <span class="cm"># 5</span>
+
+<span class="cm"># Import multiple items from collections</span>
+<span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict
+
+word_counts = <span class="fn">Counter</span>([<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"apple"</span>, <span class="str">"cherry"</span>])
+<span class="cm"># Counter({'apple': 2, 'banana': 1, 'cherry': 1})</span>
+
+<span class="cm"># Wildcard import (generally discouraged)</span>
+<span class="kw">from</span> math <span class="kw">import</span> *
+<span class="cm"># Brings everything into namespace &mdash; can cause name collisions</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Warning:</strong>
+                    <p>Avoid <code>from module import *</code> in production code. It pollutes the namespace and makes it unclear where names originate, which can lead to subtle bugs when two modules export identically named functions.</p>
+                </div>
+
+                <h4>3. Aliased Import: <code>import module as alias</code></h4>
+                <p>Creates a shorter alias for frequently used modules. This is standard practice in the data science ecosystem.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Aliased imports &mdash; data science conventions</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+<span class="cm"># Use the alias for all calls</span>
+arr = np.<span class="fn">array</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+df = pd.<span class="fn">DataFrame</span>({<span class="str">"col"</span>: [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]})
+
+<span class="cm"># You can also alias selective imports</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime <span class="kw">as</span> dt
+now = dt.<span class="fn">now</span>()</div>
+
+                <h4>Summary of Import Styles</h4>
+                <table class="dark-table">
+                    <tr>
+                        <th>Style</th>
+                        <th>Syntax</th>
+                        <th>Usage</th>
+                        <th>Access</th>
+                    </tr>
+                    <tr>
+                        <td>Standard</td>
+                        <td><code>import math</code></td>
+                        <td>Full module needed</td>
+                        <td><code>math.sqrt()</code></td>
+                    </tr>
+                    <tr>
+                        <td>Selective</td>
+                        <td><code>from math import sqrt</code></td>
+                        <td>Few specific names</td>
+                        <td><code>sqrt()</code></td>
+                    </tr>
+                    <tr>
+                        <td>Aliased</td>
+                        <td><code>import numpy as np</code></td>
+                        <td>Shorten long names</td>
+                        <td><code>np.array()</code></td>
+                    </tr>
+                    <tr>
+                        <td>Selective + Alias</td>
+                        <td><code>from datetime import datetime as dt</code></td>
+                        <td>Avoid name conflicts</td>
+                        <td><code>dt.now()</code></td>
+                    </tr>
+                    <tr>
+                        <td>Wildcard</td>
+                        <td><code>from math import *</code></td>
+                        <td>Quick scripts only</td>
+                        <td><code>sqrt()</code></td>
+                    </tr>
+                </table>
+
+                <!-- Standard Library Modules -->
+                <h3 id="stdlib"><i class="fa-solid fa-book-open"></i> Python Standard Library Modules</h3>
+                <p>Python ships with a rich standard library. For the exam, you should know these key modules and their purposes:</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Module</th>
+                        <th>Purpose</th>
+                        <th>Key Functions / Classes</th>
+                    </tr>
+                    <tr>
+                        <td><code>csv</code></td>
+                        <td>Read/write CSV files</td>
+                        <td><code>reader()</code>, <code>writer()</code>, <code>DictReader()</code>, <code>DictWriter()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>os</code></td>
+                        <td>OS interaction, file paths</td>
+                        <td><code>getcwd()</code>, <code>listdir()</code>, <code>path.join()</code>, <code>path.exists()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>math</code></td>
+                        <td>Mathematical functions</td>
+                        <td><code>sqrt()</code>, <code>ceil()</code>, <code>floor()</code>, <code>log()</code>, <code>pi</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>statistics</code></td>
+                        <td>Statistical calculations</td>
+                        <td><code>mean()</code>, <code>median()</code>, <code>stdev()</code>, <code>mode()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>datetime</code></td>
+                        <td>Date/time manipulation</td>
+                        <td><code>datetime.now()</code>, <code>timedelta</code>, <code>strftime()</code>, <code>strptime()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>collections</code></td>
+                        <td>Specialized data structures</td>
+                        <td><code>Counter</code>, <code>defaultdict</code>, <code>OrderedDict</code>, <code>namedtuple</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>json</code></td>
+                        <td>JSON encoding/decoding</td>
+                        <td><code>load()</code>, <code>dump()</code>, <code>loads()</code>, <code>dumps()</code></td>
+                    </tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># csv module &mdash; reading CSV files</span>
+<span class="kw">import</span> csv
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"sales.csv"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+    reader = csv.<span class="fn">DictReader</span>(f)
+    <span class="kw">for</span> row <span class="kw">in</span> reader:
+        <span class="fn">print</span>(row[<span class="str">"product"</span>], row[<span class="str">"revenue"</span>])
+
+<span class="cm"># statistics module &mdash; quick stats</span>
+<span class="kw">import</span> statistics
+
+data = [<span class="num">85</span>, <span class="num">90</span>, <span class="num">78</span>, <span class="num">92</span>, <span class="num">88</span>, <span class="num">76</span>, <span class="num">95</span>]
+<span class="fn">print</span>(statistics.<span class="fn">mean</span>(data))    <span class="cm"># 86.28571428571429</span>
+<span class="fn">print</span>(statistics.<span class="fn">median</span>(data))  <span class="cm"># 88</span>
+<span class="fn">print</span>(statistics.<span class="fn">stdev</span>(data))   <span class="cm"># 7.1586...</span>
+
+<span class="cm"># datetime module &mdash; working with dates</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+now = datetime.<span class="fn">now</span>()
+<span class="fn">print</span>(now.<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M"</span>))  <span class="cm"># 2026-04-25 14:30</span>
+
+one_week_ago = now - <span class="fn">timedelta</span>(days=<span class="num">7</span>)
+<span class="fn">print</span>(one_week_ago.<span class="fn">strftime</span>(<span class="str">"%B %d, %Y"</span>))  <span class="cm"># April 18, 2026</span>
+
+<span class="cm"># collections module &mdash; Counter for frequency analysis</span>
+<span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict
+
+colors = [<span class="str">"red"</span>, <span class="str">"blue"</span>, <span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"blue"</span>, <span class="str">"red"</span>]
+freq = <span class="fn">Counter</span>(colors)
+<span class="fn">print</span>(freq.<span class="fn">most_common</span>(<span class="num">2</span>))  <span class="cm"># [('red', 3), ('blue', 2)]</span>
+
+<span class="cm"># defaultdict provides default values for missing keys</span>
+scores = <span class="fn">defaultdict</span>(list)
+scores[<span class="str">"Alice"</span>].<span class="fn">append</span>(<span class="num">95</span>)
+scores[<span class="str">"Bob"</span>].<span class="fn">append</span>(<span class="num">87</span>)
+scores[<span class="str">"Alice"</span>].<span class="fn">append</span>(<span class="num">91</span>)
+<span class="fn">print</span>(scores)  <span class="cm"># defaultdict(list, {'Alice': [95, 91], 'Bob': [87]})</span></div>
+
+                <!-- PIP -->
+                <h3 id="pip"><i class="fa-solid fa-box-open"></i> Managing Packages with PIP</h3>
+                <p><strong>PIP</strong> (Pip Installs Packages) is Python's standard package manager. It downloads and installs packages from the <a href="https://pypi.org" target="_blank">Python Package Index (PyPI)</a>.</p>
+
+                <h4>Essential PIP Commands</h4>
+                <table class="dark-table">
+                    <tr>
+                        <th>Command</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td><code>pip install</code></td>
+                        <td>Install a package</td>
+                        <td><code>pip install pandas</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip install ==</code></td>
+                        <td>Install specific version</td>
+                        <td><code>pip install pandas==2.1.0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip uninstall</code></td>
+                        <td>Remove a package</td>
+                        <td><code>pip uninstall pandas</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip list</code></td>
+                        <td>Show installed packages</td>
+                        <td><code>pip list</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip freeze</code></td>
+                        <td>Output installed packages in requirements format</td>
+                        <td><code>pip freeze &gt; requirements.txt</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip install -r</code></td>
+                        <td>Install from requirements file</td>
+                        <td><code>pip install -r requirements.txt</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip show</code></td>
+                        <td>Display package info</td>
+                        <td><code>pip show numpy</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>pip install --upgrade</code></td>
+                        <td>Upgrade a package</td>
+                        <td><code>pip install --upgrade pandas</code></td>
+                    </tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Terminal / Command line &mdash; PIP commands</span>
+
+<span class="cm"># Install a package from PyPI</span>
+$ pip install pandas
+
+<span class="cm"># Install a specific version</span>
+$ pip install pandas==2.1.0
+
+<span class="cm"># Upgrade an existing package</span>
+$ pip install --upgrade pandas
+
+<span class="cm"># Uninstall a package</span>
+$ pip uninstall pandas
+
+<span class="cm"># List all installed packages</span>
+$ pip list
+<span class="cm"># Package    Version</span>
+<span class="cm"># ---------- -------</span>
+<span class="cm"># numpy      1.26.4</span>
+<span class="cm"># pandas     2.2.1</span>
+<span class="cm"># ...</span>
+
+<span class="cm"># Export installed packages to a requirements file</span>
+$ pip freeze &gt; requirements.txt
+
+<span class="cm"># Install all packages from a requirements file</span>
+$ pip install -r requirements.txt
+
+<span class="cm"># Show details about a specific package</span>
+$ pip show numpy
+<span class="cm"># Name: numpy</span>
+<span class="cm"># Version: 1.26.4</span>
+<span class="cm"># Summary: Fundamental package for array computing...</span>
+<span class="cm"># Location: /usr/lib/python3/dist-packages</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Key Distinction &mdash; <code>pip list</code> vs. <code>pip freeze</code>:</strong>
+                    <p><code>pip list</code> displays packages in a human-readable table. <code>pip freeze</code> outputs in <code>package==version</code> format, ideal for generating <code>requirements.txt</code> files that can recreate an environment.</p>
+                </div>
+
+                <!-- Custom Modules -->
+                <h3 id="custom-modules"><i class="fa-solid fa-folder-tree"></i> Creating and Importing Custom Modules</h3>
+                <p>Any Python file can serve as a module. You can organize reusable code into your own modules and packages.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># File: data_utils.py (your custom module)</span>
+
+<span class="kw">def</span> <span class="fn">clean_column_name</span>(name):
+    <span class="str">"""Standardize a column name to lowercase with underscores."""</span>
+    <span class="kw">return</span> name.<span class="fn">strip</span>().<span class="fn">lower</span>().<span class="fn">replace</span>(<span class="str">" "</span>, <span class="str">"_"</span>)
+
+<span class="kw">def</span> <span class="fn">remove_outliers</span>(data, threshold=<span class="num">3</span>):
+    <span class="str">"""Remove values more than `threshold` std devs from the mean."""</span>
+    <span class="kw">import</span> statistics
+    mean = statistics.<span class="fn">mean</span>(data)
+    stdev = statistics.<span class="fn">stdev</span>(data)
+    <span class="kw">return</span> [x <span class="kw">for</span> x <span class="kw">in</span> data <span class="kw">if</span> <span class="fn">abs</span>(x - mean) &lt;= threshold * stdev]
+
+VALID_FORMATS = [<span class="str">".csv"</span>, <span class="str">".json"</span>, <span class="str">".xlsx"</span>, <span class="str">".parquet"</span>]</div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># File: main.py (importing your custom module)</span>
+
+<span class="cm"># Standard import &mdash; the module file must be in the same directory</span>
+<span class="cm"># or on Python's module search path (sys.path)</span>
+<span class="kw">import</span> data_utils
+
+clean = data_utils.<span class="fn">clean_column_name</span>(<span class="str">"  Sales Revenue  "</span>)
+<span class="fn">print</span>(clean)  <span class="cm"># "sales_revenue"</span>
+
+<span class="cm"># Selective import</span>
+<span class="kw">from</span> data_utils <span class="kw">import</span> remove_outliers, VALID_FORMATS
+
+cleaned = <span class="fn">remove_outliers</span>([<span class="num">10</span>, <span class="num">12</span>, <span class="num">11</span>, <span class="num">200</span>, <span class="num">13</span>, <span class="num">9</span>])
+<span class="fn">print</span>(cleaned)  <span class="cm"># [10, 12, 11, 13, 9]</span></div>
+
+                <h4>Creating a Package</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Package directory structure:</span>
+<span class="cm"># my_analytics/</span>
+<span class="cm">#     __init__.py       &lt;-- makes it a package</span>
+<span class="cm">#     cleaning.py</span>
+<span class="cm">#     analysis.py</span>
+<span class="cm">#     visualization.py</span>
+
+<span class="cm"># __init__.py can expose key names for convenience</span>
+<span class="kw">from</span> .cleaning <span class="kw">import</span> clean_column_name
+<span class="kw">from</span> .analysis <span class="kw">import</span> run_summary
+
+<span class="cm"># In another script you can then do:</span>
+<span class="kw">from</span> my_analytics <span class="kw">import</span> clean_column_name
+<span class="cm"># or</span>
+<span class="kw">from</span> my_analytics.analysis <span class="kw">import</span> run_summary</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-magnifying-glass"></i> Module Search Order:</strong>
+                    <p>When you <code>import data_utils</code>, Python searches in this order: (1) the current directory, (2) directories listed in the <code>PYTHONPATH</code> environment variable, (3) the standard library, (4) site-packages (where <code>pip</code> installs packages). You can inspect the search path with <code>import sys; print(sys.path)</code>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- OBJECTIVE 2: Exception Handling and Script Robustness        -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj2">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-shield-halved"></i> 2.2.2 Exception Handling and Script Robustness</h2>
+                <p>Robust data scripts anticipate and gracefully handle errors. Python's exception handling mechanism lets you catch errors at runtime and respond appropriately, rather than letting the entire program crash.</p>
+
+                <!-- try/except/else/finally -->
+                <h3 id="try-except"><i class="fa-solid fa-code-branch"></i> try / except / else / finally Blocks</h3>
+                <p>The full exception handling structure has four clauses:</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Clause</th>
+                        <th>When It Runs</th>
+                        <th>Required?</th>
+                    </tr>
+                    <tr>
+                        <td><code>try</code></td>
+                        <td>Code that might raise an exception</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td><code>except</code></td>
+                        <td>Runs if the specified exception occurs</td>
+                        <td>Yes (at least one)</td>
+                    </tr>
+                    <tr>
+                        <td><code>else</code></td>
+                        <td>Runs only if <strong>no</strong> exception was raised</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><code>finally</code></td>
+                        <td><strong>Always</strong> runs, exception or not</td>
+                        <td>No</td>
+                    </tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Basic try/except</span>
+<span class="kw">try</span>:
+    number = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter a number: "</span>))
+    result = <span class="num">100</span> / number
+<span class="kw">except</span> <span class="type">ValueError</span>:
+    <span class="fn">print</span>(<span class="str">"Invalid input. Please enter a valid integer."</span>)
+<span class="kw">except</span> <span class="type">ZeroDivisionError</span>:
+    <span class="fn">print</span>(<span class="str">"Cannot divide by zero."</span>)</div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Full try/except/else/finally</span>
+<span class="kw">def</span> <span class="fn">read_config</span>(filepath):
+    <span class="kw">try</span>:
+        f = <span class="fn">open</span>(filepath, <span class="str">"r"</span>)
+        content = f.<span class="fn">read</span>()
+    <span class="kw">except</span> <span class="type">FileNotFoundError</span>:
+        <span class="fn">print</span>(<span class="str">f"Config file not found: </span>{filepath}<span class="str">"</span>)
+        content = <span class="kw">None</span>
+    <span class="kw">except</span> <span class="type">PermissionError</span>:
+        <span class="fn">print</span>(<span class="str">f"No permission to read: </span>{filepath}<span class="str">"</span>)
+        content = <span class="kw">None</span>
+    <span class="kw">else</span>:
+        <span class="cm"># Only runs if no exception occurred</span>
+        <span class="fn">print</span>(<span class="str">f"Successfully loaded </span>{<span class="fn">len</span>(content)}<span class="str"> characters."</span>)
+    <span class="kw">finally</span>:
+        <span class="cm"># Always runs &mdash; ideal for cleanup</span>
+        <span class="kw">try</span>:
+            f.<span class="fn">close</span>()
+        <span class="kw">except</span> <span class="type">NameError</span>:
+            <span class="kw">pass</span>  <span class="cm"># f was never assigned if open() failed</span>
+
+    <span class="kw">return</span> content</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-arrows-rotate"></i> Execution Flow:</strong>
+                    <p><code>try</code> &rarr; if exception, jump to matching <code>except</code>; if no exception, run <code>else</code>. In both cases, <code>finally</code> always executes last. This makes <code>finally</code> perfect for releasing resources like file handles and database connections.</p>
+                </div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Catching multiple exceptions in one handler</span>
+<span class="kw">try</span>:
+    value = data[key]
+    result = <span class="fn">int</span>(value)
+<span class="kw">except</span> (<span class="type">KeyError</span>, <span class="type">ValueError</span>, <span class="type">TypeError</span>) <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Data error: </span>{e}<span class="str">"</span>)
+    result = <span class="kw">None</span></div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Using the exception object for details</span>
+<span class="kw">try</span>:
+    scores = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>]
+    <span class="fn">print</span>(scores[<span class="num">10</span>])
+<span class="kw">except</span> <span class="type">IndexError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Error type: </span>{<span class="fn">type</span>(e).__name__}<span class="str">"</span>)  <span class="cm"># IndexError</span>
+    <span class="fn">print</span>(<span class="str">f"Message: </span>{e}<span class="str">"</span>)                      <span class="cm"># list index out of range</span></div>
+
+                <!-- Common Exceptions -->
+                <h3 id="common-exceptions"><i class="fa-solid fa-bug"></i> Common Built-in Exceptions</h3>
+                <p>Knowing which exception corresponds to which error is essential for the exam and for writing robust data code.</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Exception</th>
+                        <th>Raised When</th>
+                        <th>Typical Data Scenario</th>
+                    </tr>
+                    <tr>
+                        <td><code>ValueError</code></td>
+                        <td>Right type, wrong value</td>
+                        <td><code>int("abc")</code>, <code>float("N/A")</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>TypeError</code></td>
+                        <td>Wrong type for operation</td>
+                        <td><code>"5" + 3</code>, passing wrong arg type</td>
+                    </tr>
+                    <tr>
+                        <td><code>KeyError</code></td>
+                        <td>Missing dictionary key</td>
+                        <td><code>row["nonexistent_col"]</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>IndexError</code></td>
+                        <td>Index out of range</td>
+                        <td><code>data[100]</code> on a 50-item list</td>
+                    </tr>
+                    <tr>
+                        <td><code>FileNotFoundError</code></td>
+                        <td>File does not exist</td>
+                        <td><code>open("missing.csv")</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>ZeroDivisionError</code></td>
+                        <td>Division by zero</td>
+                        <td>Computing a ratio with a zero denominator</td>
+                    </tr>
+                    <tr>
+                        <td><code>ImportError</code></td>
+                        <td>Module cannot be imported</td>
+                        <td><code>import nonexistent_lib</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>AttributeError</code></td>
+                        <td>Object has no such attribute</td>
+                        <td>Calling <code>.append()</code> on a tuple</td>
+                    </tr>
+                    <tr>
+                        <td><code>NameError</code></td>
+                        <td>Variable not defined</td>
+                        <td>Using a variable before assignment</td>
+                    </tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Demonstrating common exceptions</span>
+
+<span class="cm"># ValueError</span>
+<span class="kw">try</span>:
+    age = <span class="fn">int</span>(<span class="str">"twenty"</span>)
+<span class="kw">except</span> <span class="type">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"ValueError: </span>{e}<span class="str">"</span>)
+    <span class="cm"># ValueError: invalid literal for int() with base 10: 'twenty'</span>
+
+<span class="cm"># TypeError</span>
+<span class="kw">try</span>:
+    result = <span class="str">"price: "</span> + <span class="num">49.99</span>
+<span class="kw">except</span> <span class="type">TypeError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"TypeError: </span>{e}<span class="str">"</span>)
+    <span class="cm"># TypeError: can only concatenate str (not "float") to str</span>
+
+<span class="cm"># KeyError</span>
+<span class="kw">try</span>:
+    record = {<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"age"</span>: <span class="num">30</span>}
+    email = record[<span class="str">"email"</span>]
+<span class="kw">except</span> <span class="type">KeyError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"KeyError: missing key </span>{e}<span class="str">"</span>)
+    <span class="cm"># KeyError: missing key 'email'</span>
+
+<span class="cm"># FileNotFoundError</span>
+<span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data_2026.csv"</span>) <span class="kw">as</span> f:
+        data = f.<span class="fn">read</span>()
+<span class="kw">except</span> <span class="type">FileNotFoundError</span>:
+    <span class="fn">print</span>(<span class="str">"File not found. Check the file path."</span>)
+
+<span class="cm"># ZeroDivisionError</span>
+<span class="kw">try</span>:
+    conversion_rate = <span class="num">0</span> / <span class="num">0</span>
+<span class="kw">except</span> <span class="type">ZeroDivisionError</span>:
+    <span class="fn">print</span>(<span class="str">"Cannot compute rate: division by zero."</span>)
+    conversion_rate = <span class="num">0.0</span></div>
+
+                <!-- Raising Exceptions -->
+                <h3 id="raising"><i class="fa-solid fa-hand"></i> Raising Exceptions and Custom Messages</h3>
+                <p>Use the <code>raise</code> statement to intentionally trigger exceptions when your code detects invalid conditions. This is critical for input validation in data pipelines.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Raising exceptions for validation</span>
+<span class="kw">def</span> <span class="fn">validate_age</span>(age):
+    <span class="kw">if not</span> <span class="fn">isinstance</span>(age, (<span class="type">int</span>, <span class="type">float</span>)):
+        <span class="kw">raise</span> <span class="type">TypeError</span>(<span class="str">f"Age must be numeric, got </span>{<span class="fn">type</span>(age).__name__}<span class="str">"</span>)
+    <span class="kw">if</span> age &lt; <span class="num">0</span> <span class="kw">or</span> age &gt; <span class="num">150</span>:
+        <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">f"Age must be between 0 and 150, got </span>{age}<span class="str">"</span>)
+    <span class="kw">return</span> <span class="kw">True</span>
+
+<span class="cm"># Usage</span>
+<span class="kw">try</span>:
+    <span class="fn">validate_age</span>(-<span class="num">5</span>)
+<span class="kw">except</span> <span class="type">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)  <span class="cm"># Age must be between 0 and 150, got -5</span>
+
+<span class="kw">try</span>:
+    <span class="fn">validate_age</span>(<span class="str">"thirty"</span>)
+<span class="kw">except</span> <span class="type">TypeError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)  <span class="cm"># Age must be numeric, got str</span></div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Validating a dataset before processing</span>
+<span class="kw">def</span> <span class="fn">validate_dataset</span>(df):
+    <span class="str">"""Validate that a DataFrame meets minimum requirements."""</span>
+    required_cols = [<span class="str">"id"</span>, <span class="str">"date"</span>, <span class="str">"value"</span>]
+
+    <span class="kw">if</span> df.empty:
+        <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"Dataset is empty."</span>)
+
+    missing = [col <span class="kw">for</span> col <span class="kw">in</span> required_cols <span class="kw">if</span> col <span class="kw">not in</span> df.columns]
+    <span class="kw">if</span> missing:
+        <span class="kw">raise</span> <span class="type">KeyError</span>(<span class="str">f"Missing required columns: </span>{missing}<span class="str">"</span>)
+
+    <span class="kw">if</span> df[<span class="str">"id"</span>].<span class="fn">duplicated</span>().<span class="fn">any</span>():
+        <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"Duplicate IDs found in dataset."</span>)
+
+    <span class="kw">return</span> <span class="kw">True</span></div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Re-raising an exception after logging</span>
+<span class="kw">import</span> logging
+
+<span class="kw">def</span> <span class="fn">process_file</span>(path):
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(path) <span class="kw">as</span> f:
+            data = f.<span class="fn">read</span>()
+    <span class="kw">except</span> <span class="type">FileNotFoundError</span>:
+        logging.<span class="fn">error</span>(<span class="str">f"File not found: </span>{path}<span class="str">"</span>)
+        <span class="kw">raise</span>  <span class="cm"># Re-raise the same exception</span></div>
+
+                <!-- Tracebacks -->
+                <h3 id="tracebacks"><i class="fa-solid fa-list-ul"></i> Interpreting Error Messages and Tracebacks</h3>
+                <p>Python tracebacks are read <strong>bottom to top</strong>. The last line shows the exception type and message; lines above show the call stack with the most recent call at the bottom.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Example traceback:</span>
+<span class="cm"># Traceback (most recent call last):</span>
+<span class="cm">#   File "pipeline.py", line 45, in &lt;module&gt;</span>
+<span class="cm">#     result = process_records(data)</span>
+<span class="cm">#   File "pipeline.py", line 32, in process_records</span>
+<span class="cm">#     cleaned = clean_value(record["price"])</span>
+<span class="cm">#   File "pipeline.py", line 18, in clean_value</span>
+<span class="cm">#     return float(value)</span>
+<span class="cm"># ValueError: could not convert string to float: 'N/A'</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-book-open-reader"></i> Reading Tracebacks:</strong>
+                    <ol>
+                        <li><strong>Bottom line:</strong> The exception type (<code>ValueError</code>) and the message (<code>could not convert string to float: 'N/A'</code>).</li>
+                        <li><strong>Second from bottom:</strong> The exact line of code that caused the error &mdash; <code>return float(value)</code>.</li>
+                        <li><strong>Working upward:</strong> The chain of function calls that led to the error, with file names and line numbers.</li>
+                    </ol>
+                </div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Common traceback patterns in data code:</span>
+
+<span class="cm"># 1. KeyError in pandas &mdash; misspelled column name</span>
+<span class="cm"># KeyError: 'reveneu'</span>
+<span class="cm"># Fix: Check df.columns and correct the spelling</span>
+
+<span class="cm"># 2. FileNotFoundError &mdash; wrong path or filename</span>
+<span class="cm"># FileNotFoundError: [Errno 2] No such file or directory: 'dta/sales.csv'</span>
+<span class="cm"># Fix: Check os.path.exists() and correct the path</span>
+
+<span class="cm"># 3. TypeError &mdash; operations on incompatible types</span>
+<span class="cm"># TypeError: unsupported operand type(s) for +: 'int' and 'str'</span>
+<span class="cm"># Fix: Convert types before operations</span>
+
+<span class="cm"># 4. ImportError &mdash; module not installed</span>
+<span class="cm"># ModuleNotFoundError: No module named 'sklearn'</span>
+<span class="cm"># Fix: pip install scikit-learn</span></div>
+
+                <!-- Real-World Error Handling -->
+                <h3 id="real-world"><i class="fa-solid fa-globe"></i> Real-World Error Handling in Data Code</h3>
+                <p>Data processing scripts frequently encounter malformed data, missing files, and network issues. Here are practical patterns for robust data code.</p>
+
+                <h4>Reading Files Safely</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> csv
+<span class="kw">import</span> os
+
+<span class="kw">def</span> <span class="fn">load_csv_safely</span>(filepath):
+    <span class="str">"""Load a CSV file with comprehensive error handling."""</span>
+    <span class="kw">if not</span> os.path.<span class="fn">exists</span>(filepath):
+        <span class="fn">print</span>(<span class="str">f"Error: File '</span>{filepath}<span class="str">' does not exist."</span>)
+        <span class="kw">return</span> []
+
+    <span class="kw">if not</span> filepath.<span class="fn">endswith</span>(<span class="str">".csv"</span>):
+        <span class="fn">print</span>(<span class="str">f"Warning: '</span>{filepath}<span class="str">' may not be a CSV file."</span>)
+
+    rows = []
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(filepath, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f:
+            reader = csv.<span class="fn">DictReader</span>(f)
+            <span class="kw">for</span> i, row <span class="kw">in</span> <span class="fn">enumerate</span>(reader):
+                rows.<span class="fn">append</span>(row)
+    <span class="kw">except</span> <span class="type">UnicodeDecodeError</span>:
+        <span class="fn">print</span>(<span class="str">"Encoding error. Trying latin-1..."</span>)
+        <span class="kw">with</span> <span class="fn">open</span>(filepath, <span class="str">"r"</span>, encoding=<span class="str">"latin-1"</span>) <span class="kw">as</span> f:
+            reader = csv.<span class="fn">DictReader</span>(f)
+            rows = <span class="fn">list</span>(reader)
+    <span class="kw">except</span> csv.Error <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"CSV parsing error: </span>{e}<span class="str">"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">f"Successfully loaded </span>{<span class="fn">len</span>(rows)}<span class="str"> rows."</span>)
+
+    <span class="kw">return</span> rows</div>
+
+                <h4>Parsing Data with Type Conversion</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">parse_numeric_column</span>(records, column):
+    <span class="str">"""Safely convert a column to float, handling errors."""</span>
+    parsed = []
+    errors = []
+
+    <span class="kw">for</span> i, record <span class="kw">in</span> <span class="fn">enumerate</span>(records):
+        <span class="kw">try</span>:
+            value = record[column]
+            parsed.<span class="fn">append</span>(<span class="fn">float</span>(value))
+        <span class="kw">except</span> <span class="type">KeyError</span>:
+            errors.<span class="fn">append</span>(<span class="str">f"Row </span>{i}<span class="str">: column '</span>{column}<span class="str">' not found"</span>)
+        <span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">TypeError</span>):
+            errors.<span class="fn">append</span>(<span class="str">f"Row </span>{i}<span class="str">: cannot convert '</span>{record.<span class="fn">get</span>(column)}<span class="str">' to float"</span>)
+
+    <span class="kw">if</span> errors:
+        <span class="fn">print</span>(<span class="str">f"Encountered </span>{<span class="fn">len</span>(errors)}<span class="str"> errors in column '</span>{column}<span class="str">':"</span>)
+        <span class="kw">for</span> err <span class="kw">in</span> errors[:<span class="num">5</span>]:  <span class="cm"># Show first 5 errors</span>
+            <span class="fn">print</span>(<span class="str">f"  - </span>{err}<span class="str">"</span>)
+
+    <span class="kw">return</span> parsed</div>
+
+                <h4>Handling Common Pandas Errors</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Safe file loading with pandas</span>
+<span class="kw">def</span> <span class="fn">load_dataframe</span>(filepath):
+    <span class="kw">try</span>:
+        df = pd.<span class="fn">read_csv</span>(filepath)
+    <span class="kw">except</span> <span class="type">FileNotFoundError</span>:
+        <span class="fn">print</span>(<span class="str">f"File not found: </span>{filepath}<span class="str">"</span>)
+        <span class="kw">return</span> pd.<span class="fn">DataFrame</span>()
+    <span class="kw">except</span> pd.errors.EmptyDataError:
+        <span class="fn">print</span>(<span class="str">f"File is empty: </span>{filepath}<span class="str">"</span>)
+        <span class="kw">return</span> pd.<span class="fn">DataFrame</span>()
+    <span class="kw">except</span> pd.errors.ParserError <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"Parse error: </span>{e}<span class="str">"</span>)
+        <span class="kw">return</span> pd.<span class="fn">DataFrame</span>()
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">f"Loaded DataFrame: </span>{df.shape[<span class="num">0</span>]}<span class="str"> rows, </span>{df.shape[<span class="num">1</span>]}<span class="str"> columns"</span>)
+        <span class="kw">return</span> df
+
+<span class="cm"># Safe column access</span>
+<span class="kw">def</span> <span class="fn">safe_column_mean</span>(df, column):
+    <span class="kw">try</span>:
+        <span class="kw">return</span> df[column].<span class="fn">mean</span>()
+    <span class="kw">except</span> <span class="type">KeyError</span>:
+        <span class="fn">print</span>(<span class="str">f"Column '</span>{column}<span class="str">' not found. Available: </span>{<span class="fn">list</span>(df.columns)}<span class="str">"</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">except</span> <span class="type">TypeError</span>:
+        <span class="fn">print</span>(<span class="str">f"Column '</span>{column}<span class="str">' is not numeric."</span>)
+        <span class="kw">return</span> <span class="kw">None</span></div>
+
+                <h4>Complete Data Pipeline with Error Handling</h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">import</span> csv
+<span class="kw">import</span> statistics
+<span class="kw">import</span> os
+
+<span class="kw">def</span> <span class="fn">analyze_sales</span>(filepath):
+    <span class="str">"""End-to-end pipeline with robust error handling."""</span>
+
+    <span class="cm"># Step 1: Load data</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(filepath, <span class="str">"r"</span>) <span class="kw">as</span> f:
+            reader = csv.<span class="fn">DictReader</span>(f)
+            records = <span class="fn">list</span>(reader)
+    <span class="kw">except</span> <span class="type">FileNotFoundError</span>:
+        <span class="kw">raise</span> <span class="type">FileNotFoundError</span>(<span class="str">f"Sales file not found: </span>{filepath}<span class="str">"</span>)
+
+    <span class="kw">if not</span> records:
+        <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"No records found in file."</span>)
+
+    <span class="cm"># Step 2: Parse and validate revenue values</span>
+    revenues = []
+    skipped = <span class="num">0</span>
+
+    <span class="kw">for</span> row <span class="kw">in</span> records:
+        <span class="kw">try</span>:
+            revenue = <span class="fn">float</span>(row[<span class="str">"revenue"</span>])
+            <span class="kw">if</span> revenue &lt; <span class="num">0</span>:
+                <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"Negative revenue"</span>)
+            revenues.<span class="fn">append</span>(revenue)
+        <span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">KeyError</span>):
+            skipped += <span class="num">1</span>
+            <span class="kw">continue</span>
+
+    <span class="cm"># Step 3: Compute statistics</span>
+    <span class="kw">try</span>:
+        result = {
+            <span class="str">"total"</span>: <span class="fn">sum</span>(revenues),
+            <span class="str">"mean"</span>: statistics.<span class="fn">mean</span>(revenues),
+            <span class="str">"median"</span>: statistics.<span class="fn">median</span>(revenues),
+            <span class="str">"stdev"</span>: statistics.<span class="fn">stdev</span>(revenues),
+            <span class="str">"count"</span>: <span class="fn">len</span>(revenues),
+            <span class="str">"skipped"</span>: skipped,
+        }
+    <span class="kw">except</span> statistics.StatisticsError:
+        <span class="fn">print</span>(<span class="str">"Not enough data to compute statistics."</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+
+    <span class="kw">return</span> result</div>
+
+                <!-- Best Practices -->
+                <h3 id="best-practices"><i class="fa-solid fa-check-double"></i> Best Practices for Robust Scripts</h3>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-1"></i> Catch Specific Exceptions, Not Bare <code>except</code></strong>
+                    <p>A bare <code>except:</code> catches everything, including <code>KeyboardInterrupt</code> and <code>SystemExit</code>, which makes it impossible to stop your program. Always specify exception types.</p>
+                </div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># BAD &mdash; bare except catches everything, hides bugs</span>
+<span class="kw">try</span>:
+    result = <span class="fn">process</span>(data)
+<span class="kw">except</span>:
+    <span class="kw">pass</span>
+
+<span class="cm"># GOOD &mdash; catch specific exceptions</span>
+<span class="kw">try</span>:
+    result = <span class="fn">process</span>(data)
+<span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">TypeError</span>) <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Processing error: </span>{e}<span class="str">"</span>)
+    result = <span class="kw">None</span>
+
+<span class="cm"># ACCEPTABLE &mdash; catch Exception (still skips SystemExit, KeyboardInterrupt)</span>
+<span class="kw">try</span>:
+    result = <span class="fn">process</span>(data)
+<span class="kw">except</span> <span class="type">Exception</span> <span class="kw">as</span> e:
+    logging.<span class="fn">error</span>(<span class="str">f"Unexpected error: </span>{e}<span class="str">"</span>)
+    result = <span class="kw">None</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-2"></i> Use <code>finally</code> for Resource Cleanup</strong>
+                    <p>Always close files, database connections, and network sockets in a <code>finally</code> block (or use <code>with</code> statements which handle this automatically).</p>
+                </div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Best practice: use context managers (with statement)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.csv"</span>) <span class="kw">as</span> f:
+    data = f.<span class="fn">read</span>()
+<span class="cm"># File is automatically closed, even if an exception occurs</span>
+
+<span class="cm"># Equivalent manual approach with finally</span>
+f = <span class="kw">None</span>
+<span class="kw">try</span>:
+    f = <span class="fn">open</span>(<span class="str">"data.csv"</span>)
+    data = f.<span class="fn">read</span>()
+<span class="kw">finally</span>:
+    <span class="kw">if</span> f:
+        f.<span class="fn">close</span>()</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-3"></i> Validate Inputs Early</strong>
+                    <p>Check data types, ranges, and required fields at the start of functions. Raise descriptive exceptions for invalid inputs rather than letting cryptic errors surface later in the pipeline.</p>
+                </div>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">def</span> <span class="fn">calculate_growth_rate</span>(current, previous):
+    <span class="str">"""Calculate percentage growth between two values."""</span>
+    <span class="kw">if not</span> <span class="fn">isinstance</span>(current, (<span class="type">int</span>, <span class="type">float</span>)):
+        <span class="kw">raise</span> <span class="type">TypeError</span>(<span class="str">f"current must be numeric, got </span>{<span class="fn">type</span>(current).__name__}<span class="str">"</span>)
+    <span class="kw">if not</span> <span class="fn">isinstance</span>(previous, (<span class="type">int</span>, <span class="type">float</span>)):
+        <span class="kw">raise</span> <span class="type">TypeError</span>(<span class="str">f"previous must be numeric, got </span>{<span class="fn">type</span>(previous).__name__}<span class="str">"</span>)
+    <span class="kw">if</span> previous == <span class="num">0</span>:
+        <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"previous cannot be zero (division by zero)."</span>)
+
+    <span class="kw">return</span> ((current - previous) / previous) * <span class="num">100</span></div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-4"></i> Log Errors, Do Not Silence Them</strong>
+                    <p>Swallowing exceptions with <code>pass</code> masks bugs. At minimum, log the error so it can be diagnosed later.</p>
+                </div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-5"></i> Use <code>else</code> to Separate Success Logic</strong>
+                    <p>Code in the <code>else</code> block only runs when <code>try</code> succeeds. This keeps error-handling code separate from normal flow, improving readability.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUIZ SECTION                                                  -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <div class="subsection">
+                <h2><i class="fa-solid fa-clipboard-question"></i> Practice Quiz: Module Management and Exception Handling</h2>
+                <p style="margin-bottom:1.5rem;opacity:0.8;">Test your knowledge with 10 multiple-choice questions. Click an option to see if it is correct.</p>
+
+                <!-- Question 1 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q1. What is the correct way to import only the <code>sqrt</code> function from the <code>math</code> module?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>import sqrt from math</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">B) <code>from math import sqrt</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">C) <code>import math.sqrt</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>math import sqrt</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B.</strong> The syntax <code>from module import name</code> imports a specific name from a module. Option A reverses the order. Option C would import the <code>math</code> module (not <code>sqrt</code> directly). Option D is invalid syntax.</div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q2. What is the difference between <code>pip list</code> and <code>pip freeze</code>?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>pip list</code> shows only standard library modules; <code>pip freeze</code> shows all</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">B) They are identical commands with different names</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">C) <code>pip list</code> shows a human-readable table; <code>pip freeze</code> outputs in <code>package==version</code> format for requirements files</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>pip freeze</code> locks packages so they cannot be upgraded</div>
+                    <div class="quiz-explanation"><strong>Correct: C.</strong> <code>pip list</code> displays installed packages in a formatted table. <code>pip freeze</code> outputs them in <code>package==version</code> format, which can be redirected to a <code>requirements.txt</code> file for environment reproducibility.</div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q3. What exception is raised by <code>int("hello")</code>?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>TypeError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">B) <code>ValueError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">C) <code>NameError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>SyntaxError</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B.</strong> <code>int()</code> receives a string (correct type), but <code>"hello"</code> is not a valid integer representation (wrong value). This triggers a <code>ValueError</code>. A <code>TypeError</code> would occur if you passed a type that <code>int()</code> cannot convert at all (e.g., a list).</div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q4. When does the <code>else</code> block execute in a <code>try/except/else/finally</code> structure?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) When an exception is caught by <code>except</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">B) Always, regardless of exceptions</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">C) Only when no exception was raised in the <code>try</code> block</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) Only when a <code>finally</code> block is also present</div>
+                    <div class="quiz-explanation"><strong>Correct: C.</strong> The <code>else</code> clause runs only if the <code>try</code> block completes without raising any exception. It is useful for code that should run on success but should not be inside the <code>try</code> block (to avoid accidentally catching its exceptions).</div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q5. What does the following code print?<br><code>import numpy as np</code><br><code>print(type(np))</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>&lt;class 'numpy'&gt;</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">B) <code>&lt;class 'module'&gt;</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">C) <code>&lt;class 'package'&gt;</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>&lt;class 'alias'&gt;</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B.</strong> When you import a module (with or without an alias), the variable refers to a <code>module</code> object. The alias <code>np</code> is simply an alternate name for the same module object. <code>type(np)</code> returns <code>&lt;class 'module'&gt;</code>.</div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q6. Which <code>pip</code> command generates a file that can recreate the current environment?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>pip list &gt; requirements.txt</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">B) <code>pip freeze &gt; requirements.txt</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">C) <code>pip export &gt; requirements.txt</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>pip save &gt; requirements.txt</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B.</strong> <code>pip freeze</code> outputs packages in the <code>package==version</code> format that <code>pip install -r requirements.txt</code> expects. <code>pip list</code> produces a formatted table that is not directly usable by <code>pip install -r</code>. Options C and D are not valid pip commands.</div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q7. What happens when you run the following code?<br><code>try:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;x = 10 / 0</code><br><code>except ZeroDivisionError:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;print("A")</code><br><code>else:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;print("B")</code><br><code>finally:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;print("C")</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) Prints: A B C</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">B) Prints: A C</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">C) Prints: A</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) Prints: B C</div>
+                    <div class="quiz-explanation"><strong>Correct: B.</strong> The <code>try</code> block raises <code>ZeroDivisionError</code>, so the <code>except</code> block runs and prints "A". Since an exception occurred, the <code>else</code> block is skipped. The <code>finally</code> block always runs, printing "C". Result: A C.</div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q8. What is the primary risk of using <code>from module import *</code>?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) It is slower than a standard import</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">B) It only works with standard library modules</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">C) It can cause namespace collisions and makes it unclear where names originate</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) It installs the module from PyPI automatically</div>
+                    <div class="quiz-explanation"><strong>Correct: C.</strong> Wildcard imports dump all public names from a module into the current namespace. If two modules export a function with the same name, the second import silently overwrites the first. It also makes code harder to read because the origin of each name is unclear.</div>
+                </div>
+
+                <!-- Question 9 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q9. What exception type would you use to validate that a function argument is a positive number?<br><code>def set_quantity(qty):</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;if qty &lt;= 0:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise ???("Quantity must be positive.")</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;return qty</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>TypeError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">B) <code>ValueError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">C) <code>KeyError</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>IndexError</code></div>
+                    <div class="quiz-explanation"><strong>Correct: B.</strong> The argument is the right type (a number), but the value is invalid (non-positive). <code>ValueError</code> is appropriate when the type is correct but the value does not meet requirements. <code>TypeError</code> would be used if the argument was the wrong type entirely (e.g., a string instead of a number).</div>
+                </div>
+
+                <!-- Question 10 -->
+                <div class="quiz-box" data-section="q22">
+                    <div class="quiz-question">Q10. Which standard library module provides <code>Counter</code> and <code>defaultdict</code>?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">A) <code>statistics</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">B) <code>itertools</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'q22')">C) <code>collections</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'q22')">D) <code>functools</code></div>
+                    <div class="quiz-explanation"><strong>Correct: C.</strong> The <code>collections</code> module provides specialized container types including <code>Counter</code> (for counting hashable objects), <code>defaultdict</code> (dict with default factory), <code>OrderedDict</code>, <code>namedtuple</code>, and <code>deque</code>.</div>
+                </div>
+
+                <div id="score-q22" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <div class="page-nav">
+            <a href="topic2-1.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 2.1 Core Python Proficiency</a>
+            <a href="topic2-3.html" class="nav-btn next">Next: 2.3 OOP for Data Modeling <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#obj1">2.2.1 Modules &amp; PIP</a>
+        <a class="toc-item" href="#import-styles">Import Styles</a>
+        <a class="toc-item" href="#stdlib">Standard Library</a>
+        <a class="toc-item" href="#pip">PIP Commands</a>
+        <a class="toc-item" href="#custom-modules">Custom Modules</a>
+        <a class="toc-item" href="#obj2">2.2.2 Exception Handling</a>
+        <a class="toc-item" href="#try-except">try/except/else/finally</a>
+        <a class="toc-item" href="#common-exceptions">Common Exceptions</a>
+        <a class="toc-item" href="#raising">Raising Exceptions</a>
+        <a class="toc-item" href="#tracebacks">Tracebacks</a>
+        <a class="toc-item" href="#real-world">Real-World Patterns</a>
+        <a class="toc-item" href="#best-practices">Best Practices</a>
+        <a class="toc-item" href="#quiz">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        (function(){document.querySelectorAll('.fade-up').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});if(window.location.hash){const el=document.querySelector(window.location.hash);if(el)el.classList.add('visible');}})();
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

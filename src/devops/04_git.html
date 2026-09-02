@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git &amp; GitHub - DevOps Lab</title>
+    <meta name="description" content="Learn Git and GitHub from zero: repositories, commits, branches, merging, remotes and pull requests. Version control is the backbone of every DevOps workflow.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#f05133;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#d13a1f;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(240,81,51,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#8f2c17);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#d13a1f}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#d13a1f;border-left-color:#d13a1f;background:rgba(240,81,51,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#d13a1f}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#f47a62}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(240,81,51,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#f05133);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .subsection-title{font-size:1.15rem;font-weight:700;margin:24px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection-title i{color:var(--primary);font-size:.9rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#f47a62}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#d13a1f;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(240,81,51,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-git-alt"></i> DevOps Lab</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#why">Why Git</a>
+                <a href="#concepts">Concepts</a>
+                <a href="#lab">Hands-on Lab</a>
+                <a href="#cheatsheet">Cheat Sheet</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#why" onclick="this.parentElement.classList.remove('open')">Why Git</a>
+        <a href="#concepts" onclick="this.parentElement.classList.remove('open')">Concepts</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Hands-on Lab</a>
+        <a href="#cheatsheet" onclick="this.parentElement.classList.remove('open')">Cheat Sheet</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Git &amp; GitHub</h1>
+            <p class="hero-sub">Track every change, never lose work, and collaborate without chaos.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 4 &middot; Create the notes-app repo you'll use for the rest of the course. Free.</p>
+            <span class="diff-badge" style="background:#10b981">Beginner</span>
+            <span class="cat-badge"><i class="fa-brands fa-git-alt" style="margin-right:6px"></i>Foundations</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~50 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Understand version control and why every team relies on it</li>
+                    <li>Tell the difference between <strong>Git</strong> (the tool) and <strong>GitHub</strong> (the host)</li>
+                    <li>Track changes: <code>init &rarr; add &rarr; commit</code></li>
+                    <li>Work with <strong>branches</strong> and merge them</li>
+                    <li>Push to GitHub and collaborate via a <strong>pull request</strong></li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> <a href="02_linux.html">Module 2 (Linux)</a>, plus Git installed (<code>git --version</code>) and a free <a href="https://github.com" target="_blank" rel="noopener">GitHub</a> account.</p>
+        </div>
+
+        <!-- Why -->
+        <div class="section fade-up" id="why">
+            <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> Why Version Control</h2>
+            <p class="section-desc">Ever ended up with <code>report_final.doc</code>, <code>report_final_v2.doc</code>, <code>report_FINAL_really.doc</code>? That's manual version control &mdash; and it falls apart the moment more than one person is involved.</p>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Without version control</h3>
+                <p>You can't see who changed what or when, you can't safely undo a mistake, and two people editing the same file overwrite each other. For software, that's chaos.</p>
+            </div>
+            <p class="section-desc"><strong>Git</strong> records a complete history of every change to your project. You can travel back in time, see exactly what changed, branch off to experiment safely, and merge work from many people. It's the foundation of CI/CD (Module 9) &mdash; pipelines trigger on Git events.</p>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-circle-info"></i> Git vs. GitHub</h3>
+                <p><strong>Git</strong> is the version-control tool that runs on your machine. <strong>GitHub</strong> is a website that hosts Git repositories online so you can back them up and collaborate. (GitLab and Bitbucket are alternatives.) Git works fine offline; GitHub is the shared copy.</p>
+            </div>
+        </div>
+
+        <!-- Concepts -->
+        <div class="section fade-up" id="concepts">
+            <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> The Mental Model</h2>
+            <p class="section-desc">Git has three areas your files move through. Understanding this makes every command obvious:</p>
+            <div class="code-block"><span class="diag">  Working Dir  ──git add──▶  Staging Area  ──git commit──▶  Repository
+  (your edits)              (changes to save)            (permanent history)
+                                                              │
+                                                          git push
+                                                              ▼
+                                                          GitHub (remote)</span></div>
+            <table class="dark-table">
+                <thead><tr><th>Term</th><th>What it is</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Repository (repo)</strong></td><td>A project folder Git is tracking, plus its full history.</td></tr>
+                    <tr><td><strong>Commit</strong></td><td>A saved snapshot of your changes, with a message.</td></tr>
+                    <tr><td><strong>Branch</strong></td><td>A parallel line of work, so you can experiment without breaking <code>main</code>.</td></tr>
+                    <tr><td><strong>Remote</strong></td><td>A copy of the repo hosted elsewhere (e.g. GitHub), named <code>origin</code>.</td></tr>
+                    <tr><td><strong>Pull Request (PR)</strong></td><td>A GitHub proposal to merge one branch into another, with review.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Hands-on Lab -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-flask-vial"></i> Hands-on Lab: Your First Repo</h2>
+            <p class="section-desc">We'll create the <strong>notes-app</strong> repository you'll reuse from Module 6 onward. Follow along in your terminal.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>One-time setup</h3>
+                    <p class="section-desc">Tell Git who you are (used to label your commits):</p>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>git config --global user.name <span class="str">"Your Name"</span>
+git config --global user.email <span class="str">"you@example.com"</span>
+git config --global init.defaultBranch main</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Create a repo</h3>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>mkdir notes-app
+cd notes-app
+git init                 <span class="cm"># start tracking this folder</span>
+echo "# Notes App" &gt; README.md</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Stage and commit</h3>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>git status               <span class="cm"># see what's changed (README is untracked)</span>
+git add README.md        <span class="cm"># stage it</span>
+git commit -m <span class="str">"Initial commit"</span>   <span class="cm"># save a snapshot</span>
+git log --oneline        <span class="cm"># see your history</span></div>
+                    <div class="info-box">
+                        <h3><i class="fa-solid fa-pen"></i> Good commit messages</h3>
+                        <p>Write them in the imperative, present tense: "Add health endpoint", "Fix port mapping". Short, specific, and explaining <em>what</em> the change does. Future-you will be grateful.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Ignore what shouldn't be tracked</h3>
+                    <p class="section-desc">A <code>.gitignore</code> keeps secrets and junk out of version control:</p>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>printf "__pycache__/\n*.pyc\n.env\nvenv/\n" &gt; .gitignore
+git add .gitignore
+git commit -m <span class="str">"Add gitignore"</span></div>
+                    <div class="info-box warning">
+                        <h3><i class="fa-solid fa-triangle-exclamation"></i> Never commit secrets</h3>
+                        <p>Passwords, API keys, and <code>.env</code> files must never be committed &mdash; once pushed to GitHub, bots find them in minutes. Add them to <code>.gitignore</code> from day one.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>Branch &amp; merge</h3>
+                    <p class="section-desc">Branches let you work on a feature without touching <code>main</code>. The standard workflow:</p>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>git switch -c add-description     <span class="cm"># create + switch to a new branch</span>
+echo "A tiny notes web app." &gt;&gt; README.md
+git add README.md
+git commit -m <span class="str">"Describe the app in the README"</span>
+
+git switch main                  <span class="cm"># back to main</span>
+git merge add-description        <span class="cm"># bring the changes in</span></div>
+                    <div class="info-box">
+                        <h3><i class="fa-solid fa-code-branch"></i> Why branch?</h3>
+                        <p><code>main</code> should always be working/deployable. You build features on branches, then merge when they're ready &mdash; usually via a pull request (next step). This is the heart of team collaboration.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">6</div>
+                <div class="step-body">
+                    <h3>Push to GitHub</h3>
+                    <p class="section-desc">Create a new empty repo on GitHub (no README), then connect and push:</p>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>git remote add origin https://github.com/YOUR_USERNAME/notes-app.git
+git push -u origin main          <span class="cm"># upload; -u remembers this for next time</span></div>
+                    <p class="section-desc">Refresh the GitHub page &mdash; your code is now online and backed up. ✅</p>
+                    <div class="info-box success">
+                        <h3><i class="fa-solid fa-key"></i> Authentication</h3>
+                        <p>GitHub no longer accepts your account password on the command line. When prompted, use a <strong>Personal Access Token</strong> (GitHub &rarr; Settings &rarr; Developer settings &rarr; Tokens) as the password, or set up SSH keys.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">7</div>
+                <div class="step-body">
+                    <h3>Collaborate with a Pull Request</h3>
+                    <p class="section-desc">PRs are how changes get reviewed before merging &mdash; the backbone of team workflows (and CI/CD triggers).</p>
+                    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>git switch -c update-readme
+echo "Built during the DevOps Lab course." &gt;&gt; README.md
+git commit -am <span class="str">"Add course note to README"</span>
+git push -u origin update-readme</div>
+                    <div class="info-box">
+                        <ul>
+                            <li>On GitHub, click <strong>"Compare &amp; pull request"</strong>.</li>
+                            <li>Add a title and description, then <strong>Create pull request</strong>.</li>
+                            <li>Review the diff, then <strong>Merge</strong> it into <code>main</code>.</li>
+                            <li>Back on your laptop: <code>git switch main &amp;&amp; git pull</code> to get the merged change.</li>
+                        </ul>
+                    </div>
+                    <div class="info-box success">
+                        <h3><i class="fa-solid fa-circle-check"></i> You now have the workflow</h3>
+                        <p>Branch &rarr; commit &rarr; push &rarr; pull request &rarr; merge. This exact loop is how virtually every software team ships code &mdash; and what triggers your CI/CD pipeline later.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cheat Sheet -->
+        <div class="section fade-up" id="cheatsheet">
+            <h2 class="section-title"><i class="fa-solid fa-table-list"></i> Git Cheat Sheet</h2>
+            <table class="dark-table">
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                    <tr><td><code>git init</code></td><td>Start tracking a folder</td></tr>
+                    <tr><td><code>git clone &lt;url&gt;</code></td><td>Copy a remote repo to your machine</td></tr>
+                    <tr><td><code>git status</code></td><td>See what's changed</td></tr>
+                    <tr><td><code>git add &lt;file&gt;</code> / <code>git add .</code></td><td>Stage changes</td></tr>
+                    <tr><td><code>git commit -m "msg"</code></td><td>Save a snapshot</td></tr>
+                    <tr><td><code>git log --oneline</code></td><td>View history</td></tr>
+                    <tr><td><code>git switch -c &lt;branch&gt;</code></td><td>Create &amp; switch to a branch</td></tr>
+                    <tr><td><code>git switch &lt;branch&gt;</code></td><td>Switch branches</td></tr>
+                    <tr><td><code>git merge &lt;branch&gt;</code></td><td>Merge a branch into the current one</td></tr>
+                    <tr><td><code>git push</code> / <code>git pull</code></td><td>Upload / download commits</td></tr>
+                    <tr><td><code>git diff</code></td><td>See line-by-line changes</td></tr>
+                    <tr><td><code>git restore &lt;file&gt;</code></td><td>Discard local changes to a file</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="section fade-up" id="troubleshooting">
+            <h2 class="section-title"><i class="fa-solid fa-screwdriver-wrench"></i> Troubleshooting</h2>
+            <table class="dark-table">
+                <thead><tr><th>Symptom</th><th>Likely cause &amp; fix</th></tr></thead>
+                <tbody>
+                    <tr><td>Push rejected (auth failed)</td><td>Use a Personal Access Token or SSH key, not your password.</td></tr>
+                    <tr><td><code>rejected ... fetch first</code></td><td>Remote has commits you don't &mdash; <code>git pull</code> then push.</td></tr>
+                    <tr><td>Merge conflict</td><td>Two changes clash &mdash; edit the marked lines, then <code>git add</code> + <code>git commit</code>.</td></tr>
+                    <tr><td>Committed a secret by mistake</td><td>Rotate the secret immediately; removing from history is hard once pushed.</td></tr>
+                    <tr><td>Committed to the wrong branch</td><td>Don't panic &mdash; branches are cheap. Ask before rewriting shared history.</td></tr>
+                    <tr><td><code>fatal: not a git repository</code></td><td>You're not inside a repo &mdash; <code>cd</code> into it or <code>git init</code>.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Challenge -->
+        <div class="section fade-up" id="challenge">
+            <h2 class="section-title"><i class="fa-solid fa-trophy"></i> Your Challenge</h2>
+            <div class="info-box">
+                <ul>
+                    <li>Add your <code>backup.sh</code> from Module 3 to the repo and commit it.</li>
+                    <li>Create a branch, make a change, open a PR, and merge it on GitHub.</li>
+                    <li>Use <code>git log --oneline --graph --all</code> to visualize your branch history.</li>
+                    <li><strong>Bonus:</strong> intentionally create a merge conflict in the README and resolve it.</li>
+                </ul>
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show hint for resolving a conflict</button>
+            <div class="solution-content">
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm"># Git marks conflicts in the file like this:</span>
+<span class="op">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+your version
+<span class="op">=======</span>
+their version
+<span class="op">&gt;&gt;&gt;&gt;&gt;&gt;&gt; other-branch</span>
+<span class="cm"># Edit to keep what you want, delete the markers, then:</span>
+git add README.md
+git commit</div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You can now</h3>
+                <p>Track changes with commits, branch and merge, push to GitHub, and collaborate via pull requests. You also created the <code>notes-app</code> repo you'll build on for the rest of the course.</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 5 &mdash; Networking Basics</strong>, the last foundation &mdash; how apps actually talk to each other, which you'll need the moment you start running containers.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="03_bash.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 3: Bash</a>
+            <a href="05_networking.html" class="nav-btn next">Module 5: Networking <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">DevOps Lab - Learn DevOps by Doing - albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Git &amp; GitHub</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#why">Why Version Control</a>
+        <a class="toc-item" href="#concepts">Mental Model</a>
+        <a class="toc-item" href="#lab">Hands-on Lab</a>
+        <a class="toc-item" href="#cheatsheet">Cheat Sheet</a>
+        <a class="toc-item" href="#troubleshooting">Troubleshooting</a>
+        <a class="toc-item" href="#challenge">Challenge</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('tc-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('tc-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){const content=btn.nextElementSibling;btn.classList.toggle('open');content.classList.toggle('show');btn.innerHTML=content.classList.contains('show')?'<i class="fa-solid fa-chevron-right"></i> Hide hint':'<i class="fa-solid fa-chevron-right"></i> Show hint for resolving a conflict';}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

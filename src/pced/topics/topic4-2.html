@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 4.2: Statistical Methods and Machine Learning | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu"><a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a></div>
+
+    <section class="hero"><div class="hero-content">
+        <h1>Topic 4.2: Statistical Methods and Machine Learning</h1>
+        <p class="hero-sub">Block 4: Data Analysis and Modeling</p>
+    </div></section>
+
+    <div class="container narrow">
+
+        <!-- Objectives Overview -->
+        <div class="section fade-up">
+            <h2><i class="fa-solid fa-bullseye"></i> Learning Objectives (3)</h2>
+            <div class="info-box">
+                <ul style="margin:0;padding-left:1.2rem;">
+                    <li>4.2.1 Descriptive Statistics for Dataset Analysis</li>
+                    <li>4.2.2 Importance of Test Datasets</li>
+                    <li>4.2.3 Supervised Learning Algorithms and Model Accuracy</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.2.1 Descriptive Statistics for Dataset Analysis -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj1">
+            <h2><i class="fa-solid fa-chart-bar"></i> 4.2.1 Descriptive Statistics for Dataset Analysis</h2>
+
+            <p>Descriptive statistics summarize and describe the main characteristics of a dataset. They provide a quick overview of data distribution, central tendency, and variability, forming the foundation for all data analysis.</p>
+
+            <div class="subsection">
+                <h3>Key Measures</h3>
+                <table class="dark-table">
+                    <tr>
+                        <th>Measure</th>
+                        <th>What It Tells You</th>
+                        <th>Formula / Concept</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Mean</strong></td>
+                        <td>Average value &mdash; the center of the data</td>
+                        <td>Sum of all values / Number of values</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Median</strong></td>
+                        <td>Middle value when data is sorted; robust to outliers</td>
+                        <td>50th percentile</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mode</strong></td>
+                        <td>Most frequently occurring value</td>
+                        <td>Value with highest frequency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Variance</strong></td>
+                        <td>Average squared deviation from the mean</td>
+                        <td>&Sigma;(x<sub>i</sub> - x&#772;)&sup2; / (n - 1)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Standard Deviation</strong></td>
+                        <td>Spread of values around the mean (in original units)</td>
+                        <td>&radic;Variance</td>
+                    </tr>
+                </table>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> Exam Tip:</strong>
+                    The mean is sensitive to outliers while the median is robust. If a dataset is heavily skewed (e.g., income data), the median is a better measure of central tendency.
+                </div>
+            </div>
+
+            <div class="subsection" id="obj1-pandas">
+                <h3>Using Pandas for Descriptive Statistics</h3>
+                <p>Pandas provides built-in methods that make computing descriptive statistics on DataFrames and Series straightforward.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Descriptive statistics with Pandas
+import pandas as pd
+
+# Sample dataset: employee performance
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve',
+            'Frank', 'Grace', 'Hank', 'Ivy', 'Jack'],
+    'Age': [28, 34, 45, 31, 29, 52, 38, 41, 26, 33],
+    'Salary': [55000, 72000, 95000, 60000, 58000,
+              110000, 78000, 85000, 48000, 67000],
+    'Score': [82, 91, 78, 88, 95, 70, 85, 76, 92, 87]
+}
+df = pd.DataFrame(data)
+
+# df.describe() - comprehensive summary of numeric columns
+print(df.describe())
+#          Age       Salary      Score
+# count  10.00     10.00       10.00
+# mean   35.70     72800.00    84.40
+# std     8.22     19236.17     7.89
+# min    26.00     48000.00    70.00
+# 25%    29.25     58500.00    78.50
+# 50%    33.50     69500.00    85.50
+# 75%    40.25     83250.00    90.25
+# max    52.00    110000.00    95.00
+
+# Individual statistic methods
+print("Mean salary:", df['Salary'].mean())        # 72800.0
+print("Median salary:", df['Salary'].median())    # 69500.0
+print("Mode of scores:", df['Score'].mode()[0])  # No single mode
+print("Std dev:", df['Salary'].std())              # 19236.17
+print("Variance:", df['Salary'].var())              # 370030000.0
+
+# Additional useful methods
+print("Min:", df['Score'].min())     # 70
+print("Max:", df['Score'].max())     # 95
+print("Sum:", df['Salary'].sum())   # 728000
+print("Count:", df['Age'].count()) # 10</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-info"></i> Key Detail: ddof parameter</strong>
+                    By default, Pandas uses <code>ddof=1</code> (sample standard deviation/variance), while NumPy uses <code>ddof=0</code> (population). This is a common exam question. You can specify <code>df['col'].std(ddof=0)</code> to match NumPy's default behavior.
+                </div>
+            </div>
+
+            <div class="subsection" id="obj1-numpy">
+                <h3>Using NumPy for Descriptive Statistics</h3>
+                <p>NumPy provides efficient functions for computing statistics on arrays. It is especially useful for large numerical datasets.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Descriptive statistics with NumPy
+import numpy as np
+
+salaries = np.array([55000, 72000, 95000, 60000, 58000,
+                     110000, 78000, 85000, 48000, 67000])
+
+print("Mean:", np.mean(salaries))        # 72800.0
+print("Median:", np.median(salaries))    # 69500.0
+print("Std (pop):", np.std(salaries))    # 18261.28 (ddof=0)
+print("Std (samp):", np.std(salaries, ddof=1))  # 19236.17
+print("Var (pop):", np.var(salaries))    # 333474000.0 (ddof=0)
+print("Var (samp):", np.var(salaries, ddof=1))  # 370526666.67
+
+# Percentiles and quantiles
+print("25th percentile:", np.percentile(salaries, 25))  # 58500.0
+print("75th percentile:", np.percentile(salaries, 75))  # 83250.0
+print("IQR:", np.percentile(salaries, 75) - np.percentile(salaries, 25))
+
+# NumPy does NOT have a built-in mode function
+# Use scipy.stats.mode() or pandas .mode() instead
+from scipy import stats
+mode_result = stats.mode(salaries, keepdims=True)
+print("Mode:", mode_result.mode[0])</div>
+            </div>
+
+            <div class="subsection" id="obj1-practical">
+                <h3>Practical Application: Trends, Anomalies, and Decisions</h3>
+
+                <p>Descriptive statistics serve three critical purposes in data analysis:</p>
+
+                <h4>1. Identifying Trends</h4>
+                <p>Comparing means, medians, and distributions across groups or time periods reveals patterns. For example, comparing average sales by quarter identifies seasonal trends.</p>
+
+                <h4>2. Detecting Anomalies</h4>
+                <p>Values that fall outside expected ranges (e.g., more than 2-3 standard deviations from the mean) signal potential data quality issues or genuinely unusual observations.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Detecting outliers using standard deviation
+mean_sal = df['Salary'].mean()
+std_sal = df['Salary'].std()
+
+# Flag values beyond 2 standard deviations
+lower = mean_sal - 2 * std_sal
+upper = mean_sal + 2 * std_sal
+
+outliers = df[(df['Salary'] &lt; lower) | (df['Salary'] &gt; upper)]
+print("Outliers:\n", outliers)
+
+# Using IQR method
+Q1 = df['Salary'].quantile(0.25)
+Q3 = df['Salary'].quantile(0.75)
+IQR = Q3 - Q1
+iqr_outliers = df[(df['Salary'] &lt; Q1 - 1.5 * IQR) |
+                  (df['Salary'] &gt; Q3 + 1.5 * IQR)]</div>
+
+                <h4>3. Supporting Decision-Making</h4>
+                <p>Summary statistics help stakeholders understand data at a glance without needing to examine every record. A manager can review average performance scores, salary distributions, and score variability to allocate bonuses.</p>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-triangle-exclamation"></i> Common Exam Pitfall:</strong>
+                Remember that <code>df.describe()</code> only includes numeric columns by default. To include non-numeric columns, use <code>df.describe(include='all')</code>. It shows count, unique, top, and freq for object columns.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.2.2 Importance of Test Datasets -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj2">
+            <h2><i class="fa-solid fa-flask-vial"></i> 4.2.2 Importance of Test Datasets</h2>
+
+            <p>In machine learning, evaluating a model on the same data it was trained on gives a misleadingly optimistic view of its performance. <strong>Test datasets</strong> are held-out portions of data that the model has never seen, used exclusively to assess generalization ability.</p>
+
+            <div class="subsection">
+                <h3>Why We Split Data</h3>
+                <table class="dark-table">
+                    <tr>
+                        <th>Concept</th>
+                        <th>Purpose</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Training Set</strong></td>
+                        <td>Used to train (fit) the model &mdash; the model learns patterns from this data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Test Set</strong></td>
+                        <td>Used to evaluate performance &mdash; measures how well the model generalizes to unseen data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validation Set</strong> (optional)</td>
+                        <td>Used during training to tune hyperparameters &mdash; prevents overfitting to test set</td>
+                    </tr>
+                </table>
+
+                <p>A typical split ratio is <strong>80% training / 20% testing</strong>, though 70/30 and 75/25 are also common. The key rule is: <strong>never use test data during training.</strong></p>
+            </div>
+
+            <div class="subsection" id="obj2-split">
+                <h3>Train/Test Split with sklearn</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Train/Test Split using scikit-learn
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import numpy as np
+
+# Create a sample dataset
+np.random.seed(42)
+n = 200
+X = pd.DataFrame({
+    'feature_1': np.random.randn(n),
+    'feature_2': np.random.randn(n),
+    'feature_3': np.random.uniform(0, 10, n)
+})
+y = (X['feature_1'] * 2 + X['feature_2'] + np.random.randn(n) * 0.5) > 0
+y = y.astype(int)
+
+# Split: 80% train, 20% test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,       # 20% for testing
+    random_state=42,     # reproducibility
+    stratify=y           # maintain class proportions
+)
+
+print(f"Training set size: {len(X_train)}")   # 160
+print(f"Test set size: {len(X_test)}")         # 40
+print(f"Training class distribution:\n{y_train.value_counts(normalize=True)}")
+print(f"Test class distribution:\n{y_test.value_counts(normalize=True)}")</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-info"></i> Key Parameters of train_test_split():</strong>
+                    <ul style="margin:0.5rem 0 0 0;padding-left:1.2rem;">
+                        <li><code>test_size</code> &mdash; Fraction (0.0 to 1.0) or absolute number of test samples</li>
+                        <li><code>random_state</code> &mdash; Seed for reproducibility; ensures the same split every time</li>
+                        <li><code>stratify</code> &mdash; Ensures the train and test sets have the same proportion of each class (critical for imbalanced datasets)</li>
+                        <li><code>shuffle</code> &mdash; Whether to shuffle data before splitting (default: True)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="obj2-leakage">
+                <h3>Data Leakage and Best Practices</h3>
+
+                <p><strong>Data leakage</strong> occurs when information from outside the training dataset is used to create the model. This leads to unrealistically high performance during evaluation but poor results in production.</p>
+
+                <h4>Common Sources of Data Leakage</h4>
+                <ul>
+                    <li><strong>Target leakage:</strong> Using features that are derived from or directly correlated with the target variable (e.g., using "total_charges" to predict "is_subscribed" when charges only exist for subscribers)</li>
+                    <li><strong>Train-test contamination:</strong> Normalizing or imputing missing values on the full dataset <em>before</em> splitting &mdash; test statistics leak into training</li>
+                    <li><strong>Temporal leakage:</strong> Using future data to predict the past (e.g., using Friday sales data to predict Thursday demand)</li>
+                </ul>
+
+                <h4>Best Practices for Unbiased Evaluation</h4>
+                <ol>
+                    <li><strong>Split first, then preprocess.</strong> Fit scalers and imputers on training data only, then transform test data.</li>
+                    <li><strong>Use stratification</strong> for classification tasks to maintain class balance.</li>
+                    <li><strong>Set a random_state</strong> for reproducible results.</li>
+                    <li><strong>Never peek at test data</strong> during feature engineering or model selection.</li>
+                    <li><strong>Use cross-validation</strong> for more reliable estimates of performance.</li>
+                </ol>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># CORRECT: Fit scaler on training data, transform both
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)  # fit + transform
+X_test_scaled = scaler.transform(X_test)         # transform only!
+
+# WRONG: This causes data leakage!
+# scaler.fit_transform(X)  # fitting on ALL data (train + test)</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-circle-exclamation"></i> Data Leakage Warning:</strong>
+                Always apply <code>fit_transform()</code> on the training set and <code>transform()</code> on the test set. Fitting on the entire dataset leaks test set statistics into the training process.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.2.3 Supervised Learning Algorithms and Model Accuracy -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="obj3">
+            <h2><i class="fa-solid fa-brain"></i> 4.2.3 Supervised Learning Algorithms and Model Accuracy</h2>
+
+            <p>Supervised learning uses labeled data (input-output pairs) to train models that can predict outcomes for new, unseen data. There are two main categories:</p>
+
+            <table class="dark-table">
+                <tr>
+                    <th>Type</th>
+                    <th>Target Variable</th>
+                    <th>Goal</th>
+                    <th>Example Algorithms</th>
+                </tr>
+                <tr>
+                    <td><strong>Classification</strong></td>
+                    <td>Categorical (discrete)</td>
+                    <td>Predict a class label</td>
+                    <td>Logistic Regression, Decision Trees, SVM, KNN, Random Forest</td>
+                </tr>
+                <tr>
+                    <td><strong>Regression</strong></td>
+                    <td>Continuous (numeric)</td>
+                    <td>Predict a numerical value</td>
+                    <td>Linear Regression, Polynomial Regression, Ridge, Lasso</td>
+                </tr>
+            </table>
+
+            <div class="subsection">
+                <h3>Characteristics of Common Algorithms</h3>
+                <table class="dark-table">
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Type</th>
+                        <th>Key Characteristics</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Linear Regression</strong></td>
+                        <td>Regression</td>
+                        <td>Assumes linear relationship; simple, interpretable; prone to underfitting with complex data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Logistic Regression</strong></td>
+                        <td>Classification</td>
+                        <td>Outputs probabilities via sigmoid; works for binary/multi-class; assumes linear decision boundary</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decision Trees</strong></td>
+                        <td>Both</td>
+                        <td>Splits data recursively; highly interpretable; prone to overfitting without pruning</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Forest</strong></td>
+                        <td>Both</td>
+                        <td>Ensemble of decision trees; reduces overfitting; less interpretable than single tree</td>
+                    </tr>
+                    <tr>
+                        <td><strong>K-Nearest Neighbors (KNN)</strong></td>
+                        <td>Both</td>
+                        <td>Instance-based; no training phase; sensitive to feature scaling and choice of k</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="subsection" id="obj3-overunder">
+                <h3>Overfitting, Underfitting, and the Bias-Variance Tradeoff</h3>
+
+                <h4>Overfitting</h4>
+                <p>Overfitting occurs when a model is <strong>too complex</strong> and learns the noise in the training data rather than the underlying pattern. It performs exceptionally well on training data but poorly on unseen test data.</p>
+                <ul>
+                    <li>High training accuracy, low test accuracy</li>
+                    <li>The model has <strong>memorized</strong> the training examples</li>
+                    <li>Too many parameters relative to the number of data points</li>
+                    <li>Example: A high-degree polynomial that passes through every training point</li>
+                </ul>
+
+                <h4>Underfitting</h4>
+                <p>Underfitting occurs when a model is <strong>too simple</strong> to capture the underlying patterns in the data. It performs poorly on both training and test data.</p>
+                <ul>
+                    <li>Low training accuracy, low test accuracy</li>
+                    <li>The model <strong>fails to learn</strong> the relationship between features and target</li>
+                    <li>Too few parameters or overly restrictive assumptions</li>
+                    <li>Example: Fitting a straight line to clearly curved data</li>
+                </ul>
+
+                <h4>The Bias-Variance Tradeoff</h4>
+                <p>Model error can be decomposed into three components: <strong>bias</strong>, <strong>variance</strong>, and <strong>irreducible error</strong> (noise). The goal is to find the sweet spot that minimizes total error.</p>
+
+                <table class="dark-table">
+                    <tr>
+                        <th>Component</th>
+                        <th>Definition</th>
+                        <th>Associated With</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Bias</strong></td>
+                        <td>Error from overly simplistic assumptions; the model consistently misses the true pattern</td>
+                        <td>Underfitting (too simple)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Variance</strong></td>
+                        <td>Error from sensitivity to small fluctuations in training data; predictions vary widely</td>
+                        <td>Overfitting (too complex)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Irreducible Error</strong></td>
+                        <td>Noise inherent in the data; cannot be reduced by any model</td>
+                        <td>Data itself</td>
+                    </tr>
+                </table>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-lightbulb"></i> How It Connects:</strong>
+                    <ul style="margin:0.5rem 0 0 0;padding-left:1.2rem;">
+                        <li><strong>Linear regression</strong> tends toward <strong>high bias / low variance</strong> (underfitting) &mdash; it assumes a linear relationship regardless of true data patterns.</li>
+                        <li><strong>High-degree polynomial regression</strong> tends toward <strong>low bias / high variance</strong> (overfitting) &mdash; it can fit training data perfectly but wildly fluctuates on new data.</li>
+                        <li>The optimal model complexity lies where <strong>total error (bias + variance)</strong> is minimized.</li>
+                    </ul>
+                </div>
+
+                <h4>Strategies to Prevent Overfitting</h4>
+                <ol>
+                    <li><strong>Cross-validation:</strong> Evaluate model on multiple folds of data to get a robust performance estimate</li>
+                    <li><strong>Regularization:</strong> Add penalty terms (L1/Lasso, L2/Ridge) that constrain model complexity</li>
+                    <li><strong>Simplify the model:</strong> Use fewer features or lower polynomial degree</li>
+                    <li><strong>More training data:</strong> Larger datasets reduce the chance of memorizing noise</li>
+                    <li><strong>Early stopping:</strong> Stop training when validation performance starts decreasing</li>
+                    <li><strong>Pruning:</strong> Remove branches from decision trees that add little predictive power</li>
+                </ol>
+            </div>
+
+            <div class="subsection" id="obj3-linear">
+                <h3>Linear Regression: Fitting and Evaluation</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Linear Regression with scikit-learn
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+# Generate sample regression data
+np.random.seed(42)
+X = np.random.rand(100, 1) * 10   # Feature: values 0-10
+y = 2.5 * X.flatten() + 5 + np.random.randn(100) * 2  # y = 2.5x + 5 + noise
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Create and fit the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Model parameters
+print(f"Coefficient (slope): {model.coef_[0]:.4f}")    # ~2.5
+print(f"Intercept: {model.intercept_:.4f}")              # ~5.0
+
+# Predictions
+y_train_pred = model.predict(X_train)
+y_test_pred = model.predict(X_test)
+
+# Evaluation metrics
+print(f"\nTraining R-squared: {r2_score(y_train, y_train_pred):.4f}")
+print(f"Test R-squared:     {r2_score(y_test, y_test_pred):.4f}")
+print(f"Training MSE:       {mean_squared_error(y_train, y_train_pred):.4f}")
+print(f"Test MSE:           {mean_squared_error(y_test, y_test_pred):.4f}")
+
+# R-squared interpretation:
+# - 1.0 = perfect predictions
+# - 0.0 = model no better than predicting the mean
+# - Negative = model worse than predicting the mean</div>
+            </div>
+
+            <div class="subsection" id="obj3-logistic">
+                <h3>Logistic Regression: Classification</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Logistic Regression for binary classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (accuracy_score, confusion_matrix,
+                             classification_report)
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+import numpy as np
+
+# Load the Iris dataset (simplified to binary: setosa vs not-setosa)
+iris = load_iris()
+X = iris.data
+y = (iris.target == 0).astype(int)  # 1 = setosa, 0 = not setosa
+
+# Split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Create and fit logistic regression
+log_model = LogisticRegression(random_state=42, max_iter=200)
+log_model.fit(X_train, y_train)
+
+# Predictions
+y_pred = log_model.predict(X_test)
+y_prob = log_model.predict_proba(X_test)  # probability estimates
+
+# Evaluation
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+#               Predicted 0   Predicted 1
+# Actual 0   [   TN            FP        ]
+# Actual 1   [   FN            TP        ]
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+#               precision    recall  f1-score   support
+#            0       1.00      1.00      1.00        20
+#            1       1.00      1.00      1.00        10
+#     accuracy                           1.00        30</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-circle-info"></i> Confusion Matrix Explained:</strong>
+                    <ul style="margin:0.5rem 0 0 0;padding-left:1.2rem;">
+                        <li><strong>True Positive (TP):</strong> Correctly predicted positive</li>
+                        <li><strong>True Negative (TN):</strong> Correctly predicted negative</li>
+                        <li><strong>False Positive (FP):</strong> Incorrectly predicted positive (Type I error)</li>
+                        <li><strong>False Negative (FN):</strong> Incorrectly predicted negative (Type II error)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="obj3-overfit-demo">
+                <h3>Demonstrating Overfitting with Polynomial Regression</h3>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Demonstrating overfitting vs underfitting with polynomial regression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+# Generate non-linear data: y = sin(x) + noise
+np.random.seed(42)
+X = np.sort(np.random.uniform(0, 6, 30)).reshape(-1, 1)
+y = np.sin(X).flatten() + np.random.randn(30) * 0.2
+
+# Split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# Compare different complexities
+degrees = [1, 4, 15]  # underfitting, good fit, overfitting
+
+for degree in degrees:
+    # Create polynomial regression pipeline
+    model = make_pipeline(
+        PolynomialFeatures(degree),
+        LinearRegression()
+    )
+    model.fit(X_train, y_train)
+
+    # Evaluate on both sets
+    train_score = r2_score(y_train, model.predict(X_train))
+    test_score = r2_score(y_test, model.predict(X_test))
+    train_mse = mean_squared_error(y_train, model.predict(X_train))
+    test_mse = mean_squared_error(y_test, model.predict(X_test))
+
+    print(f"\nDegree {degree}:")
+    print(f"  Train R2: {train_score:.4f}  |  Test R2: {test_score:.4f}")
+    print(f"  Train MSE: {train_mse:.4f} |  Test MSE: {test_mse:.4f}")
+
+# Expected output pattern:
+# Degree 1:  Low train R2, Low test R2     -> UNDERFITTING
+# Degree 4:  Good train R2, Good test R2   -> GOOD FIT
+# Degree 15: ~1.0 train R2, Low test R2    -> OVERFITTING</div>
+
+                <div class="info-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Key Takeaway:</strong>
+                    When training R&sup2; is much higher than test R&sup2;, the model is overfitting. When both are low, the model is underfitting. The best model has similar (and high) scores on both sets.
+                </div>
+            </div>
+
+            <div class="subsection" id="obj3-cv">
+                <h3>Cross-Validation</h3>
+                <p>Cross-validation provides a more reliable estimate of model performance by training and evaluating the model on multiple different subsets of the data.</p>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># K-Fold Cross-Validation
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+X = np.random.rand(100, 3)
+y = 3 * X[:, 0] + 2 * X[:, 1] - X[:, 2] + np.random.randn(100) * 0.5
+
+# Create model
+model = LinearRegression()
+
+# 5-Fold Cross-Validation
+kfold = KFold(n_splits=5, shuffle=True, random_state=42)
+scores = cross_val_score(model, X, y, cv=kfold, scoring='r2')
+
+print("Fold R2 scores:", scores)
+print(f"Mean R2: {scores.mean():.4f}")
+print(f"Std R2:  {scores.std():.4f}")
+
+# Cross-validation for classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+log_model = LogisticRegression(max_iter=200)
+
+# 5-fold cross-validation with accuracy scoring
+cv_scores = cross_val_score(log_model, iris.data, iris.target,
+                            cv=5, scoring='accuracy')
+print(f"\nLogistic Regression CV Accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
+
+# How K-Fold works:
+# Fold 1: [Test] [Train] [Train] [Train] [Train]
+# Fold 2: [Train] [Test] [Train] [Train] [Train]
+# Fold 3: [Train] [Train] [Test] [Train] [Train]
+# Fold 4: [Train] [Train] [Train] [Test] [Train]
+# Fold 5: [Train] [Train] [Train] [Train] [Test]
+# Final score = average of all 5 fold scores</div>
+            </div>
+
+            <div class="subsection" id="obj3-metrics">
+                <h3>Model Accuracy Metrics</h3>
+
+                <h4>Classification Metrics</h4>
+                <table class="dark-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Formula</th>
+                        <th>Best For</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Accuracy</strong></td>
+                        <td>(TP + TN) / Total</td>
+                        <td>Balanced datasets</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precision</strong></td>
+                        <td>TP / (TP + FP)</td>
+                        <td>When false positives are costly (spam detection)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recall (Sensitivity)</strong></td>
+                        <td>TP / (TP + FN)</td>
+                        <td>When false negatives are costly (disease screening)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>F1-Score</strong></td>
+                        <td>2 * (Precision * Recall) / (Precision + Recall)</td>
+                        <td>Imbalanced datasets; harmonic mean of precision and recall</td>
+                    </tr>
+                </table>
+
+                <h4>Regression Metrics</h4>
+                <table class="dark-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>What It Measures</th>
+                        <th>Ideal Value</th>
+                    </tr>
+                    <tr>
+                        <td><strong>R-squared (R&sup2;)</strong></td>
+                        <td>Proportion of variance in y explained by the model</td>
+                        <td>1.0 (closer to 1 is better)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MSE (Mean Squared Error)</strong></td>
+                        <td>Average of squared prediction errors; penalizes large errors</td>
+                        <td>0.0 (lower is better)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RMSE</strong></td>
+                        <td>Square root of MSE; in same units as target variable</td>
+                        <td>0.0 (lower is better)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MAE (Mean Absolute Error)</strong></td>
+                        <td>Average absolute difference between predicted and actual</td>
+                        <td>0.0 (lower is better)</td>
+                    </tr>
+                </table>
+
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button># Computing all metrics in Python
+from sklearn.metrics import (accuracy_score, precision_score,
+    recall_score, f1_score, confusion_matrix,
+    mean_squared_error, r2_score, mean_absolute_error)
+import numpy as np
+
+# --- Classification Metrics ---
+y_true_cls = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
+y_pred_cls = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0]
+
+print("Accuracy: ", accuracy_score(y_true_cls, y_pred_cls))   # 0.80
+print("Precision:", precision_score(y_true_cls, y_pred_cls))  # 0.80
+print("Recall:   ", recall_score(y_true_cls, y_pred_cls))     # 0.80
+print("F1-Score: ", f1_score(y_true_cls, y_pred_cls))         # 0.80
+
+cm = confusion_matrix(y_true_cls, y_pred_cls)
+print("Confusion Matrix:\n", cm)
+# [[TN, FP],
+#  [FN, TP]]
+
+# --- Regression Metrics ---
+y_true_reg = np.array([3.0, 5.0, 2.5, 7.0, 4.5])
+y_pred_reg = np.array([2.8, 5.2, 2.1, 6.8, 4.9])
+
+print("\nR-squared:", r2_score(y_true_reg, y_pred_reg))
+print("MSE:      ", mean_squared_error(y_true_reg, y_pred_reg))
+print("RMSE:     ", np.sqrt(mean_squared_error(y_true_reg, y_pred_reg)))
+print("MAE:      ", mean_absolute_error(y_true_reg, y_pred_reg))</div>
+            </div>
+
+            <div class="info-box">
+                <strong><i class="fa-solid fa-lightbulb"></i> Exam Tip: Choosing the Right Metric</strong>
+                <ul style="margin:0.5rem 0 0 0;padding-left:1.2rem;">
+                    <li>Use <strong>accuracy</strong> when classes are balanced.</li>
+                    <li>Use <strong>precision</strong> when the cost of false positives is high (e.g., spam filter marking important emails as spam).</li>
+                    <li>Use <strong>recall</strong> when the cost of false negatives is high (e.g., failing to detect a disease).</li>
+                    <li>Use <strong>F1-score</strong> when you need a balance between precision and recall, especially with imbalanced data.</li>
+                    <li>Use <strong>R-squared</strong> and <strong>MSE</strong> for regression problems.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- Practice Quiz -->
+        <!-- ============================================================ -->
+        <div class="section fade-up" id="quiz">
+            <h2><i class="fa-solid fa-circle-question"></i> Practice Quiz: Statistical Methods and Machine Learning</h2>
+            <p>Test your understanding with these 10 questions. Click on an option to check your answer.</p>
+
+            <!-- Q1 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q1: What does the <code>df.describe()</code> method return by default?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) Summary statistics for all columns including object types</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">B) Summary statistics (count, mean, std, min, 25%, 50%, 75%, max) for numeric columns only</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">C) Only the mean and standard deviation of all columns</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) A correlation matrix of all numeric columns</div>
+                <div class="quiz-explanation"><strong>Correct: B.</strong> By default, <code>df.describe()</code> computes count, mean, std, min, 25th percentile, 50th percentile (median), 75th percentile, and max for numeric columns only. Use <code>df.describe(include='all')</code> to include non-numeric columns.</div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q2: By default, <code>np.std()</code> computes the population standard deviation (ddof=0), while <code>df.std()</code> in Pandas computes the sample standard deviation (ddof=1). What is the practical difference?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) There is no practical difference; both produce the same value</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">B) The sample standard deviation (ddof=1) divides by (n-1) and is slightly larger, providing an unbiased estimate for sample data</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">C) The population standard deviation (ddof=0) is always larger because it divides by n</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) Pandas always gives incorrect results for standard deviation</div>
+                <div class="quiz-explanation"><strong>Correct: B.</strong> Dividing by (n-1) instead of n corrects for the bias in estimating the population variance from a sample. This is called Bessel's correction. The sample std (ddof=1) is slightly larger than the population std (ddof=0). Both NumPy and Pandas can use either, but their defaults differ.</div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q3: Why is it critical to split data into training and testing sets before model evaluation?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) To reduce the size of the dataset and speed up training</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">B) To ensure the model trains on only easy examples</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">C) To evaluate how well the model generalizes to unseen data, preventing overly optimistic performance estimates</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) Because scikit-learn requires the data to be split before training</div>
+                <div class="quiz-explanation"><strong>Correct: C.</strong> Evaluating on the same data used for training gives misleadingly high performance metrics because the model has already memorized the training examples. A separate test set provides an honest estimate of how the model performs on new, unseen data.</div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q4: What is data leakage?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) When the dataset is too small to train a model</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">B) When information from outside the training set is used during model training, leading to unrealistically high performance</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">C) When a model underfits the data due to insufficient features</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) When training data is stored in an insecure database</div>
+                <div class="quiz-explanation"><strong>Correct: B.</strong> Data leakage occurs when test set information bleeds into the training process. A common example is fitting a scaler on the entire dataset (train + test) before splitting, which allows the model to learn from test data statistics. Always split first, then preprocess.</div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q5: A model achieves 99% accuracy on the training set but only 55% on the test set. This is most likely a case of:</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) Underfitting</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">B) Overfitting</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">C) A good generalization</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) Data leakage</div>
+                <div class="quiz-explanation"><strong>Correct: B.</strong> A large gap between training accuracy (99%) and test accuracy (55%) is the hallmark of overfitting. The model has memorized the training data (including its noise) but cannot generalize to new data. The model is too complex for the amount of training data.</div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q6: In the bias-variance tradeoff, a simple linear regression model applied to highly non-linear data tends to have:</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">A) High bias and low variance</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">B) Low bias and high variance</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">C) Low bias and low variance</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) High bias and high variance</div>
+                <div class="quiz-explanation"><strong>Correct: A.</strong> Linear regression makes strong assumptions about linearity. When applied to non-linear data, it consistently underfits (high bias) because it cannot capture the true pattern. However, its predictions are stable across different training sets (low variance).</div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q7: What is the purpose of the <code>stratify</code> parameter in <code>train_test_split()</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) To sort the data before splitting</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">B) To increase the size of the test set</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">C) To ensure both training and test sets have the same proportion of each class</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) To apply feature scaling automatically</div>
+                <div class="quiz-explanation"><strong>Correct: C.</strong> The <code>stratify</code> parameter ensures that the class distribution in the original dataset is preserved in both the training and test splits. This is especially important for imbalanced datasets where one class is underrepresented.</div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q8: Which metric is most appropriate when the cost of false negatives is very high (e.g., failing to diagnose a serious disease)?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) Accuracy</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">B) Precision</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">C) Recall</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) R-squared</div>
+                <div class="quiz-explanation"><strong>Correct: C.</strong> Recall = TP / (TP + FN) measures the proportion of actual positives that are correctly identified. When false negatives are costly (missing a disease diagnosis), maximizing recall ensures that as many true positive cases as possible are detected, even at the expense of more false positives.</div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q9: In 5-fold cross-validation, how many times is the model trained and evaluated?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) 1 time</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">B) 5 times, each using a different 20% of the data as the test set</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">C) 5 times, each using 50% of the data for training</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) 25 times, testing every combination of folds</div>
+                <div class="quiz-explanation"><strong>Correct: B.</strong> In 5-fold cross-validation, the data is divided into 5 equal parts. The model is trained 5 times, each time using 4 folds (80%) for training and 1 fold (20%) for testing. Each fold serves as the test set exactly once. The final performance metric is the average across all 5 folds.</div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="quiz-box" data-section="q42">
+                <div class="quiz-question">Q10: Which of the following strategies helps prevent overfitting?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">A) Increasing model complexity by adding more polynomial features</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">B) Training the model for more iterations without a stopping criterion</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'q42')">C) Applying regularization (e.g., L1 or L2 penalty) and using cross-validation</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'q42')">D) Removing the test set and training on all available data</div>
+                <div class="quiz-explanation"><strong>Correct: C.</strong> Regularization (L1/Lasso or L2/Ridge) adds a penalty term that discourages overly complex models by constraining large coefficients. Combined with cross-validation for robust performance estimation, these are the primary strategies to combat overfitting. Options A, B, and D would all increase or mask overfitting.</div>
+            </div>
+
+            <div id="score-q42"></div>
+        </div>
+
+        <!-- Page Navigation -->
+        <div class="page-nav">
+            <a href="topic4-1.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Previous: 4.1 Pandas and NumPy</a>
+            <a href="topic5-1.html" class="nav-btn next">Next: 5.1 Data Visualization <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+
+    <div class="toc" id="toc">
+        <h4>Navigation</h4>
+        <a class="toc-item" href="#obj1">4.2.1 Descriptive Statistics</a>
+        <a class="toc-item" href="#obj1-pandas">Pandas Statistics</a>
+        <a class="toc-item" href="#obj1-numpy">NumPy Statistics</a>
+        <a class="toc-item" href="#obj1-practical">Trends &amp; Anomalies</a>
+        <a class="toc-item" href="#obj2">4.2.2 Test Datasets</a>
+        <a class="toc-item" href="#obj2-split">Train/Test Split</a>
+        <a class="toc-item" href="#obj2-leakage">Data Leakage</a>
+        <a class="toc-item" href="#obj3">4.2.3 Supervised Learning</a>
+        <a class="toc-item" href="#obj3-overunder">Overfitting &amp; Underfitting</a>
+        <a class="toc-item" href="#obj3-linear">Linear Regression</a>
+        <a class="toc-item" href="#obj3-logistic">Logistic Regression</a>
+        <a class="toc-item" href="#obj3-overfit-demo">Overfitting Demo</a>
+        <a class="toc-item" href="#obj3-cv">Cross-Validation</a>
+        <a class="toc-item" href="#obj3-metrics">Accuracy Metrics</a>
+        <a class="toc-item" href="#quiz">Practice Quiz</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        window.addEventListener('scroll',()=>{const y=window.scrollY;document.getElementById('scrollTop').classList.toggle('visible',y>500);document.getElementById('toc').classList.toggle('visible',y>500);});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+        function copyCode(btn){const code=btn.parentElement.textContent.replace(' Copy','').trim();navigator.clipboard.writeText(code);btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);}
+        const scores={};
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';if(!scores[section])scores[section]={total:0,correct:0};scores[section].total++;if(correct){el.classList.add('correct');scores[section].correct++;}else{el.classList.add('incorrect');box.querySelectorAll('.quiz-option').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('correct');});}box.querySelector('.quiz-explanation').classList.add('show');const sm=document.getElementById('score-'+section);if(sm){const s=scores[section];sm.innerHTML='<h4>Section Score</h4><div class="score">'+s.correct+'/'+s.total+'</div>';}}
+    </script>
+</body>
+</html>

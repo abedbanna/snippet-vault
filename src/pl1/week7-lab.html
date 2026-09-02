@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 7: Lab — Inheritance | PL1 - Java (601112)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px;transition:width .4s ease}
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+        .section-title i{color:var(--primary);font-size:1.2rem}
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+        .usecase-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.9rem;line-height:1.7;color:var(--text2)}
+        .usecase-box i{color:var(--secondary);margin-right:.4rem}
+        .usecase-box strong{color:var(--secondary)}
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+        @media(max-width:768px){.nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}.nav-links.open{display:flex}.mobile-toggle{display:block}.hero h1{font-size:1.8rem}.exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week7.html">&larr; Week 7</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week7.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 7</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 7: Lab — <span class="gradient">Inheritance</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 11 &amp; Liang</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 9 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1 -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Basic Inheritance — Animal &amp; Dog</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> In a pet management system, all animals share common properties (name, age) and behaviors (makeSound). A Dog <em>is-a</em> Animal — it inherits those features and adds its own (breed). This is the most fundamental inheritance pattern you will use everywhere.</div>
+                <div class="info-box">Create an <code>Animal</code> class with fields <code>name</code> (String) and <code>age</code> (int), a constructor, and a method <code>makeSound()</code> that prints <strong>"Animal sound"</strong>. Create a <code>Dog</code> class that <strong>extends Animal</strong>, adds a <code>breed</code> field, calls <code>super(name, age)</code> in its constructor, and overrides <code>makeSound()</code> to print <strong>"Woof!"</strong>. In <code>main</code>, create a Dog and call both its own method and verify it has the Animal fields.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Name: Rex, Age: 3, Breed: Labrador
+Woof!
+Rex is 3 years old.</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" spellcheck="false">class Animal {
+    // Fields: name (String), age (int)
+
+
+    // Constructor: Animal(String name, int age)
+
+
+    // makeSound() — prints "Animal sound"
+
+}
+
+class Dog extends Animal {
+    // Field: breed (String)
+
+
+    // Constructor: Dog(String name, int age, String breed)
+    // Call super(name, age) first!
+
+
+    // Override makeSound() — prints "Woof!"
+
+}
+
+public class TestDog {
+    public static void main(String[] args) {
+        Dog d = new Dog("Rex", 3, "Labrador");
+        System.out.println("Name: " + d.name + ", Age: " + d.age + ", Breed: " + d.breed);
+        d.makeSound();
+        System.out.println(d.name + " is " + d.age + " years old.");
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">Animal constructor: <code>Animal(String name, int age) { this.name = name; this.age = age; }</code>. Dog: <code>class Dog extends Animal { String breed; Dog(String name, int age, String breed) { super(name, age); this.breed = breed; } }</code>. Override: add <code>@Override</code> then <code>public void makeSound() { System.out.println("Woof!"); }</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2 -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>super() Constructor — Person &amp; Employee</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> An HR system stores people and employees. Every employee is a person first — they have a name and age. The <code>super()</code> call ensures the parent class sets up its own fields properly before the child adds its own. Skipping it (when no no-arg constructor exists) causes a compile error.</div>
+                <div class="info-box">Create a <code>Person</code> class with <code>name</code> (String) and <code>age</code> (int), a constructor, and a <code>display()</code> method that prints <strong>"Person: [name], Age: [age]"</strong>. Create an <code>Employee</code> class that <strong>extends Person</strong>, adds <code>jobTitle</code> (String) and <code>salary</code> (double), uses <code>super(name, age)</code>, and overrides <code>display()</code> to print the person info <strong>plus</strong> job and salary. In <code>main</code>, test both classes.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Person: Hana, Age: 25
+Person: Sami, Age: 30
+Job: Engineer, Salary: 5000.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" spellcheck="false">class Person {
+    // Fields: name (String), age (int)
+
+
+    // Constructor: Person(String name, int age)
+
+
+    // display() — prints "Person: [name], Age: [age]"
+
+}
+
+class Employee extends Person {
+    // Fields: jobTitle (String), salary (double)
+
+
+    // Constructor: Employee(String name, int age, String jobTitle, double salary)
+    // Call super(name, age) first!
+
+
+    // Override display() — print Person info, then job and salary
+
+}
+
+public class TestEmployee {
+    public static void main(String[] args) {
+        Person p = new Person("Hana", 25);
+        p.display();
+
+        Employee e = new Employee("Sami", 30, "Engineer", 5000.0);
+        e.display();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Employee constructor: <code>Employee(String name, int age, String jobTitle, double salary) { super(name, age); this.jobTitle = jobTitle; this.salary = salary; }</code>. Override display: <code>@Override public void display() { super.display(); System.out.println("Job: " + jobTitle + ", Salary: " + salary); }</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3 -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Calling super.method() — Vehicle &amp; Car</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> When overriding a method, you sometimes still want the parent's version to run first (e.g., to build on it rather than fully replace it). <code>super.describe()</code> lets you include the parent's output before adding child-specific details — avoiding code duplication.</div>
+                <div class="info-box">Create a <code>Vehicle</code> class with <code>brand</code> (String) and <code>speed</code> (int), a constructor, and a <code>describe()</code> method that prints <strong>"Vehicle: [brand], Max Speed: [speed] km/h"</strong>. Create a <code>Car</code> class that <strong>extends Vehicle</strong>, adds <code>numDoors</code> (int), and overrides <code>describe()</code> — calling <code>super.describe()</code> first, then printing <strong>"Doors: [numDoors]"</strong>. Test in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Vehicle: Toyota, Max Speed: 180 km/h
+Doors: 4</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" spellcheck="false">class Vehicle {
+    // Fields: brand (String), speed (int)
+
+
+    // Constructor: Vehicle(String brand, int speed)
+
+
+    // describe() — prints "Vehicle: [brand], Max Speed: [speed] km/h"
+
+}
+
+class Car extends Vehicle {
+    // Field: numDoors (int)
+
+
+    // Constructor: Car(String brand, int speed, int numDoors)
+    // Use super(brand, speed)
+
+
+    // Override describe() — call super.describe() FIRST, then print "Doors: [numDoors]"
+
+}
+
+public class TestCar {
+    public static void main(String[] args) {
+        Car c = new Car("Toyota", 180, 4);
+        c.describe();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Car's override: <code>@Override public void describe() { super.describe(); System.out.println("Doors: " + numDoors); }</code>. The <code>super.describe()</code> must come before any Car-specific printing so the output order matches exactly.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4 -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>Method Overriding — Shape &amp; Rectangle</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A drawing application has many shapes. Each shape has an area and perimeter, but the formula differs by shape. The parent <code>Shape</code> provides a default implementation (returning 0), while each subclass overrides it with the correct formula. The <code>@Override</code> annotation lets the compiler catch signature mistakes.</div>
+                <div class="info-box">Create a <code>Shape</code> class with a <code>color</code> field (String), a constructor, and two methods <code>getArea()</code> and <code>getPerimeter()</code> — both return <code>0.0</code>. Create a <code>Rectangle</code> class that extends <code>Shape</code>, adds <code>width</code> and <code>height</code> (double), and uses <code>@Override</code> to implement both methods correctly. Print results in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Color: Blue
+Area: 15.0
+Perimeter: 16.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" spellcheck="false">class Shape {
+    String color;
+
+    // Constructor: Shape(String color)
+
+
+    // getArea() — returns 0.0
+
+
+    // getPerimeter() — returns 0.0
+
+}
+
+class Rectangle extends Shape {
+    double width, height;
+
+    // Constructor: Rectangle(String color, double width, double height)
+    // Use super(color)
+
+
+    // @Override getArea() — returns width * height
+
+
+    // @Override getPerimeter() — returns 2 * (width + height)
+
+}
+
+public class TestShape {
+    public static void main(String[] args) {
+        Rectangle r = new Rectangle("Blue", 3.0, 5.0);
+        System.out.println("Color: " + r.color);
+        System.out.println("Area: " + r.getArea());
+        System.out.println("Perimeter: " + r.getPerimeter());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4">Rectangle constructor: <code>Rectangle(String color, double width, double height) { super(color); this.width = width; this.height = height; }</code>. Override: <code>@Override public double getArea() { return width * height; }</code> and <code>@Override public double getPerimeter() { return 2 * (width + height); }</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5 -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>protected Access Modifier — BankAccount &amp; SavingsAccount</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A bank's base account keeps its balance <code>protected</code> — not <code>private</code> — so that specialized subclasses (like SavingsAccount) can access it directly without going through getters. External code still can't touch it. This is the key role of <code>protected</code> in inheritance.</div>
+                <div class="info-box">Create a <code>BankAccount</code> class with a <strong>protected</strong> field <code>balance</code> (double), a constructor, and a <code>deposit(double amount)</code> method that adds to balance, plus a <code>getBalance()</code> getter. Create a <code>SavingsAccount</code> that <strong>extends BankAccount</strong>, adds an <code>interestRate</code> (double), and has an <code>applyInterest()</code> method that directly uses <code>balance += balance * interestRate</code>. Test in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Balance after deposit: 1500.0
+Balance after interest: 1575.0</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" spellcheck="false">class BankAccount {
+    // protected balance (double)
+
+
+    // Constructor: BankAccount(double balance)
+
+
+    // deposit(double amount) — adds to balance
+
+
+    // getBalance() — returns balance
+
+}
+
+class SavingsAccount extends BankAccount {
+    // Field: interestRate (double)
+
+
+    // Constructor: SavingsAccount(double balance, double interestRate)
+    // Use super(balance)
+
+
+    // applyInterest() — directly access balance: balance += balance * interestRate
+
+}
+
+public class TestBank {
+    public static void main(String[] args) {
+        SavingsAccount acc = new SavingsAccount(1000.0, 0.05);
+        acc.deposit(500.0);
+        System.out.println("Balance after deposit: " + acc.getBalance());
+        acc.applyInterest();
+        System.out.println("Balance after interest: " + acc.getBalance());
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Declare: <code>protected double balance;</code>. applyInterest: <code>public void applyInterest() { balance += balance * interestRate; }</code>. Note: this works because balance is <code>protected</code>, not <code>private</code>. If it were private, you'd need <code>setBalance(getBalance() + ...)</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 6 -->
+        <div class="exercise-card" id="ex6">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">6</span>Overriding toString() — Book</h3>
+                <span class="exercise-status" id="status6"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> Every Java class inherits <code>toString()</code> from <code>Object</code>, but the default output is a cryptic memory address like <code>Book@1b6d3586</code>. Overriding it makes objects human-readable — <code>System.out.println(book)</code> automatically calls your version.</div>
+                <div class="info-box">Create a <code>Book</code> class with private fields <code>title</code> (String), <code>author</code> (String), and <code>pages</code> (int). Add a constructor and <strong>override <code>toString()</code></strong> from <code>Object</code> to return <strong>"Book[title=..., author=..., pages=...]"</strong>. In <code>main</code>, create two books and print them directly with <code>System.out.println()</code> — Java calls <code>toString()</code> automatically.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Book[title=Clean Code, author=Robert Martin, pages=431]
+Book[title=Effective Java, author=Joshua Bloch, pages=412]</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(6)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor6" spellcheck="false">class Book {
+    // Private fields: title (String), author (String), pages (int)
+
+
+    // Constructor: Book(String title, String author, int pages)
+
+
+    // @Override toString() — returns "Book[title=..., author=..., pages=...]"
+
+}
+
+public class TestBook {
+    public static void main(String[] args) {
+        Book b1 = new Book("Clean Code", "Robert Martin", 431);
+        Book b2 = new Book("Effective Java", "Joshua Bloch", 412);
+
+        System.out.println(b1);  // calls toString() automatically
+        System.out.println(b2);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(5)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(5)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(5)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback6"></div>
+                <button class="hint-toggle" onclick="toggleHint(6)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint6"><code>@Override public String toString() { return "Book[title=" + title + ", author=" + author + ", pages=" + pages + "]"; }</code>. Since fields are private, you can access them directly inside the class. <code>System.out.println(b1)</code> automatically calls <code>b1.toString()</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 7 -->
+        <div class="exercise-card" id="ex7">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">7</span>Overriding equals() — Point</h3>
+                <span class="exercise-status" id="status7"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> The default <code>equals()</code> from <code>Object</code> compares references (memory addresses), not content. Two separate <code>Point(1, 2)</code> objects will be "not equal" by default even though they represent the same coordinates. Overriding <code>equals()</code> fixes this by comparing field values.</div>
+                <div class="info-box">Create a <code>Point</code> class with fields <code>x</code> and <code>y</code> (int). Add a constructor. <strong>Override <code>equals(Object obj)</code></strong>: first check if <code>obj instanceof Point</code>, then cast and compare <code>x</code> and <code>y</code> values. Also <strong>override <code>toString()</code></strong> to return <strong>"Point(x, y)"</strong>. In <code>main</code>, compare points using both <code>==</code> and <code>.equals()</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>p1 = Point(2, 3)
+p2 = Point(2, 3)
+p1 == p2: false
+p1.equals(p2): true</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(7)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor7" spellcheck="false">class Point {
+    int x, y;
+
+    // Constructor: Point(int x, int y)
+
+
+    // @Override toString() — returns "Point(x, y)"
+
+
+    // @Override equals(Object obj)
+    // Step 1: if (obj instanceof Point)
+    // Step 2: cast — Point other = (Point) obj;
+    // Step 3: return this.x == other.x && this.y == other.y
+    // Otherwise: return false
+
+}
+
+public class TestPoint {
+    public static void main(String[] args) {
+        Point p1 = new Point(2, 3);
+        Point p2 = new Point(2, 3);
+
+        System.out.println("p1 = " + p1);
+        System.out.println("p2 = " + p2);
+        System.out.println("p1 == p2: " + (p1 == p2));
+        System.out.println("p1.equals(p2): " + p1.equals(p2));
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(6)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(6)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(6)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback7"></div>
+                <button class="hint-toggle" onclick="toggleHint(7)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint7"><code>@Override public boolean equals(Object obj) { if (obj instanceof Point) { Point other = (Point) obj; return this.x == other.x && this.y == other.y; } return false; }</code>. The <code>instanceof</code> check prevents a <code>ClassCastException</code> if a non-Point is passed.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 8 -->
+        <div class="exercise-card" id="ex8">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">8</span>Override vs. Overload — Calculator</h3>
+                <span class="exercise-status" id="status8"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> Overloading means same name, different parameters — resolved at compile time. Overriding means same name, same parameters in a subclass — resolved at runtime. This exercise puts both side by side so you can see the key difference: overloading stays in one class, overriding spans a parent-child pair.</div>
+                <div class="info-box">Create a <code>Calculator</code> class with an <strong>overloaded</strong> <code>add()</code> method: one takes two <code>int</code>s, another takes three <code>int</code>s, and a third takes two <code>double</code>s. Also add a <code>multiply(int a, int b)</code> that returns <code>a * b</code>. Create <code>SmartCalc</code> that <strong>extends Calculator</strong> and <strong>overrides</strong> <code>multiply(int a, int b)</code> to print a message before returning the result. Test both in <code>main</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>add(2,3) = 5
+add(1,2,3) = 6
+add(1.5,2.5) = 4.0
+multiply(4,5) = 20
+[Smart] Multiplying 4 x 5
+smartMultiply(4,5) = 20</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(8)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor8" spellcheck="false">class Calculator {
+    // Overloaded add() — 3 versions:
+    // add(int a, int b) returns a + b
+    // add(int a, int b, int c) returns a + b + c
+    // add(double a, double b) returns a + b
+
+
+    // multiply(int a, int b) returns a * b
+
+}
+
+class SmartCalc extends Calculator {
+    // @Override multiply(int a, int b)
+    // Print "[Smart] Multiplying a x b" first, then return a * b
+
+}
+
+public class TestCalc {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        System.out.println("add(2,3) = " + calc.add(2, 3));
+        System.out.println("add(1,2,3) = " + calc.add(1, 2, 3));
+        System.out.println("add(1.5,2.5) = " + calc.add(1.5, 2.5));
+        System.out.println("multiply(4,5) = " + calc.multiply(4, 5));
+
+        SmartCalc smart = new SmartCalc();
+        System.out.println("[Smart] Multiplying 4 x 5");
+        System.out.println("smartMultiply(4,5) = " + smart.multiply(4, 5));
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(7)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(7)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(7)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback8"></div>
+                <button class="hint-toggle" onclick="toggleHint(8)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint8">Three add methods: <code>int add(int a, int b)</code>, <code>int add(int a, int b, int c)</code>, <code>double add(double a, double b)</code> — same name, different parameters = overloading. SmartCalc: <code>@Override public int multiply(int a, int b) { System.out.println("[Smart] Multiplying " + a + " x " + b); return a * b; }</code> — same signature in subclass = overriding.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 9 -->
+        <div class="exercise-card" id="ex9">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">9</span>Multi-level Inheritance — Animal → Mammal → Dog</h3>
+                <span class="exercise-status" id="status9"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> Java allows a chain of inheritance: <code>Animal → Mammal → Dog</code>. When you create a <code>Dog</code>, Java first calls <code>Animal()</code>, then <code>Mammal()</code>, then <code>Dog()</code> — building from the top down. At the bottom, Dog has access to everything defined in all three levels.</div>
+                <div class="info-box">Create three classes in a chain: <strong>Animal</strong> (fields: <code>name</code>, <code>alive</code>=true; method: <code>breathe()</code> prints <strong>"[name] is breathing"</strong>), <strong>Mammal extends Animal</strong> (adds <code>furColor</code>; method: <code>nurse()</code> prints <strong>"[name] is nursing young"</strong>), and <strong>Dog extends Mammal</strong> (adds <code>breed</code>; overrides method <code>makeSound()</code> printing <strong>"Woof! I am [name]"</strong>). In <code>main</code>, create one Dog and call all three methods.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Buddy is breathing
+Buddy is nursing young
+Woof! I am Buddy
+Breed: Golden Retriever, Fur: Golden, Alive: true</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(9)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor9" spellcheck="false">class Animal {
+    String name;
+    boolean alive = true;
+
+    // Constructor: Animal(String name)
+
+
+    // breathe() — prints "[name] is breathing"
+
+}
+
+class Mammal extends Animal {
+    String furColor;
+
+    // Constructor: Mammal(String name, String furColor)
+    // Use super(name)
+
+
+    // nurse() — prints "[name] is nursing young"
+
+}
+
+class Dog extends Mammal {
+    String breed;
+
+    // Constructor: Dog(String name, String furColor, String breed)
+    // Use super(name, furColor)
+
+
+    // makeSound() — prints "Woof! I am [name]"
+
+}
+
+public class TestChain {
+    public static void main(String[] args) {
+        Dog dog = new Dog("Buddy", "Golden", "Golden Retriever");
+        dog.breathe();
+        dog.nurse();
+        dog.makeSound();
+        System.out.println("Breed: " + dog.breed + ", Fur: " + dog.furColor + ", Alive: " + dog.alive);
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(8)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(8)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(8)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback9"></div>
+                <button class="hint-toggle" onclick="toggleHint(9)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint9">Mammal: <code>Mammal(String name, String furColor) { super(name); this.furColor = furColor; }</code>. Dog: <code>Dog(String name, String furColor, String breed) { super(name, furColor); this.breed = breed; }</code>. Each level passes its relevant args up. Dog inherits <code>breathe()</code> from Animal and <code>nurse()</code> from Mammal — no need to rewrite them.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  {
+    skeleton: `class Animal {\n    // Fields: name (String), age (int)\n\n\n    // Constructor: Animal(String name, int age)\n\n\n    // makeSound() — prints "Animal sound"\n\n}\n\nclass Dog extends Animal {\n    // Field: breed (String)\n\n\n    // Constructor: Dog(String name, int age, String breed)\n    // Call super(name, age) first!\n\n\n    // Override makeSound() — prints "Woof!"\n\n}\n\npublic class TestDog {\n    public static void main(String[] args) {\n        Dog d = new Dog("Rex", 3, "Labrador");\n        System.out.println("Name: " + d.name + ", Age: " + d.age + ", Breed: " + d.breed);\n        d.makeSound();\n        System.out.println(d.name + " is " + d.age + " years old.");\n    }\n}`,
+    keywords: ["extends Animal", "super(", "makeSound", "@Override", "new Dog"]
+  },
+  {
+    skeleton: `class Person {\n    // Fields: name (String), age (int)\n\n\n    // Constructor: Person(String name, int age)\n\n\n    // display() — prints "Person: [name], Age: [age]"\n\n}\n\nclass Employee extends Person {\n    // Fields: jobTitle (String), salary (double)\n\n\n    // Constructor: Employee(String name, int age, String jobTitle, double salary)\n    // Call super(name, age) first!\n\n\n    // Override display() — print Person info, then job and salary\n\n}\n\npublic class TestEmployee {\n    public static void main(String[] args) {\n        Person p = new Person("Hana", 25);\n        p.display();\n\n        Employee e = new Employee("Sami", 30, "Engineer", 5000.0);\n        e.display();\n    }\n}`,
+    keywords: ["extends Person", "super(", "display", "@Override", "new Employee", "jobTitle"]
+  },
+  {
+    skeleton: `class Vehicle {\n    // Fields: brand (String), speed (int)\n\n\n    // Constructor: Vehicle(String brand, int speed)\n\n\n    // describe() — prints "Vehicle: [brand], Max Speed: [speed] km/h"\n\n}\n\nclass Car extends Vehicle {\n    // Field: numDoors (int)\n\n\n    // Constructor: Car(String brand, int speed, int numDoors)\n    // Use super(brand, speed)\n\n\n    // Override describe() — call super.describe() FIRST, then print "Doors: [numDoors]"\n\n}\n\npublic class TestCar {\n    public static void main(String[] args) {\n        Car c = new Car("Toyota", 180, 4);\n        c.describe();\n    }\n}`,
+    keywords: ["extends Vehicle", "super(", "super.describe()", "@Override", "numDoors"]
+  },
+  {
+    skeleton: `class Shape {\n    String color;\n\n    // Constructor: Shape(String color)\n\n\n    // getArea() — returns 0.0\n\n\n    // getPerimeter() — returns 0.0\n\n}\n\nclass Rectangle extends Shape {\n    double width, height;\n\n    // Constructor: Rectangle(String color, double width, double height)\n    // Use super(color)\n\n\n    // @Override getArea() — returns width * height\n\n\n    // @Override getPerimeter() — returns 2 * (width + height)\n\n}\n\npublic class TestShape {\n    public static void main(String[] args) {\n        Rectangle r = new Rectangle("Blue", 3.0, 5.0);\n        System.out.println("Color: " + r.color);\n        System.out.println("Area: " + r.getArea());\n        System.out.println("Perimeter: " + r.getPerimeter());\n    }\n}`,
+    keywords: ["extends Shape", "super(", "getArea", "getPerimeter", "@Override", "width * height"]
+  },
+  {
+    skeleton: `class BankAccount {\n    // protected balance (double)\n\n\n    // Constructor: BankAccount(double balance)\n\n\n    // deposit(double amount) — adds to balance\n\n\n    // getBalance() — returns balance\n\n}\n\nclass SavingsAccount extends BankAccount {\n    // Field: interestRate (double)\n\n\n    // Constructor: SavingsAccount(double balance, double interestRate)\n    // Use super(balance)\n\n\n    // applyInterest() — directly access balance: balance += balance * interestRate\n\n}\n\npublic class TestBank {\n    public static void main(String[] args) {\n        SavingsAccount acc = new SavingsAccount(1000.0, 0.05);\n        acc.deposit(500.0);\n        System.out.println("Balance after deposit: " + acc.getBalance());\n        acc.applyInterest();\n        System.out.println("Balance after interest: " + acc.getBalance());\n    }\n}`,
+    keywords: ["extends BankAccount", "protected", "super(", "balance +=", "interestRate", "deposit"]
+  },
+  {
+    skeleton: `class Book {\n    // Private fields: title (String), author (String), pages (int)\n\n\n    // Constructor: Book(String title, String author, int pages)\n\n\n    // @Override toString() — returns "Book[title=..., author=..., pages=...]"\n\n}\n\npublic class TestBook {\n    public static void main(String[] args) {\n        Book b1 = new Book("Clean Code", "Robert Martin", 431);\n        Book b2 = new Book("Effective Java", "Joshua Bloch", 412);\n\n        System.out.println(b1);  // calls toString() automatically\n        System.out.println(b2);\n    }\n}`,
+    keywords: ["private", "@Override", "toString()", "return", "title", "author", "pages"]
+  },
+  {
+    skeleton: `class Point {\n    int x, y;\n\n    // Constructor: Point(int x, int y)\n\n\n    // @Override toString() — returns "Point(x, y)"\n\n\n    // @Override equals(Object obj)\n    // Step 1: if (obj instanceof Point)\n    // Step 2: cast — Point other = (Point) obj;\n    // Step 3: return this.x == other.x && this.y == other.y\n    // Otherwise: return false\n\n}\n\npublic class TestPoint {\n    public static void main(String[] args) {\n        Point p1 = new Point(2, 3);\n        Point p2 = new Point(2, 3);\n\n        System.out.println("p1 = " + p1);\n        System.out.println("p2 = " + p2);\n        System.out.println("p1 == p2: " + (p1 == p2));\n        System.out.println("p1.equals(p2): " + p1.equals(p2));\n    }\n}`,
+    keywords: ["@Override", "equals", "instanceof", "Point other", "this.x == other.x", "toString()"]
+  },
+  {
+    skeleton: `class Calculator {\n    // Overloaded add() — 3 versions:\n    // add(int a, int b) returns a + b\n    // add(int a, int b, int c) returns a + b + c\n    // add(double a, double b) returns a + b\n\n\n    // multiply(int a, int b) returns a * b\n\n}\n\nclass SmartCalc extends Calculator {\n    // @Override multiply(int a, int b)\n    // Print "[Smart] Multiplying a x b" first, then return a * b\n\n}\n\npublic class TestCalc {\n    public static void main(String[] args) {\n        Calculator calc = new Calculator();\n        System.out.println("add(2,3) = " + calc.add(2, 3));\n        System.out.println("add(1,2,3) = " + calc.add(1, 2, 3));\n        System.out.println("add(1.5,2.5) = " + calc.add(1.5, 2.5));\n        System.out.println("multiply(4,5) = " + calc.multiply(4, 5));\n\n        SmartCalc smart = new SmartCalc();\n        System.out.println("[Smart] Multiplying 4 x 5");\n        System.out.println("smartMultiply(4,5) = " + smart.multiply(4, 5));\n    }\n}`,
+    keywords: ["extends Calculator", "int add(int a, int b)", "int add(int a, int b, int c)", "double add(double", "@Override", "multiply"]
+  },
+  {
+    skeleton: `class Animal {\n    String name;\n    boolean alive = true;\n\n    // Constructor: Animal(String name)\n\n\n    // breathe() — prints "[name] is breathing"\n\n}\n\nclass Mammal extends Animal {\n    String furColor;\n\n    // Constructor: Mammal(String name, String furColor)\n    // Use super(name)\n\n\n    // nurse() — prints "[name] is nursing young"\n\n}\n\nclass Dog extends Mammal {\n    String breed;\n\n    // Constructor: Dog(String name, String furColor, String breed)\n    // Use super(name, furColor)\n\n\n    // makeSound() — prints "Woof! I am [name]"\n\n}\n\npublic class TestChain {\n    public static void main(String[] args) {\n        Dog dog = new Dog("Buddy", "Golden", "Golden Retriever");\n        dog.breathe();\n        dog.nurse();\n        dog.makeSound();\n        System.out.println("Breed: " + dog.breed + ", Fur: " + dog.furColor + ", Alive: " + dog.alive);\n    }\n}`,
+    keywords: ["extends Animal", "extends Mammal", "super(name)", "super(name, furColor)", "breathe", "nurse", "makeSound"]
+  }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied! Paste it in the compiler tab that just opened (Ctrl+V / \u2318+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use: ' + missing.map(k => '<code>' + k + '</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){ const t = localStorage.getItem('theme') || 'dark'; if (t === 'light') document.getElementById('themeIcon').className = 'fas fa-sun'; })();
+
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+</body>
+</html>

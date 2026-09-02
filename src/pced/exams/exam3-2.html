@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam: Topic 3.2 - Inferential Statistics | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a><a href="../topics/topic3-2.html">Study Material</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../topics/topic3-2.html" onclick="this.parentElement.classList.remove('open')">Study Material</a>
+    </div>
+    <section class="hero"><div class="hero-content">
+        <h1>Exam: Inferential Statistics</h1>
+        <p class="hero-sub">Topic 3.2 &middot; Block 3: Statistics Foundations</p>
+        <p class="hero-sub" style="font-size:1.05rem;">20 Questions &middot; 20 Minutes</p>
+    </div></section>
+    <div class="container narrow">
+        <div class="section" id="exam-controls">
+            <div class="exam-header">
+                <div class="exam-timer" id="timer"><i class="fa-solid fa-clock"></i> <span id="time-display">20:00</span></div>
+                <div class="exam-progress">Question <strong id="answered-count">0</strong> of <strong>20</strong> answered</div>
+            </div>
+            <div class="exam-nav" id="question-nav"></div>
+        </div>
+        <div id="questions-container"></div>
+        <div class="exam-actions" id="submit-section">
+            <button class="exam-submit" id="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Exam</button>
+        </div>
+        <div class="exam-result" id="result-section" style="display:none;">
+            <h2><i class="fa-solid fa-chart-bar" style="color:var(--primary);"></i> Exam Results</h2>
+            <div class="score-big" id="score-display"></div>
+            <div class="exam-result-details">
+                <div class="exam-result-item"><div class="num green" id="correct-count">0</div><div class="label">Correct</div></div>
+                <div class="exam-result-item"><div class="num red" id="incorrect-count">0</div><div class="label">Incorrect</div></div>
+                <div class="exam-result-item"><div class="num orange" id="skipped-count">0</div><div class="label">Skipped</div></div>
+            </div>
+            <div>
+                <button class="review-btn" onclick="reviewExam()"><i class="fa-solid fa-magnifying-glass"></i> Review Answers</button>
+                <button class="retake-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Retake Exam</button>
+                <a href="../index.html" class="retake-btn" style="text-decoration:none;"><i class="fa-solid fa-house"></i> Back to Course</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+    <script>
+    function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+    (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+    window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>500);});
+
+    const questions = [
+        {
+            q: "What is bootstrapping in statistics?",
+            options: ["Splitting data into training and test sets", "Resampling with replacement from a dataset to estimate a statistic's distribution", "Removing outliers before analysis", "Fitting a model to the entire population"],
+            correct: 1,
+            explanation: "Bootstrapping is a resampling technique where you repeatedly draw samples with replacement from your observed data to build an empirical distribution of a statistic (e.g., the mean)."
+        },
+        {
+            q: "Why is sampling done <em>with replacement</em> in bootstrapping?",
+            options: ["To ensure each sample is smaller than the original", "To allow the same observation to appear multiple times, creating variability between bootstrap samples", "To guarantee every data point appears exactly once", "To remove duplicate values from the dataset"],
+            correct: 1,
+            explanation: "Sampling with replacement means any observation can be selected more than once in a single bootstrap sample. This creates variation between samples, which is essential for estimating the sampling distribution of a statistic."
+        },
+        {
+            q: "A bootstrap 95% confidence interval for the mean is [12.3, 18.7]. Which interpretation is correct?",
+            options: ["95% of the data falls between 12.3 and 18.7", "We are 95% confident the population mean lies between 12.3 and 18.7", "The sample mean is exactly 15.5", "The standard deviation is 6.4"],
+            correct: 1,
+            explanation: "A bootstrap confidence interval provides a range within which we are confident the true population parameter lies. The 95% level means that this procedure captures the true mean in 95% of repeated applications."
+        },
+        {
+            q: "In simple linear regression, the equation y = mx + b represents:",
+            options: ["A curved relationship between x and y", "A straight line where m is the slope and b is the y-intercept", "A probability function", "A classification boundary"],
+            correct: 1,
+            explanation: "In linear regression, y = mx + b is the equation of a straight line. The slope (m) represents the change in y for a one-unit change in x, and the intercept (b) is the predicted value of y when x = 0."
+        },
+        {
+            q: "Which assumption is NOT required for linear regression?",
+            options: ["Linearity between the independent and dependent variables", "Homoscedasticity (constant variance of residuals)", "The dependent variable must be categorical", "Independence of observations"],
+            correct: 2,
+            explanation: "Linear regression requires a continuous dependent variable, not a categorical one. The key assumptions include linearity, independence, homoscedasticity, and normally distributed residuals."
+        },
+        {
+            q: "What does R-squared (R&sup2;) measure in linear regression?",
+            options: ["The slope of the regression line", "The proportion of variance in the dependent variable explained by the model", "The statistical significance of the model", "The number of predictors used"],
+            correct: 1,
+            explanation: "R-squared indicates how much of the variability in the dependent variable is accounted for by the independent variable(s). An R&sup2; of 0.85 means 85% of the variance is explained by the model."
+        },
+        {
+            q: "The least squares method in linear regression minimizes:",
+            options: ["The sum of residuals", "The sum of squared residuals (differences between observed and predicted values)", "The correlation coefficient", "The number of data points"],
+            correct: 1,
+            explanation: "The ordinary least squares (OLS) method finds the line that minimizes the sum of the squared differences between observed y-values and the predicted y-values on the regression line."
+        },
+        {
+            q: "In a linear regression with coefficient &beta;1 = 3.5, how do you interpret this?",
+            options: ["The y-intercept is 3.5", "For every one-unit increase in x, y increases by 3.5 units on average", "The R-squared value is 3.5", "The prediction error is 3.5"],
+            correct: 1,
+            explanation: "A regression coefficient of 3.5 means that for each one-unit increase in the predictor variable, the predicted response variable increases by 3.5 units, holding all other variables constant."
+        },
+        {
+            q: "Logistic regression is primarily used for:",
+            options: ["Predicting continuous numerical outcomes", "Binary classification problems (e.g., yes/no, 0/1)", "Clustering data into groups", "Time series forecasting"],
+            correct: 1,
+            explanation: "Logistic regression models the probability of a binary outcome (e.g., pass/fail, spam/not spam). It outputs probabilities between 0 and 1 using the sigmoid function."
+        },
+        {
+            q: "The sigmoid function in logistic regression outputs values in which range?",
+            options: ["-infinity to +infinity", "-1 to 1", "0 to 1", "0 to infinity"],
+            correct: 2,
+            explanation: "The sigmoid (logistic) function maps any real-valued input to a value between 0 and 1, making it suitable for modeling probabilities in binary classification."
+        },
+        {
+            q: "What is an odds ratio in logistic regression?",
+            options: ["The probability of an event occurring", "The ratio of the probability of the event occurring to the probability of it not occurring", "The slope of the regression line", "The R-squared value"],
+            correct: 1,
+            explanation: "The odds ratio compares the odds of an event occurring versus not occurring. In logistic regression, the exponentiated coefficient (e^&beta;) gives the odds ratio, showing how the odds change with a one-unit increase in the predictor."
+        },
+        {
+            q: "When should you choose logistic regression over linear regression?",
+            options: ["When the dependent variable is continuous", "When the dependent variable is binary or categorical", "When you have more than 10 predictors", "When the data is normally distributed"],
+            correct: 1,
+            explanation: "Logistic regression is appropriate when the outcome variable is binary (two categories). Linear regression is used when the outcome is continuous. Using linear regression for a binary outcome can produce predictions outside [0, 1]."
+        },
+        {
+            q: "Overfitting occurs when a model:",
+            options: ["Is too simple to capture patterns in the data", "Performs well on training data but poorly on unseen data", "Has a high bias and low variance", "Uses too few features"],
+            correct: 1,
+            explanation: "Overfitting means the model has learned the noise and specific patterns of the training data rather than the underlying relationship. It performs excellently on training data but generalizes poorly to new data."
+        },
+        {
+            q: "Which of the following is a sign of overfitting?",
+            options: ["High training accuracy and high test accuracy", "Low training accuracy and low test accuracy", "High training accuracy and low test accuracy", "Low training accuracy and high test accuracy"],
+            correct: 2,
+            explanation: "A large gap between training accuracy (high) and test accuracy (low) is the hallmark of overfitting. The model memorizes training data but fails to generalize."
+        },
+        {
+            q: "In the context of model evaluation, what does a residual represent?",
+            options: ["The predicted value", "The difference between the observed and predicted value", "The slope of the regression line", "The correlation coefficient"],
+            correct: 1,
+            explanation: "A residual is the difference between an observed value and the model's predicted value (residual = observed - predicted). Analyzing residuals helps evaluate model fit."
+        },
+        {
+            q: "If a linear regression model has R&sup2; = 0.45, what does this tell you?",
+            options: ["The model explains 45% of the variance in the dependent variable", "The correlation coefficient is 0.45", "The model is overfitting", "45% of predictions are correct"],
+            correct: 0,
+            explanation: "R&sup2; = 0.45 means 45% of the variability in the dependent variable is explained by the independent variable(s). The remaining 55% is unexplained by the model."
+        },
+        {
+            q: "What is the key difference between bootstrapping and cross-validation?",
+            options: ["They are the same technique", "Bootstrapping estimates the distribution of a statistic; cross-validation evaluates model performance", "Bootstrapping is only for classification; cross-validation is only for regression", "Cross-validation uses replacement; bootstrapping does not"],
+            correct: 1,
+            explanation: "Bootstrapping resamples with replacement to estimate confidence intervals or the distribution of a statistic. Cross-validation splits data into folds to assess how well a model generalizes to unseen data."
+        },
+        {
+            q: "A logistic regression model predicts P(y=1) = 0.82 for a given input. If the threshold is 0.5, the predicted class is:",
+            options: ["0", "1", "Cannot be determined", "0.82"],
+            correct: 1,
+            explanation: "Since the predicted probability (0.82) is greater than the threshold (0.5), the model classifies this observation as class 1 (positive class)."
+        },
+        {
+            q: "Which technique helps prevent overfitting in regression models?",
+            options: ["Adding more features without limit", "Using the entire dataset for training only", "Regularization (e.g., adding a penalty for large coefficients)", "Removing the intercept term"],
+            correct: 2,
+            explanation: "Regularization techniques like L1 (Lasso) and L2 (Ridge) add a penalty term to the loss function that discourages overly large coefficients, thereby reducing overfitting."
+        },
+        {
+            q: "In a simple linear regression, if the slope coefficient is negative, this means:",
+            options: ["There is no relationship between x and y", "As x increases, y tends to decrease", "The model is poorly fitted", "The intercept is also negative"],
+            correct: 1,
+            explanation: "A negative slope indicates an inverse relationship: as the predictor variable (x) increases, the response variable (y) tends to decrease. The sign of the slope is independent of model quality or the intercept."
+        }
+    ];
+
+    let userAnswers=new Array(questions.length).fill(-1),examSubmitted=false,timerInterval,timeLeft=20*60;
+    function init(){renderQuestions();renderNav();startTimer();}
+    function renderQuestions(){document.getElementById('questions-container').innerHTML=questions.map((q,i)=>`<div class="exam-question" id="q${i}"><div class="exam-q-header"><div class="exam-q-number">${i+1}</div><div class="exam-q-text">${q.q}</div></div>${q.options.map((opt,j)=>`<div class="exam-option" onclick="selectAnswer(${i},${j})" id="q${i}o${j}"><div class="exam-option-letter">${String.fromCharCode(65+j)}</div><div>${opt}</div></div>`).join('')}<div class="exam-explanation" id="exp${i}">${q.explanation}</div></div>`).join('');}
+    function renderNav(){document.getElementById('question-nav').innerHTML=questions.map((_,i)=>`<div class="exam-nav-btn" id="nav${i}" onclick="scrollToQ(${i})">${i+1}</div>`).join('');}
+    function selectAnswer(qi,oi){if(examSubmitted)return;userAnswers[qi]=oi;questions[qi].options.forEach((_,j)=>{document.getElementById(`q${qi}o${j}`).classList.toggle('selected',j===oi);});document.getElementById(`q${qi}`).classList.add('answered');document.getElementById(`nav${qi}`).classList.add('answered');updateProgress();}
+    function scrollToQ(i){document.getElementById(`q${i}`).scrollIntoView({behavior:'smooth',block:'center'});}
+    function updateProgress(){document.getElementById('answered-count').textContent=userAnswers.filter(a=>a!==-1).length;}
+    function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);submitExam();}},1000);}
+    function updateTimerDisplay(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('time-display').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;const t=document.getElementById('timer');t.classList.remove('warning','danger');if(timeLeft<=120)t.classList.add('danger');else if(timeLeft<=300)t.classList.add('warning');}
+    function submitExam(){if(examSubmitted)return;examSubmitted=true;clearInterval(timerInterval);let c=0,ic=0,sk=0;questions.forEach((q,i)=>{if(userAnswers[i]===-1)sk++;else if(userAnswers[i]===q.correct)c++;else ic++;});const pct=Math.round(c/questions.length*100);document.getElementById('score-display').textContent=pct+'%';document.getElementById('score-display').className='score-big '+(pct>=75?'pass':'fail');document.getElementById('correct-count').textContent=c;document.getElementById('incorrect-count').textContent=ic;document.getElementById('skipped-count').textContent=sk;document.getElementById('submit-section').style.display='none';document.getElementById('result-section').style.display='block';document.getElementById('result-section').scrollIntoView({behavior:'smooth'});document.querySelectorAll('.exam-option').forEach(el=>el.style.pointerEvents='none');}
+    function reviewExam(){questions.forEach((q,i)=>{const qEl=document.getElementById(`q${i}`),navEl=document.getElementById(`nav${i}`);if(userAnswers[i]===-1){qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-missed');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status skipped">Skipped</div>');}else if(userAnswers[i]===q.correct){qEl.classList.add('review-correct');navEl.classList.add('review-correct');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status correct"><i class="fa-solid fa-check"></i> Correct</div>');}else{qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${userAnswers[i]}`).classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status incorrect"><i class="fa-solid fa-xmark"></i> Incorrect</div>');}document.getElementById(`exp${i}`).classList.add('show');});document.getElementById('q0').scrollIntoView({behavior:'smooth'});}
+    init();
+    </script>
+</body>
+</html>

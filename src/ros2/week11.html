@@ -1,0 +1,3088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 11: RViz2 Visualization for Intelligent Systems | University of Petra</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    
+    <style>
+        :root {
+            --uop-primary: #2c3e50;
+            --uop-secondary: #3498db;
+            --uop-accent: #e74c3c;
+            --uop-success: #27ae60;
+            --uop-warning: #f39c12;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 76px;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--uop-primary) 0%, var(--uop-secondary) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--uop-primary) 0%, var(--uop-secondary) 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .hero-section .lead {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 30px;
+            margin-top: 50px;
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--uop-secondary);
+            border-radius: 2px;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--uop-primary) 0%, var(--uop-secondary) 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .code-block .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 15px;
+            font-size: 0.85rem;
+            z-index: 10;
+        }
+        
+        pre[class*="language-"] {
+            border-radius: 8px;
+            margin: 0;
+        }
+        
+        .alert-custom {
+            border-left: 4px solid;
+            border-radius: 8px;
+        }
+        
+        .alert-info-custom {
+            background-color: #e3f2fd;
+            border-left-color: #2196F3;
+        }
+        
+        .alert-warning-custom {
+            background-color: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        
+        .alert-success-custom {
+            background-color: #d4edda;
+            border-left-color: #28a745;
+        }
+        
+        .alert-tip-custom {
+            background-color: #f3e5f5;
+            border-left-color: #9c27b0;
+        }
+        
+        .step-card {
+            border-left: 4px solid var(--uop-secondary);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--uop-secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 90px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+        
+        .toc .nav-link {
+            color: var(--uop-primary);
+            padding: 8px 15px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .toc .nav-link:hover,
+        .toc .nav-link.active {
+            background-color: #f8f9fa;
+            border-left-color: var(--uop-secondary);
+            color: var(--uop-secondary);
+        }
+        
+        .deliverable-card {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
+            border-left: 4px solid var(--uop-secondary);
+        }
+        
+        .terminal {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+        
+        .terminal::before {
+            content: '$ ';
+            color: #00ff00;
+        }
+        
+        table {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .badge-custom {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            background: var(--uop-primary);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 80px;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--uop-secondary);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top:hover {
+            background: var(--uop-primary);
+            transform: translateY(-5px);
+        }
+        
+        .scroll-to-top.show {
+            display: flex;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .toc {
+                position: static;
+                margin-bottom: 30px;
+            }
+        }
+    
+        /* DARK THEME OVERRIDE */
+        *{box-sizing:border-box}
+        :root{
+            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
+            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
+            --warning:#f59e0b;--danger:#ef4444;
+            --text:#f1f5f9;--text2:#94a3b8;
+            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
+            --code:#0d1117;
+        }
+        body.light-mode{
+            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
+            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
+            --warning:#d97706;--danger:#dc2626;
+            --text:#0f172a;--text2:#334155;
+            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
+            --code:#1e293b;
+        }
+        body{
+            font-family:'Inter',sans-serif !important;
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            line-height:1.7;
+        }
+        a{color:var(--primary);transition:color .2s}
+        a:hover{color:#60a5fa}
+
+        /* Bootstrap overrides */
+        .navbar{
+            background:rgba(11,15,25,.92) !important;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border) !important;
+            padding:0 24px !important;
+            box-shadow:none !important;
+        }
+        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
+        .navbar-brand{
+            font-weight:700 !important;font-size:1.15rem !important;
+            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
+        }
+        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
+        .navbar-nav .nav-link{
+            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
+            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
+        }
+        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
+        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
+        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
+        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
+        .navbar-toggler-icon{filter:invert(1) !important}
+        body.light-mode .navbar-toggler-icon{filter:none !important}
+        .navbar-collapse{background:transparent !important}
+        @media(max-width:991px){
+            .navbar-collapse{
+                background:rgba(11,15,25,.98) !important;
+                border-radius:0 0 12px 12px;padding:12px 0;
+                border:1px solid var(--border);border-top:none;
+            }
+            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
+        }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            background:none !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
+            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+            transition:all .2s;margin-left:8px;
+        }
+        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Hero */
+        .hero, .hero-section{
+            background:var(--bg) !important;
+            color:var(--text) !important;
+            position:relative;overflow:hidden;
+            padding:80px 0 60px !important;
+            margin-bottom:0 !important;
+        }
+        .hero::before,.hero-section::before{
+            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
+        }
+        .hero::after,.hero-section::after{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:32px 32px;pointer-events:none;
+        }
+        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
+        .hero h1,.hero-section h1{
+            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
+            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
+            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+            color:transparent !important;
+        }
+        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
+            color:var(--text2) !important;opacity:1 !important;
+        }
+        .hero .display-4{font-size:2.8rem !important}
+
+        /* Cards */
+        .card{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:12px !important;
+            box-shadow:none !important;
+            color:var(--text) !important;
+        }
+        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
+        .card-body{background:transparent !important;color:var(--text) !important}
+        .card-header{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-bottom:1px solid var(--border) !important;
+            font-weight:600;
+        }
+        .card-title{color:var(--text) !important}
+        .card-text{color:var(--text2) !important}
+
+        /* Section titles */
+        .section-title, h2.section-title, h3.section-title{
+            color:var(--text) !important;
+            border-bottom-color:var(--primary) !important;
+        }
+        .section-title::before{background:var(--primary) !important}
+        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
+        p{color:var(--text2)}
+
+        /* Info/Warning/Success boxes */
+        .info-box,.alert-info-custom,.alert-info,.key-concept{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--primary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
+        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
+        
+        .warning-box,.alert-warning-custom,.alert-warning{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--warning) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
+        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
+        
+        .success-box,.alert-success-custom,.alert-success{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--success) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .success-box strong{color:var(--success) !important}
+        .success-box p{color:var(--text2) !important}
+
+        .alert-tip-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--secondary) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert-danger,.alert-danger-custom{
+            background:var(--surface2) !important;
+            border:1px solid var(--border2) !important;
+            border-left:3px solid var(--danger) !important;
+            border-radius:8px !important;
+            color:var(--text) !important;
+        }
+        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+
+        /* Code blocks */
+        pre, pre[class*="language-"]{
+            background:var(--code) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:8px !important;
+            color:#e6edf3 !important;
+            font-family:'JetBrains Mono',monospace !important;
+            font-size:.875rem !important;
+            line-height:1.6 !important;
+            padding:20px !important;
+        }
+        code{
+            font-family:'JetBrains Mono',monospace !important;
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            padding:2px 6px;border-radius:4px;
+            font-size:.85em !important;
+        }
+        pre code{
+            background:transparent !important;
+            color:#e6edf3 !important;
+            padding:0 !important;
+        }
+        .code-block{position:relative;margin:16px 0}
+        .code-block .copy-btn, .copy-btn{
+            position:absolute;top:10px;right:10px;
+            background:var(--surface2) !important;border:1px solid var(--border2) !important;
+            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
+            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
+        }
+        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
+
+        /* Tables */
+        .table,.dark-table,table{
+            color:var(--text) !important;
+            border-color:var(--border) !important;
+        }
+        .table th,table th{
+            background:var(--surface2) !important;
+            color:var(--text) !important;
+            border-color:var(--border2) !important;
+            font-weight:600;
+        }
+        .table td,table td{
+            color:var(--text2) !important;
+            border-color:var(--border) !important;
+            background:transparent !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>*{
+            background:rgba(255,255,255,.02) !important;
+            color:var(--text2) !important;
+        }
+        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
+        .table-bordered{border-color:var(--border2) !important}
+        thead{border-bottom:2px solid var(--border2) !important}
+        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
+        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
+
+        /* Sidebar / TOC */
+        .sidebar,.toc{
+            background:var(--surface) !important;
+            border:1px solid var(--border2) !important;
+            border-radius:10px !important;
+            padding:16px !important;
+        }
+        .sidebar a,.toc a,.toc .nav-link{
+            color:var(--text2) !important;
+            border-left-color:transparent !important;
+        }
+        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
+            color:var(--primary) !important;
+            border-left-color:var(--primary) !important;
+            background:rgba(59,130,246,.05) !important;
+        }
+        .list-group-item{
+            background:var(--surface) !important;
+            border-color:var(--border) !important;
+            color:var(--text2) !important;
+        }
+        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
+
+        /* Badges */
+        .badge,.badge-custom{
+            background:var(--surface2) !important;
+            color:var(--primary) !important;
+            border:1px solid var(--border2);
+        }
+        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
+        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
+        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
+        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
+        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
+
+        /* Buttons */
+        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
+        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
+        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
+        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
+        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
+        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
+        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
+        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
+        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
+
+        /* Misc Bootstrap */
+        .breadcrumb{background:var(--surface) !important}
+        .breadcrumb-item a{color:var(--primary) !important}
+        .breadcrumb-item.active{color:var(--text2) !important}
+        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
+        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
+        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
+        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
+        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .modal-header{border-bottom-color:var(--border) !important}
+        .modal-footer{border-top-color:var(--border) !important}
+        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
+        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
+        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
+        .nav-tabs{border-bottom-color:var(--border2) !important}
+        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
+        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
+        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
+        .nav-pills .nav-link{color:var(--text2) !important}
+        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
+        .progress{background:var(--surface2) !important}
+        .progress-bar{background:var(--primary) !important}
+        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
+        hr{border-color:var(--border) !important;opacity:.5}
+        .text-muted{color:var(--text2) !important}
+        .text-dark{color:var(--text) !important}
+        .bg-light{background:var(--surface2) !important}
+        .bg-white{background:var(--surface) !important}
+        .border{border-color:var(--border2) !important}
+        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
+        .lead{color:var(--text2) !important}
+        strong,b{color:var(--text) !important}
+        ::selection{background:rgba(59,130,246,.3);color:#fff}
+
+        /* Step cards / numbered steps */
+        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
+        .step-number{background:var(--primary) !important;color:#fff !important}
+
+        /* Scroll to top */
+        .scroll-top{
+            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
+            color:var(--text2);display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
+        }
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* Footer override */
+        footer,.footer{
+            background:var(--surface) !important;
+            border-top:1px solid var(--border) !important;
+            color:var(--text2) !important;
+        }
+        footer a{color:var(--primary) !important}
+        footer p,footer span,footer div{color:var(--text2) !important}
+
+    </style>
+    
+    <script>
+        // Copy code functionality - defined early to be available for onclick handlers
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent || codeBlock.innerText;
+            
+            // Create temporary textarea
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-primary');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.add('btn-primary');
+                    button.classList.remove('btn-success');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy code. Please select and copy manually.');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#toc-nav" data-bs-offset="100">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#top">
+                <i class="bi bi-robot"></i> RViz2 Tutorial
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#rviz-overview">What is RViz2?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#getting-started">Getting Started</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#interface">Interface</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#perception">Perception</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#project">Project</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1><i class="bi bi-diagram-3"></i> Week 11: RViz2 Visualization</h1>
+                    <p class="lead">Advanced Robot Perception Dashboard Development for Intelligent Systems</p>
+                    <div class="mt-3 mb-4">
+                        <span class="badge bg-info text-dark badge-custom me-2">
+                            <i class="bi bi-book"></i> Theory First
+                        </span>
+                        <span class="badge bg-success badge-custom me-2">
+                            <i class="bi bi-tools"></i> Hands-On Practice
+                        </span>
+                        <span class="badge bg-warning text-dark badge-custom me-2">
+                            <i class="bi bi-code-slash"></i> Python Only
+                        </span>
+                    </div>
+                    <div class="mt-4">
+                        <span class="badge bg-light text-dark badge-custom me-2">
+                            <i class="bi bi-geo-alt"></i> University of Petra
+                        </span>
+                        <span class="badge bg-light text-dark badge-custom me-2">
+                            <i class="bi bi-book"></i> Robotics Programming
+                        </span>
+                        <span class="badge bg-light text-dark badge-custom">
+                            <i class="bi bi-person"></i> Dr. Abulkarim Albanna
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar TOC -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="toc">
+                    <h5 class="mb-3"><i class="bi bi-list-ul"></i> Contents</h5>
+                    <nav id="toc-nav" class="nav flex-column">
+                        <a class="nav-link" href="#overview">Overview</a>
+                        <a class="nav-link" href="#rviz-overview">What is RViz2?</a>
+                        <a class="nav-link" href="#getting-started">Getting Started</a>
+                        <a class="nav-link" href="#interface">RViz2 Interface</a>
+                        <a class="nav-link" href="#robot-viz">Robot State Visualization</a>
+                        <a class="nav-link" href="#perception">Perception Visualization</a>
+                        <a class="nav-link" href="#transforms">Transform Visualization</a>
+                        <a class="nav-link" href="#custom-config">Custom Configurations</a>
+                        <a class="nav-link" href="#project">Hands-on Project</a>
+                        <a class="nav-link" href="#deliverables">Package Structure</a>
+                        <a class="nav-link" href="#resources">Resources</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                
+                <!-- Overview Section -->
+                <section id="overview">
+                    <h2 class="section-title">
+                        <i class="bi bi-bullseye"></i> Learning Objectives
+                    </h2>
+                    
+                    <div class="alert alert-info-custom alert-custom">
+                        <h5><i class="bi bi-info-circle"></i> What You'll Learn</h5>
+                        <ul class="mb-0">
+                            <li>Master RViz2 interface and intelligent display panels</li>
+                            <li>Visualize robot states, sensor data, and transformations</li>
+                            <li>Create perception visualizations with detection markers</li>
+                            <li>Develop custom RViz configurations for debugging</li>
+                            <li>Build comprehensive robot perception dashboards</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-tip-custom alert-custom">
+                        <h5><i class="bi bi-code-slash"></i> Python-Focused Tutorial</h5>
+                        <p class="mb-2">This tutorial uses <strong>Python exclusively</strong> for all examples and implementations. All code examples are written in Python 3.10+ using the rclpy library for ROS 2 Jazzy Jalisco.</p>
+                        <p class="mb-0"><strong><i class="fa-solid fa-book-open"></i> Start by understanding:</strong> Read the "What is RViz2?" section next to learn why visualization is critical before diving into code!</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-check-circle"></i> Prerequisites</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li>ROS 2 Jazzy Jalisco</li>
+                                        <li>Python 3.10+</li>
+                                        <li>TF2 transforms knowledge</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li>Sensor integration experience</li>
+                                        <li>Python programming skills</li>
+                                        <li>Understanding of coordinate frames</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- RViz2 Overview Section -->
+                <section id="rviz-overview">
+                    <h2 class="section-title">
+                        <i class="bi bi-info-circle"></i> What is RViz2?
+                    </h2>
+
+                    <p class="lead">RViz2 (ROS Visualization 2) is the most powerful 3D visualization tool for ROS 2, essential for developing, debugging, and demonstrating intelligent robot systems.</p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-lightbulb text-warning"></i> Why RViz2 Matters</h5>
+                                    <p>RViz2 is not just a visualization tool - it's your window into the robot's "brain". It allows you to:</p>
+                                    <ul>
+                                        <li>See what your robot sees (sensors, cameras)</li>
+                                        <li>Understand what your robot thinks (planning, perception)</li>
+                                        <li>Debug issues visually (transforms, paths)</li>
+                                        <li>Present your work professionally</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-success">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-graph-up text-success"></i> Industry Standard</h5>
+                                    <p>RViz2 is used worldwide by:</p>
+                                    <ul>
+                                        <li><strong>Research Labs:</strong> MIT, Stanford, CMU</li>
+                                        <li><strong>Companies:</strong> Boston Dynamics, Tesla, Waymo</li>
+                                        <li><strong>Startups:</strong> Autonomous vehicle companies</li>
+                                        <li><strong>Academia:</strong> Robotics courses globally</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-diagram-3"></i> Core Components of RViz2</h3>
+
+                    <div class="row mt-4">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="bi bi-display"></i> 3D Viewport</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Main visualization area</strong> where all 3D content is rendered.</p>
+                                    <hr>
+                                    <p class="small mb-0"><strong>Features:</strong></p>
+                                    <ul class="small">
+                                        <li>Real-time 3D rendering</li>
+                                        <li>Camera controls (orbit, pan, zoom)</li>
+                                        <li>Multiple coordinate frames</li>
+                                        <li>Grid and axis helpers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="bi bi-stack"></i> Displays Panel</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Control center</strong> for adding and configuring visualization elements.</p>
+                                    <hr>
+                                    <p class="small mb-0"><strong>Common Displays:</strong></p>
+                                    <ul class="small">
+                                        <li>Robot Model</li>
+                                        <li>TF (Transforms)</li>
+                                        <li>Markers</li>
+                                        <li>Camera/LaserScan</li>
+                                        <li>PointCloud</li>
+                                        <li>Path/Trajectory</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="bi bi-eye"></i> Views Panel</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Camera control</strong> for different viewing perspectives.</p>
+                                    <hr>
+                                    <p class="small mb-0"><strong>View Types:</strong></p>
+                                    <ul class="small">
+                                        <li>Orbit: Rotate around point</li>
+                                        <li>FPS: First-person view</li>
+                                        <li>TopDown: Bird's eye view</li>
+                                        <li>XY/XZ/YZ: Orthographic views</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="bi bi-clock"></i> Time Panel</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Time synchronization</strong> for simulation and playback.</p>
+                                    <hr>
+                                    <p class="small mb-0"><strong>Functions:</strong></p>
+                                    <ul class="small">
+                                        <li>Display current ROS time</li>
+                                        <li>Show elapsed time</li>
+                                        <li>Sync with simulation</li>
+                                        <li>Bag file playback control</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="bi bi-tools"></i> Tool Properties</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Configuration panel</strong> for active tools.</p>
+                                    <hr>
+                                    <p class="small mb-0"><strong>Available Tools:</strong></p>
+                                    <ul class="small">
+                                        <li>2D Nav Goal</li>
+                                        <li>2D Pose Estimate</li>
+                                        <li>Measure distance</li>
+                                        <li>Publish point</li>
+                                        <li>Select objects</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="bi bi-gear"></i> Global Options</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>System-wide settings</strong> affecting all displays.</p>
+                                    <hr>
+                                    <p class="small mb-0"><strong>Key Settings:</strong></p>
+                                    <ul class="small">
+                                        <li>Fixed Frame (reference)</li>
+                                        <li>Background color</li>
+                                        <li>Frame rate (FPS)</li>
+                                        <li>Target frame</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-star"></i> Key Features of RViz2</h3>
+
+                    <div class="accordion mt-4" id="featuresAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#feature1">
+                                    <i class="bi bi-eye me-2"></i> <strong>Real-time Visualization</strong>
+                                </button>
+                            </h2>
+                            <div id="feature1" class="accordion-collapse collapse show" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p>RViz2 updates in real-time as your robot operates, showing live data from sensors, changing robot states, and dynamic environments.</p>
+                                    <div class="alert alert-info-custom alert-custom">
+                                        <strong>Example:</strong> As your robot moves, you see its position update, sensors detecting obstacles, and path planning happening live.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature2">
+                                    <i class="bi bi-layers me-2"></i> <strong>Multiple Data Types</strong>
+                                </button>
+                            </h2>
+                            <div id="feature2" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p>Visualize diverse data simultaneously:</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li>3D meshes (robot models)</li>
+                                                <li>Point clouds (lidar data)</li>
+                                                <li>Images (camera feeds)</li>
+                                                <li>Laser scans (2D lidar)</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li>Markers (custom shapes)</li>
+                                                <li>Paths (navigation routes)</li>
+                                                <li>TF frames (transforms)</li>
+                                                <li>Maps (occupancy grids)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature3">
+                                    <i class="bi bi-layers-half me-2"></i> <strong>Interactive Controls</strong>
+                                </button>
+                            </h2>
+                            <div id="feature3" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p>RViz2 isn't just for viewing - you can interact with your robot:</p>
+                                    <ul>
+                                        <li><strong>Set Navigation Goals:</strong> Click to tell robot where to go</li>
+                                        <li><strong>Set Initial Pose:</strong> Click to localize robot on map</li>
+                                        <li><strong>Publish Points:</strong> Click to send waypoints</li>
+                                        <li><strong>Select Objects:</strong> Click to inspect details</li>
+                                        <li><strong>Measure Distances:</strong> Click-and-drag to measure</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature4">
+                                    <i class="bi bi-save me-2"></i> <strong>Configuration Persistence</strong>
+                                </button>
+                            </h2>
+                            <div id="feature4" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p>Save your entire RViz2 setup (all displays, settings, views) to a <code>.rviz</code> file and reload it instantly.</p>
+                                    <div class="alert alert-success-custom alert-custom">
+                                        <strong>Benefit:</strong> No need to reconfigure displays every time. Perfect for demonstrations and consistent debugging sessions.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feature5">
+                                    <i class="bi bi-plug me-2"></i> <strong>Plugin Architecture</strong>
+                                </button>
+                            </h2>
+                            <div id="feature5" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p>Extend RViz2 with custom plugins for specialized visualizations:</p>
+                                    <ul>
+                                        <li>Custom display types for your unique sensors</li>
+                                        <li>Specialized panels for your application</li>
+                                        <li>Integration with third-party tools</li>
+                                        <li>Company-specific visualization needs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-briefcase"></i> Real-World Applications</h3>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-car-front"></i> Autonomous Vehicles</h5>
+                                    <p>Visualizing sensor fusion, obstacle detection, path planning, and decision-making in self-driving cars.</p>
+                                    <p class="small text-muted mb-0"><strong>Example:</strong> Waymo uses RViz to debug their autonomous taxi fleet.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-robot"></i> Manufacturing Robots</h5>
+                                    <p>Monitoring robot arm movements, collision avoidance, and pick-and-place operations in factories.</p>
+                                    <p class="small text-muted mb-0"><strong>Example:</strong> ABB uses visualization for robot programming and debugging.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-hospital"></i> Medical Robotics</h5>
+                                    <p>Visualizing surgical robots, showing tool positions, force feedback, and safety zones during operations.</p>
+                                    <p class="small text-muted mb-0"><strong>Example:</strong> Da Vinci surgical system uses 3D visualization for surgeon feedback.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-truck"></i> Warehouse Automation</h5>
+                                    <p>Tracking multiple robots, inventory locations, optimal paths, and fleet coordination in real-time.</p>
+                                    <p class="small text-muted mb-0"><strong>Example:</strong> Amazon robotics visualizes 1000+ robots simultaneously.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-rocket"></i> Space Exploration</h5>
+                                    <p>Visualizing rover operations, terrain mapping, sample collection, and communication with Earth.</p>
+                                    <p class="small text-muted mb-0"><strong>Example:</strong> NASA JPL uses RViz for Mars rover mission planning.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-building"></i> Construction Robots</h5>
+                                    <p>Monitoring autonomous construction equipment, site mapping, and coordination of multiple machines.</p>
+                                    <p class="small text-muted mb-0"><strong>Example:</strong> Built Robotics visualizes autonomous bulldozers and excavators.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning-custom alert-custom mt-4">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Why Visualization is Critical</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Without Visualization:</strong></p>
+                                <ul>
+                                    <li><i class="fa-solid fa-xmark"></i> Debug by reading log files (slow)</li>
+                                    <li><i class="fa-solid fa-xmark"></i> Guess what sensors detect</li>
+                                    <li><i class="fa-solid fa-xmark"></i> Hard to explain to non-engineers</li>
+                                    <li><i class="fa-solid fa-xmark"></i> Miss spatial relationship issues</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>With RViz2:</strong></p>
+                                <ul>
+                                    <li><i class="fa-solid fa-check"></i> See problems immediately</li>
+                                    <li><i class="fa-solid fa-check"></i> Understand robot perception</li>
+                                    <li><i class="fa-solid fa-check"></i> Professional demonstrations</li>
+                                    <li><i class="fa-solid fa-check"></i> Catch coordinate frame errors</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-success mt-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-check-circle"></i> Learning Path</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>In this tutorial, you'll learn RViz2 in this order:</p>
+                            <ol>
+                                <li><strong>Getting Started:</strong> Create and run your first visualization</li>
+                                <li><strong>Interface Mastery:</strong> Learn all panels and controls</li>
+                                <li><strong>Robot State:</strong> Visualize robot models and joint states</li>
+                                <li><strong>Perception:</strong> Create detection markers and overlays</li>
+                                <li><strong>Transforms:</strong> Master coordinate frame visualization</li>
+                                <li><strong>Configuration:</strong> Save and share professional setups</li>
+                                <li><strong>Project:</strong> Build a complete perception dashboard</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- Getting Started Section -->
+                <section id="getting-started">
+                    <h2 class="section-title">
+                        <i class="bi bi-rocket-takeoff"></i> Getting Started - Step by Step
+                    </h2>
+
+                    <p class="lead">Let's start by setting up your environment and running your first RViz2 visualization. Follow these steps carefully.</p>
+
+                    <div class="alert alert-warning-custom alert-custom">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Before You Begin</h5>
+                        <p class="mb-0">Make sure you have ROS 2 Jazzy installed and sourced. Open a terminal and verify:</p>
+                        <div class="terminal mt-2">echo $ROS_DISTRO</div>
+                        <p class="mt-2 mb-0">You should see: <code>jazzy</code></p>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-1-circle-fill"></i> Step 1: Create Your Workspace</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-folder-plus"></i> Setting Up ROS 2 Workspace
+                        </div>
+                        <div class="card-body">
+                            <p>First, create a ROS 2 workspace for your visualization project:</p>
+                            
+                            <div class="terminal">mkdir -p ~/ros2_ws/src</div>
+                            <div class="terminal">cd ~/ros2_ws/src</div>
+                            
+                            <p class="mt-3">Create your package:</p>
+                            <div class="terminal">ros2 pkg create perception_dashboard --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs visualization_msgs nav_msgs tf2_ros</div>
+                            
+                            <div class="alert alert-success-custom alert-custom mt-3">
+                                <p class="mb-0"><strong>Expected Output:</strong></p>
+                                <pre class="mb-0 mt-2" style="background: #f8f9fa; padding: 10px; border-radius: 5px;">going to create a new package
+package name: perception_dashboard
+destination directory: /home/user/ros2_ws/src
+package format: 3
+version: 0.0.0
+description: TODO: Package description
+maintainer: ['user <user@todo.todo>']
+licenses: ['TODO: License declaration']
+build type: ament_python
+dependencies: ['rclpy', 'std_msgs', 'geometry_msgs', 'sensor_msgs', 'visualization_msgs', 'nav_msgs', 'tf2_ros']
+creating folder ./perception_dashboard
+creating ./perception_dashboard/package.xml
+creating source and include folder
+creating folder ./perception_dashboard/perception_dashboard
+...</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-2-circle-fill"></i> Step 2: Create Your First Visualization Node</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-file-earmark-code"></i> Creating simple_marker_node.py
+                        </div>
+                        <div class="card-body">
+                            <p>Navigate to your package and create your first visualization node:</p>
+                            
+                            <div class="terminal">cd ~/ros2_ws/src/perception_dashboard/perception_dashboard</div>
+                            <div class="terminal">touch simple_marker_node.py</div>
+                            <div class="terminal">chmod +x simple_marker_node.py</div>
+                            
+                            <p class="mt-3">Open the file and add this code:</p>
+                            
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Simple Marker Node - Your First RViz2 Visualization
+This node publishes a basic marker that you'll see in RViz2
+"""
+
+import rclpy
+from rclpy.node import Node
+from visualization_msgs.msg import Marker
+from std_msgs.msg import ColorRGBA
+
+class SimpleMarkerNode(Node):
+    def __init__(self):
+        super().__init__('simple_marker_node')
+        
+        # Create publisher for visualization markers
+        self.marker_pub = self.create_publisher(Marker, '/visualization_marker', 10)
+        
+        # Create timer to publish markers at 1 Hz
+        self.timer = self.create_timer(1.0, self.publish_marker)
+        
+        self.get_logger().info('Simple Marker Node Started!')
+        self.get_logger().info('Publishing markers on topic: /visualization_marker')
+    
+    def publish_marker(self):
+        """Publish a simple cube marker"""
+        marker = Marker()
+        
+        # Header
+        marker.header.frame_id = "map"
+        marker.header.stamp = self.get_clock().now().to_msg()
+        
+        # Marker properties
+        marker.ns = "basic_shapes"
+        marker.id = 0
+        marker.type = Marker.CUBE
+        marker.action = Marker.ADD
+        
+        # Position (center of the marker)
+        marker.pose.position.x = 0.0
+        marker.pose.position.y = 0.0
+        marker.pose.position.z = 0.5
+        
+        # Orientation
+        marker.pose.orientation.x = 0.0
+        marker.pose.orientation.y = 0.0
+        marker.pose.orientation.z = 0.0
+        marker.pose.orientation.w = 1.0
+        
+        # Size (1m x 1m x 1m cube)
+        marker.scale.x = 1.0
+        marker.scale.y = 1.0
+        marker.scale.z = 1.0
+        
+        # Color (Red, semi-transparent)
+        marker.color.r = 1.0
+        marker.color.g = 0.0
+        marker.color.b = 0.0
+        marker.color.a = 0.8
+        
+        # Publish the marker
+        self.marker_pub.publish(marker)
+        self.get_logger().info('Published red cube marker')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SimpleMarkerNode()
+    
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+                            
+                            <div class="alert alert-tip-custom alert-custom mt-3">
+                                <h6><i class="bi bi-lightbulb"></i> Understanding This Code</h6>
+                                <ul class="mb-0">
+                                    <li><strong>Line 12:</strong> Creates a publisher for Marker messages</li>
+                                    <li><strong>Line 15:</strong> Timer calls publish_marker() every 1 second</li>
+                                    <li><strong>Line 22:</strong> Creates a new Marker message</li>
+                                    <li><strong>Line 26:</strong> Sets the reference frame (coordinate system)</li>
+                                    <li><strong>Line 31:</strong> CUBE type creates a box shape</li>
+                                    <li><strong>Lines 49-52:</strong> RGBA color (Red=1.0, Alpha=0.8 for transparency)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-3-circle-fill"></i> Step 3: Configure the Package</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-gear"></i> Update setup.py
+                        </div>
+                        <div class="card-body">
+                            <p>Edit the <code>setup.py</code> file to register your node:</p>
+                            
+                            <div class="terminal">cd ~/ros2_ws/src/perception_dashboard</div>
+                            <div class="terminal">nano setup.py</div>
+                            
+                            <p class="mt-3">Find the <code>entry_points</code> section and modify it:</p>
+                            
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-python">    entry_points={
+        'console_scripts': [
+            'simple_marker_node = perception_dashboard.simple_marker_node:main',
+        ],
+    },</code></pre>
+                            </div>
+                            
+                            <p class="mt-3">Save and exit (<kbd>Ctrl+X</kbd>, then <kbd>Y</kbd>, then <kbd>Enter</kbd>)</p>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-4-circle-fill"></i> Step 4: Build the Package</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-hammer"></i> Compile Your Code
+                        </div>
+                        <div class="card-body">
+                            <p>Build your package using colcon:</p>
+                            
+                            <div class="terminal">cd ~/ros2_ws</div>
+                            <div class="terminal">colcon build --packages-select perception_dashboard</div>
+                            
+                            <div class="alert alert-success-custom alert-custom mt-3">
+                                <p class="mb-0"><strong>Expected Output:</strong></p>
+                                <pre class="mb-0 mt-2" style="background: #f8f9fa; padding: 10px; border-radius: 5px;">Starting >>> perception_dashboard
+Finished <<< perception_dashboard [1.23s]
+
+Summary: 1 package finished [1.45s]</pre>
+                            </div>
+                            
+                            <p class="mt-3">Source your workspace:</p>
+                            <div class="terminal">source install/setup.bash</div>
+                            
+                            <div class="alert alert-tip-custom alert-custom mt-3">
+                                <h6><i class="bi bi-lightbulb"></i> Pro Tip</h6>
+                                <p class="mb-0">Add this to your <code>~/.bashrc</code> to automatically source your workspace:</p>
+                                <div class="terminal mt-2">echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-5-circle-fill"></i> Step 5: Run Your Node</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-play-circle"></i> Start the Marker Publisher
+                        </div>
+                        <div class="card-body">
+                            <p>Open a <strong>new terminal</strong> and run your node:</p>
+                            
+                            <div class="terminal">source /opt/ros/jazzy/setup.bash</div>
+                            <div class="terminal">source ~/ros2_ws/install/setup.bash</div>
+                            <div class="terminal">ros2 run perception_dashboard simple_marker_node</div>
+                            
+                            <div class="alert alert-success-custom alert-custom mt-3">
+                                <p class="mb-0"><strong>Expected Output:</strong></p>
+                                <pre class="mb-0 mt-2" style="background: #f8f9fa; padding: 10px; border-radius: 5px;">[INFO] [1234567890.123456789] [simple_marker_node]: Simple Marker Node Started!
+[INFO] [1234567890.123456789] [simple_marker_node]: Publishing markers on topic: /visualization_marker
+[INFO] [1234567890.123456789] [simple_marker_node]: Published red cube marker
+[INFO] [1234567891.123456789] [simple_marker_node]: Published red cube marker
+[INFO] [1234567892.123456789] [simple_marker_node]: Published red cube marker
+...</pre>
+                            </div>
+                            
+                            <div class="alert alert-info-custom alert-custom mt-3">
+                                <h6><i class="bi bi-info-circle"></i> Verify It's Working</h6>
+                                <p>In another terminal, check if the topic is publishing:</p>
+                                <div class="terminal">ros2 topic list | grep visualization</div>
+                                <p class="mt-2">You should see: <code>/visualization_marker</code></p>
+                                <div class="terminal mt-2">ros2 topic echo /visualization_marker --once</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-6-circle-fill"></i> Step 6: Visualize in RViz2</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-display"></i> Launch RViz2 and See Your Marker
+                        </div>
+                        <div class="card-body">
+                            <p>Open <strong>another new terminal</strong> and launch RViz2:</p>
+                            
+                            <div class="terminal">source /opt/ros/jazzy/setup.bash</div>
+                            <div class="terminal">rviz2</div>
+                            
+                            <h6 class="mt-4">Configure RViz2 to See Your Marker:</h6>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="step-number mb-3">1</div>
+                                            <h6>Set Fixed Frame</h6>
+                                            <p class="small">In the "Displays" panel on the left:</p>
+                                            <ul class="small">
+                                                <li>Find "Global Options"</li>
+                                                <li>Click "Fixed Frame"</li>
+                                                <li>Change from "map" to <code>map</code></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="step-number mb-3">2</div>
+                                            <h6>Add Grid</h6>
+                                            <p class="small">Click "Add" button (bottom left):</p>
+                                            <ul class="small">
+                                                <li>Select "By display type"</li>
+                                                <li>Scroll to "Grid"</li>
+                                                <li>Click "OK"</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="step-number mb-3">3</div>
+                                            <h6>Add Marker Display</h6>
+                                            <p class="small">Click "Add" button again:</p>
+                                            <ul class="small">
+                                                <li>Select "By display type"</li>
+                                                <li>Scroll to "Marker"</li>
+                                                <li>Click "OK"</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="step-number mb-3">4</div>
+                                            <h6>Configure Marker Topic</h6>
+                                            <p class="small">In the Marker display settings:</p>
+                                            <ul class="small">
+                                                <li>Expand "Marker"</li>
+                                                <li>Click on "Topic"</li>
+                                                <li>Select <code>/visualization_marker</code></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-success-custom alert-custom mt-4">
+                                <h6><i class="bi bi-check-circle"></i> Success!</h6>
+                                <p class="mb-0">You should now see a <strong>red cube</strong> floating in the 3D view! The cube is 1 meter on each side and positioned 0.5 meters above the ground plane.</p>
+                            </div>
+                            
+                            <div class="alert alert-tip-custom alert-custom">
+                                <h6><i class="bi bi-mouse"></i> RViz2 Camera Controls</h6>
+                                <ul class="mb-0">
+                                    <li><strong>Left-click + drag:</strong> Rotate the camera</li>
+                                    <li><strong>Middle-click + drag:</strong> Pan the view</li>
+                                    <li><strong>Scroll wheel:</strong> Zoom in/out</li>
+                                    <li><strong>Right-click:</strong> Context menu</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-7-circle-fill"></i> Step 7: Experiment and Learn</h3>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-pencil-square"></i> Modify Your Code
+                        </div>
+                        <div class="card-body">
+                            <p>Now let's experiment! Try modifying the code to see different results:</p>
+                            
+                            <h6 class="mt-3">Experiment 1: Change the Color</h6>
+                            <p>Edit <code>simple_marker_node.py</code> and change the color to green:</p>
+                            <div class="code-block">
+                                <pre><code class="language-python">        # Color (Green instead of red)
+        marker.color.r = 0.0  # Change from 1.0
+        marker.color.g = 1.0  # Change from 0.0
+        marker.color.b = 0.0
+        marker.color.a = 0.8</code></pre>
+                            </div>
+                            
+                            <h6 class="mt-3">Experiment 2: Change the Shape</h6>
+                            <p>Try different marker types:</p>
+                            <div class="code-block">
+                                <pre><code class="language-python">        marker.type = Marker.SPHERE  # Try SPHERE, CYLINDER, ARROW</code></pre>
+                            </div>
+                            
+                            <h6 class="mt-3">Experiment 3: Make It Move</h6>
+                            <p>Add a counter to make the marker move:</p>
+                            <div class="code-block">
+                                <pre><code class="language-python">    def __init__(self):
+        super().__init__('simple_marker_node')
+        self.marker_pub = self.create_publisher(Marker, '/visualization_marker', 10)
+        self.timer = self.create_timer(0.1, self.publish_marker)  # Faster updates
+        self.counter = 0.0  # Add counter
+        self.get_logger().info('Simple Marker Node Started!')
+    
+    def publish_marker(self):
+        """Publish a moving marker"""
+        import math
+        
+        marker = Marker()
+        marker.header.frame_id = "map"
+        marker.header.stamp = self.get_clock().now().to_msg()
+        
+        marker.ns = "basic_shapes"
+        marker.id = 0
+        marker.type = Marker.SPHERE
+        marker.action = Marker.ADD
+        
+        # Make it move in a circle
+        marker.pose.position.x = 2.0 * math.cos(self.counter)
+        marker.pose.position.y = 2.0 * math.sin(self.counter)
+        marker.pose.position.z = 0.5
+        
+        marker.pose.orientation.w = 1.0
+        
+        marker.scale.x = 0.5
+        marker.scale.y = 0.5
+        marker.scale.z = 0.5
+        
+        marker.color.r = 1.0
+        marker.color.g = 0.0
+        marker.color.b = 1.0  # Purple
+        marker.color.a = 1.0
+        
+        self.marker_pub.publish(marker)
+        self.counter += 0.05  # Increment counter</code></pre>
+                            </div>
+                            
+                            <p class="mt-3">After each change:</p>
+                            <div class="terminal">cd ~/ros2_ws</div>
+                            <div class="terminal">colcon build --packages-select perception_dashboard</div>
+                            <div class="terminal">source install/setup.bash</div>
+                            <p class="mt-2">Then restart your node (Ctrl+C in the node terminal, then run it again)</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success-custom alert-custom mt-4">
+                        <h5><i class="bi bi-trophy"></i> Congratulations!</h5>
+                        <p class="mb-0">You've successfully created and run your first RViz2 visualization! You now understand the basics of:</p>
+                        <ul class="mt-2 mb-0">
+                            <li>Creating ROS 2 Python packages</li>
+                            <li>Publishing visualization markers</li>
+                            <li>Configuring RViz2</li>
+                            <li>Building and running ROS 2 nodes</li>
+                        </ul>
+                        <p class="mt-3 mb-0"><strong>Next:</strong> Continue reading to learn about more advanced visualization techniques!</p>
+                    </div>
+
+                    <div class="card mt-4 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-terminal"></i> Your Running System</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>At this point, you should have <strong>2 terminal windows</strong> open:</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-1-circle"></i> Terminal 1: Node Running</h6>
+                                            <div class="terminal" style="font-size: 0.85em;">ros2 run perception_dashboard simple_marker_node</div>
+                                            <p class="small mb-0 mt-2">Should show: "Published red cube marker" messages</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-2-circle"></i> Terminal 2: RViz2 Running</h6>
+                                            <div class="terminal" style="font-size: 0.85em;">rviz2</div>
+                                            <p class="small mb-0 mt-2">Should show: Red cube in 3D view</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-warning-custom alert-custom mt-3 mb-0">
+                                <p class="mb-0"><strong><i class="fa-solid fa-lightbulb"></i> Tip:</strong> Keep both terminals visible so you can see the log messages while observing the visualization!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- RViz2 Interface Section -->
+                <section id="interface">
+                    <h2 class="section-title">
+                        <i class="bi bi-window"></i> RViz2 Interface and Intelligent Displays
+                    </h2>
+
+                    <p class="lead">RViz2 is the primary 3D visualization tool for ROS 2, providing a powerful framework for visualizing robot state, sensor data, and planning results in real-time.</p>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-play-circle"></i> Step 1: Launch RViz2
+                        </div>
+                        <div class="card-body">
+                            <p>Start RViz2 with the following command:</p>
+                            <div class="terminal">ros2 run rviz2 rviz2</div>
+                            <p class="mt-3">Or launch with a specific configuration file:</p>
+                            <div class="terminal">ros2 run rviz2 rviz2 -d ~/my_config.rviz</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-layout-three-columns"></i> Understanding the Interface Layout
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Panel</th>
+                                            <th>Function</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Displays Panel</strong></td>
+                                            <td>Add/remove visualization elements</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Views Panel</strong></td>
+                                            <td>Control camera position and type</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Time Panel</strong></td>
+                                            <td>Display current ROS time</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Tool Properties</strong></td>
+                                            <td>Configure selected tools</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>3D View</strong></td>
+                                            <td>Main visualization window</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-tools"></i> Essential Toolbar Tools
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-cursor"></i> Interact</h6>
+                                            <p class="small mb-0">Default tool for camera manipulation</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-geo-alt"></i> 2D Nav Goal</h6>
+                                            <p class="small mb-0">Set navigation goals</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-crosshair"></i> 2D Pose Estimate</h6>
+                                            <p class="small mb-0">Set initial robot pose</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-rulers"></i> Measure</h6>
+                                            <p class="small mb-0">Measure distances in 3D space</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6><i class="bi bi-pin-map"></i> Publish Point</h6>
+                                            <p class="small mb-0">Publish clicked points</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-tip-custom alert-custom mt-4">
+                                <h6><i class="bi bi-lightbulb"></i> Pro Tip</h6>
+                                <p class="mb-0">Use <code>Ctrl+S</code> to save your RViz configuration and <code>Ctrl+O</code> to load a saved configuration.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Robot State Visualization -->
+                <section id="robot-viz">
+                    <h2 class="section-title">
+                        <i class="bi bi-robot"></i> Visualizing Robot States and Sensor Data
+                    </h2>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-code-square"></i> Robot State Publisher Example
+                        </div>
+                        <div class="card-body">
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Header
+import math
+
+class RobotStatePublisher(Node):
+    def __init__(self):
+        super().__init__('robot_state_publisher')
+        
+        # Publisher for joint states
+        self.joint_pub = self.create_publisher(
+            JointState, 
+            'joint_states', 
+            10
+        )
+        
+        # Timer for publishing at 50Hz
+        self.timer = self.create_timer(0.02, self.publish_joint_states)
+        
+        # Joint configuration
+        self.joint_names = [
+            'joint1', 'joint2', 'joint3', 
+            'joint4', 'joint5', 'joint6'
+        ]
+        
+        self.counter = 0.0
+        self.get_logger().info('Robot State Publisher initialized')
+    
+    def publish_joint_states(self):
+        msg = JointState()
+        msg.header = Header()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.name = self.joint_names
+        
+        # Create smooth sinusoidal motion for demonstration
+        msg.position = [
+            math.sin(self.counter) * 0.5,
+            math.cos(self.counter) * 0.3,
+            math.sin(self.counter * 2) * 0.4,
+            math.cos(self.counter * 1.5) * 0.2,
+            math.sin(self.counter * 0.5) * 0.6,
+            math.cos(self.counter * 0.7) * 0.3
+        ]
+        
+        msg.velocity = []
+        msg.effort = []
+        
+        self.joint_pub.publish(msg)
+        self.counter += 0.02
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = RobotStatePublisher()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card step-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="step-number me-3">1</div>
+                                        <div>
+                                            <h5>Add RobotModel Display</h5>
+                                            <p class="mb-0">Click "Add" → Select "RobotModel" → Configure:</p>
+                                            <ul class="mt-2">
+                                                <li>Description Topic: <code>/robot_description</code></li>
+                                                <li>Visual Enabled: </li>
+                                                <li>Alpha: 1.0</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card step-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="step-number me-3">2</div>
+                                        <div>
+                                            <h5>Configure Fixed Frame</h5>
+                                            <p class="mb-2">In Global Options, set Fixed Frame to:</p>
+                                            <div class="terminal">base_link</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info-custom alert-custom mt-4">
+                        <h5><i class="bi bi-info-circle"></i> Sensor Display Types in RViz2</h5>
+                        <ul class="mb-0">
+                            <li><strong>LaserScan:</strong> 2D lidar data visualization</li>
+                            <li><strong>PointCloud2:</strong> 3D point cloud visualization</li>
+                            <li><strong>Image:</strong> Camera image display</li>
+                            <li><strong>Camera:</strong> Camera with overlays</li>
+                            <li><strong>Range:</strong> Ultrasonic/IR sensor cones</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Perception Visualization -->
+                <section id="perception">
+                    <h2 class="section-title">
+                        <i class="bi bi-eye"></i> Perception Visualization (Detection Markers)
+                    </h2>
+
+                    <p class="lead">Create professional detection markers for object recognition and tracking.</p>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-code-square"></i> Creating Detection Markers
+                        </div>
+                        <div class="card-body">
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import Point
+from std_msgs.msg import ColorRGBA
+import random
+
+class PerceptionVisualizer(Node):
+    def __init__(self):
+        super().__init__('perception_visualizer')
+        
+        # Publisher for detection markers
+        self.marker_pub = self.create_publisher(
+            MarkerArray, 
+            '/detections', 
+            10
+        )
+        
+        self.timer = self.create_timer(0.5, self.publish_detections)
+        self.detection_id = 0
+        self.get_logger().info('Perception Visualizer initialized')
+    
+    def create_bounding_box(self, id, x, y, z, size_x, size_y, size_z, 
+                              label, confidence):
+        """Create a bounding box marker for object detection"""
+        marker = Marker()
+        marker.header.frame_id = 'base_link'
+        marker.header.stamp = self.get_clock().now().to_msg()
+        marker.ns = 'detections'
+        marker.id = id
+        marker.type = Marker.CUBE
+        marker.action = Marker.ADD
+        
+        # Position
+        marker.pose.position.x = x
+        marker.pose.position.y = y
+        marker.pose.position.z = z
+        marker.pose.orientation.w = 1.0
+        
+        # Size
+        marker.scale.x = size_x
+        marker.scale.y = size_y
+        marker.scale.z = size_z
+        
+        # Color based on confidence
+        marker.color = ColorRGBA()
+        marker.color.r = 1.0 - confidence
+        marker.color.g = confidence
+        marker.color.b = 0.0
+        marker.color.a = 0.5  # Semi-transparent
+        
+        marker.lifetime.sec = 1
+        
+        return marker
+    
+    def create_text_marker(self, id, x, y, z, text):
+        """Create a text marker for labels"""
+        marker = Marker()
+        marker.header.frame_id = 'base_link'
+        marker.header.stamp = self.get_clock().now().to_msg()
+        marker.ns = 'labels'
+        marker.id = id
+        marker.type = Marker.TEXT_VIEW_FACING
+        marker.action = Marker.ADD
+        
+        marker.pose.position.x = x
+        marker.pose.position.y = y
+        marker.pose.position.z = z + 0.5  # Above the box
+        
+        marker.scale.z = 0.2  # Text height
+        
+        marker.color = ColorRGBA()
+        marker.color.r = 1.0
+        marker.color.g = 1.0
+        marker.color.b = 1.0
+        marker.color.a = 1.0
+        
+        marker.text = text
+        marker.lifetime.sec = 1
+        
+        return marker
+    
+    def publish_detections(self):
+        marker_array = MarkerArray()
+        
+        # Simulate 3 detected objects
+        objects = [
+            {'label': 'Person', 'pos': (2.0, 1.0, 0.9), 
+             'size': (0.5, 0.5, 1.8), 'conf': 0.95},
+            {'label': 'Car', 'pos': (5.0, -2.0, 0.8), 
+             'size': (4.5, 2.0, 1.6), 'conf': 0.88},
+            {'label': 'Bicycle', 'pos': (3.0, 3.0, 0.5), 
+             'size': (1.8, 0.6, 1.0), 'conf': 0.75}
+        ]
+        
+        for i, obj in enumerate(objects):
+            # Add slight random motion
+            x = obj['pos'][0] + random.uniform(-0.1, 0.1)
+            y = obj['pos'][1] + random.uniform(-0.1, 0.1)
+            z = obj['pos'][2]
+            
+            # Bounding box
+            box_marker = self.create_bounding_box(
+                i * 2, x, y, z,
+                obj['size'][0], obj['size'][1], obj['size'][2],
+                obj['label'], obj['conf']
+            )
+            marker_array.markers.append(box_marker)
+            
+            # Label with confidence
+            text = f"{obj['label']} ({obj['conf']:.2f})"
+            text_marker = self.create_text_marker(
+                i * 2 + 1, x, y, z, text
+            )
+            marker_array.markers.append(text_marker)
+        
+        self.marker_pub.publish(marker_array)
+        self.get_logger().info(f'Published {len(marker_array.markers)} markers')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = PerceptionVisualizer()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success-custom alert-custom mt-4">
+                        <h5><i class="bi bi-check-circle"></i> Marker Types Available</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="mb-0">
+                                    <li><strong>CUBE/SPHERE/CYLINDER:</strong> Basic shapes</li>
+                                    <li><strong>ARROW:</strong> Directional indicators</li>
+                                    <li><strong>LINE_STRIP/LINE_LIST:</strong> Connected lines</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="mb-0">
+                                    <li><strong>TEXT_VIEW_FACING:</strong> Text labels</li>
+                                    <li><strong>MESH_RESOURCE:</strong> Custom 3D models</li>
+                                    <li><strong>TRIANGLE_LIST:</strong> Custom geometry</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Transform Visualization -->
+                <section id="transforms">
+                    <h2 class="section-title">
+                        <i class="bi bi-arrow-repeat"></i> Transform Visualization
+                    </h2>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-code-square"></i> TF Publisher Example
+                        </div>
+                        <div class="card-body">
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-python">#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from tf2_ros import TransformBroadcaster
+from geometry_msgs.msg import TransformStamped
+import math
+
+class TFPublisher(Node):
+    def __init__(self):
+        super().__init__('tf_publisher')
+        
+        self.tf_broadcaster = TransformBroadcaster(self)
+        self.timer = self.create_timer(0.01, self.publish_transforms)
+        self.counter = 0.0
+        
+        self.get_logger().info('TF Publisher initialized')
+    
+    def publish_transforms(self):
+        # Base link to world
+        t = TransformStamped()
+        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.frame_id = 'world'
+        t.child_frame_id = 'base_link'
+        
+        # Simulate robot moving in a circle
+        radius = 2.0
+        t.transform.translation.x = radius * math.cos(self.counter)
+        t.transform.translation.y = radius * math.sin(self.counter)
+        t.transform.translation.z = 0.0
+        
+        # Rotation to face forward along path
+        t.transform.rotation.x = 0.0
+        t.transform.rotation.y = 0.0
+        t.transform.rotation.z = math.sin(self.counter / 2.0)
+        t.transform.rotation.w = math.cos(self.counter / 2.0)
+        
+        self.tf_broadcaster.sendTransform(t)
+        
+        # Camera link relative to base_link
+        t2 = TransformStamped()
+        t2.header.stamp = self.get_clock().now().to_msg()
+        t2.header.frame_id = 'base_link'
+        t2.child_frame_id = 'camera_link'
+        
+        t2.transform.translation.x = 0.3
+        t2.transform.translation.y = 0.0
+        t2.transform.translation.z = 0.5
+        
+        t2.transform.rotation.w = 1.0
+        
+        self.tf_broadcaster.sendTransform(t2)
+        
+        self.counter += 0.01
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TFPublisher()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-plus-circle"></i> Add TF Display</h5>
+                                    <p>Click "Add" → Select "TF" → Configure:</p>
+                                    <ul>
+                                        <li><strong>Show Names:</strong> </li>
+                                        <li><strong>Show Axes:</strong> </li>
+                                        <li><strong>Show Arrows:</strong> </li>
+                                        <li><strong>Marker Scale:</strong> 1.0</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-tree"></i> View TF Tree</h5>
+                                    <p>Generate a TF tree diagram:</p>
+                                    <div class="terminal">ros2 run tf2_tools view_frames</div>
+                                    <p class="mt-2 mb-0 small">This generates a PDF showing the TF tree hierarchy.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning-custom alert-custom mt-4">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Common TF Issues</h5>
+                        <ul class="mb-0">
+                            <li><strong>Missing transforms:</strong> Check if all required frames are being published</li>
+                            <li><strong>Old transforms:</strong> Verify timestamp synchronization</li>
+                            <li><strong>Disconnected frames:</strong> Ensure complete chain from fixed frame</li>
+                            <li><strong>High latency:</strong> Reduce publish rate or optimize transform logic</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Custom Configuration -->
+                <section id="custom-config">
+                    <h2 class="section-title">
+                        <i class="bi bi-gear"></i> Custom RViz Configurations
+                    </h2>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-file-earmark-code"></i> RViz Configuration Structure
+                        </div>
+                        <div class="card-body">
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-yaml">Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Time
+    Name: Time
+
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Plane Cell Count: 50
+      Cell Size: 1.0
+      Color: 160; 160; 160
+      
+    - Class: rviz_default_plugins/RobotModel
+      Name: Robot Model
+      Enabled: true
+      Description Topic: /robot_description
+      Visual Enabled: true
+      Alpha: 1.0
+      
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Show Names: true
+      Show Axes: true
+      Marker Scale: 1.0
+      
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Detections
+      Enabled: true
+      Topic: /detections
+      
+  Global Options:
+    Fixed Frame: world
+    Background Color: 48; 48; 48
+    
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 10.0
+      Focal Point:
+        X: 0.0
+        Y: 0.0
+        Z: 0.0
+      Pitch: 0.5
+      Yaw: 0.5</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="step-number mb-3">1</div>
+                                    <h5>Save Configuration</h5>
+                                    <p>File → Save Config As → Choose location and name</p>
+                                    <p class="mb-0 small text-muted">Keyboard: <code>Ctrl+S</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="step-number mb-3">2</div>
+                                    <h5>Load Configuration</h5>
+                                    <div class="terminal">ros2 run rviz2 rviz2 -d config.rviz</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="step-number mb-3">3</div>
+                                    <h5>Launch with Config</h5>
+                                    <p class="mb-0">Include in your launch file for automatic loading</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Project Section -->
+                <section id="project">
+                    <h2 class="section-title">
+                        <i class="bi bi-laptop"></i> Hands-on Project: Intelligent Robot Perception Dashboard
+                    </h2>
+
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title"><i class="bi bi-trophy"></i> Project Overview</h3>
+                            <p class="card-text lead">Create a comprehensive RViz2 configuration that visualizes a complete intelligent robot system including robot state, sensor data, object detections, and planning information.</p>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-5 mb-4"><i class="bi bi-list-check"></i> Project Requirements</h4>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-camera-video"></i> Camera Visualization</h5>
+                                    <p>Display camera feed with overlays showing detected objects and confidence scores.</p>
+                                    <ul class="mb-0">
+                                        <li>Real-time image display</li>
+                                        <li>Detection overlays</li>
+                                        <li>Proper frame alignment</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-bullseye"></i> Detection Markers</h5>
+                                    <p>3D bounding boxes with labels and confidence scores for all detected objects.</p>
+                                    <ul class="mb-0">
+                                        <li>Bounding boxes</li>
+                                        <li>Text labels</li>
+                                        <li>Confidence visualization</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-diagram-3"></i> Transform Tree</h5>
+                                    <p>Complete TF visualization showing all coordinate frames and their relationships.</p>
+                                    <ul class="mb-0">
+                                        <li>All frames visible</li>
+                                        <li>Frame names displayed</li>
+                                        <li>Axes visualization</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card deliverable-card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-bezier2"></i> Trajectory Visualization</h5>
+                                    <p>Display robot path history and planned trajectory with clear differentiation.</p>
+                                    <ul class="mb-0">
+                                        <li>Historical path</li>
+                                        <li>Planned trajectory</li>
+                                        <li>Color-coded paths</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-5">
+                        <div class="card-header">
+                            <i class="bi bi-code-slash"></i> Complete Dashboard Implementation
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info-custom alert-custom">
+                                <p class="mb-0"><i class="bi bi-info-circle"></i> The complete perception dashboard code integrates all concepts covered in this tutorial. Study the example carefully and adapt it for your specific use case.</p>
+                            </div>
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Comprehensive Perception Dashboard for Intelligent Robot Systems
+Combines robot state, sensor data, detections, and path planning
+"""
+
+import rclpy
+from rclpy.node import Node
+from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import Point, PoseStamped
+from nav_msgs.msg import Path
+from std_msgs.msg import ColorRGBA, Header
+from tf2_ros import TransformBroadcaster
+from geometry_msgs.msg import TransformStamped
+import math
+import random
+
+class PerceptionDashboard(Node):
+    def __init__(self):
+        super().__init__('perception_dashboard')
+        
+        # Publishers
+        self.marker_pub = self.create_publisher(
+            MarkerArray, '/perception/markers', 10
+        )
+        self.path_pub = self.create_publisher(
+            Path, '/planned_path', 10
+        )
+        self.trajectory_pub = self.create_publisher(
+            Path, '/robot_trajectory', 10
+        )
+        
+        # TF broadcaster
+        self.tf_broadcaster = TransformBroadcaster(self)
+        
+        # Timers
+        self.create_timer(0.1, self.publish_detections)
+        self.create_timer(0.05, self.publish_transforms)
+        self.create_timer(1.0, self.publish_planned_path)
+        self.create_timer(0.1, self.update_trajectory)
+        
+        # State variables
+        self.counter = 0.0
+        self.trajectory_points = []
+        self.max_trajectory_points = 100
+        
+        self.get_logger().info('Perception Dashboard initialized')
+    
+    def publish_detections(self):
+        """Publish object detection markers"""
+        marker_array = MarkerArray()
+        
+        # Simulated detections
+        detections = [
+            {
+                'id': 0, 'class': 'person', 
+                'pos': (3.0, 2.0, 0.9),
+                'size': (0.5, 0.5, 1.8),
+                'confidence': 0.92,
+                'velocity': (0.5, 0.2, 0.0)
+            },
+            {
+                'id': 1, 'class': 'car',
+                'pos': (8.0, -3.0, 0.8),
+                'size': (4.5, 2.0, 1.5),
+                'confidence': 0.88,
+                'velocity': (-1.0, 0.0, 0.0)
+            }
+        ]
+        
+        for det in detections:
+            # Create markers for each detection
+            # ... (implementation details)
+            pass
+        
+        self.marker_pub.publish(marker_array)
+    
+    def publish_transforms(self):
+        """Publish robot transform tree"""
+        t = TransformStamped()
+        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.frame_id = 'world'
+        t.child_frame_id = 'base_link'
+        
+        radius = 3.0
+        t.transform.translation.x = radius * math.cos(self.counter * 0.5)
+        t.transform.translation.y = radius * math.sin(self.counter * 0.5)
+        t.transform.translation.z = 0.0
+        
+        self.tf_broadcaster.sendTransform(t)
+        self.counter += 0.05
+    
+    def publish_planned_path(self):
+        """Publish planned navigation path"""
+        path = Path()
+        path.header.frame_id = 'world'
+        path.header.stamp = self.get_clock().now().to_msg()
+        
+        # Create planned path
+        for i in range(50):
+            pose = PoseStamped()
+            pose.header = path.header
+            # ... (path generation)
+            path.poses.append(pose)
+        
+        self.path_pub.publish(path)
+    
+    def update_trajectory(self):
+        """Update robot trajectory history"""
+        # Track robot path over time
+        # ... (implementation)
+        pass
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = PerceptionDashboard()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ROS 2 Package Structure -->
+                <section id="deliverables">
+                    <h2 class="section-title">
+                        <i class="bi bi-folder-fill"></i> ROS 2 Package Structure
+                    </h2>
+
+                    <p class="lead">Understanding proper ROS 2 package organization is essential for creating maintainable and professional robot perception dashboards.</p>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-diagram-3"></i> Complete Package Directory Structure
+                        </div>
+                        <div class="card-body">
+                            <div class="code-block">
+                                <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                                <pre><code class="language-bash">perception_dashboard/
+├── perception_dashboard/
+│   ├── __init__.py
+│   ├── perception_node.py
+│   ├── marker_utils.py
+│   ├── tf_publisher.py
+│   └── sensor_publisher.py
+├── launch/
+│   ├── dashboard.launch.py
+│   ├── perception_only.launch.py
+│   └── full_system.launch.py
+├── config/
+│   ├── perception_dashboard.rviz
+│   ├── robot_params.yaml
+│   └── sensor_config.yaml
+├── rviz/
+│   ├── default.rviz
+│   └── debug.rviz
+├── resource/
+│   └── perception_dashboard
+├── test/
+│   ├── test_perception_node.py
+│   └── test_marker_utils.py
+├── package.xml
+├── setup.py
+├── setup.cfg
+└── README.md</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-file-earmark-code"></i> Essential Package Files</h3>
+
+                    <div class="accordion" id="packageFilesAccordion">
+                        <!-- package.xml -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#packageXml">
+                                    <strong>1. package.xml - Package Metadata</strong>
+                                </button>
+                            </h2>
+                            <div id="packageXml" class="accordion-collapse collapse show" data-bs-parent="#packageFilesAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                        <pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
+&lt;?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?&gt;
+&lt;package format="3"&gt;
+  &lt;name&gt;perception_dashboard&lt;/name&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;description&gt;Intelligent Robot Perception Dashboard for RViz2&lt;/description&gt;
+  &lt;maintainer email="a.albanna@uop.edu.jo"&gt;Dr. Abulkarim Albanna&lt;/maintainer&gt;
+  &lt;license&gt;Apache-2.0&lt;/license&gt;
+
+  &lt;buildtool_depend&gt;ament_python&lt;/buildtool_depend&gt;
+
+  &lt;depend&gt;rclpy&lt;/depend&gt;
+  &lt;depend&gt;std_msgs&lt;/depend&gt;
+  &lt;depend&gt;geometry_msgs&lt;/depend&gt;
+  &lt;depend&gt;sensor_msgs&lt;/depend&gt;
+  &lt;depend&gt;visualization_msgs&lt;/depend&gt;
+  &lt;depend&gt;nav_msgs&lt;/depend&gt;
+  &lt;depend&gt;tf2_ros&lt;/depend&gt;
+  &lt;depend&gt;tf2_geometry_msgs&lt;/depend&gt;
+
+  &lt;test_depend&gt;ament_copyright&lt;/test_depend&gt;
+  &lt;test_depend&gt;ament_flake8&lt;/test_depend&gt;
+  &lt;test_depend&gt;ament_pep257&lt;/test_depend&gt;
+  &lt;test_depend&gt;python3-pytest&lt;/test_depend&gt;
+
+  &lt;export&gt;
+    &lt;build_type&gt;ament_python&lt;/build_type&gt;
+  &lt;/export&gt;
+&lt;/package&gt;</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- setup.py -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setupPy">
+                                    <strong>2. setup.py - Python Package Setup</strong>
+                                </button>
+                            </h2>
+                            <div id="setupPy" class="accordion-collapse collapse" data-bs-parent="#packageFilesAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                        <pre><code class="language-python">from setuptools import setup
+import os
+from glob import glob
+
+package_name = 'perception_dashboard'
+
+setup(
+    name=package_name,
+    version='1.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+        # Include launch files
+        (os.path.join('share', package_name, 'launch'),
+            glob('launch/*.launch.py')),
+        # Include config files
+        (os.path.join('share', package_name, 'config'),
+            glob('config/*.yaml')),
+        # Include RViz configs
+        (os.path.join('share', package_name, 'rviz'),
+            glob('rviz/*.rviz')),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='Dr. Abulkarim Albanna',
+    maintainer_email='a.albanna@uop.edu.jo',
+    description='Intelligent Robot Perception Dashboard for RViz2',
+    license='Apache-2.0',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'perception_node = perception_dashboard.perception_node:main',
+            'tf_publisher = perception_dashboard.tf_publisher:main',
+            'sensor_publisher = perception_dashboard.sensor_publisher:main',
+        ],
+    },
+)</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Launch File -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#launchFile">
+                                    <strong>3. Launch File - System Startup</strong>
+                                </button>
+                            </h2>
+                            <div id="launchFile" class="accordion-collapse collapse" data-bs-parent="#packageFilesAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                        <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Launch file for Perception Dashboard
+Starts all necessary nodes and RViz2 with custom configuration
+"""
+
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
+import os
+
+def generate_launch_description():
+    # Declare launch arguments
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    
+    # Get package directories
+    pkg_share = FindPackageShare('perception_dashboard').find('perception_dashboard')
+    
+    # RViz config file
+    rviz_config_file = PathJoinSubstitution([
+        FindPackageShare('perception_dashboard'),
+        'rviz',
+        'perception_dashboard.rviz'
+    ])
+    
+    # Parameters file
+    params_file = PathJoinSubstitution([
+        FindPackageShare('perception_dashboard'),
+        'config',
+        'robot_params.yaml'
+    ])
+    
+    return LaunchDescription([
+        # Declare arguments
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation time if true'
+        ),
+        
+        # Perception node
+        Node(
+            package='perception_dashboard',
+            executable='perception_node',
+            name='perception_node',
+            output='screen',
+            parameters=[
+                params_file,
+                {'use_sim_time': use_sim_time}
+            ]
+        ),
+        
+        # TF publisher
+        Node(
+            package='perception_dashboard',
+            executable='tf_publisher',
+            name='tf_publisher',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+        
+        # Sensor publisher
+        Node(
+            package='perception_dashboard',
+            executable='sensor_publisher',
+            name='sensor_publisher',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+        
+        # RViz2
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d', rviz_config_file],
+            output='screen'
+        ),
+    ])</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Config File -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#configFile">
+                                    <strong>4. YAML Configuration File</strong>
+                                </button>
+                            </h2>
+                            <div id="configFile" class="accordion-collapse collapse" data-bs-parent="#packageFilesAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                        <pre><code class="language-yaml"># robot_params.yaml
+perception_node:
+  ros__parameters:
+    # Update rates (Hz)
+    marker_update_rate: 10.0
+    transform_update_rate: 50.0
+    path_update_rate: 1.0
+    
+    # Visualization settings
+    marker_lifetime: 1.0
+    trajectory_max_points: 100
+    
+    # Detection settings
+    confidence_threshold: 0.5
+    max_detections: 20
+    
+    # Frame IDs
+    world_frame: "world"
+    base_frame: "base_link"
+    camera_frame: "camera_link"
+    laser_frame: "laser_frame"
+    
+    # Colors (RGBA)
+    person_color: [0.0, 1.0, 0.0, 0.5]
+    car_color: [1.0, 0.0, 0.0, 0.5]
+    bicycle_color: [0.0, 0.0, 1.0, 0.5]
+    
+    # Marker sizes
+    text_size: 0.2
+    arrow_shaft_diameter: 0.1
+    arrow_head_diameter: 0.2</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- setup.cfg -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setupCfg">
+                                    <strong>5. setup.cfg - Installation Configuration</strong>
+                                </button>
+                            </h2>
+                            <div id="setupCfg" class="accordion-collapse collapse" data-bs-parent="#packageFilesAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <button class="btn btn-sm btn-primary copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                        <pre><code class="language-ini">[develop]
+script_dir=$base/lib/perception_dashboard
+
+[install]
+install_scripts=$base/lib/perception_dashboard</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5"><i class="bi bi-terminal"></i> Building and Running the Package</h3>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card step-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="step-number me-3">1</div>
+                                        <div>
+                                            <h5>Create Package</h5>
+                                            <div class="terminal">cd ~/ros2_ws/src</div>
+                                            <div class="terminal mt-2">ros2 pkg create perception_dashboard --build-type ament_python --dependencies rclpy std_msgs geometry_msgs sensor_msgs visualization_msgs nav_msgs tf2_ros</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card step-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="step-number me-3">2</div>
+                                        <div>
+                                            <h5>Build Package</h5>
+                                            <div class="terminal">cd ~/ros2_ws</div>
+                                            <div class="terminal mt-2">colcon build --packages-select perception_dashboard</div>
+                                            <div class="terminal mt-2">source install/setup.bash</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card step-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="step-number me-3">3</div>
+                                        <div>
+                                            <h5>Run Individual Node</h5>
+                                            <div class="terminal">ros2 run perception_dashboard perception_node</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card step-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="step-number me-3">4</div>
+                                        <div>
+                                            <h5>Launch Full System</h5>
+                                            <div class="terminal">ros2 launch perception_dashboard dashboard.launch.py</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success-custom alert-custom mt-4">
+                        <h5><i class="bi bi-check-circle"></i> Package Organization Best Practices</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>Keep Python modules in the package directory</li>
+                                    <li>Use launch files for complex startups</li>
+                                    <li>Store configurations in YAML files</li>
+                                    <li>Keep RViz configs in dedicated folder</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>Include tests for all major functions</li>
+                                    <li>Document with clear README</li>
+                                    <li>Use meaningful node and topic names</li>
+                                    <li>Follow ROS 2 naming conventions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-list-check"></i> Package Checklist</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Required Files:</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check1">
+                                        <label class="form-check-label" for="check1">package.xml</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check2">
+                                        <label class="form-check-label" for="check2">setup.py</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check3">
+                                        <label class="form-check-label" for="check3">setup.cfg</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check4">
+                                        <label class="form-check-label" for="check4">README.md</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check5">
+                                        <label class="form-check-label" for="check5">resource/ folder</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Recommended Structure:</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check6">
+                                        <label class="form-check-label" for="check6">launch/ directory</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check7">
+                                        <label class="form-check-label" for="check7">config/ directory</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check8">
+                                        <label class="form-check-label" for="check8">rviz/ directory</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check9">
+                                        <label class="form-check-label" for="check9">test/ directory</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="check10">
+                                        <label class="form-check-label" for="check10">Python modules organized</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Resources -->
+                <section id="resources">
+                    <h2 class="section-title">
+                        <i class="bi bi-book"></i> Additional Resources
+                    </h2>
+
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-file-text"></i> Official Documentation</h5>
+                                    <ul class="list-unstyled">
+                                        <li><a href="https://docs.ros.org/en/jazzy/Tutorials/Intermediate/RViz/RViz-User-Guide/RViz-User-Guide.html" target="_blank">RViz2 User Guide</a></li>
+                                        <li><a href="http://docs.ros.org/en/api/visualization_msgs/html/index-msg.html" target="_blank">Visualization Messages</a></li>
+                                        <li><a href="https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Tf2/Tf2-Main.html" target="_blank">TF2 Tutorials</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-play-circle"></i> Video Tutorials</h5>
+                                    <ul class="list-unstyled">
+                                        <li>ROS 2 RViz2 Basics</li>
+                                        <li>Advanced Visualization</li>
+                                        <li>Custom Markers</li>
+                                        <li>Perception Systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-code-square"></i> Example Projects</h5>
+                                    <ul class="list-unstyled">
+                                        <li>Navigation Stack Viz</li>
+                                        <li>Object Detection</li>
+                                        <li>Multi-Robot Systems</li>
+                                        <li>SLAM Mapping</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-tip-custom alert-custom mt-4">
+                        <h5><i class="bi bi-calendar-event"></i> Important Dates</h5>
+                        <ul class="mb-0">
+                            <li><strong>Assignment Release:</strong> Week 11, Day 1</li>
+                            <li><strong>Submission Deadline:</strong> Week 12, Day 7 (23:59)</li>
+                            <li><strong>Late Submission:</strong> 10% penalty per day</li>
+                            <li><strong>Demo Session:</strong> Week 13</li>
+                        </ul>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="bi bi-building"></i> University of Petra</h5>
+                    <p>Department of Data Science & Artificial Intelligence</p>
+                    <p class="mb-0">Robotics Programming Course</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5><i class="bi bi-person-circle"></i> Instructor</h5>
+                    <p>Dr. Abulkarim Albanna</p>
+                    <p class="mb-0">Office: CS Building, Room 305</p>
+                    <p>Office Hours: Thursday 2:00-4:00 PM</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5><i class="bi bi-envelope"></i> Contact</h5>
+                    <p>Email: a.albanna@uop.edu.jo</p>
+                    <p class="mb-0">Course Forum: [Link]</p>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center">
+                <p class="mb-0"><i class="fa-regular fa-copyright"></i> 2024 University of Petra | Week 11: RViz2 Visualization Tutorial</p>
+                <p class="small mb-0">Created with <i class="bi bi-heart-fill text-danger"></i> for students</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ini.min.js"></script>
+
+    <script>
+        // Scroll to top button
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+        
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active nav link on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.toc .nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';

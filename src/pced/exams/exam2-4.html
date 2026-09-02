@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam: Topic 2.4 - SQL for Data Analysts | Albanna Tutorials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-inner">
+        <a href="../index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-python"></i> Python Advanced</a>
+        <div class="nav-links"><a href="../index.html">Home</a><a href="../topics/topic2-4.html">Study Material</a></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+            <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="../index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="../topics/topic2-4.html" onclick="this.parentElement.classList.remove('open')">Study Material</a>
+    </div>
+    <section class="hero"><div class="hero-content">
+        <h1>Exam: SQL for Data Analysts</h1>
+        <p class="hero-sub">Topic 2.4 &middot; Block 2: Programming and Database Skills</p>
+        <p class="hero-sub" style="font-size:1.05rem;">20 Questions &middot; 20 Minutes</p>
+    </div></section>
+    <div class="container narrow">
+        <div class="section" id="exam-controls">
+            <div class="exam-header">
+                <div class="exam-timer" id="timer"><i class="fa-solid fa-clock"></i> <span id="time-display">20:00</span></div>
+                <div class="exam-progress">Question <strong id="answered-count">0</strong> of <strong>20</strong> answered</div>
+            </div>
+            <div class="exam-nav" id="question-nav"></div>
+        </div>
+        <div id="questions-container"></div>
+        <div class="exam-actions" id="submit-section">
+            <button class="exam-submit" id="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Exam</button>
+        </div>
+        <div class="exam-result" id="result-section" style="display:none;">
+            <h2><i class="fa-solid fa-chart-bar" style="color:var(--primary);"></i> Exam Results</h2>
+            <div class="score-big" id="score-display"></div>
+            <div class="exam-result-details">
+                <div class="exam-result-item"><div class="num green" id="correct-count">0</div><div class="label">Correct</div></div>
+                <div class="exam-result-item"><div class="num red" id="incorrect-count">0</div><div class="label">Incorrect</div></div>
+                <div class="exam-result-item"><div class="num orange" id="skipped-count">0</div><div class="label">Skipped</div></div>
+            </div>
+            <div>
+                <button class="review-btn" onclick="reviewExam()"><i class="fa-solid fa-magnifying-glass"></i> Review Answers</button>
+                <button class="retake-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Retake Exam</button>
+                <a href="../index.html" class="retake-btn" style="text-decoration:none;"><i class="fa-solid fa-house"></i> Back to Course</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"><div class="footer-bottom">Data Analyst with Python Advanced &mdash; Albanna Tutorials</div></footer>
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+    <script>
+    function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pcad-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+    (function(){if(localStorage.getItem('pcad-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+    window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>500);});
+
+    const questions = [
+        {
+            q: "Which SQL clause is used to filter rows <strong>before</strong> grouping?",
+            options: [
+                "<code>HAVING</code>",
+                "<code>WHERE</code>",
+                "<code>GROUP BY</code>",
+                "<code>ORDER BY</code>"
+            ],
+            correct: 1,
+            explanation: "<code>WHERE</code> filters individual rows <strong>before</strong> grouping. <code>HAVING</code> filters groups <strong>after</strong> aggregation. You cannot use aggregate functions in a <code>WHERE</code> clause."
+        },
+        {
+            q: "What does an <code>INNER JOIN</code> return?",
+            options: [
+                "All rows from the left table, with NULLs where there is no match on the right",
+                "All rows from both tables, with NULLs where there is no match",
+                "Only rows that have matching values in both tables",
+                "All rows from the right table, with NULLs where there is no match on the left"
+            ],
+            correct: 2,
+            explanation: "An <code>INNER JOIN</code> returns only the rows where there is a match in both tables based on the join condition. Rows without a match in either table are excluded."
+        },
+        {
+            q: "What is the correct way to use a parameterized query with <code>sqlite3</code> in Python?",
+            options: [
+                "<code>cursor.execute(f\"SELECT * FROM users WHERE name = '{name}'\")</code>",
+                "<code>cursor.execute(\"SELECT * FROM users WHERE name = %s\", (name,))</code>",
+                "<code>cursor.execute(\"SELECT * FROM users WHERE name = ?\", (name,))</code>",
+                "<code>cursor.execute(\"SELECT * FROM users WHERE name = \" + name)</code>"
+            ],
+            correct: 2,
+            explanation: "The <code>sqlite3</code> module uses <code>?</code> as the placeholder. Parameters are passed as a tuple. Options A and D are vulnerable to SQL injection. Option B uses <code>%s</code>, which is the <code>pymysql</code> placeholder, not <code>sqlite3</code>."
+        },
+        {
+            q: "What does <code>HAVING</code> do in a SQL query?",
+            options: [
+                "Filters individual rows before grouping",
+                "Filters groups after aggregation",
+                "Sorts the result set",
+                "Limits the number of rows returned"
+            ],
+            correct: 1,
+            explanation: "<code>HAVING</code> filters groups <strong>after</strong> <code>GROUP BY</code> aggregation. Unlike <code>WHERE</code>, <code>HAVING</code> can use aggregate functions like <code>COUNT()</code>, <code>AVG()</code>, etc."
+        },
+        {
+            q: "Which SQL statement is used to modify existing rows in a table?",
+            options: [
+                "<code>INSERT INTO</code>",
+                "<code>ALTER TABLE</code>",
+                "<code>UPDATE</code>",
+                "<code>MODIFY</code>"
+            ],
+            correct: 2,
+            explanation: "<code>UPDATE</code> modifies existing rows. It uses a <code>SET</code> clause to specify new values and typically a <code>WHERE</code> clause to target specific rows. Without <code>WHERE</code>, all rows are updated."
+        },
+        {
+            q: "In the <code>sqlite3</code> workflow, what must you call after INSERT, UPDATE, or DELETE to save changes?",
+            options: [
+                "<code>cursor.save()</code>",
+                "<code>conn.commit()</code>",
+                "<code>cursor.flush()</code>",
+                "<code>conn.persist()</code>"
+            ],
+            correct: 1,
+            explanation: "<code>conn.commit()</code> saves (commits) all pending changes to the database. Without calling <code>commit()</code>, INSERT, UPDATE, and DELETE operations are not persisted."
+        },
+        {
+            q: "What does a <code>LEFT JOIN</code> return?",
+            options: [
+                "Only rows with matching values in both tables",
+                "All rows from the left table, plus matching rows from the right (NULL if no match)",
+                "All rows from the right table, plus matching rows from the left (NULL if no match)",
+                "All rows from both tables regardless of matches"
+            ],
+            correct: 1,
+            explanation: "A <code>LEFT JOIN</code> returns all rows from the left table. For rows that have a match in the right table, the corresponding data is included. For rows with no match, the right-side columns contain <code>NULL</code>."
+        },
+        {
+            q: "What is SQL injection?",
+            options: [
+                "A method for optimizing SQL query performance",
+                "A technique where an attacker inserts malicious SQL through user input to manipulate queries",
+                "A way to inject data into a database using bulk inserts",
+                "A method for importing SQL scripts from external files"
+            ],
+            correct: 1,
+            explanation: "SQL injection exploits vulnerabilities when user input is incorporated into SQL queries without proper parameterization. Attackers can manipulate the query logic to bypass authentication, steal data, or destroy tables."
+        },
+        {
+            q: "Which <code>sqlite3</code> fetch method returns a single row as a tuple (or <code>None</code>)?",
+            options: [
+                "<code>cursor.fetchall()</code>",
+                "<code>cursor.fetchone()</code>",
+                "<code>cursor.fetchmany(1)</code>",
+                "<code>cursor.fetchrow()</code>"
+            ],
+            correct: 1,
+            explanation: "<code>fetchone()</code> returns the next row as a tuple, or <code>None</code> if no more rows. <code>fetchall()</code> returns all remaining rows as a list of tuples. <code>fetchmany(n)</code> returns up to <em>n</em> rows."
+        },
+        {
+            q: "What does this SQL query do?<br><code>SELECT department, COUNT(*) AS emp_count<br>FROM employees<br>GROUP BY department<br>HAVING COUNT(*) > 5<br>ORDER BY emp_count DESC;</code>",
+            options: [
+                "Lists all employees in departments with more than 5 members",
+                "Counts employees per department, keeps only departments with more than 5, sorted by count descending",
+                "Deletes departments with more than 5 employees",
+                "Groups employees by name and filters by department count"
+            ],
+            correct: 1,
+            explanation: "The query groups employees by department, counts them, filters to keep only groups with more than 5 employees (<code>HAVING</code>), and sorts the results by count in descending order."
+        },
+        {
+            q: "Which SQLite type maps to Python's <code>float</code>?",
+            options: [
+                "<code>INTEGER</code>",
+                "<code>TEXT</code>",
+                "<code>REAL</code>",
+                "<code>BLOB</code>"
+            ],
+            correct: 2,
+            explanation: "SQLite's <code>REAL</code> type maps to Python's <code>float</code>. <code>INTEGER</code> maps to <code>int</code>, <code>TEXT</code> to <code>str</code>, <code>BLOB</code> to <code>bytes</code>, and <code>NULL</code> to <code>None</code>."
+        },
+        {
+            q: "What does <code>cursor.executemany()</code> do?",
+            options: [
+                "Executes a single SQL statement multiple times with different parameter sets",
+                "Executes multiple different SQL statements in sequence",
+                "Executes a query and returns multiple result sets",
+                "Creates multiple cursors for parallel execution"
+            ],
+            correct: 0,
+            explanation: "<code>executemany()</code> runs the same SQL statement once for each parameter set in a sequence. For example: <code>cursor.executemany('INSERT INTO t VALUES (?, ?)', list_of_tuples)</code>."
+        },
+        {
+            q: "What is the primary defense against SQL injection attacks?",
+            options: [
+                "Using string concatenation with input validation",
+                "Encrypting all database queries",
+                "Using parameterized queries (prepared statements)",
+                "Limiting the length of user input fields"
+            ],
+            correct: 2,
+            explanation: "Parameterized queries are the primary defense against SQL injection. The database engine treats parameter values as <strong>data</strong>, never as executable SQL, preventing attackers from altering query logic."
+        },
+        {
+            q: "What does <code>SELECT DISTINCT department FROM employees;</code> return?",
+            options: [
+                "All department values including duplicates",
+                "Only unique department values with duplicates removed",
+                "The count of unique departments",
+                "Departments sorted alphabetically"
+            ],
+            correct: 1,
+            explanation: "<code>DISTINCT</code> removes duplicate values from the result set. This query returns each unique department name exactly once."
+        },
+        {
+            q: "In Python's <code>sqlite3</code>, what does <code>sqlite3.connect(':memory:')</code> do?",
+            options: [
+                "Connects to a database file named ':memory:'",
+                "Creates a temporary in-memory database that exists only while the connection is open",
+                "Loads the database from disk into RAM for faster access",
+                "Creates a connection pool in memory"
+            ],
+            correct: 1,
+            explanation: "<code>':memory:'</code> creates a temporary in-memory SQLite database. It is fast and useful for testing, but all data is lost when the connection is closed."
+        },
+        {
+            q: "What happens if you run <code>DELETE FROM employees;</code> without a <code>WHERE</code> clause?",
+            options: [
+                "It raises a syntax error",
+                "It deletes the table structure",
+                "It deletes ALL rows from the employees table",
+                "It deletes only the first row"
+            ],
+            correct: 2,
+            explanation: "Running <code>DELETE FROM</code> without a <code>WHERE</code> clause deletes <strong>every row</strong> in the table. The table structure remains, but all data is removed. This is one of the most dangerous SQL mistakes."
+        },
+        {
+            q: "What placeholder does <code>pymysql</code> use for parameterized queries?",
+            options: [
+                "<code>?</code>",
+                "<code>%s</code>",
+                "<code>:name</code>",
+                "<code>${param}</code>"
+            ],
+            correct: 1,
+            explanation: "<code>pymysql</code> uses <code>%s</code> as its placeholder for all data types. Do not confuse this with Python's <code>%</code> string formatting &mdash; it is handled by the database driver. <code>sqlite3</code> uses <code>?</code>."
+        },
+        {
+            q: "What does the <code>CASE WHEN</code> expression do in SQL?",
+            options: [
+                "Creates a new table based on conditions",
+                "Provides conditional logic within a query, similar to if/elif/else",
+                "Changes the case of text values to uppercase",
+                "Filters rows based on a condition"
+            ],
+            correct: 1,
+            explanation: "<code>CASE WHEN</code> provides conditional logic within a SQL query, similar to <code>if/elif/else</code> in Python. It evaluates conditions and returns different values based on which condition is true."
+        },
+        {
+            q: "In the <code>sqlite3</code> workflow, what is the correct order of operations?",
+            options: [
+                "Cursor &rarr; Connect &rarr; Execute &rarr; Fetch &rarr; Commit &rarr; Close",
+                "Connect &rarr; Cursor &rarr; Execute &rarr; Fetch &rarr; Commit &rarr; Close",
+                "Connect &rarr; Execute &rarr; Cursor &rarr; Commit &rarr; Fetch &rarr; Close",
+                "Cursor &rarr; Execute &rarr; Connect &rarr; Fetch &rarr; Close &rarr; Commit"
+            ],
+            correct: 1,
+            explanation: "The correct DB-API 2.0 workflow is: (1) Connect to the database, (2) Create a cursor, (3) Execute SQL, (4) Fetch results, (5) Commit changes for write operations, (6) Close the connection."
+        },
+        {
+            q: "How does SQLite store dates and times?",
+            options: [
+                "As a native <code>DATETIME</code> type, directly compatible with Python's <code>datetime</code>",
+                "As <code>TEXT</code> strings (typically ISO format), which must be converted to <code>datetime</code> in Python",
+                "As <code>INTEGER</code> Unix timestamps only",
+                "As <code>BLOB</code> binary objects"
+            ],
+            correct: 1,
+            explanation: "SQLite does not have a dedicated date/time type. Dates are typically stored as <code>TEXT</code> in ISO format (e.g., '2026-04-25'). In Python, you convert them using <code>datetime.fromisoformat()</code> or <code>datetime.strptime()</code>."
+        }
+    ];
+
+    let userAnswers=new Array(questions.length).fill(-1), examSubmitted=false, timerInterval, timeLeft=20*60;
+    function init(){renderQuestions();renderNav();startTimer();}
+    function renderQuestions(){document.getElementById('questions-container').innerHTML=questions.map((q,i)=>`<div class="exam-question" id="q${i}"><div class="exam-q-header"><div class="exam-q-number">${i+1}</div><div class="exam-q-text">${q.q}</div></div>${q.options.map((opt,j)=>`<div class="exam-option" onclick="selectAnswer(${i},${j})" id="q${i}o${j}"><div class="exam-option-letter">${String.fromCharCode(65+j)}</div><div>${opt}</div></div>`).join('')}<div class="exam-explanation" id="exp${i}">${q.explanation}</div></div>`).join('');}
+    function renderNav(){document.getElementById('question-nav').innerHTML=questions.map((_,i)=>`<div class="exam-nav-btn" id="nav${i}" onclick="scrollToQ(${i})">${i+1}</div>`).join('');}
+    function selectAnswer(qi,oi){if(examSubmitted)return;userAnswers[qi]=oi;questions[qi].options.forEach((_,j)=>{document.getElementById(`q${qi}o${j}`).classList.toggle('selected',j===oi);});document.getElementById(`q${qi}`).classList.add('answered');document.getElementById(`nav${qi}`).classList.add('answered');updateProgress();}
+    function scrollToQ(i){document.getElementById(`q${i}`).scrollIntoView({behavior:'smooth',block:'center'});}
+    function updateProgress(){document.getElementById('answered-count').textContent=userAnswers.filter(a=>a!==-1).length;}
+    function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);submitExam();}},1000);}
+    function updateTimerDisplay(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById('time-display').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;const t=document.getElementById('timer');t.classList.remove('warning','danger');if(timeLeft<=120)t.classList.add('danger');else if(timeLeft<=300)t.classList.add('warning');}
+    function submitExam(){if(examSubmitted)return;examSubmitted=true;clearInterval(timerInterval);let c=0,ic=0,sk=0;questions.forEach((q,i)=>{if(userAnswers[i]===-1)sk++;else if(userAnswers[i]===q.correct)c++;else ic++;});const pct=Math.round(c/questions.length*100);document.getElementById('score-display').textContent=pct+'%';document.getElementById('score-display').className='score-big '+(pct>=75?'pass':'fail');document.getElementById('correct-count').textContent=c;document.getElementById('incorrect-count').textContent=ic;document.getElementById('skipped-count').textContent=sk;document.getElementById('submit-section').style.display='none';document.getElementById('result-section').style.display='block';document.getElementById('result-section').scrollIntoView({behavior:'smooth'});document.querySelectorAll('.exam-option').forEach(el=>el.style.pointerEvents='none');}
+    function reviewExam(){questions.forEach((q,i)=>{const qEl=document.getElementById(`q${i}`),navEl=document.getElementById(`nav${i}`);if(userAnswers[i]===-1){qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-missed');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status skipped">Skipped</div>');}else if(userAnswers[i]===q.correct){qEl.classList.add('review-correct');navEl.classList.add('review-correct');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status correct"><i class="fa-solid fa-check"></i> Correct</div>');}else{qEl.classList.add('review-incorrect');navEl.classList.add('review-incorrect');document.getElementById(`q${i}o${userAnswers[i]}`).classList.add('review-incorrect');document.getElementById(`q${i}o${q.correct}`).classList.add('review-correct');qEl.querySelector('.exam-q-header').insertAdjacentHTML('beforeend','<div class="exam-q-status incorrect"><i class="fa-solid fa-xmark"></i> Incorrect</div>');}document.getElementById(`exp${i}`).classList.add('show');});document.getElementById('q0').scrollIntoView({behavior:'smooth'});}
+    init();
+    </script>
+</body>
+</html>

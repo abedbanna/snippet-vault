@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 3: Lab — Sorting & Searching | PL1 - Java (601112)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--code:#0d1117;--border:rgba(255,255,255,.08);--shadow:0 4px 24px rgba(0,0,0,.3);--radius:12px}
+        [data-theme="light"]{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--text:#0f172a;--text2:#475569;--code:#f6f8fa;--border:rgba(0,0,0,.08);--shadow:0 4px 24px rgba(0,0,0,.08)}
+        html:not([data-theme]){visibility:hidden}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        [data-theme="light"] .navbar{background:var(--bg)}
+        .nav-logo{font-size:1.25rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .nav-logo i{font-size:1.1rem}
+        .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+        .nav-links a{color:var(--text2);font-size:.9rem;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary);text-decoration:none}
+        .theme-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .theme-toggle:hover{color:var(--primary);border-color:var(--primary)}
+        .mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+
+        .hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+        .hero::before{display:none}
+        .hero .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+        .hero .back-link:hover{color:var(--primary);text-decoration:none}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--primary);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:500;margin-bottom:1.5rem}
+        .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+        .hero h1 .gradient{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto}
+
+        .progress-bar-container{max-width:900px;margin:0 auto 2rem;padding:0 2rem}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;font-size:.9rem;color:var(--text2)}
+        .progress-header span:last-child{font-weight:600;color:var(--success)}
+        .progress-track{width:100%;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:10px}
+
+        .section{max-width:900px;margin:0 auto 3rem;padding:0 2rem}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+        .section-title i{color:var(--primary);font-size:1.2rem}
+
+        .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2.5rem}
+        .exercise-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .exercise-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:.9rem;margin-right:.75rem;flex-shrink:0}
+        .exercise-header h3{font-size:1.15rem;font-weight:600;display:flex;align-items:center}
+        .exercise-status{font-size:1.2rem;color:var(--text2)}
+        .exercise-status.done{color:var(--success)}
+        .exercise-body{padding:1.5rem}
+
+        .info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;font-size:.95rem;line-height:1.7;color:var(--text)}
+        .info-box strong{color:var(--primary)}
+        .info-box code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+
+        .usecase-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.9rem;line-height:1.7;color:var(--text2)}
+        .usecase-box i{color:var(--secondary);margin-right:.4rem}
+        .usecase-box strong{color:var(--secondary)}
+
+        .expected-output{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--success);white-space:pre-line}
+        .expected-output .label{color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+
+        .editor-wrapper{position:relative;margin-bottom:1rem}
+        .editor-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem}
+        .code-editor{width:100%;min-height:280px;background:var(--code);color:#e6edf3;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;resize:vertical;outline:none;tab-size:4}
+        .code-editor:focus{border-color:var(--primary)}
+        [data-theme="light"] .code-editor{background:#1e1e2e;color:#e6edf3}
+
+        .editor-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+        .check-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.3rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none}
+        .copy-code-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;margin-left:8px}
+        .copy-code-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb)!important;color:#fff}
+        .btn-check{background:var(--success);color:#fff}
+        .btn-reset{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+        .feedback{padding:.8rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none;margin-bottom:1rem;align-items:center;gap:.5rem}
+        .feedback.success{display:flex;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--success)}
+        .feedback.error{display:flex;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--danger)}
+
+        .hint-toggle{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--warning);font-size:.9rem;font-weight:500;cursor:pointer;padding:.3rem 0}
+        .hint-toggle:hover{text-decoration:underline}
+        .hint-content{display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:1rem 1.2rem;margin-top:.5rem;font-size:.9rem;color:var(--text2);line-height:1.7}
+        .hint-content.open{display:block}
+        .hint-content code{font-family:'JetBrains Mono',monospace;background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.82rem}
+
+        .footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text2);font-size:.85rem}
+
+        .scroll-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.1rem;z-index:999}
+        .scroll-top.show{display:flex}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.5rem}
+            .nav-links.open{display:flex}
+            .mobile-toggle{display:block}
+            .hero h1{font-size:1.8rem}
+            .exercise-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <ul class="nav-links">
+            <li><a href="#exercises">Exercises</a></li>
+            <li><a href="week3.html">← Week 3</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun" id="themeIcon"></i></button></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <a href="week3.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Week 3</a>
+        <div class="hero-badge"><i class="fas fa-flask"></i> Lab Session</div>
+        <h1>Week 3: Lab — <span class="gradient">Sorting & Searching</span></h1>
+        <p>Hands-on Programming Exercises — Ch. 7-8</p>
+    </section>
+
+    <div class="progress-bar-container">
+        <div class="progress-header"><span><i class="fas fa-tasks"></i> Progress</span><span id="progressText">0 / 5 completed</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div id="exercises" class="section">
+
+        <!-- Exercise 1: Sort Student Names by Grade -->
+        <div class="exercise-card" id="ex1">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">1</span>Sort a Class Leaderboard</h3>
+                <span class="exercise-status" id="status1"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A teacher has 5 student exam grades and wants to display them sorted from lowest to highest to see who needs extra help at a glance. She doesn't have a built-in sort — she needs to write her own. How would you do it? Pick any approach: find the smallest and put it first, or take each grade and slide it into the right position — your choice!</div>
+                <div class="info-box">Read <strong>5 integers</strong> (exam grades) into an array. Write your own logic to <strong>sort them in ascending order</strong> (without using <code>Arrays.sort</code>). Use nested loops and <strong>swapping</strong>. Print the array before and after sorting.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter 5 grades: 78 92 65 88 71
+Before sorting: 78 92 65 88 71
+After sorting: 65 71 78 88 92</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(1)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor1" rows="24" spellcheck="false">import java.util.Scanner;
+
+public class SortLeaderboard {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        int[] grades = new int[5];
+        
+        System.out.print("Enter 5 grades: ");
+        for (int i = 0; i < 5; i++) {
+            grades[i] = input.nextInt();
+        }
+        
+        // Print before sorting
+        System.out.print("Before sorting: ");
+        for (int i = 0; i < 5; i++)
+            System.out.print(grades[i] + " ");
+        System.out.println();
+        
+        // Sort the array in ascending order
+        // Use nested for loops and swap with a temp variable
+        
+        
+        // Print after sorting
+        System.out.print("After sorting: ");
+        for (int i = 0; i < 5; i++)
+            System.out.print(grades[i] + " ");
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(0)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(0)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(0)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+                <button class="hint-toggle" onclick="toggleHint(1)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint1">One approach: use two nested <code>for</code> loops. Outer: <code>for (int i = 0; i &lt; 4; i++)</code>. Inner: <code>for (int j = i + 1; j &lt; 5; j++)</code>. If <code>grades[i] &gt; grades[j]</code>, swap them using a <code>temp</code> variable: <code>int temp = grades[i]; grades[i] = grades[j]; grades[j] = temp;</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Sort Prices Descending -->
+        <div class="exercise-card" id="ex2">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">2</span>Sort Product Prices — Most Expensive First</h3>
+                <span class="exercise-status" id="status2"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> An online store wants to show products sorted from most expensive to cheapest so customers can see premium items first. The trick here is: sorting in <strong>descending</strong> order — everything you know about sorting still works, you just flip the comparison! Instead of checking "is this smaller?", you check "is this bigger?".</div>
+                <div class="info-box">Read <strong>N doubles</strong> (product prices) into an array. Sort them in <strong>descending order</strong> (highest to lowest) using nested loops and swapping. Print the sorted prices.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter number of products: 5
+Enter 5 prices: 29.99 9.50 45.00 12.75 31.20
+Prices (high to low): 45.0 31.2 29.99 12.75 9.5</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(2)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor2" rows="24" spellcheck="false">import java.util.Scanner;
+
+public class SortPricesDesc {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("Enter number of products: ");
+        int n = input.nextInt();
+        double[] prices = new double[n];
+        
+        System.out.print("Enter " + n + " prices: ");
+        for (int i = 0; i < n; i++) {
+            prices[i] = input.nextDouble();
+        }
+        
+        // Sort the array in DESCENDING order
+        // Use nested for loops
+        // Swap when the current element is LESS than the next
+        
+        
+        // Print sorted prices
+        System.out.print("Prices (high to low): ");
+        for (int i = 0; i < n; i++)
+            System.out.print(prices[i] + " ");
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(1)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(1)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(1)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+                <button class="hint-toggle" onclick="toggleHint(2)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint2">Same as ascending sort, but flip the comparison. Outer: <code>for (int i = 0; i &lt; n - 1; i++)</code>. Inner: <code>for (int j = i + 1; j &lt; n; j++)</code>. If <code>prices[i] &lt; prices[j]</code> (notice the <code>&lt;</code> instead of <code>&gt;</code>), swap: <code>double temp = prices[i]; prices[i] = prices[j]; prices[j] = temp;</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Search for a Student -->
+        <div class="exercise-card" id="ex3">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">3</span>Find a Student ID in a List</h3>
+                <span class="exercise-status" id="status3"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> The university lost-and-found office has a box of student ID cards — they're in no particular order. A student comes in and gives their ID number. The only way to find the card is to check each one, starting from the first, until you find it or run out of cards. This is <strong>linear search</strong> — simple and works on any list, sorted or not.</div>
+                <div class="info-box">Read <strong>N integers</strong> (student IDs) into an array, then read a <strong>target ID</strong> to search for. Loop through the array one element at a time. If found, print the <strong>index</strong>. If not found, print <code>"ID not found"</code>.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter number of IDs: 6
+Enter 6 IDs: 1045 2031 1578 3022 1190 2455
+Enter ID to search: 3022
+Found at index: 3</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(3)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor3" rows="24" spellcheck="false">import java.util.Scanner;
+
+public class FindStudentID {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("Enter number of IDs: ");
+        int n = input.nextInt();
+        int[] ids = new int[n];
+        
+        System.out.print("Enter " + n + " IDs: ");
+        for (int i = 0; i < n; i++) {
+            ids[i] = input.nextInt();
+        }
+        
+        System.out.print("Enter ID to search: ");
+        int target = input.nextInt();
+        
+        // Search for the target in the array
+        // Loop from 0 to n-1
+        // If ids[i] == target, print index and stop
+        // If you finish the loop without finding it, print "ID not found"
+        
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(2)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(2)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(2)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+                <button class="hint-toggle" onclick="toggleHint(3)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint3">Use a flag: <code>boolean found = false;</code>. Loop: <code>for (int i = 0; i &lt; n; i++)</code>. Inside: <code>if (ids[i] == target)</code> → print <code>"Found at index: " + i</code>, set <code>found = true;</code>, and <code>break;</code>. After the loop: <code>if (!found) System.out.println("ID not found");</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 4: Sort then Search -->
+        <div class="exercise-card" id="ex4">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">4</span>Sort Scores, Then Find a Grade</h3>
+                <span class="exercise-status" id="status4"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A teacher enters exam scores in random order. She wants to: (1) sort them so she can see the results clearly, then (2) quickly check if a specific score exists. This is a very common pattern in programming — <strong>sort first, then search</strong>. Once data is sorted, you can search much faster by always looking in the middle and eliminating half the remaining data each time.</div>
+                <div class="info-box">Read <strong>N integers</strong> into an array. First, <strong>sort</strong> the array using <code>Arrays.sort()</code>. Print the sorted array using <code>Arrays.toString()</code>. Then read a <strong>target value</strong> and use <code>Arrays.binarySearch()</code> to find it. Print the result — if <code>index &gt;= 0</code>, it's found; otherwise it's not.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter number of scores: 6
+Enter 6 scores: 85 72 90 68 95 78
+Sorted: [68, 72, 78, 85, 90, 95]
+Enter score to find: 90
+Score 90 found at index: 4</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(4)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor4" rows="26" spellcheck="false">import java.util.Scanner;
+import java.util.Arrays;
+
+public class SortThenSearch {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("Enter number of scores: ");
+        int n = input.nextInt();
+        int[] scores = new int[n];
+        
+        System.out.print("Enter " + n + " scores: ");
+        for (int i = 0; i < n; i++) {
+            scores[i] = input.nextInt();
+        }
+        
+        // Sort the array using Arrays.sort()
+        
+        
+        // Print sorted array using Arrays.toString()
+        
+        
+        // Read target score
+        System.out.print("Enter score to find: ");
+        int target = input.nextInt();
+        
+        // Search using Arrays.binarySearch()
+        // If result >= 0 → found at that index
+        // If result < 0 → not found
+        
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(3)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(3)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(3)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+                <button class="hint-toggle" onclick="toggleHint(4)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint4">Sort: <code>Arrays.sort(scores);</code>. Print: <code>System.out.println("Sorted: " + Arrays.toString(scores));</code>. Search: <code>int index = Arrays.binarySearch(scores, target);</code>. Then: <code>if (index &gt;= 0)</code> print found with index, else print <code>"Score not found"</code>.</div>
+            </div>
+        </div>
+
+        <!-- Exercise 5: Combined Challenge -->
+        <div class="exercise-card" id="ex5">
+            <div class="exercise-header">
+                <h3><span class="exercise-num">5</span>Top 3 Players from a Tournament</h3>
+                <span class="exercise-status" id="status5"><i class="far fa-circle"></i></span>
+            </div>
+            <div class="exercise-body">
+                <div class="usecase-box"><i class="fas fa-lightbulb"></i> <strong>Think about it:</strong> A gaming tournament just ended and you have all the player scores. The organizer needs the <strong>top 3 highest scores</strong> for the podium. How do you find them? One smart approach: sort all scores from highest to lowest, then just take the first 3. Sorting makes many problems easy — finding the top N, the bottom N, the median, etc.</div>
+                <div class="info-box">Read <strong>N integers</strong> (player scores) into an array. <strong>Sort</strong> the array in <strong>descending order</strong> using your own nested loops. Then print only the <strong>top 3 scores</strong> (the first 3 elements after sorting). If there are fewer than 3 scores, print all of them.</div>
+                <div class="expected-output"><span class="label"><i class="fas fa-terminal"></i> Expected Output</span>Enter number of players: 7
+Enter 7 scores: 340 520 190 680 450 720 310
+Top 3 scores:
+1st place: 720
+2nd place: 680
+3rd place: 520</div>
+                <div class="editor-wrapper">
+                    <div class="editor-label"><i class="fas fa-code"></i> Your Code <button class="copy-code-btn" onclick="copyEditorCode(5)"><i class="far fa-copy"></i> Copy</button></div>
+                    <textarea class="code-editor" id="editor5" rows="28" spellcheck="false">import java.util.Scanner;
+
+public class Top3Players {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("Enter number of players: ");
+        int n = input.nextInt();
+        int[] scores = new int[n];
+        
+        System.out.print("Enter " + n + " scores: ");
+        for (int i = 0; i < n; i++) {
+            scores[i] = input.nextInt();
+        }
+        
+        // Sort the array in DESCENDING order
+        // Use nested for loops and swap
+        
+        
+        // Print the top 3 (or fewer if n < 3)
+        System.out.println("Top 3 scores:");
+        String[] places = {"1st", "2nd", "3rd"};
+        // Loop up to 3 (or n if n < 3)
+        // Print: places[i] + " place: " + scores[i]
+        
+        
+        input.close();
+    }
+}</textarea>
+                </div>
+                <div class="editor-actions">
+                    <button class="check-btn btn-run" onclick="runCode(4)"><i class="fas fa-play"></i> Run</button>
+                    <button class="check-btn btn-check" onclick="checkSolution(4)"><i class="fas fa-check"></i> Check Solution</button>
+                    <button class="check-btn btn-reset" onclick="resetEditor(4)"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+                <button class="hint-toggle" onclick="toggleHint(5)"><i class="fas fa-lightbulb"></i> Show Hint</button>
+                <div class="hint-content" id="hint5">Sort descending: outer <code>for (int i = 0; i &lt; n - 1; i++)</code>, inner <code>for (int j = i + 1; j &lt; n; j++)</code>. If <code>scores[i] &lt; scores[j]</code>, swap with <code>temp</code>. For top 3: <code>int top = Math.min(3, n);</code> then <code>for (int i = 0; i &lt; top; i++)</code> print <code>places[i] + " place: " + scores[i]</code>.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>PL1 - Programming Languages 1 (601112) — Java Lab Exercises</p>
+        <p style="margin-top:.5rem">Built with <i class="fas fa-heart" style="color:var(--danger)"></i> for learning</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+const exercises = [
+  { skeleton: "import java.util.Scanner;\n\npublic class SortLeaderboard {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        int[] grades = new int[5];\n        \n        System.out.print(\"Enter 5 grades: \");\n        for (int i = 0; i < 5; i++) {\n            grades[i] = input.nextInt();\n        }\n        \n        // Print before sorting\n        System.out.print(\"Before sorting: \");\n        for (int i = 0; i < 5; i++)\n            System.out.print(grades[i] + \" \");\n        System.out.println();\n        \n        // Sort the array in ascending order\n        // Use nested for loops and swap with a temp variable\n        \n        \n        // Print after sorting\n        System.out.print(\"After sorting: \");\n        for (int i = 0; i < 5; i++)\n            System.out.print(grades[i] + \" \");\n        \n        input.close();\n    }\n}", keywords: ["for", "int[]", "temp", "="] },
+  { skeleton: "import java.util.Scanner;\n\npublic class SortPricesDesc {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        System.out.print(\"Enter number of products: \");\n        int n = input.nextInt();\n        double[] prices = new double[n];\n        \n        System.out.print(\"Enter \" + n + \" prices: \");\n        for (int i = 0; i < n; i++) {\n            prices[i] = input.nextDouble();\n        }\n        \n        // Sort the array in DESCENDING order\n        // Use nested for loops\n        // Swap when the current element is LESS than the next\n        \n        \n        // Print sorted prices\n        System.out.print(\"Prices (high to low): \");\n        for (int i = 0; i < n; i++)\n            System.out.print(prices[i] + \" \");\n        \n        input.close();\n    }\n}", keywords: ["double[]", "for", "temp", "prices"] },
+  { skeleton: "import java.util.Scanner;\n\npublic class FindStudentID {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        System.out.print(\"Enter number of IDs: \");\n        int n = input.nextInt();\n        int[] ids = new int[n];\n        \n        System.out.print(\"Enter \" + n + \" IDs: \");\n        for (int i = 0; i < n; i++) {\n            ids[i] = input.nextInt();\n        }\n        \n        System.out.print(\"Enter ID to search: \");\n        int target = input.nextInt();\n        \n        // Search for the target in the array\n        // Loop from 0 to n-1\n        // If ids[i] == target, print index and stop\n        // If you finish the loop without finding it, print \"ID not found\"\n        \n        \n        input.close();\n    }\n}", keywords: ["for", "target", "==", "found"] },
+  { skeleton: "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class SortThenSearch {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        System.out.print(\"Enter number of scores: \");\n        int n = input.nextInt();\n        int[] scores = new int[n];\n        \n        System.out.print(\"Enter \" + n + \" scores: \");\n        for (int i = 0; i < n; i++) {\n            scores[i] = input.nextInt();\n        }\n        \n        // Sort the array using Arrays.sort()\n        \n        \n        // Print sorted array using Arrays.toString()\n        \n        \n        // Read target score\n        System.out.print(\"Enter score to find: \");\n        int target = input.nextInt();\n        \n        // Search using Arrays.binarySearch()\n        // If result >= 0 → found at that index\n        // If result < 0 → not found\n        \n        \n        input.close();\n    }\n}", keywords: ["Arrays.sort", "Arrays.binarySearch", "Arrays.toString", "target"] },
+  { skeleton: "import java.util.Scanner;\n\npublic class Top3Players {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        \n        System.out.print(\"Enter number of players: \");\n        int n = input.nextInt();\n        int[] scores = new int[n];\n        \n        System.out.print(\"Enter \" + n + \" scores: \");\n        for (int i = 0; i < n; i++) {\n            scores[i] = input.nextInt();\n        }\n        \n        // Sort the array in DESCENDING order\n        // Use nested for loops and swap\n        \n        \n        // Print the top 3 (or fewer if n < 3)\n        System.out.println(\"Top 3 scores:\");\n        String[] places = {\"1st\", \"2nd\", \"3rd\"};\n        // Loop up to 3 (or n if n < 3)\n        // Print: places[i] + \" place: \" + scores[i]\n        \n        \n        input.close();\n    }\n}", keywords: ["for", "int[]", "temp", "place", "scores"] }
+];
+
+const completed = new Set();
+
+function copyEditorCode(id) {
+    const code = document.getElementById('editor' + id).value;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-code-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
+    });
+}
+
+function runCode(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    window.open('https://www.programiz.com/java-programming/online-compiler/', '_blank');
+    navigator.clipboard.writeText(code).then(() => {
+        const fb = document.getElementById('feedback' + id);
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-copy"></i> Code copied to clipboard! Paste it in the compiler tab that just opened (Ctrl+V / ⌘+V)';
+    });
+}
+
+function checkSolution(idx) {
+    const id = idx + 1;
+    const code = document.getElementById('editor' + id).value;
+    const fb = document.getElementById('feedback' + id);
+    const kws = exercises[idx].keywords;
+    const missing = kws.filter(k => !code.includes(k));
+    if (missing.length === 0) {
+        fb.className = 'feedback success';
+        fb.innerHTML = '<i class="fas fa-check-circle"></i> Great job! Your solution looks correct.';
+        completed.add(id);
+        document.getElementById('status' + id).innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.getElementById('status' + id).classList.add('done');
+    } else {
+        fb.className = 'feedback error';
+        fb.innerHTML = '<i class="fas fa-times-circle"></i> Not quite. Make sure you use the required constructs: ' + missing.map(k=>'<code>'+k+'</code>').join(', ');
+        completed.delete(id);
+        document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById('status' + id).classList.remove('done');
+    }
+    updateProgress();
+}
+
+function resetEditor(idx) {
+    const id = idx + 1;
+    document.getElementById('editor' + id).value = exercises[idx].skeleton;
+    document.getElementById('feedback' + id).className = 'feedback';
+    completed.delete(id);
+    document.getElementById('status' + id).innerHTML = '<i class="far fa-circle"></i>';
+    document.getElementById('status' + id).classList.remove('done');
+    updateProgress();
+}
+
+function toggleHint(id) {
+    document.getElementById('hint' + id).classList.toggle('open');
+}
+
+function updateProgress() {
+    const pct = (completed.size / exercises.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = completed.size + ' / ' + exercises.length + ' completed';
+}
+
+// Tab key inserts spaces
+document.querySelectorAll('.code-editor').forEach(el => {
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const s = el.selectionStart, end = el.selectionEnd;
+            el.value = el.value.substring(0, s) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = s + 4;
+        }
+    });
+});
+
+// Theme
+function toggleTheme() {
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){const t=localStorage.getItem('theme')||'dark';if(t==='light')document.getElementById('themeIcon').className='fas fa-sun';})();
+
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+});
+</script>
+
+</body>
+</html>

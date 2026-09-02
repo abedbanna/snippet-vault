@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrating n8n for Automated Intelligence Workflows</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --dark: #1A535C;
+            --light: #F7FFF7;
+            --accent: #FFE66D;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            line-height: 1.6;
+        }
+        .bg-primary { background-color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .bg-dark { background-color: var(--dark); }
+        .bg-light { background-color: var(--light); }
+        .bg-accent { background-color: var(--accent); }
+
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-dark { color: var(--dark); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, #2c7a7b 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .progress-container {
+            position: sticky;
+            top: 0;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--secondary);
+            transition: width 0.5s ease;
+        }
+
+        .collapsible-header {
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapsible-content {
+            padding: 1rem;
+            display: none;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .node {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem;
+            text-align: center;
+        }
+
+        .connector {
+            height: 50px;
+            position: relative;
+        }
+
+        .connector::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            border-left: 2px dashed #a0aec0;
+        }
+
+        .code-block {
+            background-color: #1a202c;
+            color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #2d3748;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background-color: #4a5568;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -75px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .workflow-builder {
+            background-color: #f8fafc;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 300px;
+        }
+
+        .interactive-diagram {
+            position: relative;
+            width: 100%;
+            margin: 2rem 0;
+        }
+
+        .diagram-component {
+            position: absolute;
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .diagram-component:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .diagram-line {
+            position: absolute;
+            border-top: 2px solid #a0aec0;
+        }
+
+        .diagram-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid #a0aec0;
+        }
+
+        /* Custom checkboxes for interactive tracking */
+        .custom-checkbox {
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            user-select: none;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+            border-radius: 4px;
+        }
+
+        .custom-checkbox:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: var(--secondary);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .custom-checkbox .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 7px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Interactive Flow Diagram Styles */
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .flow-node {
+            width: 200px;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .flow-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .flow-connector {
+            height: 40px;
+            width: 2px;
+            background-color: #718096;
+            position: relative;
+        }
+
+        .flow-connector::after {
+            content: "▼";
+            position: absolute;
+            bottom: -10px;
+            left: -4px;
+            color: #718096;
+        }
+
+        /* Animation */
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out forwards;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .flex-col-mobile {
+                flex-direction: column !important;
+            }
+
+            .w-full-mobile {
+                width: 100% !important;
+            }
+
+            .mb-4-mobile {
+                margin-bottom: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="container mx-auto px-4 py-16">
+            <h1 class="text-4xl font-bold mb-6">Integrating n8n for Automated Intelligence Workflows</h1>
+            <p class="text-xl mb-8">A step-by-step journey from fundamentals to advanced concepts</p>
+            <div class="flex justify-center space-x-4">
+                <a href="#fundamentals" class="bg-white text-dark px-6 py-2 rounded-full hover:bg-accent hover:text-dark transition duration-300">Get Started</a>
+                <a href="https://n8n.io" target="_blank" class="bg-transparent border border-white text-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition duration-300">Visit n8n.io</a>
+                <a href="index.html" target="_blank" class="bg-transparent border border-white text-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition duration-300">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="progress-container">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold">Your Learning Progress</h3>
+                <span id="progress-percentage">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-bar" class="progress" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Introduction Section -->
+        <section id="introduction" class="section mb-12 animate-fade-in" style="animation-delay: 0.1s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Introduction to n8n and Workflow Automation</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">What is n8n?</h3>
+                    <p class="mb-4">n8n is a powerful, open-source workflow automation tool that enables you to connect various apps, services, and APIs to automate tasks without writing extensive code. It provides a visual interface where you can design workflows by connecting nodes representing different services or operations.</p>
+                    <p>Unlike many other automation platforms, n8n can be self-hosted, offering greater flexibility, privacy, and control over your data and processes.</p>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">Key Features</h3>
+                    <ul class="space-y-2">
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Visual workflow builder with drag-and-drop interface</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> 400+ pre-built integrations with popular apps and services</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Advanced AI capabilities through integration with LLMs</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Flexible deployment options (cloud or self-hosted)</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Custom JavaScript code support for complex transformations</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Webhook and API endpoints for external triggers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4">Why n8n for Intelligence Workflows?</h3>
+                <p class="mb-4">n8n excels at creating automated intelligence workflows because it:</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <i class="fas fa-brain text-4xl text-secondary mb-3"></i>
+                        <h4 class="font-semibold mb-2">AI Integration</h4>
+                        <p>Seamlessly connects with AI services like OpenAI, Google Gemini, Groq, and more</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <i class="fas fa-code-branch text-4xl text-secondary mb-3"></i>
+                        <h4 class="font-semibold mb-2">Flexible Data Flow</h4>
+                        <p>Handles complex data transformations with native JavaScript support</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <i class="fas fa-plug text-4xl text-secondary mb-3"></i>
+                        <h4 class="font-semibold mb-2">Extensive Connectivity</h4>
+                        <p>Connects your AI tools with hundreds of other services and data sources</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="introduction">
+                    <span class="checkmark"></span>
+                    I understand what n8n is and why it's valuable for automation
+                </label>
+            </div>
+        </section>
+
+        <!-- Fundamentals Section -->
+        <section id="fundamentals" class="section mb-12 animate-fade-in" style="animation-delay: 0.2s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Fundamental Architecture of n8n</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Core Components</h3>
+                <div class="flow-diagram">
+                    <div class="flow-node bg-blue-100" onclick="showComponentDetails('trigger-nodes')">
+                        <i class="fas fa-play-circle text-blue-500 text-2xl mb-2"></i>
+                        <h4 class="font-semibold">Trigger Nodes</h4>
+                    </div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-node bg-green-100" onclick="showComponentDetails('processing-nodes')">
+                        <i class="fas fa-cogs text-green-500 text-2xl mb-2"></i>
+                        <h4 class="font-semibold">Processing Nodes</h4>
+                    </div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-node bg-purple-100" onclick="showComponentDetails('output-nodes')">
+                        <i class="fas fa-database text-purple-500 text-2xl mb-2"></i>
+                        <h4 class="font-semibold">Output Nodes</h4>
+                    </div>
+                </div>
+
+                <div id="component-details" class="mt-8 p-6 bg-gray-50 rounded-lg hidden">
+                    <div id="trigger-nodes-details" class="component-detail hidden">
+                        <h4 class="text-lg font-semibold mb-3 text-blue-600">Trigger Nodes</h4>
+                        <p>Trigger nodes are the starting points of workflows. They initiate the workflow execution based on events such as:</p>
+                        <ul class="list-disc pl-6 mt-2 mb-4">
+                            <li>Webhook calls</li>
+                            <li>Scheduled times</li>
+                            <li>Chat interfaces</li>
+                            <li>Database changes</li>
+                        </ul>
+                        <p>Examples: Webhook, Schedule, Chat Trigger, Cron</p>
+                    </div>
+
+                    <div id="processing-nodes-details" class="component-detail hidden">
+                        <h4 class="text-lg font-semibold mb-3 text-green-600">Processing Nodes</h4>
+                        <p>Processing nodes manipulate, transform, and enrich data as it flows through the workflow. They can:</p>
+                        <ul class="list-disc pl-6 mt-2 mb-4">
+                            <li>Filter and sort data</li>
+                            <li>Transform data structure</li>
+                            <li>Execute custom code</li>
+                            <li>Make API calls to external services</li>
+                        </ul>
+                        <p>Examples: HTTP Request, Function, AI Agent, Split Out, Aggregate</p>
+                    </div>
+
+                    <div id="output-nodes-details" class="component-detail hidden">
+                        <h4 class="text-lg font-semibold mb-3 text-purple-600">Output Nodes</h4>
+                        <p>Output nodes represent the final destinations for processed data. They can:</p>
+                        <ul class="list-disc pl-6 mt-2 mb-4">
+                            <li>Store data in databases</li>
+                            <li>Send notifications</li>
+                            <li>Update external services</li>
+                            <li>Trigger other workflows</li>
+                        </ul>
+                        <p>Examples: Email, Telegram, Airtable, Google Sheets</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Data Structure in n8n</h3>
+                <p class="mb-4">Understanding how data flows through n8n is essential for building effective workflows. n8n uses a specific data structure:</p>
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode('dataStructureCode')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <pre id="dataStructureCode">
+// n8n data structure: Array of JSON objects with a "json" property
+return [
+  {
+    json: {
+      name: 'Alice',
+      email: 'alice@example.com',
+      role: 'Developer'
+    }
+  },
+  {
+    json: {
+      name: 'Bob',
+      email: 'bob@example.com',
+      role: 'Designer'
+    }
+  }
+];</pre>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Key Characteristics</h4>
+                        <ul class="space-y-2">
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Data is always an array of objects</li>
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Each object must contain a "json" property</li>
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Nodes process each item in the array independently</li>
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Data maintains this structure throughout the workflow</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Data Transformation Options</h4>
+                        <ul class="space-y-2">
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Split Out Node: Convert arrays into multiple items</li>
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Aggregate Node: Combine multiple items into one</li>
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Code Node: Custom JavaScript transformations</li>
+                            <li><i class="fas fa-arrow-right text-secondary mr-2"></i> Set Node: Map data between different structures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Execution Flow Model</h3>
+                <p class="mb-4">n8n follows a specific execution model that determines how workflows run:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="card p-4">
+                        <h4 class="font-semibold mb-2">1. Trigger Phase</h4>
+                        <p>The workflow waits for a triggering event from a trigger node, which initiates execution.</p>
+                    </div>
+                    <div class="card p-4">
+                        <h4 class="font-semibold mb-2">2. Execution Phase</h4>
+                        <p>Data flows sequentially from node to node, with each node processing the data it receives.</p>
+                    </div>
+                    <div class="card p-4">
+                        <h4 class="font-semibold mb-2">3. Completion Phase</h4>
+                        <p>The workflow finishes when all connected nodes have executed or an error occurs.</p>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg mt-6">
+                    <h4 class="font-semibold mb-2">Important Note on Execution</h4>
+                    <p>n8n processes data items independently through each node. This means if you have 5 items entering a node, the node's operation will run 5 times - once for each item. This is crucial to understand when designing workflows with multiple data items.</p>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="fundamentals">
+                    <span class="checkmark"></span>
+                    I understand the fundamental architecture of n8n
+                </label>
+            </div>
+        </section>
+
+        <!-- Building AI Workflows Section -->
+        <section id="ai-workflows" class="section mb-12 animate-fade-in" style="animation-delay: 0.3s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Integrating AI Capabilities with n8n</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Understanding AI in n8n</h3>
+                <p class="mb-4">n8n provides powerful capabilities for integrating AI into your workflows through specialized nodes and connections to various language models.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold mb-3">AI Concepts in n8n</h4>
+                        <ul class="space-y-3">
+                            <li><span class="font-semibold">AI Agent:</span> A core component that orchestrates AI operations and tool usage</li>
+                            <li><span class="font-semibold">Language Models (LLMs):</span> External AI services like OpenAI, DeepSeek, Google Gemini, Groq, etc.</li>
+                            <li><span class="font-semibold">Memory:</span> Components that store conversation context for continuity</li>
+                            <li><span class="font-semibold">Tools:</span> Specialized capabilities the AI agent can access and use</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-3">Key Differences: LLM vs. AI Agent</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left pb-2">Feature</th>
+                                        <th class="text-left pb-2">LLM</th>
+                                        <th class="text-left pb-2">AI Agent</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="py-1">Core Capability</td>
+                                        <td>Text generation</td>
+                                        <td>Goal-oriented tasks</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1">Decision-Making</td>
+                                        <td>None</td>
+                                        <td>Yes</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1">Uses Tools/APIs</td>
+                                        <td>No</td>
+                                        <td>Yes</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1">Workflow Complexity</td>
+                                        <td>Single-step</td>
+                                        <td>Multi-step</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">The AI Agent Architecture</h3>
+
+                <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="flow-node bg-blue-200 w-64">
+                            <h4 class="font-semibold">AI Agent Node</h4>
+                            <p class="text-sm">Orchestrates AI interactions</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                            <div class="flex flex-col items-center">
+                                <div class="flow-connector"></div>
+                                <div class="flow-node bg-green-200 w-48">
+                                    <h4 class="font-semibold">Chat Model</h4>
+                                    <p class="text-sm">Processes language</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="flow-connector"></div>
+                                <div class="flow-node bg-yellow-200 w-48">
+                                    <h4 class="font-semibold">Memory</h4>
+                                    <p class="text-sm">Stores context</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="flow-connector"></div>
+                                <div class="flow-node bg-purple-200 w-48">
+                                    <h4 class="font-semibold">Tools</h4>
+                                    <p class="text-sm">Extends capabilities</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center">The AI Agent architecture consists of a root node (AI Agent) connected to sub-nodes that provide specific functionality.</p>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3">AI Agent Components in Detail</h4>
+
+                    <div class="collapsible-container">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <span><i class="fas fa-robot mr-2 text-green-500"></i> Chat Model</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="collapsible-content">
+                            <p class="mb-2">The Chat Model is the language processing engine behind your AI agent. n8n supports various models:</p>
+                            <ul class="list-disc pl-6 mb-4">
+                                <li>OpenAI (GPT models)</li>
+                                <li>Google Gemini</li>
+                                <li>DeepSeek</li>
+                                <li>Groq</li>
+                                <li>Azure OpenAI</li>
+                                <li>Anthropic Claude</li>
+                            </ul>
+                            <p>Each model requires specific credentials and may have different capabilities and pricing models.</p>
+                        </div>
+                    </div>
+
+                    <div class="collapsible-container mt-4">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <span><i class="fas fa-memory mr-2 text-yellow-500"></i> Memory</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="collapsible-content">
+                            <p class="mb-2">Memory components store conversation context to enable continuous interactions:</p>
+                            <ul class="list-disc pl-6 mb-4">
+                                <li><strong>Window Buffer Memory:</strong> Stores a fixed number of recent interactions</li>
+                                <li><strong>Conversation Summary Memory:</strong> Summarizes older conversations to save tokens</li>
+                                <li><strong>Vector Store Memory:</strong> Stores conversations for semantic retrieval</li>
+                            </ul>
+                            <p>Without memory, your AI agent would treat each interaction as isolated and would not remember previous conversations.</p>
+                        </div>
+                    </div>
+
+                    <div class="collapsible-container mt-4">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <span><i class="fas fa-tools mr-2 text-purple-500"></i> Tools</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="collapsible-content">
+                            <p class="mb-2">Tools extend the AI agent's capabilities beyond text processing:</p>
+                            <ul class="list-disc pl-6 mb-4">
+                                <li><strong>Search Tool:</strong> Allows the AI to search the web</li>
+                                <li><strong>Retrieval Tool:</strong> Enables searching through document collections</li>
+                                <li><strong>Calculator Tool:</strong> Performs mathematical operations</li>
+                                <li><strong>Code Interpreter:</strong> Executes code snippets</li>
+                                <li><strong>Custom Function Tool:</strong> Executes user-defined functions</li>
+                            </ul>
+                            <p>Tools transform a simple LLM into a powerful agent capable of performing complex, multi-step tasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Building an AI Workflow: Step-by-Step Example</h3>
+
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <ol class="space-y-6">
+                        <li>
+                            <div class="flex items-start">
+                                <span class="bg-secondary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">1</span>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Add a Trigger Node</h4>
+                                    <p class="mb-2">Start with a Chat Trigger node to begin the workflow when a user sends a message.</p>
+                                    <div class="bg-white p-3 rounded border border-gray-200">
+                                        <p class="text-sm text-gray-700">The Chat Trigger node creates a simple chat interface that allows users to interact with your AI workflow.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-start">
+                                <span class="bg-secondary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">2</span>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Add an AI Agent Node</h4>
+                                    <p class="mb-2">Connect an AI Agent node to the Chat Trigger to process user messages.</p>
+                                    <div class="bg-white p-3 rounded border border-gray-200">
+                                        <p class="text-sm text-gray-700">The AI Agent node is the core component that will orchestrate the intelligence workflow, making decisions and coordinating with other components.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-start">
+                                <span class="bg-secondary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">3</span>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Connect a Chat Model</h4>
+                                    <p class="mb-2">Add a Chat Model node (such as OpenAI) and connect it to the AI Agent.</p>
+                                    <div class="bg-white p-3 rounded border border-gray-200">
+                                        <p class="text-sm text-gray-700">The Chat Model provides the language processing capabilities. Connect this to the "Chat Model" input on the AI Agent node.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-start">
+                                <span class="bg-secondary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">4</span>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Add Memory for Persistence</h4>
+                                    <p class="mb-2">Connect a Memory node (like Window Buffer Memory) to store conversation context.</p>
+                                    <div class="bg-white p-3 rounded border border-gray-200">
+                                        <p class="text-sm text-gray-700">Memory allows the AI to remember previous messages in the conversation, enabling more coherent multi-turn interactions. Connect this to the "Memory" input on the AI Agent node.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-start">
+                                <span class="bg-secondary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">5</span>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Customize the AI's Behavior</h4>
+                                    <p class="mb-2">Modify the "System Message" in the AI Agent options to define the AI's personality and capabilities.</p>
+                                    <div class="code-block">
+                                        <button class="copy-btn" onclick="copyCode('systemMessage')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <pre id="systemMessage">You are a helpful assistant specializing in workflow automation.
+Your goal is to help users understand how to build automated
+intelligence workflows with n8n. Be concise but thorough in
+your explanations.</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-start">
+                                <span class="bg-secondary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">6</span>
+                                <div>
+                                    <h4 class="font-semibold mb-2">Test and Iterate</h4>
+                                    <p class="mb-2">Save and activate the workflow, then test the chat interface to see how your AI agent responds.</p>
+                                    <div class="bg-white p-3 rounded border border-gray-200">
+                                        <p class="text-sm text-gray-700">Use the built-in chat interface to test your workflow. Check the logs in the AI Agent node to see how the conversation flows and what happens at each step.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4">Interactive Demonstration: AI Workflow</h3>
+                <p class="mb-4">Click through the steps below to see how an AI workflow progresses:</p>
+
+                <div class="tabs flex border-b border-gray-300 mb-6">
+                    <button class="tab-btn py-2 px-4 mr-2 focus:outline-none" data-tab="step1" onclick="changeTab('step1', this)">Step 1: User Input</button>
+                    <button class="tab-btn py-2 px-4 mr-2 focus:outline-none" data-tab="step2" onclick="changeTab('step2', this)">Step 2: AI Processing</button>
+                    <button class="tab-btn py-2 px-4 mr-2 focus:outline-none" data-tab="step3" onclick="changeTab('step3', this)">Step 3: Response</button>
+                    <button class="tab-btn py-2 px-4 mr-2 focus:outline-none" data-tab="step4" onclick="changeTab('step4', this)">Step 4: Memory Update</button>
+                </div>
+
+                <div class="tab-content" id="step1">
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-semibold mb-2">Chat Trigger Node Activates</h4>
+                        <div class="flex items-start bg-gray-100 p-3 rounded-lg">
+                            <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                <i class="fas fa-user text-blue-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">User</p>
+                                <p>How can I integrate a database query into my n8n workflow?</p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-700">1. The Chat Trigger node receives the user message</p>
+                            <p class="text-sm text-gray-700">2. The message is formatted as a data item in n8n's standard structure</p>
+                            <p class="text-sm text-gray-700">3. The data is passed to the connected AI Agent node</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="step2">
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-semibold mb-2">AI Agent Processes the Request</h4>
+                        <div class="bg-gray-100 p-3 rounded-lg mb-4">
+                            <p class="font-semibold mb-2">AI Agent Processing</p>
+                            <ol class="text-sm space-y-2">
+                                <li>1. Combines the user query with the system message</li>
+                                <li>2. Retrieves any relevant memory from previous interactions</li>
+                                <li>3. Sends the combined prompt to the chat model</li>
+                                <li>4. The chat model generates a response based on its training</li>
+                            </ol>
+                        </div>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="font-semibold mb-2">Chat Model Thinking Process</p>
+                            <p class="text-sm italic">Analyzing query about database integration with n8n... Identifying relevant node types... Recalling standard workflow patterns for database queries... Formulating clear step-by-step instructions...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="step3">
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-semibold mb-2">AI Generates Response</h4>
+                        <div class="flex items-start bg-gray-100 p-3 rounded-lg">
+                            <div class="bg-green-100 rounded-full p-2 mr-3">
+                                <i class="fas fa-robot text-green-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">AI Assistant</p>
+                                <p>To integrate a database query into your n8n workflow, follow these steps:</p>
+                                <ol class="ml-5 mt-2 space-y-1">
+                                    <li>1. Add a trigger node to start your workflow (Webhook, Schedule, etc.)</li>
+                                    <li>2. Add a Database node matching your database type (MySQL, PostgreSQL, MongoDB, etc.)</li>
+                                    <li>3. Configure your database credentials in the node</li>
+                                    <li>4. Write your query in the SQL Query field or use the node's interface</li>
+                                    <li>5. Test the connection and query execution</li>
+                                    <li>6. Add subsequent nodes to process the query results</li>
+                                </ol>
+                                <p class="mt-2">You can then manipulate the returned data using Code nodes, Set nodes, or other transformation nodes before sending it to your desired destination.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="step4">
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-semibold mb-2">Memory Updates for Future Interactions</h4>
+                        <div class="bg-yellow-50 p-3 rounded-lg mb-4 border border-yellow-200">
+                            <p class="font-semibold mb-2">Memory Node Updates</p>
+                            <div class="text-sm space-y-2">
+                                <p>The Memory node stores:</p>
+                                <ol class="space-y-1">
+                                    <li>1. The user's question about database queries</li>
+                                    <li>2. The AI's detailed response about database integration</li>
+                                </ol>
+                                <p class="mt-2">In future interactions, the AI can reference this context. For example, if the user asks "What about MongoDB specifically?", the AI will understand this refers to the previous database integration question.</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                            <p class="font-semibold mb-2">Workflow Completion</p>
+                            <p class="text-sm">The workflow has now completed a full cycle, with the response returned to the Chat Trigger node, which displays it to the user in the chat interface. The workflow remains active, waiting for the next user message to trigger a new cycle.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="ai-workflows">
+                    <span class="checkmark"></span>
+                    I understand how to integrate AI capabilities with n8n
+                </label>
+            </div>
+        </section>
+
+        <!-- Advanced Architecture Section -->
+        <section id="advanced-architecture" class="section mb-12 animate-fade-in" style="animation-delay: 0.4s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Advanced Architecture Concepts</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Scaling n8n for Enterprise Intelligence Workflows</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold mb-3">Distributed Architecture</h4>
+                        <p class="mb-3">For larger implementations, n8n can be deployed in a distributed architecture to handle increased workflow volume and ensure high availability.</p>
+
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h5 class="font-semibold mb-2">Key Components</h5>
+                            <ul class="space-y-2">
+                                <li><i class="fas fa-server text-secondary mr-2"></i> <span class="font-semibold">Main Mode:</span> Handles the UI and workflow management</li>
+                                <li><i class="fas fa-cogs text-secondary mr-2"></i> <span class="font-semibold">Worker Mode:</span> Executes the actual workflows</li>
+                                <li><i class="fas fa-database text-secondary mr-2"></i> <span class="font-semibold">Shared Database:</span> Stores workflow definitions and execution data</li>
+                                <li><i class="fas fa-hdd text-secondary mr-2"></i> <span class="font-semibold">Queue Mode:</span> Manages execution queue for better resource utilization</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-3">Scaling Benefits</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg h-full">
+                            <ul class="space-y-4">
+                                <li>
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-tachometer-alt text-green-500 mr-2"></i>
+                                        <span class="font-semibold">Improved Performance</span>
+                                    </div>
+                                    <p class="text-sm">Distribute workflow execution across multiple workers to handle more concurrent executions</p>
+                                </li>
+                                <li>
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                                        <span class="font-semibold">Enhanced Reliability</span>
+                                    </div>
+                                    <p class="text-sm">Eliminate single points of failure with redundant components</p>
+                                </li>
+                                <li>
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-expand-arrows-alt text-green-500 mr-2"></i>
+                                        <span class="font-semibold">Horizontal Scalability</span>
+                                    </div>
+                                    <p class="text-sm">Add more worker nodes as workflow volume increases</p>
+                                </li>
+                                <li>
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-balance-scale text-green-500 mr-2"></i>
+                                        <span class="font-semibold">Resource Optimization</span>
+                                    </div>
+                                    <p class="text-sm">Allocate resources efficiently based on workflow requirements</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-white p-6 rounded-lg shadow-sm">
+                    <h4 class="font-semibold mb-4">Distributed n8n Architecture Diagram</h4>
+                    <div class="text-center p-4 border border-dashed border-gray-300 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="p-4 border rounded-lg bg-blue-50">
+                                <h5 class="font-semibold mb-2">Main Node</h5>
+                                <div class="text-sm text-gray-700 mb-3">
+                                    <p>• UI Server</p>
+                                    <p>• Workflow Management</p>
+                                    <p>• User Authentication</p>
+                                </div>
+                                <div class="flex justify-center">
+                                    <i class="fas fa-desktop text-4xl text-blue-500"></i>
+                                </div>
+                            </div>
+
+                            <div class="p-4 border rounded-lg bg-green-50">
+                                <h5 class="font-semibold mb-2">Queue System</h5>
+                                <div class="text-sm text-gray-700 mb-3">
+                                    <p>• Execution Queue</p>
+                                    <p>• Job Distribution</p>
+                                    <p>• Load Balancing</p>
+                                </div>
+                                <div class="flex justify-center">
+                                    <i class="fas fa-tasks text-4xl text-green-500"></i>
+                                </div>
+                            </div>
+
+                            <div class="p-4 border rounded-lg bg-yellow-50">
+                                <h5 class="font-semibold mb-2">Shared Database</h5>
+                                <div class="text-sm text-gray-700 mb-3">
+                                    <p>• Workflow Definitions</p>
+                                    <p>• Execution Data</p>
+                                    <p>• Credentials (encrypted)</p>
+                                </div>
+                                <div class="flex justify-center">
+                                    <i class="fas fa-database text-4xl text-yellow-500"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center my-4">
+                            <i class="fas fa-arrows-alt-v text-2xl text-gray-400"></i>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="p-4 border rounded-lg bg-purple-50">
+                                <h5 class="font-semibold mb-2">Worker Node 1</h5>
+                                <div class="text-sm text-gray-700 mb-3">
+                                    <p>• Workflow Execution</p>
+                                    <p>• API Connections</p>
+                                </div>
+                                <div class="flex justify-center">
+                                    <i class="fas fa-cog text-4xl text-purple-500"></i>
+                                </div>
+                            </div>
+
+                            <div class="p-4 border rounded-lg bg-purple-50">
+                                <h5 class="font-semibold mb-2">Worker Node 2</h5>
+                                <div class="text-sm text-gray-700 mb-3">
+                                    <p>• Workflow Execution</p>
+                                    <p>• API Connections</p>
+                                </div>
+                                <div class="flex justify-center">
+                                    <i class="fas fa-cog text-4xl text-purple-500"></i>
+                                </div>
+                            </div>
+
+                            <div class="p-4 border rounded-lg bg-purple-50">
+                                <h5 class="font-semibold mb-2">Worker Node 3</h5>
+                                <div class="text-sm text-gray-700 mb-3">
+                                    <p>• Workflow Execution</p>
+                                    <p>• API Connections</p>
+                                </div>
+                                <div class="flex justify-center">
+                                    <i class="fas fa-cog text-4xl text-purple-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Database Architecture and Data Persistence</h3>
+
+                <p class="mb-4">Understanding n8n's database structure is crucial for enterprise deployments. By default, n8n uses SQLite, but for production environments, more robust database systems are recommended.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold mb-3">Core Database Tables</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <ul class="space-y-3">
+                                <li>
+                                    <span class="font-semibold">Workflows</span>
+                                    <p class="text-sm text-gray-700">Stores workflow definitions, including node configurations and connections</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Executions</span>
+                                    <p class="text-sm text-gray-700">Records of workflow executions, including timing and status</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Execution_Data</span>
+                                    <p class="text-sm text-gray-700">Detailed data for each execution, including inputs and outputs</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Credentials</span>
+                                    <p class="text-sm text-gray-700">Encrypted API keys and authentication details</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Tags</span>
+                                    <p class="text-sm text-gray-700">Organizational labels for workflows</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Users</span>
+                                    <p class="text-sm text-gray-700">User accounts and permissions (in multi-user setups)</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-3">Database Recommendations</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg h-full">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-3 bg-white rounded-lg shadow-sm">
+                                    <div class="font-semibold mb-2 flex items-center">
+                                        <i class="fas fa-database text-blue-500 mr-2"></i> PostgreSQL
+                                    </div>
+                                    <p class="text-sm">Recommended for production. Robust and reliable with excellent performance for complex workflows.</p>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg shadow-sm">
+                                    <div class="font-semibold mb-2 flex items-center">
+                                        <i class="fas fa-database text-orange-500 mr-2"></i> MySQL
+                                    </div>
+                                    <p class="text-sm">Good alternative with wide hosting availability. Suitable for medium-sized deployments.</p>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg shadow-sm">
+                                    <div class="font-semibold mb-2 flex items-center">
+                                        <i class="fas fa-database text-green-500 mr-2"></i> SQLite
+                                    </div>
+                                    <p class="text-sm">Good for development and small deployments. Not recommended for production or distributed setups.</p>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg shadow-sm">
+                                    <div class="font-semibold mb-2 flex items-center">
+                                        <i class="fas fa-database text-red-500 mr-2"></i> MariaDB
+                                    </div>
+                                    <p class="text-sm">MySQL-compatible alternative with some performance improvements for specific use cases.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Security Architecture for Intelligence Workflows</h3>
+
+                <p class="mb-4">Security is critical when building automated intelligence workflows that may handle sensitive data or interact with enterprise systems.</p>
+
+                <div class="bg-red-50 p-6 rounded-lg border border-red-200 mb-6">
+                    <h4 class="font-semibold mb-3 text-red-700">Security Considerations for AI Workflows</h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-key text-3xl text-red-500"></i>
+                            </div>
+                            <h5 class="font-semibold mb-2 text-center">Credential Management</h5>
+                            <ul class="text-sm space-y-1">
+                                <li>• Credentials are stored encrypted</li>
+                                <li>• Access is restricted to authorized users</li>
+                                <li>• API keys never appear in execution logs</li>
+                                <li>• Rotating keys is supported</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-user-shield text-3xl text-red-500"></i>
+                            </div>
+                            <h5 class="font-semibold mb-2 text-center">Access Control</h5>
+                            <ul class="text-sm space-y-1">
+                                <li>• Role-based access control (RBAC)</li>
+                                <li>• Workflow-level permissions</li>
+                                <li>• API access restrictions</li>
+                                <li>• SAML integration for enterprise SSO</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-shield-alt text-3xl text-red-500"></i>
+                            </div>
+                            <h5 class="font-semibold mb-2 text-center">Data Security</h5>
+                            <ul class="text-sm space-y-1">
+                                <li>• Data encryption in transit</li>
+                                <li>• Execution data retention policies</li>
+                                <li>• AI model data handling</li>
+                                <li>• PII protection capabilities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h4 class="font-semibold mb-4">Security Best Practices for AI Integrations</h4>
+
+                    <div class="space-y-4">
+                        <div class="collapsible-container">
+                            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                                <span><i class="fas fa-brain mr-2 text-purple-500"></i> AI Model Data Security</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapsible-content">
+                                <p class="mb-2">When integrating AI models, be aware of how data is processed and stored:</p>
+                                <ul class="list-disc pl-6 mb-4">
+                                    <li>Understand the data retention policies of your AI service provider</li>
+                                    <li>Consider using data masking or anonymization before sending sensitive data to external AI services</li>
+                                    <li>When possible, use AI models that can run locally or on your own infrastructure</li>
+                                    <li>Review the terms of service for AI services regarding data usage for model training</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="collapsible-container">
+                            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                                <span><i class="fas fa-user-secret mr-2 text-purple-500"></i> Authentication & Authorization</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapsible-content">
+                                <p class="mb-2">Implement proper authentication and authorization mechanisms:</p>
+                                <ul class="list-disc pl-6 mb-4">
+                                    <li>Use OAuth 2.0 for service integrations when available</li>
+                                    <li>Implement the principle of least privilege for workflow access</li>
+                                    <li>Regularly audit workflow access and execution logs</li>
+                                    <li>Consider implementing IP restrictions for workflow executions</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="collapsible-container">
+                            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                                <span><i class="fas fa-code-branch mr-2 text-purple-500"></i> CI/CD & Development Practices</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapsible-content">
+                                <p class="mb-2">Follow secure development practices:</p>
+                                <ul class="list-disc pl-6 mb-4">
+                                    <li>Use separate environments for development, testing, and production</li>
+                                    <li>Implement workflow versioning and change management</li>
+                                    <li>Test workflows thoroughly before deploying to production</li>
+                                    <li>Use different credentials for development and production environments</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="advanced-architecture">
+                    <span class="checkmark"></span>
+                    I understand the advanced architecture concepts for n8n
+                </label>
+            </div>
+        </section>
+
+        <!-- Best Practices Section -->
+        <section id="best-practices" class="section mb-12 animate-fade-in" style="animation-delay: 0.5s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Best Practices and Optimization</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Workflow Design Patterns</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold mb-3">Modular Workflow Design</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="mb-3">Breaking down complex workflows into smaller, reusable components improves maintainability and scalability.</p>
+
+                            <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                <h5 class="font-semibold mb-2">Benefits:</h5>
+                                <ul class="text-sm space-y-1">
+                                    <li>• Easier troubleshooting and debugging</li>
+                                    <li>• Simplified maintenance and updates</li>
+                                    <li>• Potential for component reuse</li>
+                                    <li>• Better team collaboration</li>
+                                </ul>
+                            </div>
+
+                            <div class="mt-3 bg-white p-3 rounded-lg border border-gray-200">
+                                <h5 class="font-semibold mb-2">Implementation:</h5>
+                                <ul class="text-sm space-y-1">
+                                    <li>• Create separate workflows for distinct logical functions</li>
+                                    <li>• Use webhook nodes to chain workflows together</li>
+                                    <li>• Implement proper error handling between modules</li>
+                                    <li>• Document the purpose and interfaces of each module</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-3">Efficient Data Handling</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg h-full">
+                            <p class="mb-3">Optimize how data flows through your workflow to improve performance and reliability.</p>
+
+                            <div class="space-y-3">
+                                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                    <h5 class="font-semibold mb-1 flex items-center">
+                                        <i class="fas fa-filter text-green-500 mr-2"></i>
+                                        Filter Early
+                                    </h5>
+                                    <p class="text-sm">Reduce data volume as early as possible in the workflow to minimize processing overhead.</p>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                    <h5 class="font-semibold mb-1 flex items-center">
+                                        <i class="fas fa-compress-arrows-alt text-green-500 mr-2"></i>
+                                        Batch Processing
+                                    </h5>
+                                    <p class="text-sm">Group related operations to reduce API calls and improve throughput.</p>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                    <h5 class="font-semibold mb-1 flex items-center">
+                                        <i class="fas fa-memory text-green-500 mr-2"></i>
+                                        Memory Management
+                                    </h5>
+                                    <p class="text-sm">Be mindful of workflow memory usage, especially with large datasets.</p>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                    <h5 class="font-semibold mb-1 flex items-center">
+                                        <i class="fas fa-project-diagram text-green-500 mr-2"></i>
+                                        Avoid Deep Nesting
+                                    </h5>
+                                    <p class="text-sm">Keep data structures flat when possible to improve readability and performance.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Performance Optimization for AI Workflows</h3>
+
+                <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                    <h4 class="font-semibold mb-4">Common Performance Bottlenecks</h4>
+
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-start">
+                                <div class="bg-red-100 p-2 rounded-full mr-4">
+                                    <i class="fas fa-hourglass-half text-red-500"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-semibold mb-1">AI Model Response Time</h5>
+                                    <p class="text-sm">External AI services may have variable response times, especially under load.</p>
+                                    <div class="mt-2 bg-blue-50 p-2 rounded">
+                                        <p class="text-sm font-semibold">Solution:</p>
+                                        <p class="text-sm">Implement timeout handling and retry logic. Consider using faster models for time-sensitive operations.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-start">
+                                <div class="bg-red-100 p-2 rounded-full mr-4">
+                                    <i class="fas fa-database text-red-500"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-semibold mb-1">Large Data Volumes</h5>
+                                    <p class="text-sm">Processing large datasets can overwhelm memory and slow down execution.</p>
+                                    <div class="mt-2 bg-blue-50 p-2 rounded">
+                                        <p class="text-sm font-semibold">Solution:</p>
+                                        <p class="text-sm">Implement pagination or batching for large data sets. Consider using Split In Batches node for processing chunks.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-start">
+                                <div class="bg-red-100 p-2 rounded-full mr-4">
+                                    <i class="fas fa-cogs text-red-500"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-semibold mb-1">Complex Transformations</h5>
+                                    <p class="text-sm">Heavy data transformations in Code nodes can impact performance.</p>
+                                    <div class="mt-2 bg-blue-50 p-2 rounded">
+                                        <p class="text-sm font-semibold">Solution:</p>
+                                        <p class="text-sm">Optimize JavaScript code in Code nodes. Use built-in transformation nodes when possible instead of custom code.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                    <h4 class="font-semibold mb-4 text-green-700">Optimization Strategies for AI Workflows</h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 class="font-semibold mb-3 flex items-center">
+                                <i class="fas fa-brain text-green-500 mr-2"></i>
+                                AI-Specific Optimizations
+                            </h5>
+                            <ul class="space-y-2 text-sm">
+                                <li>
+                                    <span class="font-semibold">Prompt Engineering:</span>
+                                    <p>Craft efficient prompts to reduce token usage and improve response quality</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Model Selection:</span>
+                                    <p>Choose the right model for the task (smaller models for simpler tasks)</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Memory Management:</span>
+                                    <p>Use the appropriate memory type and size for your conversation needs</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Caching:</span>
+                                    <p>Implement caching for frequently used AI responses</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 class="font-semibold mb-3 flex items-center">
+                                <i class="fas fa-tachometer-alt text-green-500 mr-2"></i>
+                                Workflow Optimizations
+                            </h5>
+                            <ul class="space-y-2 text-sm">
+                                <li>
+                                    <span class="font-semibold">Parallelization:</span>
+                                    <p>Use Merge node to run operations in parallel when possible</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Conditional Processing:</span>
+                                    <p>Use IF node to skip unnecessary processing steps</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Data Pruning:</span>
+                                    <p>Remove unnecessary data fields early in the workflow</p>
+                                </li>
+                                <li>
+                                    <span class="font-semibold">Error Handling:</span>
+                                    <p>Implement robust error handling to prevent workflow failures</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Error Handling and Recovery Strategies</h3>
+
+                <p class="mb-4">Robust error handling is essential for production-grade automated intelligence workflows. Implementing proper error handling ensures workflows can gracefully handle unexpected situations.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <div class="text-center mb-4">
+                            <div class="inline-block p-3 bg-red-100 rounded-full">
+                                <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold mb-3 text-center">Error Detection</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Use Try/Catch nodes to capture errors</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Implement error checking in Code nodes</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Validate inputs before processing</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Add timeouts for external API calls</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <div class="text-center mb-4">
+                            <div class="inline-block p-3 bg-blue-100 rounded-full">
+                                <i class="fas fa-life-ring text-2xl text-blue-500"></i>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold mb-3 text-center">Recovery Strategies</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Implement retry mechanisms with exponential backoff</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Create fallback paths for critical operations</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Store state for long-running workflows</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Implement circuit breakers for unstable services</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <div class="text-center mb-4">
+                            <div class="inline-block p-3 bg-green-100 rounded-full">
+                                <i class="fas fa-bell text-2xl text-green-500"></i>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold mb-3 text-center">Monitoring & Alerting</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Set up notification workflows for failures</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Log detailed error information</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Implement health check endpoints</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Create dashboards to monitor execution metrics</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3">Example Error Handling Pattern</h4>
+
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode('errorHandlingCode')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre id="errorHandlingCode">
+// Error handling in a Code node
+try {
+  // Main operation
+  const response = await callExternalAPI(inputs.url);
+
+  // Validate response
+  if (!response.success) {
+    throw new Error(`API returned error: ${response.error}`);
+  }
+
+  // Process successful response
+  return {
+    json: {
+      status: 'success',
+      data: response.data
+    }
+  };
+} catch (error) {
+  // Log the error details
+  console.error('Operation failed:', error.message);
+
+  // Return a structured error response
+  return {
+    json: {
+      status: 'error',
+      message: error.message,
+      timestamp: new Date().toISOString(),
+      retryable: isRetryableError(error)
+    }
+  };
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="best-practices">
+                    <span class="checkmark"></span>
+                    I understand the best practices for n8n workflows
+                </label>
+            </div>
+        </section>
+
+        <!-- Real-World Applications Section -->
+        <section id="applications" class="section mb-12 animate-fade-in" style="animation-delay: 0.6s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Real-World Applications</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Case Studies: AI Automation with n8n</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-headset text-blue-500"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold">Intelligent Customer Support</h4>
+                        </div>
+
+                        <p class="mb-4">An e-commerce company implemented an AI-powered customer support system using n8n that automatically categorizes, prioritizes, and responds to customer inquiries.</p>
+
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                            <h5 class="font-semibold mb-2">Workflow Components:</h5>
+                            <ul class="space-y-1 text-sm">
+                                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> Email trigger node captures incoming customer emails</li>
+                                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> AI Agent node analyzes content and determines intent</li>
+                                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> Data retrieval tools access product and customer information</li>
+                                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> Response generation with appropriate templating</li>
+                                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> Human escalation for complex issues</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <h5 class="font-semibold mb-1">Results:</h5>
+                            <ul class="space-y-1 text-sm">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> 65% reduction in response time</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> 40% of inquiries resolved automatically</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> Improved customer satisfaction scores</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> Support team focused on complex issues</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-purple-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-file-alt text-purple-500"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold">Automated Document Processing</h4>
+                        </div>
+
+                        <p class="mb-4">A legal firm implemented an n8n workflow that processes legal documents, extracts key information, and categorizes them using AI for faster review and analysis.</p>
+
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                            <h5 class="font-semibold mb-2">Workflow Components:</h5>
+                            <ul class="space-y-1 text-sm">
+                                <li><i class="fas fa-arrow-right text-purple-500 mr-2"></i> Webhook trigger receives document uploads</li>
+                                <li><i class="fas fa-arrow-right text-purple-500 mr-2"></i> File operations node processes various document formats</li>
+                                <li><i class="fas fa-arrow-right text-purple-500 mr-2"></i> AI Agent with document analysis capabilities</li>
+                                <li><i class="fas fa-arrow-right text-purple-500 mr-2"></i> Extraction of entities, dates, and contractual terms</li>
+                                <li><i class="fas fa-arrow-right text-purple-500 mr-2"></i> Database storage with appropriate metadata</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <h5 class="font-semibold mb-1">Results:</h5>
+                            <ul class="space-y-1 text-sm">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> 75% reduction in document processing time</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> Improved accuracy in document classification</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> Searchable repository of processed documents</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i> Legal staff focus on analysis instead of processing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Innovative AI Workflow Blueprints</h3>
+
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h4 class="font-semibold mb-4 text-dark">Content Generation and Distribution Pipeline</h4>
+
+                        <div class="flow-diagram mb-6">
+                            <div class="flow-node bg-blue-100">
+                                <i class="fas fa-calendar-alt text-blue-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">Schedule Trigger</h5>
+                            </div>
+                            <div class="flow-connector"></div>
+                            <div class="flow-node bg-green-100">
+                                <i class="fas fa-robot text-green-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">AI Content Generator</h5>
+                            </div>
+                            <div class="flow-connector"></div>
+                            <div class="flow-node bg-yellow-100">
+                                <i class="fas fa-image text-yellow-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">AI Image Creator</h5>
+                            </div>
+                            <div class="flow-connector"></div>
+                            <div class="flow-node bg-purple-100">
+                                <i class="fas fa-share-alt text-purple-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">Multi-Channel Distribution</h5>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h5 class="font-semibold mb-2">Workflow Description:</h5>
+                                <p class="text-sm mb-3">This workflow automatically generates content based on trending topics, creates matching images, and distributes to multiple platforms on a schedule.</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-search text-blue-500 mr-2"></i>
+                                        <p class="text-sm">Uses Search tools to identify trending topics</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-pen text-blue-500 mr-2"></i>
+                                        <p class="text-sm">AI generates platform-specific content</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-image text-blue-500 mr-2"></i>
+                                        <p class="text-sm">Images created to match content theme</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-paper-plane text-blue-500 mr-2"></i>
+                                        <p class="text-sm">Distributes to social media, blog, newsletter</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h5 class="font-semibold mb-2">Implementation Notes:</h5>
+                                <ul class="space-y-2 text-sm">
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Use different system prompts for different platforms</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Implement approval step before publishing</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Store content history in database for reference</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Track engagement metrics for continuous improvement</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Consider implementing A/B testing for different content styles</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h4 class="font-semibold mb-4 text-dark">Intelligent Data Processing Pipeline</h4>
+
+                        <div class="flow-diagram mb-6">
+                            <div class="flow-node bg-blue-100">
+                                <i class="fas fa-file-import text-blue-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">Data Source Connector</h5>
+                            </div>
+                            <div class="flow-connector"></div>
+                            <div class="flow-node bg-yellow-100">
+                                <i class="fas fa-broom text-yellow-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">Data Cleaning & Normalization</h5>
+                            </div>
+                            <div class="flow-connector"></div>
+                            <div class="flow-node bg-green-100">
+                                <i class="fas fa-brain text-green-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">AI Analysis & Enrichment</h5>
+                            </div>
+                            <div class="flow-connector"></div>
+                            <div class="flow-node bg-purple-100">
+                                <i class="fas fa-chart-line text-purple-500 text-xl mb-2"></i>
+                                <h5 class="font-semibold">Visualization & Alerting</h5>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h5 class="font-semibold mb-2">Workflow Description:</h5>
+                                <p class="text-sm mb-3">This workflow automates data processing from raw inputs to intelligent insights, using AI to enhance analysis and generate actionable information.</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-database text-blue-500 mr-2"></i>
+                                        <p class="text-sm">Collects data from multiple sources</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-filter text-blue-500 mr-2"></i>
+                                        <p class="text-sm">Cleans and normalizes heterogeneous data</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-magic text-blue-500 mr-2"></i>
+                                        <p class="text-sm">AI identifies patterns and generates insights</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-bell text-blue-500 mr-2"></i>
+                                        <p class="text-sm">Creates visualizations and anomaly alerts</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h5 class="font-semibold mb-2">Implementation Notes:</h5>
+                                <ul class="space-y-2 text-sm">
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Use code nodes for complex data transformation</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Consider incremental processing for large datasets</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Implement error handling for data quality issues</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Use AI Agent with appropriate system prompts for analysis</li>
+                                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Store historical analysis for trend identification</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="applications">
+                    <span class="checkmark"></span>
+                    I understand the real-world applications of n8n for intelligence workflows
+                </label>
+            </div>
+        </section>
+
+        <!-- Resources and Next Steps Section -->
+        <section id="resources" class="section mb-12 animate-fade-in" style="animation-delay: 0.7s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Resources and Next Steps</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm h-full">
+                    <div class="text-center mb-4">
+                        <div class="inline-block p-3 bg-blue-100 rounded-full">
+                            <i class="fas fa-book text-2xl text-blue-500"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Official Documentation</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="https://docs.n8n.io/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                n8n Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/advanced-ai/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                AI Integration Guide
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/hosting/architecture/overview/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Architecture Overview
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/integrations/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Available Integrations
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm h-full">
+                    <div class="text-center mb-4">
+                        <div class="inline-block p-3 bg-green-100 rounded-full">
+                            <i class="fas fa-graduation-cap text-2xl text-green-500"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Tutorials & Learning</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="https://n8n.io/workflows/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Workflow Templates
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/c/n8nio" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                n8n YouTube Channel
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/courses/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                n8n Courses
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://community.n8n.io/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Community Forum
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm h-full">
+                    <div class="text-center mb-4">
+                        <div class="inline-block p-3 bg-purple-100 rounded-full">
+                            <i class="fas fa-code-branch text-2xl text-purple-500"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Development Resources</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="https://github.com/n8n-io/n8n" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                n8n GitHub Repository
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/integrations/creating-nodes/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Creating Custom Nodes
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/api/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                n8n API Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://docs.n8n.io/hosting/" target="_blank" class="flex items-center text-blue-600 hover:underline">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Deployment Guides
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4">Your n8n Learning Path</h3>
+
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold mb-3 flex items-center">
+                            <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-2">1</span>
+                            Begin with the Fundamentals
+                        </h4>
+                        <ul class="ml-8 space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-blue-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Complete the Basic n8n Course</p>
+                                    <p>Learn the core concepts of workflow automation with n8n</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-blue-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Build Simple Workflows</p>
+                                    <p>Create basic automation workflows to understand the platform</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-blue-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Explore Node Functionality</p>
+                                    <p>Experiment with different node types to understand their capabilities</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold mb-3 flex items-center">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center mr-2">2</span>
+                            Advance to AI Integration
+                        </h4>
+                        <ul class="ml-8 space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-green-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Complete the AI Integration Tutorial</p>
+                                    <p>Build your first AI-powered workflow following the official guide</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-green-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Experiment with Different AI Models</p>
+                                    <p>Try integrating various language models to understand their differences</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-green-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Add Tools to Your AI Agent</p>
+                                    <p>Enhance your AI workflows with specialized tools for expanded capabilities</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h4 class="font-semibold mb-3 flex items-center">
+                            <span class="bg-purple-100 text-purple-800 rounded-full w-6 h-6 flex items-center justify-center mr-2">3</span>
+                            Master Advanced Concepts
+                        </h4>
+                        <ul class="ml-8 space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-purple-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Implement Complex Business Logic</p>
+                                    <p>Create workflows with conditional branching, looping, and error handling</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-purple-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Develop Custom Components</p>
+                                    <p>Build custom nodes or tools to extend n8n's functionality</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-arrow-right text-purple-500 mt-1 mr-2"></i>
+                                <div>
+                                    <p class="font-semibold">Optimize for Production</p>
+                                    <p>Learn distributed architecture deployment and performance tuning</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="resources">
+                    <span class="checkmark"></span>
+                    I understand where to find resources to continue learning about n8n
+                </label>
+            </div>
+        </section>
+
+        <!-- Conclusion Section -->
+        <section id="conclusion" class="section mb-12 animate-fade-in" style="animation-delay: 0.8s;">
+            <h2 class="text-3xl font-bold mb-6 text-dark">Conclusion</h2>
+
+            <div class="bg-gray-50 p-8 rounded-lg">
+                <div class="max-w-3xl mx-auto">
+                    <h3 class="text-xl font-semibold mb-6 text-center">Key Takeaways</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-cogs text-3xl text-secondary"></i>
+                            </div>
+                            <h4 class="font-semibold mb-2 text-center">n8n Architecture</h4>
+                            <p class="text-sm text-center">n8n provides a flexible, extensible platform for building automated workflows with a clear data structure and execution model.</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-robot text-3xl text-secondary"></i>
+                            </div>
+                            <h4 class="font-semibold mb-2 text-center">AI Integration</h4>
+                            <p class="text-sm text-center">n8n's AI capabilities enable intelligent workflows by seamlessly connecting to language models and extending them with tools and memory.</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-sitemap text-3xl text-secondary"></i>
+                            </div>
+                            <h4 class="font-semibold mb-2 text-center">Scalable Design</h4>
+                            <p class="text-sm text-center">From simple workflows to enterprise-grade distributed architectures, n8n scales to meet the needs of growing organizations.</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-lightbulb text-3xl text-secondary"></i>
+                            </div>
+                            <h4 class="font-semibold mb-2 text-center">Practical Applications</h4>
+                            <p class="text-sm text-center">n8n enables real-world intelligence workflows that save time, enhance productivity, and provide valuable business insights.</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-6">n8n's architecture for automated intelligence workflows combines flexibility, power, and ease of use. By understanding its core principles and implementation patterns, you can create sophisticated solutions that leverage AI and automation to solve complex business problems.</p>
+
+                        <div class="inline-block bg-secondary text-white px-6 py-3 rounded-full hover:bg-opacity-90 transition duration-300">
+                            <a href="https://n8n.io" target="_blank" class="font-semibold flex items-center">
+                                <span>Start Building with n8n</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="progress-checkbox" data-section="conclusion">
+                    <span class="checkmark"></span>
+                    I've completed the entire learning journey
+                </label>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">Integrating n8n for Automated Intelligence Workflows</h3>
+                    <p class="text-gray-300">A comprehensive guide to understanding and implementing n8n's architecture</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="https://n8n.io" target="_blank" class="hover:text-accent transition duration-300">
+                        <i class="fas fa-globe text-xl"></i>
+                    </a>
+                    <a href="https://github.com/n8n-io/n8n" target="_blank" class="hover:text-accent transition duration-300">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="https://twitter.com/n8n_io" target="_blank" class="hover:text-accent transition duration-300">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="https://www.youtube.com/c/n8nio" target="_blank" class="hover:text-accent transition duration-300">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Progress tracking functionality
+        const progressCheckboxes = document.querySelectorAll('.progress-checkbox');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercentage = document.getElementById('progress-percentage');
+
+        function updateProgress() {
+            const total = progressCheckboxes.length;
+            let checked = 0;
+
+            progressCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    checked++;
+                }
+            });
+
+            const percentage = Math.round((checked / total) * 100);
+            progressBar.style.width = percentage + '%';
+            progressPercentage.textContent = percentage + '%';
+
+            // Save progress to localStorage
+            const progress = {};
+            progressCheckboxes.forEach(checkbox => {
+                progress[checkbox.dataset.section] = checkbox.checked;
+            });
+            localStorage.setItem('n8nProgress', JSON.stringify(progress));
+        }
+
+        // Load saved progress
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('n8nProgress');
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                progressCheckboxes.forEach(checkbox => {
+                    if (progress[checkbox.dataset.section]) {
+                        checkbox.checked = true;
+                    }
+                });
+                updateProgress();
+            }
+        }
+
+        // Set up event listeners for checkboxes
+        progressCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateProgress);
+        });
+
+        // Collapsible functionality
+        function toggleCollapsible(element) {
+            const content = element.nextElementSibling;
+            const icon = element.querySelector('.fa-chevron-down');
+
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                content.style.display = 'block';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+
+        // Tab functionality
+        function changeTab(tabId, button) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.remove('bg-secondary', 'text-white');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked button
+            button.classList.add('bg-secondary', 'text-white');
+        }
+
+        // Component details functionality
+        function showComponentDetails(componentId) {
+            const detailsDiv = document.getElementById('component-details');
+            const allDetails = document.querySelectorAll('.component-detail');
+
+            // Hide all details first
+            allDetails.forEach(detail => {
+                detail.classList.add('hidden');
+            });
+
+            // Show the selected component's details
+            const selectedDetail = document.getElementById(componentId + '-details');
+            if (selectedDetail) {
+                detailsDiv.classList.remove('hidden');
+                selectedDetail.classList.remove('hidden');
+            }
+        }
+
+        // Code copy functionality
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const textToCopy = codeElement.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Visual feedback
+                const copyBtn = codeElement.previousElementSibling;
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default active tab
+            document.querySelector('.tab-btn[data-tab="step1"]').click();
+
+            // Load saved progress
+            loadProgress();
+
+            // Activate first tab in each tab group
+            const tabGroups = document.querySelectorAll('.tabs');
+            tabGroups.forEach(group => {
+                const firstTab = group.querySelector('.tab-btn');
+                if (firstTab) {
+                    firstTab.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

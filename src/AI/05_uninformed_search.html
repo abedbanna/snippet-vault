@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uninformed (Blind) Search - AI Course</title>
+    <meta name="description" content="Uninformed search strategies explained with full traces: breadth-first, depth-first, depth-limited, iterative deepening, uniform cost and bidirectional search. Completeness, optimality, time and space complexity of each. Module 5 of Introduction to Artificial Intelligence, based on Russell &amp; Norvig AIMA Section 3.4.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#8b5cf6;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#7c3aed;--secondary:#059669;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#5b21b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#7c3aed}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(139,92,246,.08)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        body.light-mode .diff-badge{box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        body.light-mode .solution-toggle{background:#f8fafc;border-color:rgba(0,0,0,.08);color:#0f172a}
+        body.light-mode .solution-toggle:hover{border-color:#7c3aed}
+        body.light-mode .step-num{color:#fff}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#a78bfa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.1rem;color:var(--text2);margin-bottom:6px}
+        .diff-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#fff;margin-top:12px}
+        .cat-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);margin:8px 4px 0}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box ul{padding-left:18px;list-style:disc}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}.op{color:#ff7b72}.yk{color:#7ee787}.diag{color:#94a3b8}
+        .step{display:flex;gap:16px;margin:24px 0;align-items:flex-start}
+        .step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+        .step-body{flex:1;min-width:0}
+        .step-body h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:top}
+        .dark-table tr:hover{background:rgba(255,255,255,.02)}
+        .dark-table code{white-space:nowrap}
+        .solution-toggle{display:block;width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;text-align:left;margin-top:16px}
+        .solution-toggle:hover{border-color:var(--primary)}
+        .solution-toggle i{margin-right:8px;color:var(--primary);transition:transform .2s}
+        .solution-toggle.open i{transform:rotate(90deg)}
+        .solution-content{display:none;margin-top:0}
+        .solution-content.show{display:block}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--primary);color:#fff}
+        .nav-btn.next:hover{background:#7c3aed;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:220px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900;max-height:calc(100vh - 140px);overflow-y:auto}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.75rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(139,92,246,.06)}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}.dark-table{font-size:.75rem}.dark-table th,.dark-table td{padding:8px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-solid fa-brain"></i> AI Course</a>
+            <div class="nav-links">
+                <a href="index.html">All Modules</a>
+                <a href="#bfs">BFS</a>
+                <a href="#dfs">DFS</a>
+                <a href="#comparison">Scorecard</a>
+                <a href="#lab">Exercise</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">All Modules</a>
+        <a href="#bfs" onclick="this.parentElement.classList.remove('open')">BFS</a>
+        <a href="#dfs" onclick="this.parentElement.classList.remove('open')">DFS</a>
+        <a href="#comparison" onclick="this.parentElement.classList.remove('open')">Scorecard</a>
+        <a href="#lab" onclick="this.parentElement.classList.remove('open')">Exercise</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Uninformed (Blind) Search</h1>
+            <p class="hero-sub">BFS, DFS, depth-limited, iterative deepening, uniform cost and bidirectional search &mdash; with full traces.</p>
+            <p class="hero-sub" style="font-size:.95rem;margin-top:4px">Module 5 &middot; Based on Russell &amp; Norvig, AIMA Section 3.4</p>
+            <span class="diff-badge" style="background:#f59e0b">Intermediate</span>
+            <span class="cat-badge"><i class="fa-solid fa-sitemap" style="margin-right:6px"></i>Search</span>
+            <span class="cat-badge"><i class="fa-regular fa-clock" style="margin-right:6px"></i>~45 min</span>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- Objectives -->
+        <div class="section fade-up" id="objectives">
+            <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> What You'll Learn</h2>
+            <div class="info-box success">
+                <ul>
+                    <li>Implement and hand-trace <strong>BFS, DFS, depth-limited, iterative deepening, uniform cost</strong> and <strong>bidirectional</strong> search</li>
+                    <li>State the <strong>completeness, optimality, time and space complexity</strong> of each strategy</li>
+                    <li>Choose the right blind strategy for a given problem (memory limits, cost structure, solution depth)</li>
+                    <li>Explain <strong>repeated-state elimination</strong> and why a closed list turns tree search into graph search</li>
+                </ul>
+            </div>
+            <p class="section-desc" style="margin-top:14px"><strong>Prerequisites:</strong> Module 4 &mdash; Problem Solving (state spaces, problem formulation, the frontier, and what "expanding a node" means).</p>
+        </div>
+
+        <!-- Overview -->
+        <div class="section fade-up" id="overview">
+            <h2 class="section-title"><i class="fa-solid fa-eye-slash"></i> The Blind Search Family</h2>
+            <p class="section-desc"><strong>Uninformed</strong> (blind) search uses only the information in the problem definition itself &mdash; states, actions, goal test, step costs. It has <em>no estimate</em> of how far any state is from the goal. That knowledge arrives in Module 6; for now, we search in the dark.</p>
+            <p class="section-desc">Here is the punchline of this whole module: every blind algorithm runs the <em>same</em> loop &mdash; take a node from the frontier, test it, expand it, add its children. The only real difference between them is <strong>which fringe node gets expanded next</strong>. Change the queue discipline, and you change the algorithm:</p>
+            <table class="dark-table">
+                <thead><tr><th>Algorithm</th><th>Frontier discipline</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Breadth-first (BFS)</strong></td><td>FIFO queue &mdash; oldest node first</td></tr>
+                    <tr><td><strong>Depth-first (DFS)</strong></td><td>LIFO stack &mdash; newest node first</td></tr>
+                    <tr><td><strong>Uniform cost (UCS)</strong></td><td>Priority queue ordered by path cost <code>g(n)</code></td></tr>
+                    <tr><td><strong>Depth-limited (DLS)</strong></td><td>DFS with a depth cutoff &#8467;</td></tr>
+                    <tr><td><strong>Iterative deepening (IDS)</strong></td><td>Repeated DLS with limits 0, 1, 2, &hellip;</td></tr>
+                    <tr><td><strong>Bidirectional</strong></td><td>Two frontiers, grown from start and goal until they meet</td></tr>
+                </tbody>
+            </table>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-diagram-project"></i> Our Running Example Graph</h3>
+                <p class="section-desc">Every trace in this module uses <strong>one</strong> directed graph, so you can compare the algorithms move for move. Start state <strong>S</strong>, goal state <strong>G</strong>. Arrows show the direction of each action; <code>&#9664;&#9472;&#9472;&#9654;</code> means an edge in <em>both</em> directions.</p>
+                <div class="code-block"><span class="diag">                    S
+                  /   \
+                 v     v
+                 A &#9664;&#9472;&#9472;&#9654; D
+                 &#9474;       &#9474;
+                 v       v
+                 B &#9664;&#9472;&#9472;&#9654; E
+                 &#9474;       &#9474;
+                 v       v
+                 C &#9664;&#9472;&#9472;&#9472;&#9472; F &#9472;&#9472;&#9472;&#9472;&#9654; G  &#9733; goal</span></div>
+                <table class="dark-table">
+                    <thead><tr><th>Node</th><th>Successors (generated in this order)</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>S</strong></td><td>A, D</td></tr>
+                        <tr><td><strong>A</strong></td><td>B, D</td></tr>
+                        <tr><td><strong>B</strong></td><td>C, E</td></tr>
+                        <tr><td><strong>C</strong></td><td>&mdash; (dead end)</td></tr>
+                        <tr><td><strong>D</strong></td><td>A, E</td></tr>
+                        <tr><td><strong>E</strong></td><td>B, F</td></tr>
+                        <tr><td><strong>F</strong></td><td>C, G</td></tr>
+                        <tr><td><strong>G</strong></td><td>&mdash; (goal)</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-list-check"></i> Trace conventions (used everywhere below)</h3>
+                    <ul>
+                        <li>Children are generated <strong>alphabetically</strong>, exactly as in the table above.</li>
+                        <li>The <strong>open</strong> list is the frontier; the <strong>closed</strong> list holds already-expanded states.</li>
+                        <li>A newly generated child is <strong>discarded</strong> if it is already on open or closed (see <a href="#repeated">repeated states</a>).</li>
+                        <li>The goal test is applied when a node is <strong>removed from open</strong> for expansion.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- BFS -->
+        <div class="section fade-up" id="bfs">
+            <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> Breadth-First Search</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_bfs.png" alt="Breadth-first search expanding a binary tree level by level" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Breadth-first search on a simple binary tree. At each stage the marked node is the one about to be expanded &mdash; the frontier always grows level by level. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_bfs_trace.png" alt="Step-by-step open and closed lists during breadth-first search" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The <code>open</code> (frontier, a FIFO queue) and <code>closed</code> lists at each step &mdash; children are added to the <em>back</em> of <code>open</code>, so shallow nodes come out first. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_bfs_mem.png" alt="Table of time and memory requirements for breadth-first search" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Why BFS hits a wall: time and memory for branching factor <em>b</em>&nbsp;=&nbsp;10, at 100,000 nodes/second and 1,000 bytes/node. By depth 12 it needs petabytes &mdash; memory, not time, is the real limit. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">BFS explores the state space <strong>level by level</strong>: it examines every state at depth 1 before any state at depth 2, and so on. The open list is a <strong>FIFO queue</strong> &mdash; new states are added at the <em>right</em> end, and the state to expand is removed from the <em>left</em> end. Whatever entered the queue first gets expanded first, which is exactly what "shallowest node first" means.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">function</span> <span class="fn">breadth_first_search</span>
+    open := [Start]; closed := []
+    <span class="kw">while</span> open &ne; [] <span class="kw">do</span>
+        remove leftmost state from open, call it X
+        <span class="kw">if</span> X is a goal <span class="kw">then return</span> SUCCESS
+        <span class="kw">else</span>
+            generate children of X
+            put X on closed
+            discard children of X if already on open or closed
+            put remaining children on <span class="str">right</span> end of open
+    <span class="kw">return</span> FAIL</div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-shoe-prints"></i> Full Trace on the Running Graph</h3>
+                <table class="dark-table">
+                    <thead><tr><th>Step</th><th>Node expanded</th><th>Frontier (open)</th><th>Closed</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>&mdash; (initialize)</td><td>[ S ]</td><td>[ ]</td></tr>
+                        <tr><td>1</td><td><strong>S</strong> &rarr; children A, D</td><td>[ A, D ]</td><td>[ S ]</td></tr>
+                        <tr><td>2</td><td><strong>A</strong> &rarr; children B, D <em>(D already on open &rarr; discarded)</em></td><td>[ D, B ]</td><td>[ S, A ]</td></tr>
+                        <tr><td>3</td><td><strong>D</strong> &rarr; children A, E <em>(A on closed &rarr; discarded)</em></td><td>[ B, E ]</td><td>[ S, A, D ]</td></tr>
+                        <tr><td>4</td><td><strong>B</strong> &rarr; children C, E <em>(E already on open &rarr; discarded)</em></td><td>[ E, C ]</td><td>[ S, A, D, B ]</td></tr>
+                        <tr><td>5</td><td><strong>E</strong> &rarr; children B, F <em>(B on closed &rarr; discarded)</em></td><td>[ C, F ]</td><td>[ S, A, D, B, E ]</td></tr>
+                        <tr><td>6</td><td><strong>C</strong> &rarr; no children (dead end)</td><td>[ F ]</td><td>[ S, A, D, B, E, C ]</td></tr>
+                        <tr><td>7</td><td><strong>F</strong> &rarr; children C, G <em>(C on closed &rarr; discarded)</em></td><td>[ G ]</td><td>[ S, A, D, B, E, C, F ]</td></tr>
+                        <tr><td>8</td><td><strong>G</strong> &mdash; goal test succeeds &rarr; <strong>SUCCESS</strong></td><td>[ ]</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">Order of expansion: <code>S, A, D, B, E, C, F, G</code> &mdash; a clean level-by-level sweep: depth 0 (S), depth 1 (A, D), depth 2 (B, E), depth 3 (C, F), then G.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-clipboard-check"></i> BFS properties</h3>
+                <ul>
+                    <li><strong>Complete?</strong> Yes &mdash; if the branching factor <em>b</em> is finite, BFS must eventually reach every depth.</li>
+                    <li><strong>Optimal?</strong> Yes, <em>if all step costs are equal</em> &mdash; the shallowest goal is then the cheapest one.</li>
+                    <li><strong>Time:</strong> O(b<sup>d+1</sup>) &mdash; every node down to (and just past) the solution depth <em>d</em>.</li>
+                    <li><strong>Space:</strong> O(b<sup>d+1</sup>) &mdash; BFS keeps <em>every</em> node in memory. <strong>Space is the bigger problem.</strong></li>
+                </ul>
+            </div>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> BFS hits a wall fast</h3>
+                <p>Assume a modest branching factor <em>b</em> = 10, generating 10,000 nodes/second, storing 1,000 bytes/node:</p>
+                <table class="dark-table">
+                    <thead><tr><th>Depth</th><th>Nodes</th><th>Time</th><th>Memory</th></tr></thead>
+                    <tbody>
+                        <tr><td>2</td><td>1,100</td><td>0.11 seconds</td><td>1 MB</td></tr>
+                        <tr><td>4</td><td>111,100</td><td>11 seconds</td><td>106 MB</td></tr>
+                        <tr><td>6</td><td>10<sup>7</sup></td><td>19 minutes</td><td>10 GB</td></tr>
+                        <tr><td>8</td><td>10<sup>9</sup></td><td>31 hours</td><td>1 TB</td></tr>
+                        <tr><td>10</td><td>10<sup>11</sup></td><td>129 days</td><td>101 TB</td></tr>
+                        <tr><td>12</td><td>10<sup>13</sup></td><td>35 years</td><td>10 <strong>petabytes</strong></td></tr>
+                    </tbody>
+                </table>
+                <p>Even at depth 10 you wait months and need a data center's worth of RAM. Faster hardware barely helps &mdash; the <strong>exponential bounds dominate</strong> any constant-factor speedup. Memory, not time, is what kills BFS first in practice.</p>
+            </div>
+        </div>
+
+        <!-- DFS -->
+        <div class="section fade-up" id="dfs">
+            <h2 class="section-title"><i class="fa-solid fa-arrow-down-long"></i> Depth-First Search</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_dfs.png" alt="A tree with the depth-first path highlighted" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Depth-first search plunges down one branch as far as possible before backing up. The highlighted path shows the order in which nodes are visited. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_dfs_trace.png" alt="Step-by-step open and closed lists during depth-first search" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The <code>open</code> (frontier, a stack) and <code>closed</code> lists at every step of the depth-first trace &mdash; note how children are added to the front of <code>open</code>. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_8puzzle_bfs.png" alt="Breadth-first expansion of the 8-puzzle, nodes numbered in expansion order" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Breadth-first search applied to the 8-puzzle, with nodes numbered in the order they are removed from the queue &mdash; the search fills each level completely before going deeper. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">DFS goes <strong>deeper whenever possible</strong>. When a state is examined, <em>all of its descendants</em> are examined before any of its siblings; the algorithm only backs up when it hits a dead end. Mechanically the change from BFS is tiny: children are added to &mdash; and removed from &mdash; the <strong>left</strong> end of open, turning it into a <strong>LIFO stack</strong>.</p>
+            <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">function</span> <span class="fn">depth_first_search</span>
+    open := [Start]; closed := []
+    <span class="kw">while</span> open &ne; [] <span class="kw">do</span>
+        remove leftmost state from open, call it X
+        <span class="kw">if</span> X is a goal <span class="kw">then return</span> SUCCESS
+        <span class="kw">else</span>
+            generate children of X
+            put X on closed
+            discard children of X if already on open or closed
+            put remaining children on <span class="str">left</span> end of open   <span class="cm">&#8592; the only change!</span>
+    <span class="kw">return</span> FAIL</div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-shoe-prints"></i> Full Trace on the Running Graph</h3>
+                <table class="dark-table">
+                    <thead><tr><th>Step</th><th>Node expanded</th><th>Frontier (open)</th><th>Closed</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>&mdash; (initialize)</td><td>[ S ]</td><td>[ ]</td></tr>
+                        <tr><td>1</td><td><strong>S</strong> &rarr; children A, D</td><td>[ A, D ]</td><td>[ S ]</td></tr>
+                        <tr><td>2</td><td><strong>A</strong> &rarr; children B, D <em>(D already on open &rarr; discarded)</em></td><td>[ B, D ]</td><td>[ S, A ]</td></tr>
+                        <tr><td>3</td><td><strong>B</strong> &rarr; children C, E</td><td>[ C, E, D ]</td><td>[ S, A, B ]</td></tr>
+                        <tr><td>4</td><td><strong>C</strong> &rarr; no children (dead end &rarr; back up)</td><td>[ E, D ]</td><td>[ S, A, B, C ]</td></tr>
+                        <tr><td>5</td><td><strong>E</strong> &rarr; children B, F <em>(B on closed &rarr; discarded)</em></td><td>[ F, D ]</td><td>[ S, A, B, C, E ]</td></tr>
+                        <tr><td>6</td><td><strong>F</strong> &rarr; children C, G <em>(C on closed &rarr; discarded)</em></td><td>[ G, D ]</td><td>[ S, A, B, C, E, F ]</td></tr>
+                        <tr><td>7</td><td><strong>G</strong> &mdash; goal test succeeds &rarr; <strong>SUCCESS</strong></td><td>[ D ]</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">Order of expansion: <code>S, A, B, C, E, F, G</code>. Notice D was generated at step 1 but <em>never expanded</em> &mdash; DFS dove down S&rarr;A&rarr;B and found the goal before ever returning to S's second child. Compare that with the BFS trace: same graph, same rules, completely different journey.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-clipboard-check"></i> DFS properties</h3>
+                <ul>
+                    <li><strong>Complete?</strong> <strong>No</strong> &mdash; it can dive down an infinite (or looping) path and never come back.</li>
+                    <li><strong>Optimal?</strong> <strong>No</strong> &mdash; it returns the first solution it stumbles into, which may be deep and expensive.</li>
+                    <li><strong>Time:</strong> O(b<sup>m</sup>), where <em>m</em> is the maximum depth &mdash; terrible if <em>m</em> &#8811; <em>d</em>.</li>
+                    <li><strong>Space:</strong> <strong>O(bm) &mdash; linear!</strong> Only the current path plus unexpanded siblings. This is DFS's great advantage and the reason it survives despite everything above.</li>
+                </ul>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-feather"></i> Even leaner: backtracking search</h3>
+                <p>A <strong>backtracking</strong> variant of DFS generates only <em>one successor at a time</em> instead of all children at once, and modifies a single state description in place, undoing the change when it backs up. Memory drops from O(bm) to O(m) &mdash; just one path. This trick powers constraint solvers and game-tree search.</p>
+            </div>
+        </div>
+
+        <!-- DLS + IDS -->
+        <div class="section fade-up" id="dls-ids">
+            <h2 class="section-title"><i class="fa-solid fa-ruler-vertical"></i> Depth-Limited &amp; Iterative Deepening</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_ids.png" alt="Four iterations of iterative deepening search on a binary tree" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Iterative deepening runs depth-limited search with limits 0, 1, 2, 3&hellip; Each pass re-explores the shallow nodes, but because almost all nodes live at the deepest level the wasted work is small. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scissors"></i> Depth-Limited Search (DLS)</h3>
+                <p class="section-desc">DFS's fatal flaw is the bottomless pit. <strong>Depth-limited search</strong> fixes it bluntly: run DFS, but treat every node at depth &#8467; as if it had no successors. A DLS run has <strong>three possible outcomes</strong>:</p>
+                <table class="dark-table">
+                    <thead><tr><th>Outcome</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>solution</strong></td><td>A goal was found within the limit.</td></tr>
+                        <tr><td><strong>failure</strong></td><td>The whole space within the limit was searched &mdash; no solution exists <em>anywhere</em>.</td></tr>
+                        <tr><td><strong>cutoff</strong></td><td>No solution within depth &#8467; &mdash; but one might exist deeper.</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">The catch: <strong>choosing &#8467; is hard</strong>. Too small and you cut off the only solution; too large and you waste work exploring depths you never needed (and re-inherit DFS's non-optimality).</p>
+            </div>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-rotate"></i> Iterative Deepening Search (IDS)</h3>
+                <p class="section-desc">If you don't know the right limit &mdash; <strong>try them all</strong>. IDS runs DLS with limit 0, then 1, then 2, &hellip; until a solution appears. Each run is a cheap, linear-memory DFS; the increasing limits guarantee the <em>shallowest</em> solution is found first. IDS thus combines <strong>BFS's completeness and optimality</strong> (for unit costs) with <strong>DFS's O(bd) memory</strong>.</p>
+                <p class="section-desc">Mini-trace on the running graph (goal G is at depth 4, so limits 0&ndash;2 all end in <em>cutoff</em> &mdash; watch the shallow nodes get re-expanded each round):</p>
+                <table class="dark-table">
+                    <thead><tr><th>Limit &#8467;</th><th>Order of expansion (tree search, cutoff at depth &#8467;)</th><th>Result</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>S</td><td>cutoff</td></tr>
+                        <tr><td>1</td><td>S, A, D</td><td>cutoff</td></tr>
+                        <tr><td>2</td><td>S, A, B, D, D, A, E &nbsp;<em>(B, D reached via A; A, E via D &mdash; repeats are the price of forgetting)</em></td><td>cutoff</td></tr>
+                        <tr><td>3, 4</td><td>limits 3 and 4 continue the same way; at &#8467; = 4 the depth-4 path <strong>S &rarr; D &rarr; E &rarr; F &rarr; G</strong> is finally within the limit and G is found</td><td><strong>solution</strong> at &#8467; = 4</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-coins"></i> Why re-generating shallow nodes is cheap</h3>
+                <p>It <em>feels</em> wasteful to redo depth 0&ndash;3 while searching depth 4. But in an exponential tree, <strong>most nodes live at the deepest level</strong> &mdash; the levels above are a rounding error. The root is regenerated d+1 times, level 1 nodes d times, &hellip;, and the huge bottom level only once:</p>
+                <p style="text-align:center"><code>(d+1)b&#8304; + d&middot;b&sup1; + (d&minus;1)b&sup2; + &hellip; + 1&middot;b&#7496; = O(b&#7496;)</code></p>
+                <p>For <em>b</em> = 10, <em>d</em> = 5: IDS generates <strong>123,456</strong> nodes where BFS generates <strong>111,111</strong> on the same tree &mdash; only about <strong>11% overhead</strong>, in exchange for exponentially less memory.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-clipboard-check"></i> IDS properties</h3>
+                <ul>
+                    <li><strong>Complete?</strong> Yes (finite <em>b</em>). &nbsp;<strong>Optimal?</strong> Yes, for unit step costs.</li>
+                    <li><strong>Time:</strong> O(b<sup>d</sup>) &mdash; asymptotically as good as BFS. &nbsp;<strong>Space:</strong> O(bd) &mdash; as good as DFS.</li>
+                    <li><strong>Verdict:</strong> IDS is the <strong>preferred uninformed method</strong> when the search space is large and the solution depth is unknown.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- UCS -->
+        <div class="section fade-up" id="ucs">
+            <h2 class="section-title"><i class="fa-solid fa-money-bill-wave"></i> Uniform Cost Search</h2>
+            <p class="section-desc">When step costs differ, "shallowest first" is the wrong rule &mdash; a two-step path can be cheaper than a one-step path. <strong>Uniform cost search</strong> expands the frontier node with the <strong>lowest path cost g(n)</strong>, using a priority queue. If a cheaper route to a node already on the frontier is found, its entry is updated. UCS is <strong>optimal for any step costs &ge; &epsilon; &gt; 0</strong> and complete; time and space are O(b<sup>1+&lfloor;C*/&epsilon;&rfloor;</sup>), where C* is the optimal solution cost.</p>
+            <div class="subsection">
+                <h3><i class="fa-solid fa-shoe-prints"></i> Trace: the Cheap Long Road Beats the Expensive Shortcut</h3>
+                <p class="section-desc">A small <em>weighted</em> graph (separate from the running example, since that one is unweighted). The direct edge S&rarr;G costs 12; the scenic route S&rarr;A&rarr;B&rarr;G costs 1 + 3 + 3 = 7.</p>
+                <div class="code-block"><span class="diag">      S &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9654; G       S&#8594;G : 12
+      &#9474;                        &#9650;       S&#8594;A : 1
+      &#9660;                        &#9474;       A&#8594;B : 3
+      A &#9472;&#9472;&#9472;&#9472;&#9472;&#9654; B &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9518;       B&#8594;G : 3</span></div>
+                <table class="dark-table">
+                    <thead><tr><th>Step</th><th>Node expanded (g)</th><th>Frontier (open, with g)</th><th>Closed</th></tr></thead>
+                    <tbody>
+                        <tr><td>0</td><td>&mdash; (initialize)</td><td>[ S:0 ]</td><td>[ ]</td></tr>
+                        <tr><td>1</td><td><strong>S</strong> (g=0) &rarr; A via S (g=1), G via S (g=12)</td><td>[ A:1, G:12 ]</td><td>[ S ]</td></tr>
+                        <tr><td>2</td><td><strong>A</strong> (g=1) &rarr; B via A (g=1+3=4)</td><td>[ B:4, G:12 ]</td><td>[ S, A ]</td></tr>
+                        <tr><td>3</td><td><strong>B</strong> (g=4) &rarr; G via B (g=4+3=7) &mdash; <em>cheaper than 12, replace!</em></td><td>[ G:7 ]</td><td>[ S, A, B ]</td></tr>
+                        <tr><td>4</td><td><strong>G</strong> (g=7) &mdash; goal &rarr; <strong>SUCCESS</strong>, path S&rarr;A&rarr;B&rarr;G, cost 7</td><td>[ ]</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+                <p class="section-desc">BFS would have returned S&rarr;G at cost 12 (fewest steps). UCS waits: G sat on the frontier at cost 12 from step 1, but was not expanded &mdash; and hence not goal-tested &mdash; until it was the <em>cheapest</em> frontier node. That patience is exactly what makes UCS optimal.</p>
+            </div>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-stairs"></i> Iterative lengthening</h3>
+                <p>Just as IDS replaces BFS's queue with repeated depth-bounded DFS, <strong>iterative lengthening</strong> replaces UCS's queue with repeated DFS runs bounded by increasing <em>path-cost</em> limits instead of depth limits. It keeps UCS's optimality while avoiding its memory cost &mdash; but with real-valued costs each new limit may admit only a handful of new nodes, so it incurs <strong>substantial re-expansion overhead</strong> and is rarely a win in practice.</p>
+            </div>
+        </div>
+
+        <!-- Bidirectional -->
+        <div class="section fade-up" id="bidirectional">
+            <h2 class="section-title"><i class="fa-solid fa-arrows-left-right"></i> Bidirectional Search</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_bidir.png" alt="Two search frontiers growing toward each other from start and goal" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Bidirectional search grows two frontiers &mdash; one forward from the start, one backward from the goal &mdash; and stops when they meet. Two shallow trees are far cheaper than one deep one. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">Why grow one exponential tree of depth <em>d</em> when you can grow <strong>two of depth d/2</strong>? Bidirectional search runs a forward search from the start and a <em>backward</em> search from the goal simultaneously, stopping when the two frontiers meet. Since b<sup>d/2</sup> + b<sup>d/2</sup> &#8810; b<sup>d</sup>, the savings are enormous:</p>
+            <div class="code-block"><span class="diag">   start &#9679;&#9654;&#9654;&#9654;&#9654;&#9654;&#9654;&#9654; &#10042; &#9664;&#9664;&#9664;&#9664;&#9664;&#9664;&#9664;&#9679; goal
+              d/2      meet      d/2
+
+   b = 10, d = 6:   2 &times; 10&sup3; = 2,000 nodes
+   vs. one-way BFS: 10&#8310;      = 1,000,000 nodes</span></div>
+            <p class="section-desc">Time and space are <strong>O(b<sup>d/2</sup>)</strong> &mdash; but note the space bound: at least one frontier must be held in memory to detect the intersection, so bidirectional search is memory-hungry like BFS, just for a much smaller exponent.</p>
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Why isn't everything bidirectional?</h3>
+                <ul>
+                    <li><strong>Searching backward requires reversible actions:</strong> you must be able to compute <em>predecessors</em> &mdash; "which states reach this one?" For many problems that's hard or impossible.</li>
+                    <li><strong>You need a small, explicit set of goal states</strong> to start the backward wave from. A goal described only by a property ("any checkmate position") gives you no concrete states to grow from.</li>
+                    <li>The two searches must efficiently <strong>test frontier intersection</strong>, which adds bookkeeping.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Repeated states -->
+        <div class="section fade-up" id="repeated">
+            <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Avoiding Repeated States</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_repeated.png" alt="The GRAPH-SEARCH algorithm with an explored set" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">Graph search adds an <em>explored set</em> (the closed list) to tree search: a newly generated node is discarded if it is already on the frontier or in the explored set &mdash; this is what stops the search looping forever. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">On our running graph, A and D generate <em>each other</em>, and B and E do too. A search that forgets where it has been will bounce A&rarr;D&rarr;A&rarr;D&hellip; forever &mdash; <strong>algorithms that forget their history are doomed to repeat it</strong>. In the worst case, repeated states can blow a linear-size problem up into an exponential tree. There are three increasingly thorough (and increasingly expensive) defenses:</p>
+            <table class="dark-table">
+                <thead><tr><th>Level</th><th>Rule</th><th>Cost</th><th>Catches</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>1</strong></td><td>Don't return to the <strong>parent</strong> you just came from.</td><td>Almost free (one comparison)</td><td>Trivial back-and-forth loops (A&rarr;D&rarr;A)</td></tr>
+                    <tr><td><strong>2</strong></td><td>Don't create <strong>cyclic paths</strong> &mdash; check each child against all of its ancestors on the current path.</td><td>O(depth) per child</td><td>All cycles, but not repeats via different routes</td></tr>
+                    <tr><td><strong>3</strong></td><td>Don't generate <strong>any previously generated state</strong> &mdash; keep every visited state on a <strong>closed list</strong> and check against it. This is <em>graph search</em>.</td><td>Memory for every state ever seen</td><td>Everything &mdash; each state expanded at most once</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-scale-balanced"></i> The trade-off: memory vs. repeated work</h3>
+                <p>The closed list is exactly what our BFS and DFS traces used ("discard children already on open or closed") &mdash; it's why each trace expanded every state at most once. But storing all visited states can erase DFS's and IDS's precious linear-space advantage. As so often in search: you pay either in <strong>memory</strong> (remember everything) or in <strong>time</strong> (re-explore what you forgot).</p>
+            </div>
+        </div>
+
+        <!-- Comparison -->
+        <div class="section fade-up" id="comparison">
+            <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> Choosing a Strategy: The Scorecard</h2>
+            <figure style="margin:22px 0;text-align:center">
+                <img src="images/ps2_compare.png" alt="Table comparing completeness, time, space and optimality of the blind search strategies" loading="lazy" style="max-width:100%;height:auto;border:1px solid var(--border2);border-radius:8px;background:#fff;padding:10px">
+                <figcaption style="color:var(--text2);font-size:.82rem;margin-top:8px;line-height:1.5">The classic comparison of uninformed strategies on completeness, time, space and optimality, in terms of branching factor <em>b</em>, solution depth <em>d</em>, and maximum depth <em>m</em>. <em>(From the course slides.)</em></figcaption>
+            </figure>
+            <p class="section-desc">The classic summary (AIMA Figure 3.21). Here <em>b</em> = branching factor, <em>d</em> = depth of the shallowest solution, <em>m</em> = maximum depth of the space, &#8467; = depth limit, C* = optimal solution cost, &epsilon; = minimum step cost.</p>
+            <table class="dark-table">
+                <thead><tr><th>Criterion</th><th>BFS</th><th>UCS</th><th>DFS</th><th>DLS</th><th>IDS</th><th>Bidirectional</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Complete?</strong></td><td>Yes (b finite)</td><td>Yes</td><td>No</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+                    <tr><td><strong>Time</strong></td><td>O(b<sup>d+1</sup>)</td><td>O(b<sup>1+&lfloor;C*/&epsilon;&rfloor;</sup>)</td><td>O(b<sup>m</sup>)</td><td>O(b<sup>&#8467;</sup>)</td><td>O(b<sup>d</sup>)</td><td>O(b<sup>d/2</sup>)</td></tr>
+                    <tr><td><strong>Space</strong></td><td>O(b<sup>d+1</sup>)</td><td>O(b<sup>1+&lfloor;C*/&epsilon;&rfloor;</sup>)</td><td>O(bm)</td><td>O(b&#8467;)</td><td>O(bd)</td><td>O(b<sup>d/2</sup>)</td></tr>
+                    <tr><td><strong>Optimal?</strong></td><td>Yes (unit costs)</td><td>Yes</td><td>No</td><td>No</td><td>Yes (unit costs)</td><td>Yes (unit costs, both sides BFS)</td></tr>
+                </tbody>
+            </table>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-compass"></i> Rules of thumb</h3>
+                <ul>
+                    <li><strong>Memory-bound, unknown solution depth?</strong> &rarr; <strong>IDS</strong>. Complete, optimal (unit costs), linear space.</li>
+                    <li><strong>Step costs vary?</strong> &rarr; <strong>UCS</strong>. The only blind strategy optimal for arbitrary costs.</li>
+                    <li><strong>Both directions well-defined</strong> (predecessors computable, explicit goal states)? &rarr; <strong>Bidirectional</strong> &mdash; halve the exponent.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Exercise -->
+        <div class="section fade-up" id="lab">
+            <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Exercise</h2>
+            <p class="section-desc">Do these on paper <em>before</em> opening the solutions. Tracing by hand is the only way this really sticks.</p>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Trace BFS and DFS</h3>
+                    <p class="section-desc">Use this tree (children generated left to right; node <strong>7</strong> is the goal). Give the <strong>order of expansion</strong> for BFS and for DFS, with full open/closed lists, using the same conventions as the traces above.</p>
+                    <div class="code-block"><span class="diag">            1
+          /   \
+         2     3
+        / \     \
+       4   5     6
+           |
+           7  &#9733; goal</span></div>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>BFS</strong> &mdash; order of expansion: <code>1, 2, 3, 4, 5, 6, 7</code></p>
+                        <table class="dark-table">
+                            <thead><tr><th>Step</th><th>Node expanded</th><th>Frontier (open)</th><th>Closed</th></tr></thead>
+                            <tbody>
+                                <tr><td>0</td><td>&mdash;</td><td>[ 1 ]</td><td>[ ]</td></tr>
+                                <tr><td>1</td><td><strong>1</strong> &rarr; 2, 3</td><td>[ 2, 3 ]</td><td>[ 1 ]</td></tr>
+                                <tr><td>2</td><td><strong>2</strong> &rarr; 4, 5</td><td>[ 3, 4, 5 ]</td><td>[ 1, 2 ]</td></tr>
+                                <tr><td>3</td><td><strong>3</strong> &rarr; 6</td><td>[ 4, 5, 6 ]</td><td>[ 1, 2, 3 ]</td></tr>
+                                <tr><td>4</td><td><strong>4</strong> &rarr; none</td><td>[ 5, 6 ]</td><td>[ 1, 2, 3, 4 ]</td></tr>
+                                <tr><td>5</td><td><strong>5</strong> &rarr; 7</td><td>[ 6, 7 ]</td><td>[ 1, 2, 3, 4, 5 ]</td></tr>
+                                <tr><td>6</td><td><strong>6</strong> &rarr; none</td><td>[ 7 ]</td><td>[ 1, 2, 3, 4, 5, 6 ]</td></tr>
+                                <tr><td>7</td><td><strong>7</strong> &mdash; goal &rarr; <strong>SUCCESS</strong></td><td>[ ]</td><td>&mdash;</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="section-desc"><strong>DFS</strong> &mdash; order of expansion: <code>1, 2, 4, 5, 7</code> (nodes 3 and 6 are never expanded)</p>
+                        <table class="dark-table">
+                            <thead><tr><th>Step</th><th>Node expanded</th><th>Frontier (open)</th><th>Closed</th></tr></thead>
+                            <tbody>
+                                <tr><td>0</td><td>&mdash;</td><td>[ 1 ]</td><td>[ ]</td></tr>
+                                <tr><td>1</td><td><strong>1</strong> &rarr; 2, 3</td><td>[ 2, 3 ]</td><td>[ 1 ]</td></tr>
+                                <tr><td>2</td><td><strong>2</strong> &rarr; 4, 5 (on left)</td><td>[ 4, 5, 3 ]</td><td>[ 1, 2 ]</td></tr>
+                                <tr><td>3</td><td><strong>4</strong> &rarr; none (back up)</td><td>[ 5, 3 ]</td><td>[ 1, 2, 4 ]</td></tr>
+                                <tr><td>4</td><td><strong>5</strong> &rarr; 7 (on left)</td><td>[ 7, 3 ]</td><td>[ 1, 2, 4, 5 ]</td></tr>
+                                <tr><td>5</td><td><strong>7</strong> &mdash; goal &rarr; <strong>SUCCESS</strong></td><td>[ 3 ]</td><td>&mdash;</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Count the nodes</h3>
+                    <p class="section-desc">A uniform tree has branching factor <em>b</em> = 3, shallowest solution at depth <em>d</em> = 4, and maximum depth <em>m</em> = 4. In the worst case, how many nodes does <strong>BFS generate</strong> (count all levels up to depth d+1, matching the O(b<sup>d+1</sup>) bound)? How many nodes does <strong>DFS store</strong> at most (the O(bm) bound)? Compare.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>BFS, nodes generated (levels 0 through d+1 = 5):</strong></p>
+                        <div class="code-block"><span class="diag">3&#8304; + 3&sup1; + 3&sup2; + 3&sup3; + 3&#8308; + 3&#8309;
+= 1 + 3 + 9 + 27 + 81 + 243
+= 364 nodes  (all held in memory at ~the same time)</span></div>
+                        <p class="section-desc"><strong>DFS, nodes stored:</strong> at most <em>b</em> nodes per level of the current path, over <em>m</em> levels, plus the root:</p>
+                        <div class="code-block"><span class="diag">b &times; m + 1 = 3 &times; 4 + 1 = 13 nodes</span></div>
+                        <p class="section-desc"><strong>Comparison:</strong> 364 vs. 13 &mdash; DFS needs roughly <strong>28&times; less memory</strong>, and the gap grows exponentially with depth. That single fact is why IDS (which searches breadth-first <em>order</em> with depth-first <em>storage</em>) is such a good deal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Pick the strategy</h3>
+                    <p class="section-desc">A warehouse robot must find a route through a large grid maze. Every move costs the same (unit costs). The robot's onboard computer has <strong>very little memory</strong>, the maze is huge, and nobody knows how long the shortest route is. Which blind search strategy should it use, and why? Rule out at least two alternatives.</p>
+                    <button class="solution-toggle" onclick="toggleSolution(this)"><i class="fa-solid fa-chevron-right"></i> Show solution</button>
+                    <div class="solution-content">
+                        <p class="section-desc"><strong>Answer: Iterative Deepening Search (IDS).</strong></p>
+                        <ul style="padding-left:18px;list-style:disc;color:var(--text2);font-size:.95rem;line-height:1.8">
+                            <li><strong>Unit costs</strong> &rarr; the shallowest solution is the cheapest, so IDS is <strong>optimal</strong> here (and UCS's cost-sensitivity buys nothing).</li>
+                            <li><strong>Very little memory</strong> &rarr; IDS needs only <strong>O(bd)</strong>. BFS (and UCS, and bidirectional) need exponential memory &mdash; ruled out immediately on a huge maze.</li>
+                            <li><strong>Unknown solution depth</strong> &rarr; DLS can't pick a safe limit &#8467;, and plain DFS is neither complete (loops in a maze with cycles!) nor optimal &mdash; both ruled out.</li>
+                            <li>IDS is <strong>complete</strong>, and its re-expansion overhead is only a small constant factor (~11% for b = 10) &mdash; a bargain for the memory saved.</li>
+                        </ul>
+                        <p class="section-desc">One refinement: in a grid maze, pair IDS with cycle checking (level 2 of the repeated-state defenses) so depth-first probes don't wander in circles within a single iteration.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section fade-up" id="recap">
+            <h2 class="section-title"><i class="fa-solid fa-flag-checkered"></i> Recap &amp; What's Next</h2>
+            <div class="info-box success">
+                <h3><i class="fa-solid fa-circle-check"></i> You can now</h3>
+                <p>Trace all six blind strategies on a graph, quote each one's completeness/optimality/time/space from the scorecard, explain why <strong>space</strong> kills BFS, why <strong>IDS</strong> is the default blind choice, why <strong>UCS</strong> is the one to reach for under varying costs, and how the <strong>closed list</strong> stops history from repeating itself. Blind search is honest work &mdash; but it examines states with no idea which ones are promising.</p>
+            </div>
+            <p class="section-desc">Next up: <strong>Module 6 &mdash; Informed Search &amp; A*</strong>: adding knowledge to the search. A heuristic estimate of the distance to the goal turns the blind sweep into a guided one &mdash; and, with A*, does it while keeping optimality.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="04_problem_solving.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Module 4: Problem Solving</a>
+            <a href="06_informed_search_astar.html" class="nav-btn next">Module 6: Informed Search &amp; A* <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">Introduction to Artificial Intelligence &middot; Based on Russell &amp; Norvig, AIMA 4th ed. &middot; albanna-tutorials.com</div></footer>
+
+    <div class="toc" id="toc"><h4>Uninformed Search</h4>
+        <a class="toc-item" href="#objectives">Objectives</a>
+        <a class="toc-item" href="#overview">The Blind Family</a>
+        <a class="toc-item" href="#bfs">Breadth-First</a>
+        <a class="toc-item" href="#dfs">Depth-First</a>
+        <a class="toc-item" href="#dls-ids">DLS &amp; IDS</a>
+        <a class="toc-item" href="#ucs">Uniform Cost</a>
+        <a class="toc-item" href="#bidirectional">Bidirectional</a>
+        <a class="toc-item" href="#repeated">Repeated States</a>
+        <a class="toc-item" href="#comparison">Scorecard</a>
+        <a class="toc-item" href="#lab">Exercise</a>
+        <a class="toc-item" href="#recap">Recap</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ai-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('ai-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        function toggleSolution(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;tocItems.forEach(item=>{const id=item.getAttribute('href').slice(1);const el=document.getElementById(id);if(!el)return;item.classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>

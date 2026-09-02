@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7VKNNJ362N');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4: OOP - Classes, Objects, Constructors, Encapsulation - PL1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
+        body.light-mode{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--warning:#d97706;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--footer:#e2e8f0;--code:#1e293b}
+        body.light-mode .navbar{background:rgba(255,255,255,.92);border-bottom-color:rgba(0,0,0,.08)}
+        body.light-mode .nav-logo{color:#0f172a}body.light-mode .nav-links a{color:#334155}
+        body.light-mode .hero{background:#f0f4f8}body.light-mode .hero::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
+        body.light-mode .hero h1{background:linear-gradient(135deg,#0f172a,#1e3a5f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        body.light-mode .hero-sub{color:#334155}
+        body.light-mode .section{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        body.light-mode .section-title{color:#0f172a}body.light-mode .section-desc{color:#334155}
+        body.light-mode .code-block{background:#1e293b;color:#e2e8f0;border-color:rgba(0,0,0,.12)}
+        body.light-mode .copy-btn{background:#334155;color:#e2e8f0}
+        body.light-mode .info-box{background:#f8fafc;border-color:rgba(0,0,0,.08);border-left-color:#2563eb}
+        body.light-mode .info-box h3{color:#0f172a}body.light-mode .info-box p,.light-mode .info-box li{color:#334155}
+        body.light-mode .quiz-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .quiz-question{color:#0f172a}
+        body.light-mode .quiz-option{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .quiz-option:hover{border-color:#2563eb;color:#0f172a}
+        body.light-mode .quiz-option.correct{background:rgba(5,150,105,.12);border-color:#059669;color:#047857}
+        body.light-mode .quiz-option.incorrect{background:rgba(220,38,38,.1);border-color:#dc2626;color:#dc2626}
+        body.light-mode .trace-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .trace-box h4{color:#0f172a}
+        body.light-mode .trace-input{background:#fff;border-color:rgba(0,0,0,.12);color:#0f172a}
+        body.light-mode .bug-box{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .footer-bottom{color:#475569;border-top-color:rgba(0,0,0,.08)}
+        body.light-mode .theme-toggle{color:#334155;border-color:rgba(0,0,0,.12)}
+        body.light-mode .scroll-top{background:#fff;border-color:rgba(0,0,0,.08);color:#334155}
+        body.light-mode .toc{background:#fff;border-color:rgba(0,0,0,.08)}
+        body.light-mode .toc h4{color:#475569}body.light-mode .toc-item{color:#475569}
+        body.light-mode .toc-item:hover{color:#0f172a;background:rgba(0,0,0,.03)}
+        body.light-mode .toc-item.active{color:#2563eb;border-left-color:#2563eb;background:rgba(37,99,235,.06)}
+        body.light-mode .mobile-menu{background:rgba(255,255,255,.98)}body.light-mode .mobile-menu a{color:#334155}
+        body.light-mode .score-summary{background:#f8fafc;border-color:rgba(0,0,0,.08)}
+        body.light-mode .dark-table th{background:#1e293b;color:#fff}body.light-mode .dark-table td{color:#1e293b}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+        a{color:var(--primary);text-decoration:none;transition:color .2s}a:hover{color:#60a5fa}ul{list-style:none;padding:0}
+        .navbar{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 24px}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .nav-logo{font-size:1.15rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .nav-logo i{color:var(--primary);font-size:1.3rem}
+        .nav-links{display:flex;gap:8px}
+        .nav-links a{color:var(--text2);padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;transition:all .2s}
+        .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .theme-toggle{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px}
+        .theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+        .hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:8px}
+        .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(11,15,25,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px}
+        .mobile-menu.open{display:flex}
+        .hero{margin-top:64px;padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+        .hero h1{font-size:3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero-sub{font-size:1.15rem;color:var(--text2);margin-bottom:6px}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;margin:32px 0}
+        .section-title{font-size:1.8rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+        .section-title::before{content:'';width:4px;height:32px;background:var(--primary);border-radius:2px;flex-shrink:0}
+        .section-title i{color:var(--primary);font-size:1.3rem}
+        .section-desc{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:20px}
+        .subsection{margin:28px 0}
+        .subsection h3{font-size:1.25rem;font-weight:700;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+        .subsection h3 i{color:var(--primary);font-size:1rem}
+        .info-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--primary);border-radius:8px;padding:20px;margin:16px 0}
+        .info-box h3{font-size:1rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .info-box h3 i{color:var(--primary)}
+        .info-box p,.info-box li{color:var(--text2);font-size:.92rem;line-height:1.8}
+        .info-box.warning{border-left-color:var(--warning)}
+        .info-box.warning h3 i{color:var(--warning)}
+        .info-box.success{border-left-color:var(--success)}
+        .info-box.success h3 i{color:var(--success)}
+        .code-block{background:var(--code);border:1px solid var(--border2);border-radius:8px;padding:20px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#e6edf3;line-height:1.6;position:relative;white-space:pre}
+        .copy-btn{position:absolute;top:10px;right:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s}
+        .copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .dark-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:8px;overflow:hidden}
+        .dark-table th{background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;font-weight:600;font-size:.85rem;border-bottom:1px solid var(--border2)}
+        .dark-table td{padding:12px 16px;color:var(--text2);font-size:.85rem;border-bottom:1px solid var(--border)}
+        code{font-family:'JetBrains Mono',monospace;background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.85em;color:#a78bfa}
+        .quiz-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .quiz-question{font-weight:600;color:var(--text);margin-bottom:14px;font-size:1rem}
+        .quiz-option{background:var(--surface);border:1px solid var(--border2);padding:12px 16px;margin:6px 0;border-radius:8px;cursor:pointer;transition:all .2s;color:var(--text2);font-size:.9rem}
+        .quiz-option:hover{border-color:var(--primary);color:var(--text)}
+        .quiz-option.correct{background:rgba(16,185,129,.12);border-color:var(--success);color:var(--success);cursor:default}
+        .quiz-option.incorrect{background:rgba(239,68,68,.1);border-color:#ef4444;color:#ef4444;cursor:default}
+        .quiz-explanation{display:none;margin-top:10px;padding:12px;background:rgba(59,130,246,.08);border-radius:8px;font-size:.88rem;color:var(--text2);border-left:3px solid var(--primary)}
+        .quiz-explanation.show{display:block}
+        .trace-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:20px 0}
+        .trace-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .trace-box h4 i{color:var(--warning)}
+        .trace-input{background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;width:100%;margin:8px 0}
+        .trace-input:focus{outline:none;border-color:var(--primary)}
+        .check-btn{background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;font-family:'Inter',sans-serif;transition:all .2s;margin-top:6px}
+        .check-btn:hover{background:#2563eb}
+        .trace-result{margin-top:8px;font-size:.88rem;padding:8px 12px;border-radius:6px;display:none}
+        .trace-result.correct{display:block;background:rgba(16,185,129,.12);color:var(--success)}
+        .trace-result.incorrect{display:block;background:rgba(239,68,68,.1);color:#ef4444}
+        .bug-box{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid #ef4444;border-radius:12px;padding:24px;margin:20px 0}
+        .bug-box h4{font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .bug-box h4 i{color:#ef4444}
+        .score-summary{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin:24px 0;text-align:center}
+        .score-summary h4{font-size:1rem;font-weight:600;margin-bottom:8px}
+        .score-summary .score{font-size:2rem;font-weight:800;color:var(--primary)}
+        .footer{background:var(--footer);border-top:1px solid var(--border);margin-top:48px}
+        .footer-bottom{padding:20px 24px;text-align:center;color:var(--text2);font-size:.8rem}
+        .scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+        .scroll-top.visible{opacity:1;pointer-events:auto}
+        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+        .toc{position:fixed;right:24px;top:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;width:200px;opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;z-index:900}
+        .toc.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+        .toc h4{font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+        .toc-item{display:block;padding:5px 12px;font-size:.8rem;color:var(--text2);border-left:2px solid transparent;margin:2px 0;border-radius:0 4px 4px 0;transition:all .2s;cursor:pointer}
+        .toc-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+        .toc-item.active{color:var(--primary);border-left-color:var(--primary);background:rgba(59,130,246,.05)}
+        .nav-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s}
+        .nav-btn.prev{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+        .nav-btn.prev:hover{border-color:var(--primary);color:var(--primary)}
+        .nav-btn.next{background:var(--success);color:#fff}
+        .nav-btn.next:hover{background:#059669;color:#fff}
+        .page-nav{display:flex;justify-content:space-between;align-items:center;margin:40px 0 0}
+        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
+        .kw{color:#ff7b72}.str{color:#a5d6ff}.cm{color:#8b949e}.num{color:#79c0ff}.fn{color:#d2a8ff}.type{color:#ffa657}
+        .step-trace{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:16px;margin:12px 0;font-size:.88rem}
+        .step-trace table{width:100%;border-collapse:collapse}
+        .step-trace th,.step-trace td{padding:6px 12px;border:1px solid var(--border2);text-align:center;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+        .step-trace th{background:var(--surface2);color:var(--text);font-weight:600}
+        .step-trace td{color:var(--text2)}
+        .step-trace .highlight{background:rgba(59,130,246,.15);color:var(--primary)}
+        .uml-diagram{background:var(--surface);border:2px solid var(--border2);border-radius:8px;margin:16px auto;max-width:420px;font-family:'JetBrains Mono',monospace;font-size:.82rem;overflow:hidden}
+        .uml-class-name{background:var(--primary);color:#fff;padding:12px 16px;text-align:center;font-weight:700;font-size:.95rem}
+        .uml-section{padding:10px 16px;border-bottom:1px solid var(--border2)}
+        .uml-section:last-child{border-bottom:none}
+        .uml-section div{padding:2px 0;color:var(--text2)}
+        .uml-private{color:#ef4444 !important}
+        .uml-public{color:var(--success) !important}
+        @media(max-width:1400px){.toc{display:none}}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:60px 20px 40px}.section{padding:24px 16px}.nav-links{display:none}.hamburger{display:block}.page-nav{flex-direction:column;gap:12px}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none"><i class="fa-brands fa-java"></i> PL1 - Java</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#classes">Classes</a>
+                <a href="#objects">Objects</a>
+                <a href="#constructors">Constructors</a>
+                <a href="#this-keyword">this Keyword</a>
+                <a href="#encapsulation">Encapsulation</a>
+                <a href="#static">Static</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+                <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" onclick="this.parentElement.classList.remove('open')">Home</a>
+        <a href="#classes" onclick="this.parentElement.classList.remove('open')">Classes</a>
+        <a href="#objects" onclick="this.parentElement.classList.remove('open')">Objects</a>
+        <a href="#constructors" onclick="this.parentElement.classList.remove('open')">Constructors</a>
+        <a href="#this-keyword" onclick="this.parentElement.classList.remove('open')">this Keyword</a>
+        <a href="#encapsulation" onclick="this.parentElement.classList.remove('open')">Encapsulation</a>
+        <a href="#static" onclick="this.parentElement.classList.remove('open')">Static</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Week 4: OOP - Classes, Objects, Constructors, Encapsulation</h1>
+            <p class="hero-sub">Liang Chapter 9: Defining Classes, Creating Objects, Constructors, Getters/Setters, the this Keyword, and Encapsulation</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- ============ SECTION 1: DEFINING CLASSES ============ -->
+        <div class="section fade-up" id="classes">
+            <h2 class="section-title"><i class="fa-solid fa-cube"></i> Defining Classes</h2>
+            <p class="section-desc">A class is a template (blueprint) for creating objects. It defines the data fields (also called instance variables or properties) and methods that an object will have. An object is an instance of a class. (Liang, Ch. 9)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Class Structure</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A class in Java can contain <strong>data fields</strong> (variables that store the state) and <strong>methods</strong> (functions that define the behavior). (Liang, Section 9.2)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="cm">// Data field (instance variable)</span>
+    <span class="type">double</span> radius;
+
+    <span class="cm">// Method</span>
+    <span class="type">double</span> <span class="fn">getArea</span>() {
+        <span class="kw">return</span> radius * radius * Math.PI;
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-diagram-project"></i> UML Class Diagram</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">In UML (Unified Modeling Language), a class is represented as a rectangle divided into three compartments: class name, data fields, and methods. (Liang, Section 9.2)</p>
+                <div class="uml-diagram">
+                    <div class="uml-class-name">Circle</div>
+                    <div class="uml-section">
+                        <div><span class="uml-private">-</span> radius: double</div>
+                    </div>
+                    <div class="uml-section">
+                        <div><span class="uml-public">+</span> Circle()</div>
+                        <div><span class="uml-public">+</span> Circle(newRadius: double)</div>
+                        <div><span class="uml-public">+</span> getArea(): double</div>
+                        <div><span class="uml-public">+</span> getPerimeter(): double</div>
+                        <div><span class="uml-public">+</span> setRadius(radius: double): void</div>
+                        <div><span class="uml-public">+</span> getRadius(): double</div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> UML Notation</h3>
+                    <p>The <code>-</code> sign indicates <strong>private</strong> (accessible only within the class). The <code>+</code> sign indicates <strong>public</strong> (accessible from any class). (Liang, Section 9.2)</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Class vs. Object</h3>
+                <table class="dark-table">
+                    <tr><th>Class</th><th>Object</th></tr>
+                    <tr><td>A blueprint or template</td><td>An instance created from the class</td></tr>
+                    <tr><td>Defined once</td><td>Multiple objects can be created</td></tr>
+                    <tr><td>No memory allocated until an object is created</td><td>Memory is allocated when created with <code>new</code></td></tr>
+                    <tr><td>Example: <code>Circle</code> (the class)</td><td>Example: <code>myCircle</code> (an object)</td></tr>
+                </table>
+            </div>
+
+            <div class="quiz-box" data-section="classes">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the relationship between a class and an object?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'classes')">A) They are the same thing</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'classes')">B) A class is a blueprint; an object is an instance of a class</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'classes')">C) An object is a blueprint; a class is an instance</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'classes')">D) A class can only create one object</div>
+                <div class="quiz-explanation">A class defines the structure and behavior. An object is a specific instance created from that class using the <code>new</code> keyword. You can create many objects from one class. (Liang, Section 9.2)</div>
+            </div>
+
+            <div class="quiz-box" data-section="classes">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: Which of the following is a correct class definition in Java?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'classes')">A) <code>public class Student { String name; }</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'classes')">B) <code>class = Student { String name; }</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'classes')">C) <code>def class Student { name: String; }</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'classes')">D) <code>new class Student { String name; }</code></div>
+                <div class="quiz-explanation">A Java class is defined with the <code>class</code> keyword, followed by the class name and a body in curly braces. Data fields are declared inside the class body. (Liang, Section 9.2)</div>
+            </div>
+
+            <div class="score-summary" id="score-classes">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="classes-correct">0</span> / <span id="classes-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 2: CREATING OBJECTS ============ -->
+        <div class="section fade-up" id="objects">
+            <h2 class="section-title"><i class="fa-solid fa-cubes"></i> Creating and Using Objects</h2>
+            <p class="section-desc">An object is created from a class using the <code>new</code> keyword. The <code>new</code> keyword invokes the class's constructor, allocates memory for the object, and returns a reference to it. (Liang, Section 9.3)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Creating Objects</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> myCircle = <span class="kw">new</span> <span class="type">Circle</span>();
+myCircle.radius = <span class="num">5.0</span>;
+System.out.println(<span class="str">"Area: "</span> + myCircle.<span class="fn">getArea</span>());</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-memory"></i> Reference Variables</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A variable that holds an object is actually a <strong>reference variable</strong>. It stores the memory address (reference) of the object, not the object itself. (Liang, Section 9.4)</p>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Stack vs. Heap</h3>
+                    <p><strong>Stack:</strong> Stores the reference variable (e.g., <code>myCircle</code> &rarr; address)</p>
+                    <p><strong>Heap:</strong> Stores the actual object (e.g., Circle object with radius: 5.0)</p>
+                    <p>The reference on the stack points to the object on the heap.</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Reference vs. Primitive</h3>
+                <table class="dark-table">
+                    <tr><th>Primitive Variable</th><th>Reference Variable</th></tr>
+                    <tr><td>Stores actual value</td><td>Stores memory address of object</td></tr>
+                    <tr><td><code>int x = 5;</code></td><td><code>Circle c = new Circle();</code></td></tr>
+                    <tr><td>Default: 0, false, etc.</td><td>Default: <code>null</code></td></tr>
+                    <tr><td>Stored on the stack</td><td>Reference on stack, object on heap</td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-circle-dot"></i> Accessing Members</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">You access an object's data fields and methods using the <strong>dot operator</strong> (<code>.</code>). (Liang, Section 9.3)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>();
+c1.radius = <span class="num">10</span>;                    <span class="cm">// Access data field</span>
+<span class="type">double</span> area = c1.<span class="fn">getArea</span>();       <span class="cm">// Call method</span>
+System.out.println(area);              <span class="cm">// 314.159...</span></div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> null and NullPointerException</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">If a reference variable does not point to any object, it holds the value <code>null</code>. Attempting to access a member through a <code>null</code> reference causes a <code>NullPointerException</code>. (Liang, Section 9.4)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c = <span class="kw">null</span>;
+System.out.println(c.radius);  <span class="cm">// NullPointerException!</span></div>
+            </div>
+
+            <div class="quiz-box" data-section="objects">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What does the <code>new</code> keyword do?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">A) Declares a variable</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">B) Imports a class</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'objects')">C) Creates an object in memory and invokes the constructor</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">D) Deletes an existing object</div>
+                <div class="quiz-explanation">The <code>new</code> keyword allocates memory on the heap for the object, invokes the constructor to initialize it, and returns a reference. (Liang, Section 9.3)</div>
+            </div>
+
+            <div class="quiz-box" data-section="objects">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What is the default value of a reference variable?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">A) 0</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'objects')">B) <code>null</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">C) An empty object</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">D) <code>undefined</code></div>
+                <div class="quiz-explanation">The default value of a reference variable (when declared as a data field) is <code>null</code>, meaning it does not reference any object. (Liang, Section 9.4)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>();
+<span class="type">Circle</span> c2 = c1;
+c1.radius = <span class="num">5</span>;
+c2.radius = <span class="num">10</span>;
+System.out.println(c1.radius);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output? (Hint: c2 = c1 copies the reference, not the object)</p>
+                <input class="trace-input" id="trace-obj1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-obj1','10.0')">Check Answer</button>
+                <div class="trace-result" id="trace-obj1-result"></div>
+            </div>
+
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> myCircle;
+System.out.println(myCircle.<span class="fn">getArea</span>());</div>
+                <div class="quiz-box" data-section="objects" style="margin-top:12px;">
+                    <div class="quiz-question">What is the error?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'objects')">A) Variable <code>myCircle</code> might not have been initialized (no <code>new</code> was used)</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">B) Missing return type</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'objects')">C) getArea() doesn't exist</div>
+                    <div class="quiz-explanation">The variable <code>myCircle</code> is declared but never assigned an object with <code>new Circle()</code>. Local variables must be initialized before use. The compiler will report the error. (Liang, Section 9.4)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-objects">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="objects-correct">0</span> / <span id="objects-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 3: CONSTRUCTORS ============ -->
+        <div class="section fade-up" id="constructors">
+            <h2 class="section-title"><i class="fa-solid fa-hammer"></i> Constructors</h2>
+            <p class="section-desc">A constructor is a special method that is invoked to initialize an object when it is created using the <code>new</code> keyword. It has the <strong>same name</strong> as the class and <strong>no return type</strong> (not even <code>void</code>). (Liang, Section 9.5)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> No-Arg Constructor</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A constructor with no parameters is called a no-arg (no-argument) constructor. (Liang, Section 9.5)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="type">double</span> radius;
+
+    <span class="cm">// No-arg constructor</span>
+    <span class="kw">public</span> <span class="fn">Circle</span>() {
+        radius = <span class="num">1.0</span>;
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Parameterized Constructor</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A constructor can take parameters to set initial values for the object's data fields. (Liang, Section 9.5)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="type">double</span> radius;
+
+    <span class="cm">// No-arg constructor</span>
+    <span class="kw">public</span> <span class="fn">Circle</span>() {
+        radius = <span class="num">1.0</span>;
+    }
+
+    <span class="cm">// Parameterized constructor</span>
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> newRadius) {
+        radius = newRadius;
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-layer-group"></i> Constructor Overloading</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A class can have multiple constructors with different parameter lists. This is called <strong>constructor overloading</strong>. Java determines which constructor to invoke based on the arguments passed. (Liang, Section 9.5)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>();           <span class="cm">// Calls no-arg constructor (radius = 1.0)</span>
+<span class="type">Circle</span> c2 = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">5.0</span>);       <span class="cm">// Calls parameterized constructor (radius = 5.0)</span></div>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Default Constructor</h3>
+                <p>If you do not define any constructor in your class, Java automatically provides a <strong>default no-arg constructor</strong> that initializes data fields to their default values. However, if you define any constructor (even a parameterized one), Java does <strong>NOT</strong> provide the default no-arg constructor. (Liang, Section 9.5)</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Complete Circle Class (Liang, Listing 9.9 Style)</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="type">double</span> radius;
+
+    <span class="kw">public</span> <span class="fn">Circle</span>() {
+        radius = <span class="num">1.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> newRadius) {
+        radius = newRadius;
+    }
+
+    <span class="type">double</span> <span class="fn">getArea</span>() {
+        <span class="kw">return</span> radius * radius * Math.PI;
+    }
+
+    <span class="type">double</span> <span class="fn">getPerimeter</span>() {
+        <span class="kw">return</span> <span class="num">2</span> * radius * Math.PI;
+    }
+}
+
+<span class="cm">// Test program</span>
+<span class="kw">public class</span> <span class="fn">TestCircle</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>();
+        System.out.println(<span class="str">"c1 area: "</span> + c1.<span class="fn">getArea</span>());
+
+        <span class="type">Circle</span> c2 = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">5.0</span>);
+        System.out.println(<span class="str">"c2 area: "</span> + c2.<span class="fn">getArea</span>());
+    }
+}</div>
+            </div>
+
+            <div class="quiz-box" data-section="constructors">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the return type of a constructor?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'constructors')">A) <code>void</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'constructors')">B) The class type</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'constructors')">C) <code>int</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'constructors')">D) Constructors have no return type (not even void)</div>
+                <div class="quiz-explanation">A constructor does not have a return type — not even <code>void</code>. If you add a return type, it becomes a regular method, not a constructor. (Liang, Section 9.5)</div>
+            </div>
+
+            <div class="quiz-box" data-section="constructors">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: If a class has a parameterized constructor but no no-arg constructor, what happens when you write <code>new MyClass()</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'constructors')">A) Java uses the default constructor</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'constructors')">B) Compilation error — no matching constructor found</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'constructors')">C) The parameterized constructor is called with default values</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'constructors')">D) Runtime error</div>
+                <div class="quiz-explanation">Once you define any constructor, Java no longer provides the default no-arg constructor. You must explicitly define a no-arg constructor if you need one. (Liang, Section 9.5)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>();
+<span class="type">Circle</span> c2 = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">3.0</span>);
+System.out.println(c1.radius + <span class="str">" "</span> + c2.radius);</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-con1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-con1','1.0 3.0')">Check Answer</button>
+                <div class="trace-result" id="trace-con1-result"></div>
+            </div>
+
+            <div class="score-summary" id="score-constructors">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="constructors-correct">0</span> / <span id="constructors-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 4: THE this KEYWORD ============ -->
+        <div class="section fade-up" id="this-keyword">
+            <h2 class="section-title"><i class="fa-solid fa-hand-point-right"></i> The this Keyword</h2>
+            <p class="section-desc">The keyword <code>this</code> refers to the current object — the object whose method or constructor is being invoked. It is commonly used to distinguish between data fields and parameters that have the same name. (Liang, Section 9.6)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Using this to Avoid Ambiguity</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;  <span class="cm">// this.radius is the data field</span>
+                                   <span class="cm">// radius is the parameter</span>
+    }
+}</div>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Without this</h3>
+                    <p>If the parameter name is the same as the data field name, the parameter <em>hides</em> (shadows) the data field. Using <code>this.radius</code> explicitly refers to the data field. (Liang, Section 9.6)</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-list"></i> Common Uses of this</h3>
+                <table class="dark-table">
+                    <tr><th>Usage</th><th>Purpose</th><th>Example</th></tr>
+                    <tr><td><code>this.field</code></td><td>Refer to the current object's data field</td><td><code>this.radius = radius;</code></td></tr>
+                    <tr><td><code>this.method()</code></td><td>Call another method of the current object</td><td><code>this.getArea();</code></td></tr>
+                    <tr><td><code>this(args)</code></td><td>Call another constructor from a constructor</td><td><code>this(1.0);</code></td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Calling One Constructor from Another</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;
+
+    <span class="kw">public</span> <span class="fn">Circle</span>() {
+        <span class="kw">this</span>(<span class="num">1.0</span>);  <span class="cm">// Calls Circle(double) constructor</span>
+    }
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;
+    }
+}</div>
+                <div class="info-box warning">
+                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Rule</h3>
+                    <p><code>this(args)</code> must be the <strong>first statement</strong> in the constructor. You cannot call it after other statements. (Liang, Section 9.6)</p>
+                </div>
+            </div>
+
+            <div class="quiz-box" data-section="this-keyword">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What does <code>this</code> refer to in a method?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'this-keyword')">A) The current object that invoked the method</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'this-keyword')">B) The class itself</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'this-keyword')">C) The previous object created</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'this-keyword')">D) A static reference to the class</div>
+                <div class="quiz-explanation"><code>this</code> is a reference to the current object — the one on which the method was called. (Liang, Section 9.6)</div>
+            </div>
+
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Student</span> {
+    <span class="kw">private</span> <span class="type">String</span> name;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="type">String</span> name) {
+        name = name;  <span class="cm">// Bug is here!</span>
+    }
+}</div>
+                <p style="color:var(--text2);font-size:.88rem;margin-top:8px;">After <code>new Student("Ali")</code>, what is the value of the <code>name</code> field?</p>
+                <div class="quiz-box" data-section="this-keyword" style="margin-top:12px;">
+                    <div class="quiz-question">What is the problem?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'this-keyword')">A) <code>"Ali"</code> — it works correctly</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'this-keyword')">B) <code>null</code> — the parameter shadows the field; should be <code>this.name = name;</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'this-keyword')">C) Compilation error</div>
+                    <div class="quiz-explanation">The assignment <code>name = name</code> assigns the parameter to itself. The data field is never set, so it remains <code>null</code>. The fix is <code>this.name = name;</code>. (Liang, Section 9.6)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-this-keyword">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="this-keyword-correct">0</span> / <span id="this-keyword-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 5: ENCAPSULATION ============ -->
+        <div class="section fade-up" id="encapsulation">
+            <h2 class="section-title"><i class="fa-solid fa-lock"></i> Encapsulation (Data Hiding)</h2>
+            <p class="section-desc">Encapsulation is one of the fundamental OOP principles. It means making data fields <code>private</code> and providing <code>public</code> getter and setter methods to access and modify them. This protects the data from direct external access and enables data validation. (Liang, Section 9.9)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-shield-halved"></i> Why Encapsulation?</h3>
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-circle-info"></i> Benefits</h3>
+                    <p><strong>Data protection:</strong> Prevents external code from setting invalid values directly.</p>
+                    <p><strong>Flexibility:</strong> The internal implementation can change without affecting external code.</p>
+                    <p><strong>Maintainability:</strong> Easier to debug and maintain — all access goes through methods.</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Getters and Setters</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A <strong>getter</strong> method returns the value of a data field. A <strong>setter</strong> method sets a new value, optionally with validation. (Liang, Section 9.9)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;  <span class="cm">// private data field</span>
+
+    <span class="kw">public</span> <span class="fn">Circle</span>() {
+        radius = <span class="num">1.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;
+    }
+
+    <span class="cm">// Getter</span>
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getRadius</span>() {
+        <span class="kw">return</span> radius;
+    }
+
+    <span class="cm">// Setter with validation</span>
+    <span class="kw">public void</span> <span class="fn">setRadius</span>(<span class="type">double</span> radius) {
+        <span class="kw">if</span> (radius >= <span class="num">0</span>)
+            <span class="kw">this</span>.radius = radius;
+    }
+
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getArea</span>() {
+        <span class="kw">return</span> radius * radius * Math.PI;
+    }
+}</div>
+                <div class="info-box success">
+                    <h3><i class="fa-solid fa-circle-check"></i> Naming Convention</h3>
+                    <p>For a data field <code>xyz</code>, the getter is <code>getXyz()</code> and the setter is <code>setXyz(value)</code>. For a <code>boolean</code> field, the getter is <code>isXyz()</code>. (Liang, Section 9.9)</p>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-key"></i> Access Modifiers Summary</h3>
+                <table class="dark-table">
+                    <tr><th>Modifier</th><th>Class</th><th>Package</th><th>Subclass</th><th>World</th></tr>
+                    <tr><td><code>private</code></td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+                    <tr><td>(default)</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+                    <tr><td><code>protected</code></td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+                    <tr><td><code>public</code></td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Without vs. With Encapsulation</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// ❌ Without Encapsulation</span>
+<span class="type">Circle</span> c = <span class="kw">new</span> <span class="type">Circle</span>();
+c.radius = -<span class="num">5</span>;  <span class="cm">// Invalid! But no error — radius is now negative</span></div>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="cm">// ✅ With Encapsulation</span>
+<span class="type">Circle</span> c = <span class="kw">new</span> <span class="type">Circle</span>();
+c.<span class="fn">setRadius</span>(-<span class="num">5</span>);  <span class="cm">// Setter rejects negative value — radius stays 1.0</span>
+System.out.println(c.<span class="fn">getRadius</span>());  <span class="cm">// 1.0</span></div>
+            </div>
+
+            <div class="quiz-box" data-section="encapsulation">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: What is the main purpose of making data fields <code>private</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">A) To make the program run faster</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'encapsulation')">B) To protect data and control access through methods</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">C) To prevent creating objects</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">D) To allow access from any class</div>
+                <div class="quiz-explanation">Making data fields <code>private</code> prevents direct access from outside the class. Access is controlled through getter and setter methods, enabling validation. (Liang, Section 9.9)</div>
+            </div>
+
+            <div class="quiz-box" data-section="encapsulation">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: What is the correct getter name for a <code>boolean</code> field called <code>active</code>?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">A) <code>getActive()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">B) <code>active()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'encapsulation')">C) <code>isActive()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">D) <code>hasActive()</code></div>
+                <div class="quiz-explanation">For boolean data fields, the JavaBeans convention uses <code>is</code> instead of <code>get</code>. So the getter is <code>isActive()</code>. (Liang, Section 9.9)</div>
+            </div>
+
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">TestCircle</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Circle</span> c = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">5.0</span>);
+        c.radius = <span class="num">10.0</span>;  <span class="cm">// Bug is here!</span>
+    }
+}</div>
+                <div class="quiz-box" data-section="encapsulation" style="margin-top:12px;">
+                    <div class="quiz-question">What is the error?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'encapsulation')">A) Compilation error: <code>radius</code> has private access in <code>Circle</code></div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">B) Runtime error</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'encapsulation')">C) No error — it works fine</div>
+                    <div class="quiz-explanation">Since <code>radius</code> is declared <code>private</code> in the Circle class, it cannot be accessed directly from another class. You must use <code>c.setRadius(10.0)</code> instead. (Liang, Section 9.9)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-encapsulation">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="encapsulation-correct">0</span> / <span id="encapsulation-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- ============ SECTION 6: STATIC MEMBERS ============ -->
+        <div class="section fade-up" id="static">
+            <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Static Members</h2>
+            <p class="section-desc">A <code>static</code> variable or method belongs to the class, not to any particular object. It is shared by all objects of the class. (Liang, Section 9.7)</p>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Static Variables</h3>
+                <p style="color:var(--text2);margin-bottom:8px;">A static variable is shared among all instances of a class. If one object changes the static variable, all other objects see the updated value. (Liang, Section 9.7)</p>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;
+    <span class="kw">private static</span> <span class="type">int</span> numberOfObjects = <span class="num">0</span>;  <span class="cm">// Shared by all</span>
+
+    <span class="kw">public</span> <span class="fn">Circle</span>() {
+        radius = <span class="num">1.0</span>;
+        numberOfObjects++;  <span class="cm">// Increment when a new object is created</span>
+    }
+
+    <span class="kw">public</span> <span class="fn">Circle</span>(<span class="type">double</span> radius) {
+        <span class="kw">this</span>.radius = radius;
+        numberOfObjects++;
+    }
+
+    <span class="kw">public static</span> <span class="type">int</span> <span class="fn">getNumberOfObjects</span>() {
+        <span class="kw">return</span> numberOfObjects;
+    }
+}</div>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Instance vs. Static</h3>
+                <table class="dark-table">
+                    <tr><th></th><th>Instance</th><th>Static</th></tr>
+                    <tr><td><strong>Belongs to</strong></td><td>Each object</td><td>The class</td></tr>
+                    <tr><td><strong>Access</strong></td><td><code>objectName.member</code></td><td><code>ClassName.member</code></td></tr>
+                    <tr><td><strong>Memory</strong></td><td>One copy per object</td><td>One copy shared by all</td></tr>
+                    <tr><td><strong>Example</strong></td><td><code>radius</code></td><td><code>numberOfObjects</code></td></tr>
+                </table>
+            </div>
+
+            <div class="info-box warning">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Important Rules</h3>
+                <p>&bull; A static method <strong>cannot</strong> access instance variables or call instance methods directly.</p>
+                <p>&bull; An instance method <strong>can</strong> access both static and instance members.</p>
+                <p>&bull; A static method <strong>cannot</strong> use the <code>this</code> keyword. (Liang, Section 9.7)</p>
+            </div>
+
+            <div class="subsection">
+                <h3><i class="fa-solid fa-code"></i> Accessing Static Members</h3>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> c1 = <span class="kw">new</span> <span class="type">Circle</span>();
+<span class="type">Circle</span> c2 = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">5.0</span>);
+System.out.println(<span class="str">"Objects created: "</span> + <span class="fn">Circle</span>.<span class="fn">getNumberOfObjects</span>());  <span class="cm">// 2</span></div>
+            </div>
+
+            <div class="quiz-box" data-section="static">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q1: Can a static method access an instance variable directly?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">A) Yes, always</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'static')">B) No — static methods belong to the class, not any specific object</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">C) Only if the variable is public</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">D) Only if using the <code>this</code> keyword</div>
+                <div class="quiz-explanation">A static method does not belong to any particular instance, so there is no <code>this</code> and no way to access instance variables directly. It can only access static members. (Liang, Section 9.7)</div>
+            </div>
+
+            <div class="quiz-box" data-section="static">
+                <div class="quiz-question"><i class="fa-solid fa-circle-question" style="color:var(--primary);margin-right:6px;"></i> Q2: How should you call a static method?</div>
+                <div class="quiz-option" onclick="checkQuiz(this,true,'static')">A) Using the class name: <code>ClassName.methodName()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">B) Using <code>this.methodName()</code></div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">C) Static methods cannot be called</div>
+                <div class="quiz-option" onclick="checkQuiz(this,false,'static')">D) Only from the <code>main</code> method</div>
+                <div class="quiz-explanation">Static methods should be called using the class name for clarity: <code>ClassName.methodName()</code>. While calling through an object reference works, it is misleading and not recommended. (Liang, Section 9.7)</div>
+            </div>
+
+            <div class="trace-box">
+                <h4><i class="fa-solid fa-magnifying-glass"></i> Trace the Code</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="type">Circle</span> a = <span class="kw">new</span> <span class="type">Circle</span>();
+<span class="type">Circle</span> b = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">2.0</span>);
+<span class="type">Circle</span> c = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">3.0</span>);
+System.out.println(<span class="fn">Circle</span>.<span class="fn">getNumberOfObjects</span>());</div>
+                <p style="color:var(--text2);font-size:.88rem;">What is the output?</p>
+                <input class="trace-input" id="trace-st1" placeholder="Type the expected output...">
+                <button class="check-btn" onclick="checkTrace('trace-st1','3')">Check Answer</button>
+                <div class="trace-result" id="trace-st1-result"></div>
+            </div>
+
+            <div class="bug-box">
+                <h4><i class="fa-solid fa-bug"></i> Find the Bug</h4>
+                <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button><span class="kw">public class</span> <span class="fn">Circle</span> {
+    <span class="kw">private</span> <span class="type">double</span> radius;
+
+    <span class="kw">public static</span> <span class="type">double</span> <span class="fn">getArea</span>() {
+        <span class="kw">return</span> radius * radius * Math.PI;
+    }
+}</div>
+                <div class="quiz-box" data-section="static" style="margin-top:12px;">
+                    <div class="quiz-question">What is the error?</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,true,'static')">A) Cannot access instance variable <code>radius</code> from a static method</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'static')">B) Missing return statement</div>
+                    <div class="quiz-option" onclick="checkQuiz(this,false,'static')">C) Wrong return type</div>
+                    <div class="quiz-explanation"><code>getArea()</code> is static but tries to access <code>radius</code>, which is an instance variable. A static method cannot reference instance variables. Remove the <code>static</code> keyword to fix. (Liang, Section 9.7)</div>
+                </div>
+            </div>
+
+            <div class="score-summary" id="score-static">
+                <h4><i class="fa-solid fa-chart-simple" style="color:var(--primary);margin-right:6px;"></i> Section Score</h4>
+                <div class="score"><span id="static-correct">0</span> / <span id="static-total">0</span></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="page-nav">
+            <a href="week3.html" class="nav-btn prev"><i class="fa-solid fa-arrow-left"></i> Week 3: Arrays Part 2</a>
+            <a href="week5.html" class="nav-btn next">Week 5: Thinking in Objects <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="footer-bottom">601112 - Programming Language 1 (Java) - University of Petra - Dr. Abdulkarim Albanna</div></footer>
+
+    <div class="toc" id="toc"><h4>Week 4</h4>
+        <a class="toc-item" href="#classes">Defining Classes</a>
+        <a class="toc-item" href="#objects">Creating Objects</a>
+        <a class="toc-item" href="#constructors">Constructors</a>
+        <a class="toc-item" href="#this-keyword">this Keyword</a>
+        <a class="toc-item" href="#encapsulation">Encapsulation</a>
+        <a class="toc-item" href="#static">Static Members</a>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('pl1-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('pl1-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function copyCode(btn){const t=btn.parentElement.textContent.replace(/Copy$/,'').replace(/^ Copy/,'').trim();navigator.clipboard.writeText(t).then(()=>{btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';},2000);});}
+        const scores={'classes':{c:0,t:0},'objects':{c:0,t:0},'constructors':{c:0,t:0},'this-keyword':{c:0,t:0},'encapsulation':{c:0,t:0},'static':{c:0,t:0}};
+        function updateScore(s){const ce=document.getElementById(s+'-correct'),te=document.getElementById(s+'-total');if(ce)ce.textContent=scores[s].c;if(te)te.textContent=scores[s].t;}
+        function checkQuiz(el,correct,section){const box=el.closest('.quiz-box');if(box.dataset.answered)return;box.dataset.answered='true';const opts=box.querySelectorAll('.quiz-option');opts.forEach(o=>o.style.pointerEvents='none');scores[section].t++;if(correct){el.classList.add('correct');el.innerHTML+=' <i class="fa-solid fa-circle-check"></i>';scores[section].c++;}else{el.classList.add('incorrect');el.innerHTML+=' <i class="fa-solid fa-circle-xmark"></i>';opts.forEach(o=>{if(!o.classList.contains('incorrect')&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');});}const exp=box.querySelector('.quiz-explanation');if(exp)exp.classList.add('show');updateScore(section);}
+        function checkTrace(id,answer){const input=document.getElementById(id),result=document.getElementById(id+'-result'),val=input.value.trim();if(val===answer){result.className='trace-result correct';result.innerHTML='<i class="fa-solid fa-circle-check"></i> Correct! Output: '+answer;}else{result.className='trace-result incorrect';result.innerHTML='<i class="fa-solid fa-circle-xmark"></i> Incorrect. Correct output: '+answer;}}
+        const scrollTop=document.getElementById('scrollTop'),toc=document.getElementById('toc');
+        window.addEventListener('scroll',()=>{const y=window.scrollY;scrollTop.classList.toggle('visible',y>500);toc.classList.toggle('visible',y>500);});
+        const secs=['classes','objects','constructors','this-keyword','encapsulation','static'],tocItems=document.querySelectorAll('.toc-item');
+        window.addEventListener('scroll',()=>{const y=window.scrollY+150;secs.forEach((s,i)=>{const el=document.getElementById(s);if(!el)return;tocItems[i].classList.toggle('active',y>=el.offsetTop&&y<el.offsetTop+el.offsetHeight);});});
+        const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+        document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+    </script>
+</body>
+</html>
