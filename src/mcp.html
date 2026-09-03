@@ -13,582 +13,351 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Context Protocol (MCP) - Interactive Guide</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
+    <meta name="description" content="Interactive guide to the Model Context Protocol (MCP): what it is, its architecture, how it works, implementation examples, benefits and use cases.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-        .section-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-        }
-        .section-expanded .section-content {
-            max-height: 5000px;
-        }
-        .section-header {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .section-header:hover {
-            transform: translateX(5px);
-        }
-        .section-icon {
-            transition: transform 0.3s ease;
-        }
-        .section-expanded .section-icon {
-            transform: rotate(90deg);
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted #2563eb;
-            cursor: help;
-        }
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 300px;
-            background-color: #2563eb;
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-        .image-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-        .image-container:hover {
-            transform: scale(1.02);
-        }
-        .image-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 16px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .image-container:hover .image-caption {
-            opacity: 1;
-        }
-        .nav-pill {
-            transition: all 0.3s ease;
-        }
-        .nav-pill:hover {
-            transform: translateY(-3px);
-        }
-        .nav-pill.active {
-            background-color: #2563eb;
-            color: white;
-        }
-        .highlight-box {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-left: 4px solid #2563eb;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-            }
-        }
-        .code-block {
-            background-color: #1e293b;
-            color: #f8fafc;
-            font-family: monospace;
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-        }
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
+        :root{--primary:#6366f1;--primary-hover:#818cf8;--glow:rgba(99,102,241,.14)}
+        .nav-logo img{width:28px;height:28px;border-radius:6px}
+        .grid.g2{grid-template-columns:repeat(2,1fr)}
+        .grid.g3{grid-template-columns:repeat(3,1fr)}
+        .grid.g4{grid-template-columns:repeat(4,1fr)}
+        .grid.center{align-items:center}
+        .section .card h3{margin-top:0}
+        .section .card h4{margin:0 0 6px}
+        .icon-list{list-style:none!important;padding-left:0!important}
+        .icon-list li{display:flex;align-items:flex-start;gap:10px;margin:8px 0}
+        .icon-list li>i{margin-top:6px;color:var(--primary);flex-shrink:0}
+        .icon-list.ok li>i{color:var(--success)}
+        .icon-list.two{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 16px}
+        .tooltip{position:relative;display:inline-block;border-bottom:1px dotted var(--primary);cursor:help;color:var(--primary);font-weight:600}
+        .tooltip .tooltip-text{visibility:hidden;width:300px;background:var(--primary);color:#fff;text-align:center;border-radius:6px;padding:8px;position:absolute;z-index:5;bottom:125%;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .3s;font-weight:400;font-size:.85rem;line-height:1.5}
+        .tooltip:hover .tooltip-text{visibility:visible;opacity:1}
+        .info-box h4{color:var(--primary);font-size:.95rem;font-weight:600;margin:0 0 4px}
+        .info-box .grid{margin-top:8px}
+        .info-box .grid p{margin-bottom:0}
+        .card-head{background:var(--primary);color:#fff;padding:10px 18px;border-radius:12px 12px 0 0;margin:-22px -22px 16px}
+        .card-head h4{color:#fff;font-size:1rem;font-weight:600;margin:0}
+        .card .card-head+p,.card .card-head+ol{margin-bottom:0}
+        .arch-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+        .arch-head i{font-size:1.5rem;color:var(--primary)}
+        .arch-head h3{margin:0}
+        .uc-head{margin:-22px -22px 18px;padding:20px;border-radius:12px 12px 0 0;text-align:center;font-size:2.2rem;color:#fff}
+        .uc-blue{background:#2563eb}.uc-indigo{background:#4f46e5}.uc-purple{background:#9333ea}.uc-green{background:#16a34a}.uc-red{background:#dc2626}
+        .uc-list{font-size:.85rem;font-weight:500;color:var(--primary)}
+        .uc-list div{display:flex;align-items:center;gap:8px;margin:4px 0}
+        .mini{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:14px;text-align:center}
+        .mini i{font-size:1.5rem;margin-bottom:6px;display:block;color:var(--primary)}
+        .mini p{margin:0;font-weight:600;color:var(--text)}
+        .user-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px}
+        .user-card .uh{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+        .user-card .uh i{color:var(--primary)}
+        .user-card h4{margin:0}.user-card p{font-size:.88rem;margin-bottom:0}
+        .story{display:flex;gap:16px;align-items:flex-start;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px;margin:12px 0}
+        .story img{width:64px;height:64px;border-radius:8px;flex-shrink:0}
+        .story h4{margin:0 0 6px;font-size:1.05rem}
+        .story p{margin-bottom:6px}.story p:last-child{margin-bottom:0}
+        .story .by{font-size:.85rem;font-weight:500}
+        .btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:8px}
+        .btn-row.left{justify-content:flex-start}
+        .cta{background:linear-gradient(135deg,var(--primary),#4338ca);border:0}
+        .cta .section-title,.cta p{color:#fff}
+        .cta .section-title::before{background:rgba(255,255,255,.6)}
+        .cta .section-title i{color:#fff}
+        .cta .btn-primary{background:#fff;color:var(--primary)}
+        .cta .btn-primary:hover{background:#eef2ff;color:var(--primary)}
+        .cta .btn-outline{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.35)}
+        .cta .btn-outline:hover{background:rgba(255,255,255,.25);color:#fff;border-color:#fff}
+        .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+        .res-grid ul{list-style:none!important;padding-left:0!important}
+        .res-grid h3{margin-top:0}
+        .res-bottom{border-top:1px solid var(--border2);margin-top:20px;padding-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .res-bottom p{margin:0;font-size:.85rem}
+        .social a{font-size:1.25rem;margin-left:14px;color:var(--text2)}
+        .social a:hover{color:var(--primary)}
+        .section figure{margin:22px 0}
+        @media(max-width:768px){.grid.g2,.grid.g3,.res-grid{grid-template-columns:1fr}.grid.g4{grid-template-columns:repeat(2,1fr)}.icon-list.two{grid-template-columns:1fr}.card-head,.uc-head{margin:-16px -16px 14px}}
     </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style id="dark-theme-override">
-:root {
-    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-    --text:#f1f5f9;--text2:#94a3b8;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-    --code:#0d1117;
-}
-body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
-.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
-.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
-.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
-h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
-.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
-pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
-table, th, td { border-color:var(--border2)!important; }
-th { background:var(--surface2)!important; color:var(--text)!important; }
-td { background:var(--surface)!important; color:var(--text2)!important; }
-tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
-a { color:var(--primary)!important; }
-a:hover { color:#60a5fa!important; }
-.badge { opacity:0.9; }
-nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
-nav a, .navbar a, .nav-link { color:var(--text2)!important; }
-nav a:hover, .navbar a:hover { color:var(--text)!important; }
-.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
-.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
-.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
-.sidebar a, aside a { color:var(--text2)!important; }
-.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
-.sidebar a.active, aside a.active { color:var(--primary)!important; }
-footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
-img { border-radius:8px; }
-.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
-/* Light mode */
-body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
-body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
-body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
-body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
-body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
-body.light-mode footer { background:#e2e8f0!important; }
-body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
-</style>
 </head>
-<body class="bg-gray-50">
-<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 px-4 relative overflow-hidden">
-        <div class="container mx-auto max-w-5xl relative z-10">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Model Context Protocol (MCP)</h1>
-            <p class="text-xl md:text-2xl mb-6 max-w-3xl">The open standard connecting AI assistants to your data and tools</p>
-            <p class="text-lg opacity-90 max-w-3xl">An interactive guide to understanding MCP, its architecture, and implementation</p>
-        </div>
-        <div class="absolute top-0 right-0 w-full h-full opacity-10">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full">
-                <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="#fff"></path>
-                <path d="M0,0 C40,40 60,40 100,0 V100 H0 Z" fill="#fff"></path>
-            </svg>
-        </div>
-    </header>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><img src="images/logo.png" alt="MCP Logo"> Home</a>
+  <div class="nav-links">
+    <a href="#what-is-mcp">What is MCP</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#how-it-works">How it Works</a>
+    <a href="#implementation">Implementation</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#use-cases">Use Cases</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+    <a href="#what-is-mcp">What is MCP</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#how-it-works">How it Works</a>
+    <a href="#implementation">Implementation</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#use-cases">Use Cases</a>
+</div>
 
-    <!-- Navigation -->
-    <nav class="bg-white py-4 px-4 sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto max-w-5xl flex flex-wrap items-center justify-between">
-            <div class="flex items-center space-x-1">
-                <img src="images/logo.png" alt="MCP Logo" class="w-8 h-8">
-              <span class="font-bold text-blue-600"><a href="index.html" >Home</a></span>
-            </div>
+<section class="hero"><div class="hero-content">
+    <h1>Model Context Protocol (MCP)</h1>
+    <p class="hero-sub">The open standard connecting AI assistants to your data and tools</p>
+    <p class="hero-sub" style="font-size:1rem">An interactive guide to understanding MCP, its architecture, and implementation</p>
+    <span class="diff-badge">Intermediate</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~25 min</span>
+</div></section>
 
-            <div class="hidden md:flex space-x-2">
-                <a href="#what-is-mcp" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">What is MCP</a>
-                <a href="#architecture" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Architecture</a>
-                <a href="#how-it-works" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">How it Works</a>
-                <a href="#implementation" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Implementation</a>
-                <a href="#benefits" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Benefits</a>
-                <a href="#use-cases" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Use Cases</a>
-            </div>
+<div class="container">
 
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
+    <!-- Introduction -->
+    <div class="section fade-up" id="intro">
+        <div class="info-box">
+            <p style="font-size:1.05rem">MCP is revolutionizing how AI assistants connect to data sources and tools. Think of it as a <span class="tooltip">USB-C for AI<span class="tooltip-text">Just as USB-C provides a standardized way to connect devices, MCP standardizes AI connections to data sources</span></span> — a universal connector that standardizes integration.</p>
         </div>
 
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden mt-3 container mx-auto max-w-5xl">
-            <div class="flex flex-col space-y-2 bg-white p-2 rounded-lg shadow-lg">
-                <a href="#what-is-mcp" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">What is MCP</a>
-                <a href="#architecture" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Architecture</a>
-                <a href="#how-it-works" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">How it Works</a>
-                <a href="#implementation" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Implementation</a>
-                <a href="#benefits" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Benefits</a>
-                <a href="#use-cases" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Use Cases</a>
+        <div class="grid g2 center" style="margin-top:24px">
+            <figure style="margin:0">
+                <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27cf6f35-1b2e-4f4f-8b3d-e5ad3be948fb_1184x1100.gif" alt="MCP Visual Guide" loading="lazy">
+                <figcaption>Visual Guide to MCP</figcaption>
+            </figure>
+            <div>
+                <h2 class="section-title" style="font-size:1.5rem">Why MCP Matters</h2>
+                <ul class="icon-list ok">
+                    <li><i class="fas fa-check-circle"></i><span>Standardizes connections between AI models and data sources</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Reduces fragmentation in AI tool integrations</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Enables AI to access data securely within existing infrastructure</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Simplifies development of AI applications with extended capabilities</span></li>
+                    <li><i class="fas fa-check-circle"></i><span>Provides flexibility to switch between LLM providers</span></li>
+                </ul>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container mx-auto max-w-5xl px-4 py-8">
-        <!-- Introduction -->
-        <section class="mb-12">
-            <div class="highlight-box p-6 rounded-lg mb-8">
-                <p class="text-lg">MCP is revolutionizing how AI assistants connect to data sources and tools. Think of it as a <span class="tooltip font-semibold text-blue-600">USB-C for AI<span class="tooltip-text">Just as USB-C provides a standardized way to connect devices, MCP standardizes AI connections to data sources</span></span> — a universal connector that standardizes integration.</p>
+    <!-- What is MCP Section -->
+    <div class="section fade-up" id="what-is-mcp">
+        <h2 class="section-title"><i class="fas fa-circle-question"></i> What is Model Context Protocol (MCP)?</h2>
+        <p>The Model Context Protocol (MCP) is an open standard introduced by Anthropic that standardizes how AI applications connect with external tools, data sources, and systems. It enables AI assistants to access and interact with data where it lives, breaking down information silos.</p>
+
+        <div class="grid g2" style="margin:20px 0">
+            <div class="card">
+                <h3>The Problem MCP Solves</h3>
+                <p style="margin-bottom:0">Even advanced AI models are constrained by isolation from data trapped in silos and legacy systems. Each data integration requires custom implementation, making connected systems difficult to scale.</p>
             </div>
+            <div class="card">
+                <h3>The MCP Solution</h3>
+                <p style="margin-bottom:0">MCP provides a universal standard for connecting AI systems with data sources, replacing fragmented integrations with a single protocol for simpler, more reliable data access.</p>
+            </div>
+        </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="image-container">
-                    <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27cf6f35-1b2e-4f4f-8b3d-e5ad3be948fb_1184x1100.gif" alt="MCP Visual Guide" class="w-full h-auto rounded-lg shadow-lg">
-                    <div class="image-caption">
-                        Visual Guide to MCP
-                    </div>
+        <figure>
+            <img src="https://miro.medium.com/v2/resize:fit:1008/1*QA1gtUEdW3DRwCs8EBuR-A.png" alt="MCP Overview" loading="lazy">
+            <figcaption>Overview of MCP connectivity</figcaption>
+        </figure>
+
+        <div class="info-box">
+            <h3>Key Characteristics of MCP</h3>
+            <ul class="icon-list two">
+                <li><i class="fas fa-lock"></i><span><strong>Secure:</strong> Operates within your security boundaries</span></li>
+                <li><i class="fas fa-code-branch"></i><span><strong>Open:</strong> Community-driven open source standard</span></li>
+                <li><i class="fas fa-plug"></i><span><strong>Interoperable:</strong> Works across LLM providers</span></li>
+                <li><i class="fas fa-expand-arrows-alt"></i><span><strong>Extensible:</strong> Adaptable to various data sources</span></li>
+            </ul>
+        </div>
+
+        <p>Unlike proprietary integration methods, MCP is designed as a collaborative, open-source ecosystem that any developer or organization can contribute to and benefit from.</p>
+    </div>
+
+    <!-- Architecture Section -->
+    <div class="section fade-up" id="architecture">
+        <h2 class="section-title"><i class="fas fa-sitemap"></i> MCP Architecture</h2>
+        <p>MCP follows a client-server architecture with three primary components working together to enable AI models to access external data and capabilities.</p>
+
+        <figure>
+            <img src="https://images.ctfassets.net/xqb1f63q68s1/6R2RtSw84mTFLKfYBPpqNQ/f1ef779c252dde2997f6cc1ab92fa794/MCP_general_architecture-min.png" alt="MCP Architecture" loading="lazy">
+            <figcaption>General MCP architecture showing the relationship between components</figcaption>
+        </figure>
+
+        <div class="grid g3" style="margin:20px 0">
+            <div class="card">
+                <div class="arch-head"><i class="fas fa-desktop"></i><h3>MCP Host</h3></div>
+                <p style="margin-bottom:0">Applications like Claude Desktop, IDEs, or any AI-powered tool that wants to access data through the MCP protocol. The host is the entry point for user interactions.</p>
+            </div>
+            <div class="card">
+                <div class="arch-head"><i class="fas fa-exchange-alt"></i><h3>MCP Client</h3></div>
+                <p style="margin-bottom:0">Protocol clients that maintain 1:1 connections with servers. They handle the communication between hosts and servers, managing the protocol details.</p>
+            </div>
+            <div class="card">
+                <div class="arch-head"><i class="fas fa-server"></i><h3>MCP Server</h3></div>
+                <p style="margin-bottom:0">Lightweight programs that each expose specific capabilities through the standardized protocol. They connect to the actual data sources and tools.</p>
+            </div>
+        </div>
+
+        <figure>
+            <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d25a162-5cc0-42cb-a7d9-a63a3210279a_1086x1280.gif" alt="MCP Flow Animation" loading="lazy">
+            <figcaption>Animated visualization of MCP data flow</figcaption>
+        </figure>
+
+        <div class="info-box">
+            <h3>Data Sources in MCP</h3>
+            <div class="grid g2">
+                <div>
+                    <h4>Local Data Sources</h4>
+                    <p>Your computer's files, databases, and services that MCP servers can securely access without sending data to external services.</p>
                 </div>
-
-                <div class="flex flex-col justify-center">
-                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Why MCP Matters</h2>
-                    <ul class="space-y-3">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Standardizes connections between AI models and data sources</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Reduces fragmentation in AI tool integrations</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Enables AI to access data securely within existing infrastructure</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Simplifies development of AI applications with extended capabilities</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Provides flexibility to switch between LLM providers</span>
-                        </li>
-                    </ul>
+                <div>
+                    <h4>Remote Services</h4>
+                    <p>External systems available over the internet (e.g., through APIs) that MCP servers can connect to, such as GitHub, Slack, or weather services.</p>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- What is MCP Section -->
-        <section id="what-is-mcp" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">What is Model Context Protocol (MCP)?</h2>
+        <p>The architecture is designed to be modular, allowing different components to be developed and maintained independently. This modularity enables the ecosystem to grow organically, with developers creating new MCP servers for various data sources and services.</p>
+        <p>Importantly, MCP is designed with security in mind, ensuring that sensitive data remains within your security boundaries while still being accessible to AI models.</p>
+    </div>
+
+    <!-- How it Works Section -->
+    <div class="section fade-up" id="how-it-works">
+        <h2 class="section-title"><i class="fas fa-gears"></i> How MCP Works</h2>
+        <p>MCP operates through a structured workflow that enables AI models to request information from various data sources and receive responses in a standardized format.</p>
+
+        <figure>
+            <img src="https://miro.medium.com/v2/resize:fit:1400/1*oDkGe-hY--K6CY2JDmnXBA.png" alt="MCP Workflow" loading="lazy">
+            <figcaption>MCP workflow showing interaction between components</figcaption>
+        </figure>
+
+        <div class="subsection">
+            <h3><i class="fas fa-list-ol"></i> Step-by-Step Process</h3>
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>User Query</h3>
+                    <p>A user poses a question or request to an AI assistant through an MCP Host application (like Claude Desktop).</p>
+                </div>
             </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">The Model Context Protocol (MCP) is an open standard introduced by Anthropic that standardizes how AI applications connect with external tools, data sources, and systems. It enables AI assistants to access and interact with data where it lives, breaking down information silos.</p>
-
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">The Problem MCP Solves</h3>
-                        <p>Even advanced AI models are constrained by isolation from data trapped in silos and legacy systems. Each data integration requires custom implementation, making connected systems difficult to scale.</p>
-                    </div>
-
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">The MCP Solution</h3>
-                        <p>MCP provides a universal standard for connecting AI systems with data sources, replacing fragmented integrations with a single protocol for simpler, more reliable data access.</p>
-                    </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>AI Determines Context Needs</h3>
+                    <p>The AI model recognizes it needs additional information and identifies which MCP servers might have relevant data.</p>
                 </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://miro.medium.com/v2/resize:fit:1008/1*QA1gtUEdW3DRwCs8EBuR-A.png" alt="MCP Overview" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Overview of MCP connectivity
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Key Characteristics of MCP</h3>
-                    <ul class="grid md:grid-cols-2 gap-4">
-                        <li class="flex items-start">
-                            <i class="fas fa-lock text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Secure:</span> Operates within your security boundaries</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-code-branch text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Open:</span> Community-driven open source standard</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-plug text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Interoperable:</span> Works across LLM providers</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-expand-arrows-alt text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Extensible:</span> Adaptable to various data sources</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <p>Unlike proprietary integration methods, MCP is designed as a collaborative, open-source ecosystem that any developer or organization can contribute to and benefit from.</p>
             </div>
-        </section>
-
-        <!-- Architecture Section -->
-        <section id="architecture" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">MCP Architecture</h2>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Host Queries MCP Servers</h3>
+                    <p>The host application sends requests to appropriate MCP servers through the MCP Client.</p>
+                </div>
             </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">MCP follows a client-server architecture with three primary components working together to enable AI models to access external data and capabilities.</p>
-
-                <div class="image-container mb-8">
-                    <img src="https://images.ctfassets.net/xqb1f63q68s1/6R2RtSw84mTFLKfYBPpqNQ/f1ef779c252dde2997f6cc1ab92fa794/MCP_general_architecture-min.png" alt="MCP Architecture" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        General MCP architecture showing the relationship between components
-                    </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Server Processes Request</h3>
+                    <p>Each MCP server accesses its data source, processes the request, and returns relevant information.</p>
                 </div>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card bg-blue-50 p-6">
-                        <div class="flex items-center mb-3">
-                            <i class="fas fa-desktop text-2xl text-blue-600 mr-3"></i>
-                            <h3 class="text-xl font-semibold text-gray-800">MCP Host</h3>
-                        </div>
-                        <p class="text-gray-700">Applications like Claude Desktop, IDEs, or any AI-powered tool that wants to access data through the MCP protocol. The host is the entry point for user interactions.</p>
-                    </div>
-
-                    <div class="card bg-blue-50 p-6">
-                        <div class="flex items-center mb-3">
-                            <i class="fas fa-exchange-alt text-2xl text-blue-600 mr-3"></i>
-                            <h3 class="text-xl font-semibold text-gray-800">MCP Client</h3>
-                        </div>
-                        <p class="text-gray-700">Protocol clients that maintain 1:1 connections with servers. They handle the communication between hosts and servers, managing the protocol details.</p>
-                    </div>
-
-                    <div class="card bg-blue-50 p-6">
-                        <div class="flex items-center mb-3">
-                            <i class="fas fa-server text-2xl text-blue-600 mr-3"></i>
-                            <h3 class="text-xl font-semibold text-gray-800">MCP Server</h3>
-                        </div>
-                        <p class="text-gray-700">Lightweight programs that each expose specific capabilities through the standardized protocol. They connect to the actual data sources and tools.</p>
-                    </div>
-                </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d25a162-5cc0-42cb-a7d9-a63a3210279a_1086x1280.gif" alt="MCP Flow Animation" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Animated visualization of MCP data flow
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Data Sources in MCP</h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-1">Local Data Sources</h4>
-                            <p>Your computer's files, databases, and services that MCP servers can securely access without sending data to external services.</p>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-1">Remote Services</h4>
-                            <p>External systems available over the internet (e.g., through APIs) that MCP servers can connect to, such as GitHub, Slack, or weather services.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <p class="mb-4">The architecture is designed to be modular, allowing different components to be developed and maintained independently. This modularity enables the ecosystem to grow organically, with developers creating new MCP servers for various data sources and services.</p>
-
-                <p>Importantly, MCP is designed with security in mind, ensuring that sensitive data remains within your security boundaries while still being accessible to AI models.</p>
             </div>
-        </section>
-
-        <!-- How it Works Section -->
-        <section id="how-it-works" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">How MCP Works</h2>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>Response Aggregation</h3>
+                    <p>The MCP Client collects and formats responses from all servers, providing them to the AI model.</p>
+                </div>
             </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">MCP operates through a structured workflow that enables AI models to request information from various data sources and receive responses in a standardized format.</p>
-
-                <div class="image-container mb-8">
-                    <img src="https://miro.medium.com/v2/resize:fit:1400/1*oDkGe-hY--K6CY2JDmnXBA.png" alt="MCP Workflow" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        MCP workflow showing interaction between components
-                    </div>
+            <div class="step">
+                <div class="step-num">6</div>
+                <div class="step-body">
+                    <h3>AI Response Generation</h3>
+                    <p>The AI uses the additional context to generate a more informed, accurate response for the user.</p>
                 </div>
-
-                <h3 class="text-xl font-semibold mb-4">Step-by-Step Process</h3>
-
-                <div class="relative mb-8">
-                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-200"></div>
-
-                    <div class="relative pl-12 pb-6">
-                        <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">1</div>
-                        <h4 class="text-lg font-medium mb-2">User Query</h4>
-                        <p>A user poses a question or request to an AI assistant through an MCP Host application (like Claude Desktop).</p>
-                    </div>
-
-                    <div class="relative pl-12 pb-6">
-                        <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">2</div>
-                        <h4 class="text-lg font-medium mb-2">AI Determines Context Needs</h4>
-                        <p>The AI model recognizes it needs additional information and identifies which MCP servers might have relevant data.</p>
-                    </div>
-
-                    <div class="relative pl-12 pb-6">
-                        <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">3</div>
-                        <h4 class="text-lg font-medium mb-2">Host Queries MCP Servers</h4>
-                        <p>The host application sends requests to appropriate MCP servers through the MCP Client.</p>
-                    </div>
-
-                    <div class="relative pl-12 pb-6">
-                        <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">4</div>
-                        <h4 class="text-lg font-medium mb-2">Server Processes Request</h4>
-                        <p>Each MCP server accesses its data source, processes the request, and returns relevant information.</p>
-                    </div>
-
-                    <div class="relative pl-12 pb-6">
-                        <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">5</div>
-                        <h4 class="text-lg font-medium mb-2">Response Aggregation</h4>
-                        <p>The MCP Client collects and formats responses from all servers, providing them to the AI model.</p>
-                    </div>
-
-                    <div class="relative pl-12">
-                        <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">6</div>
-                        <h4 class="text-lg font-medium mb-2">AI Response Generation</h4>
-                        <p>The AI uses the additional context to generate a more informed, accurate response for the user.</p>
-                    </div>
-                </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://miro.medium.com/v2/resize:fit:1400/1*ezJW7M91tVIwf2SYPqJUzA.png" alt="MCP Example Flow" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Example of MCP in action with Claude
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-semibold mb-3">Key Protocol Features</h3>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-1">Server Discovery</h4>
-                            <p>MCP includes mechanisms for hosts to discover what servers are available and what capabilities they offer.</p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-1">Standardized Schema</h4>
-                            <p>All data exchanged through MCP follows a consistent schema, making it easy for AI models to understand and process.</p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-1">Request/Response Pattern</h4>
-                            <p>MCP uses a clear request/response pattern with structured parameters and return values.</p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-1">Access Controls</h4>
-                            <p>Built-in mechanisms for authentication and authorization ensure secure access to data sources.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <p>The standardized nature of MCP means that AI models don't need to understand the specific details of each data source — they only need to know how to interact with the MCP protocol itself.</p>
             </div>
-        </section>
+        </div>
 
-        <!-- Implementation Examples Section -->
-        <section id="implementation" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Implementation Examples</h2>
+        <figure>
+            <img src="https://miro.medium.com/v2/resize:fit:1400/1*ezJW7M91tVIwf2SYPqJUzA.png" alt="MCP Example Flow" loading="lazy">
+            <figcaption>Example of MCP in action with Claude</figcaption>
+        </figure>
+
+        <div class="info-box">
+            <h3>Key Protocol Features</h3>
+            <div class="grid g2">
+                <div>
+                    <h4>Server Discovery</h4>
+                    <p>MCP includes mechanisms for hosts to discover what servers are available and what capabilities they offer.</p>
+                </div>
+                <div>
+                    <h4>Standardized Schema</h4>
+                    <p>All data exchanged through MCP follows a consistent schema, making it easy for AI models to understand and process.</p>
+                </div>
+                <div>
+                    <h4>Request/Response Pattern</h4>
+                    <p>MCP uses a clear request/response pattern with structured parameters and return values.</p>
+                </div>
+                <div>
+                    <h4>Access Controls</h4>
+                    <p>Built-in mechanisms for authentication and authorization ensure secure access to data sources.</p>
+                </div>
             </div>
+        </div>
 
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">MCP implementation can take various forms depending on the use case. Below are examples of how MCP can be implemented in different scenarios.</p>
+        <p>The standardized nature of MCP means that AI models don't need to understand the specific details of each data source — they only need to know how to interact with the MCP protocol itself.</p>
+    </div>
 
-                <div class="image-container mb-8">
-                    <img src="https://d1lamhf6l6yk6d.cloudfront.net/uploads/2025/03/250319-Example-MCP-x2000.png" alt="MCP Implementation Example" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Detailed example of MCP implementation flow
-                    </div>
+    <!-- Implementation Examples Section -->
+    <div class="section fade-up" id="implementation">
+        <h2 class="section-title"><i class="fas fa-code"></i> Implementation Examples</h2>
+        <p>MCP implementation can take various forms depending on the use case. Below are examples of how MCP can be implemented in different scenarios.</p>
+
+        <figure>
+            <img src="https://d1lamhf6l6yk6d.cloudfront.net/uploads/2025/03/250319-Example-MCP-x2000.png" alt="MCP Implementation Example" loading="lazy">
+            <figcaption>Detailed example of MCP implementation flow</figcaption>
+        </figure>
+
+        <div class="subsection">
+            <h3><i class="fas fa-file-lines"></i> Example 1: Accessing Local Files</h3>
+            <div class="grid g2">
+                <div class="card">
+                    <div class="card-head"><h4>Scenario</h4></div>
+                    <p>A user asks Claude to analyze a spreadsheet stored on their local machine.</p>
                 </div>
-
-                <div class="mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Example 1: Accessing Local Files</h3>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="rounded-lg overflow-hidden shadow-md">
-                            <div class="bg-blue-600 text-white p-3">
-                                <h4 class="font-medium">Scenario</h4>
-                            </div>
-                            <div class="p-4 bg-white">
-                                <p>A user asks Claude to analyze a spreadsheet stored on their local machine.</p>
-                            </div>
-                        </div>
-
-                        <div class="rounded-lg overflow-hidden shadow-md">
-                            <div class="bg-blue-600 text-white p-3">
-                                <h4 class="font-medium">MCP Flow</h4>
-                            </div>
-                            <div class="p-4 bg-white">
-                                <ol class="list-decimal pl-5 space-y-1">
-                                    <li>Claude identifies the need to access local files</li>
-                                    <li>MCP Host queries the Local Files MCP Server</li>
-                                    <li>Server accesses file with user permission</li>
-                                    <li>Claude receives file content in a standardized format</li>
-                                    <li>Claude analyzes the data and responds to the user</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card">
+                    <div class="card-head"><h4>MCP Flow</h4></div>
+                    <ol>
+                        <li>Claude identifies the need to access local files</li>
+                        <li>MCP Host queries the Local Files MCP Server</li>
+                        <li>Server accesses file with user permission</li>
+                        <li>Claude receives file content in a standardized format</li>
+                        <li>Claude analyzes the data and responds to the user</li>
+                    </ol>
                 </div>
+            </div>
+        </div>
 
-                <div class="mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Example 2: Integrating with GitHub</h3>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="rounded-lg overflow-hidden shadow-md">
-                            <div class="bg-blue-600 text-white p-3">
-                                <h4 class="font-medium">Scenario</h4>
-                            </div>
-                            <div class="p-4 bg-white">
-                                <p>A developer asks an AI coding assistant to explain recent changes to a GitHub repository.</p>
-                            </div>
-                        </div>
-
-                        <div class="rounded-lg overflow-hidden shadow-md">
-                            <div class="bg-blue-600 text-white p-3">
-                                <h4 class="font-medium">MCP Flow</h4>
-                            </div>
-                            <div class="p-4 bg-white">
-                                <ol class="list-decimal pl-5 space-y-1">
-                                    <li>AI recognizes need for GitHub data</li>
-                                    <li>MCP Host connects to GitHub MCP Server</li>
-                                    <li>Server authenticates with GitHub and retrieves commit history</li>
-                                    <li>AI receives formatted repository data</li>
-                                    <li>AI analyzes changes and provides explanation</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
+        <div class="subsection">
+            <h3><i class="fab fa-github"></i> Example 2: Integrating with GitHub</h3>
+            <div class="grid g2">
+                <div class="card">
+                    <div class="card-head"><h4>Scenario</h4></div>
+                    <p>A developer asks an AI coding assistant to explain recent changes to a GitHub repository.</p>
                 </div>
+                <div class="card">
+                    <div class="card-head"><h4>MCP Flow</h4></div>
+                    <ol>
+                        <li>AI recognizes need for GitHub data</li>
+                        <li>MCP Host connects to GitHub MCP Server</li>
+                        <li>Server authenticates with GitHub and retrieves commit history</li>
+                        <li>AI receives formatted repository data</li>
+                        <li>AI analyzes changes and provides explanation</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
 
-                <div class="code-block mb-8">
-                    <h3 class="text-lg font-semibold mb-3 text-white">Sample MCP Server Implementation (Python)</h3>
-                    <pre class="text-sm">
-from mcp.server import MCPServer
+        <div class="subsection">
+            <h3><i class="fab fa-python"></i> Sample MCP Server Implementation (Python)</h3>
+<div class="code-block"><button class="copy-btn">Copy</button>from mcp.server import MCPServer
 from mcp.schema import Capability, Action
 
 # Create a simple MCP server
@@ -625,533 +394,270 @@ def read_file(path):
 
 # Start the server
 if __name__ == "__main__":
-    server.start()
-                    </pre>
-                </div>
+    server.start()</div>
+        </div>
 
-                <div class="image-container mb-8">
-                    <img src="https://miro.medium.com/v2/resize:fit:2000/1*_yD2Ffc90NB2S9DnPQfB5A.png" alt="MCP Desktop Implementation" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Claude Desktop MCP implementation
-                    </div>
-                </div>
+        <figure>
+            <img src="https://miro.medium.com/v2/resize:fit:2000/1*_yD2Ffc90NB2S9DnPQfB5A.png" alt="MCP Desktop Implementation" loading="lazy">
+            <figcaption>Claude Desktop MCP implementation</figcaption>
+        </figure>
 
-                <div class="highlight-box p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-3">Available MCP Servers</h3>
-                    <p class="mb-4">The MCP ecosystem already includes servers for various popular services and data sources:</p>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fab fa-github text-2xl mb-2"></i>
-                            <p class="font-medium">GitHub</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fab fa-slack text-2xl mb-2"></i>
-                            <p class="font-medium">Slack</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fab fa-google-drive text-2xl mb-2"></i>
-                            <p class="font-medium">Google Drive</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fas fa-database text-2xl mb-2"></i>
-                            <p class="font-medium">PostgreSQL</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fas fa-code-branch text-2xl mb-2"></i>
-                            <p class="font-medium">Git</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fas fa-file-alt text-2xl mb-2"></i>
-                            <p class="font-medium">Local Files</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fas fa-robot text-2xl mb-2"></i>
-                            <p class="font-medium">Puppeteer</p>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm text-center">
-                            <i class="fas fa-plus text-2xl mb-2"></i>
-                            <p class="font-medium">Many More</p>
-                        </div>
-                    </div>
-                </div>
+        <div class="info-box">
+            <h3>Available MCP Servers</h3>
+            <p>The MCP ecosystem already includes servers for various popular services and data sources:</p>
+            <div class="grid g4">
+                <div class="mini"><i class="fab fa-github"></i><p>GitHub</p></div>
+                <div class="mini"><i class="fab fa-slack"></i><p>Slack</p></div>
+                <div class="mini"><i class="fab fa-google-drive"></i><p>Google Drive</p></div>
+                <div class="mini"><i class="fas fa-database"></i><p>PostgreSQL</p></div>
+                <div class="mini"><i class="fas fa-code-branch"></i><p>Git</p></div>
+                <div class="mini"><i class="fas fa-file-alt"></i><p>Local Files</p></div>
+                <div class="mini"><i class="fas fa-robot"></i><p>Puppeteer</p></div>
+                <div class="mini"><i class="fas fa-plus"></i><p>Many More</p></div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Benefits Section -->
-        <section id="benefits" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Benefits of MCP</h2>
+    <!-- Benefits Section -->
+    <div class="section fade-up" id="benefits">
+        <h2 class="section-title"><i class="fas fa-star"></i> Benefits of MCP</h2>
+        <p>MCP offers numerous benefits for developers, organizations, and end-users, making it a powerful standard for AI integration.</p>
+
+        <div class="grid g2" style="margin:20px 0">
+            <div class="card">
+                <h3>For Developers</h3>
+                <ul class="icon-list" style="margin-bottom:0">
+                    <li><i class="fas fa-code"></i><span><strong>Simplified Integration:</strong> One protocol to connect with multiple AI models</span></li>
+                    <li><i class="fas fa-puzzle-piece"></i><span><strong>Modularity:</strong> Build and maintain components independently</span></li>
+                    <li><i class="fas fa-exchange-alt"></i><span><strong>Interoperability:</strong> Switch between different LLM providers</span></li>
+                    <li><i class="fas fa-tools"></i><span><strong>Reusable Components:</strong> Leverage existing MCP servers</span></li>
+                    <li><i class="fas fa-shield-alt"></i><span><strong>Security Best Practices:</strong> Built-in security patterns</span></li>
+                </ul>
             </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-8">MCP offers numerous benefits for developers, organizations, and end-users, making it a powerful standard for AI integration.</p>
-
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card p-6 bg-gradient-to-br from-blue-50 to-blue-100">
-                        <h3 class="text-xl font-semibold mb-4 text-blue-700">For Developers</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-start">
-                                <i class="fas fa-code text-blue-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Simplified Integration:</span> One protocol to connect with multiple AI models</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-puzzle-piece text-blue-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Modularity:</span> Build and maintain components independently</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-exchange-alt text-blue-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Interoperability:</span> Switch between different LLM providers</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-tools text-blue-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Reusable Components:</span> Leverage existing MCP servers</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-shield-alt text-blue-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Security Best Practices:</span> Built-in security patterns</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="card p-6 bg-gradient-to-br from-indigo-50 to-indigo-100">
-                        <h3 class="text-xl font-semibold mb-4 text-indigo-700">For Organizations</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-start">
-                                <i class="fas fa-database text-indigo-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Data Security:</span> Keep sensitive data within security boundaries</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-chart-line text-indigo-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Enhanced Productivity:</span> Enable AI tools to access internal systems</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-lock text-indigo-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Control:</span> Maintain governance over data access</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-rocket text-indigo-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Future-Proofing:</span> Adapt to new AI models without rewiring</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-coins text-indigo-600 mt-1 mr-3"></i>
-                                <span><span class="font-medium">Cost Efficiency:</span> Reduce integration maintenance costs</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card p-6 bg-gradient-to-br from-purple-50 to-purple-100 mb-8">
-                    <h3 class="text-xl font-semibold mb-4 text-purple-700">For End Users</h3>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <div class="flex items-center mb-2">
-                                <i class="fas fa-brain text-purple-600 mr-2"></i>
-                                <h4 class="font-medium">Smarter AI Responses</h4>
-                            </div>
-                            <p class="text-sm">AI assistants can access needed information, providing more accurate and contextual responses.</p>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <div class="flex items-center mb-2">
-                                <i class="fas fa-lock text-purple-600 mr-2"></i>
-                                <h4 class="font-medium">Enhanced Privacy</h4>
-                            </div>
-                            <p class="text-sm">Sensitive data can remain on local devices while still being accessible to AI assistants.</p>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <div class="flex items-center mb-2">
-                                <i class="fas fa-magic text-purple-600 mr-2"></i>
-                                <h4 class="font-medium">More Capabilities</h4>
-                            </div>
-                            <p class="text-sm">AI tools can perform more complex tasks by accessing the right information at the right time.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://cdn.prod.website-files.com/67053868fc01e494462e71c9/67dad87cbcc04e3ebfdf1364_architecture-mcp-en.webp" alt="MCP Architecture Benefits" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        How MCP enhances AI capabilities and security
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-3">The Long-Term Vision</h3>
-                    <p>As MCP adoption grows, we can expect to see a rich ecosystem of interoperable AI tools and data sources. This will enable:</p>
-
-                    <div class="grid md:grid-cols-2 gap-4 mt-4">
-                        <div class="flex items-start">
-                            <i class="fas fa-network-wired text-blue-600 mt-1 mr-3 text-lg"></i>
-                            <p>A universal layer connecting AI models to diverse data sources</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-store text-blue-600 mt-1 mr-3 text-lg"></i>
-                            <p>Marketplaces of specialized MCP servers for different use cases</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-cogs text-blue-600 mt-1 mr-3 text-lg"></i>
-                            <p>Advanced AI workflows spanning multiple systems</p>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-project-diagram text-blue-600 mt-1 mr-3 text-lg"></i>
-                            <p>True context-awareness across different applications</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="card">
+                <h3>For Organizations</h3>
+                <ul class="icon-list" style="margin-bottom:0">
+                    <li><i class="fas fa-database"></i><span><strong>Data Security:</strong> Keep sensitive data within security boundaries</span></li>
+                    <li><i class="fas fa-chart-line"></i><span><strong>Enhanced Productivity:</strong> Enable AI tools to access internal systems</span></li>
+                    <li><i class="fas fa-lock"></i><span><strong>Control:</strong> Maintain governance over data access</span></li>
+                    <li><i class="fas fa-rocket"></i><span><strong>Future-Proofing:</strong> Adapt to new AI models without rewiring</span></li>
+                    <li><i class="fas fa-coins"></i><span><strong>Cost Efficiency:</strong> Reduce integration maintenance costs</span></li>
+                </ul>
             </div>
-        </section>
+        </div>
 
-        <!-- Use Cases Section -->
-        <section id="use-cases" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Use Cases</h2>
-            </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-8">MCP enables a wide range of powerful use cases across different industries and scenarios. Here are some examples of how MCP is being used in real-world applications.</p>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-blue-600 p-4 rounded-t-lg">
-                            <i class="fas fa-code text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Software Development</h3>
-                            <p class="mb-4">AI coding assistants can access repositories, documentation, and codebase context to provide more accurate suggestions and explanations.</p>
-                            <div class="text-sm text-blue-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Code analysis with repository context</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Bug fixing with access to logs</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>PR generation and review</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-indigo-600 p-4 rounded-t-lg">
-                            <i class="fas fa-chart-bar text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Data Analysis</h3>
-                            <p class="mb-4">Business analysts can use AI tools that access databases and spreadsheets to analyze data, create reports, and generate insights.</p>
-                            <div class="text-sm text-indigo-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Query data from various sources</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Generate visualizations and reports</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Trend analysis and forecasting</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-purple-600 p-4 rounded-t-lg">
-                            <i class="fas fa-laptop-medical text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Healthcare</h3>
-                            <p class="mb-4">Medical professionals can use AI assistants that access patient records and medical literature while maintaining privacy compliance.</p>
-                            <div class="text-sm text-purple-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Research assistance with medical data</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Patient history summarization</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Treatment option analysis</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="card" style="margin:20px 0">
+            <h3>For End Users</h3>
+            <div class="grid g3">
+                <div class="user-card">
+                    <div class="uh"><i class="fas fa-brain"></i><h4>Smarter AI Responses</h4></div>
+                    <p>AI assistants can access needed information, providing more accurate and contextual responses.</p>
                 </div>
-
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-green-600 p-4 rounded-t-lg">
-                            <i class="fas fa-graduation-cap text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Education</h3>
-                            <p class="mb-4">Students and educators can use AI tools that access learning materials, assignments, and research papers to enhance the learning experience.</p>
-                            <div class="text-sm text-green-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Personalized tutoring with course materials</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Research paper assistance</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Curriculum development with historical data</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-red-600 p-4 rounded-t-lg">
-                            <i class="fas fa-file-contract text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Legal</h3>
-                            <p class="mb-4">Legal professionals can leverage AI assistants that access case law, contracts, and legal documents to assist with research and drafting.</p>
-                            <div class="text-sm text-red-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Legal research with case databases</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Contract analysis and drafting</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Legal precedent comparison</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="user-card">
+                    <div class="uh"><i class="fas fa-lock"></i><h4>Enhanced Privacy</h4></div>
+                    <p>Sensitive data can remain on local devices while still being accessible to AI assistants.</p>
                 </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://norahsakal.com/assets/images/mcp_overview-641a298352ff835488af36be3d8eee52.png" alt="MCP Use Cases" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Various MCP applications across industries
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-3">Real-World Success Stories</h3>
-
-                    <div class="space-y-6">
-                        <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
-                            <img src="https://placehold.co/64x64/2563eb/fff?text=B" alt="Block Logo" class="w-16 h-16 rounded mr-4">
-                            <div>
-                                <h4 class="font-medium text-lg">Block</h4>
-                                <p class="mb-2">"Open technologies like the Model Context Protocol are the bridges that connect AI to real-world applications, ensuring innovation is accessible, transparent, and rooted in collaboration."</p>
-                                <p class="text-sm font-medium">- Dhanji R. Prasanna, Chief Technology Officer at Block</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
-                            <img src="https://placehold.co/64x64/6366f1/fff?text=A" alt="Apollo Logo" class="w-16 h-16 rounded mr-4">
-                            <div>
-                                <h4 class="font-medium text-lg">Apollo</h4>
-                                <p class="mb-2">Apollo has integrated MCP into their systems to enhance their platform capabilities and provide better AI-powered features to their users.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start bg-white p-4 rounded-lg shadow-sm">
-                            <img src="https://placehold.co/64x64/4f46e5/fff?text=Z" alt="Zed Logo" class="w-16 h-16 rounded mr-4">
-                            <div>
-                                <h4 class="font-medium text-lg">Development Tool Companies</h4>
-                                <p class="mb-2">Companies including Zed, Replit, Codeium, and Sourcegraph are working with MCP to enhance their platforms—enabling AI agents to better retrieve relevant information.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <h3 class="text-xl font-semibold mb-4">Get Started with Your Use Case</h3>
-                    <p class="mb-6 max-w-2xl mx-auto">The possibilities with MCP are vast and growing. Whether you're building AI-powered tools or looking to enhance existing applications, MCP provides a standardized way to connect with the data sources you need.</p>
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <a href="https://github.com/modelcontextprotocol" target="_blank" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-md hover:shadow-lg flex items-center">
-                            <i class="fab fa-github mr-2"></i>
-                            GitHub Repository
-                        </a>
-                        <a href="https://modelcontextprotocol.io/quickstart" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-md hover:shadow-lg flex items-center">
-                            <i class="fas fa-rocket mr-2"></i>
-                            Quickstart Guide
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Call to Action -->
-        <section class="mb-16 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-lg overflow-hidden">
-            <div class="relative p-8 md:p-12">
-                <div class="relative z-10">
-                    <h2 class="text-3xl font-bold text-white mb-4">Join the MCP Community</h2>
-                    <p class="text-white text-lg mb-6 max-w-2xl">Be part of the growing ecosystem of developers, organizations, and enthusiasts building the future of AI integration with MCP.</p>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="https://github.com/modelcontextprotocol" target="_blank" class="px-6 py-3 bg-white text-blue-600 hover:bg-gray-100 font-medium rounded-lg transition flex items-center">
-                            <i class="fab fa-github mr-2"></i>
-                            Contribute on GitHub
-                        </a>
-                        <a href="https://claude.ai/download" target="_blank" class="px-6 py-3 bg-blue-500 hover:bg-blue-400 text-white font-medium rounded-lg transition flex items-center">
-                            <i class="fas fa-download mr-2"></i>
-                            Download Claude Desktop
-                        </a>
-                    </div>
-                </div>
-
-                <div class="absolute top-0 right-0 opacity-10 w-full h-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full">
-                        <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="#fff"></path>
-                        <circle cx="80" cy="20" r="20" fill="#fff"></circle>
-                        <circle cx="20" cy="80" r="30" fill="#fff"></circle>
-                    </svg>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 px-4">
-        <div class="container mx-auto max-w-5xl">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Model Context Protocol</h3>
-                    <p class="text-gray-300">An open standard for connecting AI assistants to the systems where data lives.</p>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Resources</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://modelcontextprotocol.io" target="_blank" class="text-gray-300 hover:text-white transition">Official Website</a></li>
-                        <li><a href="https://github.com/modelcontextprotocol" target="_blank" class="text-gray-300 hover:text-white transition">GitHub Repository</a></li>
-                        <li><a href="https://modelcontextprotocol.io/docs" target="_blank" class="text-gray-300 hover:text-white transition">Documentation</a></li>
-                        <li><a href="https://modelcontextprotocol.io/examples" target="_blank" class="text-gray-300 hover:text-white transition">Example Servers</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Community</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://github.com/orgs/modelcontextprotocol/discussions" target="_blank" class="text-gray-300 hover:text-white transition">Discussions</a></li>
-                        <li><a href="https://modelcontextprotocol.io/development/contributing" target="_blank" class="text-gray-300 hover:text-white transition">Contributing</a></li>
-                        <li><a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" class="text-gray-300 hover:text-white transition">Anthropic Announcement</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-400 mb-4 md:mb-0">© 2025 Model Context Protocol. All images used are from public sources.</p>
-                <div class="flex space-x-4">
-                    <a href="https://github.com/modelcontextprotocol" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-github text-xl"></i>
-                    </a>
-                    <a href="https://twitter.com/AnthropicAI" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-twitter text-xl"></i>
-                    </a>
-                    <a href="https://www.linkedin.com/company/anthropic" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-linkedin text-xl"></i>
-                    </a>
+                <div class="user-card">
+                    <div class="uh"><i class="fas fa-magic"></i><h4>More Capabilities</h4></div>
+                    <p>AI tools can perform more complex tasks by accessing the right information at the right time.</p>
                 </div>
             </div>
         </div>
-    </footer>
 
-    <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+        <figure>
+            <img src="https://cdn.prod.website-files.com/67053868fc01e494462e71c9/67dad87cbcc04e3ebfdf1364_architecture-mcp-en.webp" alt="MCP Architecture Benefits" loading="lazy">
+            <figcaption>How MCP enhances AI capabilities and security</figcaption>
+        </figure>
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        <div class="info-box">
+            <h3>The Long-Term Vision</h3>
+            <p>As MCP adoption grows, we can expect to see a rich ecosystem of interoperable AI tools and data sources. This will enable:</p>
+            <ul class="icon-list two" style="margin-top:12px">
+                <li><i class="fas fa-network-wired"></i><span>A universal layer connecting AI models to diverse data sources</span></li>
+                <li><i class="fas fa-store"></i><span>Marketplaces of specialized MCP servers for different use cases</span></li>
+                <li><i class="fas fa-cogs"></i><span>Advanced AI workflows spanning multiple systems</span></li>
+                <li><i class="fas fa-project-diagram"></i><span>True context-awareness across different applications</span></li>
+            </ul>
+        </div>
+    </div>
 
-        // Expandable sections
-        const sectionHeaders = document.querySelectorAll('.section-header');
+    <!-- Use Cases Section -->
+    <div class="section fade-up" id="use-cases">
+        <h2 class="section-title"><i class="fas fa-lightbulb"></i> Use Cases</h2>
+        <p>MCP enables a wide range of powerful use cases across different industries and scenarios. Here are some examples of how MCP is being used in real-world applications.</p>
 
-        sectionHeaders.forEach(header => {
-            header.addEventListener('click', () => {
-                const parent = header.parentElement;
-                parent.classList.toggle('section-expanded');
-            });
-        });
+        <div class="grid g3" style="margin:20px 0">
+            <div class="card">
+                <div class="uc-head uc-blue"><i class="fas fa-code"></i></div>
+                <h3>Software Development</h3>
+                <p>AI coding assistants can access repositories, documentation, and codebase context to provide more accurate suggestions and explanations.</p>
+                <div class="uc-list">
+                    <div><i class="fas fa-check-circle"></i><span>Code analysis with repository context</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Bug fixing with access to logs</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>PR generation and review</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="uc-head uc-indigo"><i class="fas fa-chart-bar"></i></div>
+                <h3>Data Analysis</h3>
+                <p>Business analysts can use AI tools that access databases and spreadsheets to analyze data, create reports, and generate insights.</p>
+                <div class="uc-list">
+                    <div><i class="fas fa-check-circle"></i><span>Query data from various sources</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Generate visualizations and reports</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Trend analysis and forecasting</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="uc-head uc-purple"><i class="fas fa-laptop-medical"></i></div>
+                <h3>Healthcare</h3>
+                <p>Medical professionals can use AI assistants that access patient records and medical literature while maintaining privacy compliance.</p>
+                <div class="uc-list">
+                    <div><i class="fas fa-check-circle"></i><span>Research assistance with medical data</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Patient history summarization</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Treatment option analysis</span></div>
+                </div>
+            </div>
+        </div>
 
-        // Auto-expand the first section
-        const firstSection = document.querySelector('.section-expandable');
-        if (firstSection) {
-            firstSection.classList.add('section-expanded');
-        }
+        <div class="grid g2" style="margin:20px 0">
+            <div class="card">
+                <div class="uc-head uc-green"><i class="fas fa-graduation-cap"></i></div>
+                <h3>Education</h3>
+                <p>Students and educators can use AI tools that access learning materials, assignments, and research papers to enhance the learning experience.</p>
+                <div class="uc-list">
+                    <div><i class="fas fa-check-circle"></i><span>Personalized tutoring with course materials</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Research paper assistance</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Curriculum development with historical data</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="uc-head uc-red"><i class="fas fa-file-contract"></i></div>
+                <h3>Legal</h3>
+                <p>Legal professionals can leverage AI assistants that access case law, contracts, and legal documents to assist with research and drafting.</p>
+                <div class="uc-list">
+                    <div><i class="fas fa-check-circle"></i><span>Legal research with case databases</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Contract analysis and drafting</span></div>
+                    <div><i class="fas fa-check-circle"></i><span>Legal precedent comparison</span></div>
+                </div>
+            </div>
+        </div>
 
-        // Active navigation based on scroll
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('.nav-pill');
+        <figure>
+            <img src="https://norahsakal.com/assets/images/mcp_overview-641a298352ff835488af36be3d8eee52.png" alt="MCP Use Cases" loading="lazy">
+            <figcaption>Various MCP applications across industries</figcaption>
+        </figure>
 
+        <div class="info-box">
+            <h3>Real-World Success Stories</h3>
+            <div class="story">
+                <img src="https://placehold.co/64x64/2563eb/fff?text=B" alt="Block Logo">
+                <div>
+                    <h4>Block</h4>
+                    <p>"Open technologies like the Model Context Protocol are the bridges that connect AI to real-world applications, ensuring innovation is accessible, transparent, and rooted in collaboration."</p>
+                    <p class="by">- Dhanji R. Prasanna, Chief Technology Officer at Block</p>
+                </div>
+            </div>
+            <div class="story">
+                <img src="https://placehold.co/64x64/6366f1/fff?text=A" alt="Apollo Logo">
+                <div>
+                    <h4>Apollo</h4>
+                    <p>Apollo has integrated MCP into their systems to enhance their platform capabilities and provide better AI-powered features to their users.</p>
+                </div>
+            </div>
+            <div class="story">
+                <img src="https://placehold.co/64x64/4f46e5/fff?text=Z" alt="Zed Logo">
+                <div>
+                    <h4>Development Tool Companies</h4>
+                    <p>Companies including Zed, Replit, Codeium, and Sourcegraph are working with MCP to enhance their platforms—enabling AI agents to better retrieve relevant information.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center" style="margin-top:28px">
+            <h3 style="justify-content:center">Get Started with Your Use Case</h3>
+            <p style="max-width:680px;margin:0 auto 20px">The possibilities with MCP are vast and growing. Whether you're building AI-powered tools or looking to enhance existing applications, MCP provides a standardized way to connect with the data sources you need.</p>
+            <div class="btn-row">
+                <a href="https://github.com/modelcontextprotocol" target="_blank" class="btn btn-primary"><i class="fab fa-github"></i> GitHub Repository</a>
+                <a href="https://modelcontextprotocol.io/quickstart" target="_blank" class="btn btn-outline"><i class="fas fa-rocket"></i> Quickstart Guide</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="section fade-up cta" id="community">
+        <h2 class="section-title"><i class="fas fa-users"></i> Join the MCP Community</h2>
+        <p style="font-size:1.1rem;max-width:680px">Be part of the growing ecosystem of developers, organizations, and enthusiasts building the future of AI integration with MCP.</p>
+        <div class="btn-row left">
+            <a href="https://github.com/modelcontextprotocol" target="_blank" class="btn btn-primary"><i class="fab fa-github"></i> Contribute on GitHub</a>
+            <a href="https://claude.ai/download" target="_blank" class="btn btn-outline"><i class="fas fa-download"></i> Download Claude Desktop</a>
+        </div>
+    </div>
+
+    <!-- Resources (from original footer) -->
+    <div class="section fade-up" id="resources">
+        <div class="res-grid">
+            <div>
+                <h3>Model Context Protocol</h3>
+                <p>An open standard for connecting AI assistants to the systems where data lives.</p>
+            </div>
+            <div>
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://modelcontextprotocol.io" target="_blank">Official Website</a></li>
+                    <li><a href="https://github.com/modelcontextprotocol" target="_blank">GitHub Repository</a></li>
+                    <li><a href="https://modelcontextprotocol.io/docs" target="_blank">Documentation</a></li>
+                    <li><a href="https://modelcontextprotocol.io/examples" target="_blank">Example Servers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="https://github.com/orgs/modelcontextprotocol/discussions" target="_blank">Discussions</a></li>
+                    <li><a href="https://modelcontextprotocol.io/development/contributing" target="_blank">Contributing</a></li>
+                    <li><a href="https://www.anthropic.com/news/model-context-protocol" target="_blank">Anthropic Announcement</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="res-bottom">
+            <p>© 2025 Model Context Protocol. All images used are from public sources.</p>
+            <div class="social">
+                <a href="https://github.com/modelcontextprotocol" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://twitter.com/AnthropicAI" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/anthropic" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-nav"><a class="nav-btn prev" href="/cs/index.html">← Back to Course</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
+</div>
+
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script>
+    // Active navigation based on scroll
+    (function(){
+        var sections = document.querySelectorAll('.section[id]');
+        var navLinks = document.querySelectorAll('.nav-links a');
         function setActiveNavLink() {
-            const scrollPosition = window.scrollY + 100;
-
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
-
+            var scrollPosition = window.scrollY + 100;
+            sections.forEach(function(section){
+                var sectionTop = section.offsetTop;
+                var sectionHeight = section.offsetHeight;
+                var sectionId = section.getAttribute('id');
                 if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    navLinks.forEach(link => {
+                    navLinks.forEach(function(link){
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${sectionId}`) {
+                        if (link.getAttribute('href') === '#' + sectionId) {
                             link.classList.add('active');
                         }
                     });
                 }
             });
         }
-
-        window.addEventListener('scroll', setActiveNavLink);
-
-        // Set active on page load
+        window.addEventListener('scroll', setActiveNavLink, {passive:true});
         setActiveNavLink();
-    </script>
-<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
-<script>
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-    const btn=document.getElementById('themeToggleBtn');
-    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
-    const back=document.querySelector('a[href="/cs/index.html"]');
-    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
-        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
-    }
-})();
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn'))return;
-        pre.classList.add('has-copy');pre.style.position='relative';
-        var btn=document.createElement('button');btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
-        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
-        pre.appendChild(btn);
-    });
-});
+    })();
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

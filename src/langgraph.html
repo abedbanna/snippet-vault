@@ -13,479 +13,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangGraph Step-by-Step Tutorial | Week 5</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="description" content="Step-by-step LangGraph tutorial: state, nodes, edges, tool integration, conditional routing, checkpointing, a multi-agent project and Django integration.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" id="prism-theme-dark">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" id="prism-theme-light" disabled>
     <style>
-        :root {
-            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-            --text:#f1f5f9;--text2:#94a3b8;
-            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-            --code:#0d1117;
-        }
-        body.light-mode {
-            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
-            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
-            --text:#0f172a;--text2:#334155;
-            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
-            --code:#1e293b;
-        }
+        :root{--primary:#6366f1;--primary-hover:#818cf8;--secondary:#8b5cf6;--glow:rgba(99,102,241,.14)}
 
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html { scroll-behavior:smooth; }
+        /* Progress bar (sits just under the fixed navbar) */
+        #progress-bar{position:fixed;top:var(--nav-h);left:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary));z-index:1001;transition:width .4s ease}
 
-        body {
-            font-family:'Inter',sans-serif;
-            background:var(--bg);
-            color:var(--text);
-            line-height:1.7;
-            min-height:100vh;
-            overflow-x:hidden;
-        }
+        /* Step picker */
+        .step-nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:16px}
+        .step-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--text2);transition:all .2s}
+        body.light-mode .step-btn{background:#fff}
+        .step-btn:hover{border-color:var(--primary);color:var(--text)}
+        .step-btn.active{background:var(--primary);color:#fff;border-color:transparent}
+        .step-btn.completed{border-color:var(--success)}
+        .step-number{width:26px;height:26px;background:var(--bg);color:var(--text2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0;transition:all .2s}
+        .step-btn.active .step-number{background:rgba(255,255,255,.2);color:#fff}
+        .step-btn.completed .step-number{background:var(--success);color:#fff}
+        .step-label{font-weight:500;line-height:1.3}
 
-        /* Progress Bar */
-        #progress-bar {
-            position:fixed; top:0; left:0; height:3px;
-            background:linear-gradient(90deg,var(--primary),var(--secondary));
-            z-index:10001; transition:width 0.4s ease;
-        }
+        /* Step panes */
+        .step-content{display:none;animation:fadeIn .45s ease}
+        .step-content.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .step-tag{display:inline-block;font-size:.78rem;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+        .step-content h3{display:block;margin-top:36px;padding-bottom:8px;border-bottom:2px solid var(--border2)}
+        .step-content h3 i{color:var(--primary);margin-right:6px}
+        .nav-btn:disabled,.nav-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
 
-        /* Back to Course */
-        .back-link {
-            position:fixed; top:16px; left:16px; z-index:9999;
-            background:var(--surface); border:1px solid var(--border2);
-            color:var(--primary); padding:6px 14px; border-radius:8px;
-            font-size:0.85rem; font-family:'Inter',sans-serif;
-            text-decoration:none; display:flex; align-items:center;
-            gap:6px; transition:all .2s; backdrop-filter:blur(10px);
-        }
-        .back-link:hover { background:var(--primary); color:#fff; }
+        /* Icon + text callouts */
+        .info-box{display:flex;gap:12px;align-items:flex-start}
+        .info-box>i{color:var(--primary);margin-top:4px;flex-shrink:0}
+        .info-box.warning>i{color:var(--warning)}
+        .info-box.success>i{color:var(--success)}
+        .info-box>div{flex:1;min-width:0;color:var(--text2);font-size:.92rem;line-height:1.8}
 
-        /* Header */
-        .site-header {
-            background:linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
-            border-bottom:1px solid var(--border2);
-            padding:60px 40px 40px;
-            text-align:center;
-            position:relative;
-        }
-        .site-header h1 {
-            font-size:2.6rem; font-weight:800;
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-            background-clip:text; margin-bottom:8px;
-        }
-        .site-header .subtitle {
-            color:var(--text2); font-size:1.1rem; font-weight:400;
-            max-width:600px; margin:0 auto;
-        }
-        .site-header .badge {
-            display:inline-block; margin-top:14px;
-            background:var(--surface2); border:1px solid var(--border2);
-            padding:4px 14px; border-radius:20px; font-size:0.8rem;
-            color:var(--secondary); font-weight:600;
-        }
+        /* Diagrams */
+        .diagram-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:30px;margin:24px 0;text-align:center;overflow-x:auto}
+        .diagram-box svg{max-width:100%;height:auto}
+        .diagram-box svg text{fill:var(--text);font-family:'Inter',sans-serif}
 
-        /* Theme Toggle */
-        .theme-toggle {
-            position:absolute; top:20px; right:20px;
-            background:var(--surface2); border:1px solid var(--border2);
-            color:var(--text2); width:42px; height:42px; border-radius:50%;
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-            font-size:1.1rem; transition:all .25s;
-        }
-        .theme-toggle:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
-
-        /* Layout */
-        .main-wrapper {
-            display:flex; min-height:calc(100vh - 200px);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width:280px; min-width:280px;
-            background:var(--surface);
-            border-right:1px solid var(--border2);
-            padding:20px 14px;
-            position:sticky; top:0; height:100vh;
-            overflow-y:auto;
-        }
-        .sidebar-title {
-            font-size:0.75rem; font-weight:700;
-            text-transform:uppercase; letter-spacing:1.5px;
-            color:var(--text2); padding:0 10px; margin-bottom:14px;
-        }
-        .step-nav { list-style:none; }
-        .step-nav li { margin-bottom:6px; }
-        .step-btn {
-            width:100%; padding:10px 12px;
-            background:transparent; border:1px solid transparent;
-            border-radius:10px; cursor:pointer; text-align:left;
-            font-size:0.85rem; font-family:'Inter',sans-serif;
-            color:var(--text2); transition:all .25s;
-            display:flex; align-items:center; gap:10px;
-        }
-        .step-btn:hover {
-            background:var(--surface2); border-color:var(--border2);
-            color:var(--text); transform:translateX(3px);
-        }
-        .step-btn.active {
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
-            color:#fff; border-color:transparent;
-        }
-        .step-btn.completed {
-            border-color:var(--success);
-        }
-        .step-number {
-            width:28px; height:28px;
-            background:var(--surface2); color:var(--text2);
-            border-radius:50%; display:flex; align-items:center;
-            justify-content:center; font-weight:700; font-size:0.75rem;
-            flex-shrink:0; transition:all .25s;
-        }
-        .step-btn.active .step-number {
-            background:rgba(255,255,255,0.2); color:#fff;
-        }
-        .step-btn.completed .step-number {
-            background:var(--success); color:#fff;
-        }
-        .step-label { font-weight:500; line-height:1.3; }
-
-        /* Content Area */
-        .content-area {
-            flex:1; padding:40px 50px 80px;
-            max-width:900px; margin:0 auto;
-            overflow-y:auto;
-        }
-
-        .step-content {
-            display:none;
-            animation:fadeIn 0.45s ease;
-        }
-        .step-content.active { display:block; }
-
-        @keyframes fadeIn {
-            from { opacity:0; transform:translateY(16px); }
-            to { opacity:1; transform:translateY(0); }
-        }
-
-        /* Typography */
-        .step-content h2 {
-            font-size:2rem; font-weight:800; margin-bottom:8px;
-            color:var(--text);
-        }
-        .step-content h2 .step-tag {
-            font-size:0.85rem; font-weight:700; color:var(--secondary);
-            display:block; margin-bottom:4px;
-        }
-        .step-content h3 {
-            font-size:1.35rem; font-weight:700; margin-top:36px;
-            margin-bottom:14px; color:var(--text);
-            padding-bottom:8px; border-bottom:2px solid var(--border2);
-        }
-        .step-content h4 {
-            font-size:1.1rem; font-weight:600; margin-top:24px;
-            margin-bottom:10px; color:var(--text);
-        }
-        .step-content p {
-            color:var(--text2); margin-bottom:16px; font-size:0.95rem;
-        }
-        .step-content ul, .step-content ol {
-            color:var(--text2); margin-bottom:16px; padding-left:24px;
-            font-size:0.95rem;
-        }
-        .step-content li { margin-bottom:8px; }
-        .step-content strong { color:var(--text); font-weight:600; }
-        .step-content a { color:var(--primary); text-decoration:none; }
-        .step-content a:hover { text-decoration:underline; }
-
-        /* Inline code */
-        .step-content code:not([class*="language-"]) {
-            background:var(--surface2); color:var(--primary);
-            padding:3px 8px; border-radius:5px; font-size:0.9rem;
-            font-family:'JetBrains Mono','Fira Code','Source Code Pro',monospace;
-            font-weight:500;
-            -webkit-font-smoothing:antialiased;
-        }
-
-        /* Code blocks */
-        .code-wrapper {
-            position:relative; margin:20px 0 24px;
-            border-radius:12px; overflow:hidden;
-            border:1px solid var(--border2);
-        }
-        .code-header {
-            display:flex; justify-content:space-between; align-items:center;
-            background:var(--surface2); padding:8px 16px;
-            border-bottom:1px solid var(--border2);
-        }
-        .code-lang {
-            font-size:0.75rem; font-weight:600; color:var(--text2);
-            text-transform:uppercase; letter-spacing:1px;
-        }
-        .copy-btn {
-            background:transparent; border:1px solid var(--border2);
-            color:var(--text2); padding:4px 12px; border-radius:6px;
-            font-size:0.75rem; cursor:pointer; font-family:'Inter',sans-serif;
-            transition:all .2s; display:flex; align-items:center; gap:5px;
-        }
-        .copy-btn:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
-        .copy-btn.copied { background:var(--success); color:#fff; border-color:var(--success); }
-        .code-wrapper pre {
-            margin:0 !important; border-radius:0 !important;
-            background:var(--code) !important;
-            border:none !important;
-        }
-        .code-wrapper pre code,
-        .code-wrapper pre code[class*="language-"],
-        pre[class*="language-"] code {
-            font-family:'JetBrains Mono','Fira Code','Source Code Pro','Courier New',monospace !important;
-            font-size:0.95rem !important; line-height:1.7 !important;
-            background:transparent !important;
-            padding:0 !important;
-            letter-spacing:0.02em;
-            -webkit-font-smoothing:antialiased;
-            -moz-osx-font-smoothing:grayscale;
-            text-rendering:optimizeLegibility;
-        }
-        .code-wrapper pre,
-        pre[class*="language-"] {
-            padding:20px !important;
-            font-size:0.95rem !important;
-        }
-
-        /* Info / Warning / Success Boxes */
-        .info-box, .warning-box, .success-box {
-            padding:16px 20px; border-radius:10px; margin:20px 0;
-            font-size:0.9rem; line-height:1.6;
-            display:flex; gap:12px; align-items:flex-start;
-        }
-        .info-box {
-            background:rgba(59,130,246,0.08);
-            border:1px solid rgba(59,130,246,0.2);
-            color:var(--text2);
-        }
-        .info-box i { color:var(--primary); margin-top:2px; }
-        .warning-box {
-            background:rgba(245,158,11,0.08);
-            border:1px solid rgba(245,158,11,0.2);
-            color:var(--text2);
-        }
-        .warning-box i { color:#f59e0b; margin-top:2px; }
-        .success-box {
-            background:rgba(16,185,129,0.08);
-            border:1px solid rgba(16,185,129,0.2);
-            color:var(--text2);
-        }
-        .success-box i { color:var(--success); margin-top:2px; }
-
-        /* Diagram */
-        .diagram-box {
-            background:var(--surface2); border:1px solid var(--border2);
-            border-radius:12px; padding:30px; margin:24px 0;
-            text-align:center; overflow-x:auto;
-        }
-        .diagram-box svg text { fill:var(--text); font-family:'Inter',sans-serif; }
-
-        /* Table */
-        .step-content table {
-            width:100%; border-collapse:collapse; margin:20px 0;
-            font-size:0.9rem; border-radius:10px; overflow:hidden;
-            border:1px solid var(--border2);
-        }
-        .step-content th {
-            background:var(--surface2); color:var(--text);
-            padding:12px 16px; text-align:left; font-weight:600;
-        }
-        .step-content td {
-            background:var(--surface); color:var(--text2);
-            padding:12px 16px; border-top:1px solid var(--border2);
-        }
-        .step-content tr:hover td { background:var(--surface2); }
-
-        /* Navigation buttons */
-        .step-nav-buttons {
-            display:flex; justify-content:space-between; align-items:center;
-            margin-top:50px; padding-top:24px;
-            border-top:1px solid var(--border2);
-        }
-        .nav-btn {
-            display:flex; align-items:center; gap:8px;
-            padding:12px 24px; border-radius:10px; border:1px solid var(--border2);
-            background:var(--surface2); color:var(--text);
-            font-family:'Inter',sans-serif; font-size:0.9rem;
-            font-weight:600; cursor:pointer; transition:all .25s;
-            text-decoration:none;
-        }
-        .nav-btn:hover {
-            background:var(--primary); color:#fff;
-            border-color:var(--primary); transform:translateY(-2px);
-        }
-        .nav-btn:disabled, .nav-btn.disabled {
-            opacity:0.3; cursor:not-allowed; pointer-events:none;
-        }
-        .nav-btn.next-btn {
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
-            color:#fff; border-color:transparent;
-        }
-        .nav-btn.next-btn:hover { opacity:0.9; transform:translateY(-2px); }
-
-        /* Footer */
-        .site-footer {
-            background:var(--surface); border-top:1px solid var(--border2);
-            padding:24px; text-align:center;
-            color:var(--text2); font-size:0.85rem;
-        }
-
-        /* Mobile sidebar toggle */
-        .sidebar-toggle {
-            display:none; position:fixed; bottom:20px; left:20px;
-            z-index:9998; width:50px; height:50px; border-radius:50%;
-            background:linear-gradient(135deg,var(--primary),var(--secondary));
-            color:#fff; border:none; font-size:1.2rem;
-            cursor:pointer; box-shadow:0 4px 20px rgba(59,130,246,0.4);
-        }
-
-        /* Mobile overlay */
-        .sidebar-overlay {
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,0.5); z-index:9996;
-        }
-
-        /* Responsive */
-        @media (max-width:900px) {
-            .sidebar {
-                position:fixed; left:-300px; top:0; z-index:9997;
-                transition:left .3s ease; box-shadow:4px 0 30px rgba(0,0,0,0.3);
-            }
-            .sidebar.open { left:0; }
-            .sidebar-overlay.open { display:block; }
-            .sidebar-toggle { display:flex; align-items:center; justify-content:center; }
-            .content-area { padding:30px 20px 80px; }
-            .site-header { padding:50px 20px 30px; }
-            .site-header h1 { font-size:1.8rem; }
-            .back-link { top:10px; left:10px; font-size:0.78rem; padding:5px 10px; }
-            .theme-toggle { top:12px; right:12px; width:36px; height:36px; font-size:0.95rem; }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width:6px; }
-        ::-webkit-scrollbar-track { background:var(--bg); }
-        ::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:3px; }
-        ::-webkit-scrollbar-thumb:hover { background:var(--text2); }
-
-        /* Force high-contrast code colors over Prism */
-        .code-wrapper pre,
-        .code-wrapper pre[class*="language-"] {
-            background:#0d1117 !important;
-            color:#e6edf3 !important;
-            padding:24px !important;
-            font-size:1rem !important;
-            tab-size:4;
-        }
-        .code-wrapper pre code,
-        .code-wrapper pre code[class*="language-"] {
-            color:#e6edf3 !important;
-            font-size:1rem !important;
-            line-height:1.75 !important;
-            font-family:'JetBrains Mono','Fira Code','Source Code Pro','Consolas','Monaco',monospace !important;
-            font-weight:400 !important;
-            -webkit-font-smoothing:antialiased !important;
-            text-shadow:none !important;
-        }
+        /* Code blocks (Prism) */
+        .code-wrapper{position:relative;margin:20px 0 24px;border-radius:12px;overflow:hidden;border:1px solid var(--border2)}
+        .code-header{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);padding:8px 16px;border-bottom:1px solid var(--border2)}
+        .code-lang{font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+        .code-copy-btn{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:4px 12px;border-radius:6px;font-size:.75rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:5px}
+        .code-copy-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .code-copy-btn.copied{background:var(--success);color:#fff;border-color:var(--success)}
+        .code-wrapper pre,.code-wrapper pre[class*="language-"]{margin:0 !important;border-radius:0 !important;border:none !important;background:#0d1117 !important;color:#e6edf3 !important;padding:24px !important;font-size:1rem !important;tab-size:4}
+        .code-wrapper pre code,.code-wrapper pre code[class*="language-"]{font-family:'JetBrains Mono','Fira Code','Source Code Pro','Consolas','Monaco',monospace !important;font-size:1rem !important;line-height:1.75 !important;background:transparent !important;padding:0 !important;color:#e6edf3 !important;font-weight:400 !important;letter-spacing:.02em;text-shadow:none !important;-webkit-font-smoothing:antialiased !important;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
         /* Brighter syntax colors (GitHub-dark inspired) */
-        .code-wrapper .token.comment,
-        .code-wrapper .token.prolog,
-        .code-wrapper .token.doctype { color:#8b949e !important; font-style:italic; }
-        .code-wrapper .token.keyword { color:#ff7b72 !important; font-weight:600 !important; }
-        .code-wrapper .token.builtin { color:#79c0ff !important; }
-        .code-wrapper .token.function { color:#d2a8ff !important; }
-        .code-wrapper .token.class-name { color:#7ee787 !important; }
-        .code-wrapper .token.string,
-        .code-wrapper .token.attr-value { color:#a5d6ff !important; }
-        .code-wrapper .token.number { color:#79c0ff !important; }
-        .code-wrapper .token.boolean { color:#ff7b72 !important; }
-        .code-wrapper .token.operator { color:#ff7b72 !important; }
-        .code-wrapper .token.punctuation { color:#c9d1d9 !important; }
-        .code-wrapper .token.decorator { color:#d2a8ff !important; }
-        .code-wrapper .token.variable { color:#ffa657 !important; }
-        .code-wrapper .token.property { color:#79c0ff !important; }
-        .code-wrapper .token.constant { color:#79c0ff !important; font-weight:600 !important; }
-        .code-wrapper .token.triple-quoted-string,
-        .code-wrapper .token.string.triple-quoted { color:#a5d6ff !important; }
-        .code-wrapper .token.imports .token.keyword { color:#ff7b72 !important; }
-        .code-wrapper .token.imports .token.punctuation { color:#c9d1d9 !important; }
-
-        /* Light mode overrides */
-        body.light-mode .code-wrapper pre,
-        body.light-mode .code-wrapper pre[class*="language-"] {
-            background:#1e293b !important;
-            color:#e2e8f0 !important;
-        }
-        body.light-mode .code-wrapper pre code,
-        body.light-mode .code-wrapper pre code[class*="language-"] {
-            color:#e2e8f0 !important;
-            text-shadow:none !important;
-        }
+        .code-wrapper .token.comment,.code-wrapper .token.prolog,.code-wrapper .token.doctype{color:#8b949e !important;font-style:italic}
+        .code-wrapper .token.keyword{color:#ff7b72 !important;font-weight:600 !important}
+        .code-wrapper .token.builtin{color:#79c0ff !important}
+        .code-wrapper .token.function{color:#d2a8ff !important}
+        .code-wrapper .token.class-name{color:#7ee787 !important}
+        .code-wrapper .token.string,.code-wrapper .token.attr-value{color:#a5d6ff !important}
+        .code-wrapper .token.number{color:#79c0ff !important}
+        .code-wrapper .token.boolean{color:#ff7b72 !important}
+        .code-wrapper .token.operator{color:#ff7b72 !important}
+        .code-wrapper .token.punctuation{color:#c9d1d9 !important}
+        .code-wrapper .token.decorator{color:#d2a8ff !important}
+        .code-wrapper .token.variable{color:#ffa657 !important}
+        .code-wrapper .token.property{color:#79c0ff !important}
+        .code-wrapper .token.constant{color:#79c0ff !important;font-weight:600 !important}
+        .code-wrapper .token.triple-quoted-string,.code-wrapper .token.string.triple-quoted{color:#a5d6ff !important}
+        .code-wrapper .token.imports .token.keyword{color:#ff7b72 !important}
+        .code-wrapper .token.imports .token.punctuation{color:#c9d1d9 !important}
+        body.light-mode .code-wrapper pre,body.light-mode .code-wrapper pre[class*="language-"]{background:#1e293b !important;color:#e2e8f0 !important}
+        body.light-mode .code-wrapper pre code,body.light-mode .code-wrapper pre code[class*="language-"]{color:#e2e8f0 !important;text-shadow:none !important}
     </style>
 </head>
 <body>
 
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fa-solid fa-diagram-project"></i> LangGraph</a>
+  <div class="nav-links">
+    <a href="/cs/index.html"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
+    <a href="#step-1" data-step="1">Intro</a>
+    <a href="#step-2" data-step="2">Setup</a>
+    <a href="#step-3" data-step="3">Concepts</a>
+    <a href="#step-6" data-step="6">First Graph</a>
+    <a href="#step-10" data-step="10">Project</a>
+    <a href="#step-11" data-step="11">Django</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="/cs/index.html"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
+  <a href="#step-1" data-step="1">Intro</a>
+  <a href="#step-2" data-step="2">Setup</a>
+  <a href="#step-3" data-step="3">Concepts</a>
+  <a href="#step-6" data-step="6">First Graph</a>
+  <a href="#step-10" data-step="10">Project</a>
+  <a href="#step-11" data-step="11">Django</a>
+</div>
+
 <!-- Progress Bar -->
 <div id="progress-bar" style="width:10%"></div>
 
-<!-- Back to Course -->
-<a href="/cs/index.html" class="back-link">
-    <i class="fa-solid fa-arrow-left"></i> Back to Course
-</a>
+<section class="hero"><div class="hero-content">
+  <h1>LangGraph Tutorial</h1>
+  <p class="hero-sub">Build intelligent agents with graph-based orchestration. From fundamentals to multi-agent systems in 10 steps.</p>
+  <span class="diff-badge">11 Steps</span> <span class="cat-badge"><i class="fa-solid fa-calendar"></i> Week 5 Curriculum</span>
+</div></section>
 
-<!-- Header -->
-<header class="site-header">
-    <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
-        <i class="fa-solid fa-sun"></i>
-    </button>
-    <h1><i class="fa-solid fa-diagram-project"></i> LangGraph Tutorial</h1>
-    <p class="subtitle">Build intelligent agents with graph-based orchestration. From fundamentals to multi-agent systems in 10 steps.</p>
-    <span class="badge"><i class="fa-solid fa-calendar"></i> Week 5 Curriculum</span>
-</header>
+<div class="container">
 
-<!-- Sidebar Toggle (mobile) -->
-<button class="sidebar-toggle" id="sidebarToggle">
-    <i class="fa-solid fa-bars"></i>
-</button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Main Layout -->
-<div class="main-wrapper">
-
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-title">Tutorial Steps</div>
-        <ul class="step-nav">
-            <li><button class="step-btn active" data-step="1"><span class="step-number">1</span><span class="step-label">Introduction to LangGraph</span></button></li>
-            <li><button class="step-btn" data-step="2"><span class="step-number">2</span><span class="step-label">Installation &amp; Setup</span></button></li>
-            <li><button class="step-btn" data-step="3"><span class="step-number">3</span><span class="step-label">Core Concepts &ndash; State</span></button></li>
-            <li><button class="step-btn" data-step="4"><span class="step-number">4</span><span class="step-label">Core Concepts &ndash; Nodes</span></button></li>
-            <li><button class="step-btn" data-step="5"><span class="step-number">5</span><span class="step-label">Core Concepts &ndash; Edges</span></button></li>
-            <li><button class="step-btn" data-step="6"><span class="step-number">6</span><span class="step-label">Building Your First Graph</span></button></li>
-            <li><button class="step-btn" data-step="7"><span class="step-number">7</span><span class="step-label">Tool Integration</span></button></li>
-            <li><button class="step-btn" data-step="8"><span class="step-number">8</span><span class="step-label">Conditional Routing &amp; Cycles</span></button></li>
-            <li><button class="step-btn" data-step="9"><span class="step-number">9</span><span class="step-label">Checkpointing &amp; Human-in-the-Loop</span></button></li>
-            <li><button class="step-btn" data-step="10"><span class="step-number">10</span><span class="step-label">Complete Project &ndash; Multi-Agent System</span></button></li>
-            <li><button class="step-btn" data-step="11"><span class="step-number">11</span><span class="step-label">Django Integration</span></button></li>
-        </ul>
-    </aside>
-
-    <!-- Content Area -->
-    <main class="content-area">
+    <!-- Step picker -->
+    <div class="section fade-up" id="steps">
+        <h2 class="section-title"><i class="fa-solid fa-list-ol"></i> Tutorial Steps</h2>
+        <div class="step-nav">
+                <button class="step-btn active" data-step="1"><span class="step-number">1</span><span class="step-label">Introduction to LangGraph</span></button>
+                <button class="step-btn" data-step="2"><span class="step-number">2</span><span class="step-label">Installation &amp; Setup</span></button>
+                <button class="step-btn" data-step="3"><span class="step-number">3</span><span class="step-label">Core Concepts &ndash; State</span></button>
+                <button class="step-btn" data-step="4"><span class="step-number">4</span><span class="step-label">Core Concepts &ndash; Nodes</span></button>
+                <button class="step-btn" data-step="5"><span class="step-number">5</span><span class="step-label">Core Concepts &ndash; Edges</span></button>
+                <button class="step-btn" data-step="6"><span class="step-number">6</span><span class="step-label">Building Your First Graph</span></button>
+                <button class="step-btn" data-step="7"><span class="step-number">7</span><span class="step-label">Tool Integration</span></button>
+                <button class="step-btn" data-step="8"><span class="step-number">8</span><span class="step-label">Conditional Routing &amp; Cycles</span></button>
+                <button class="step-btn" data-step="9"><span class="step-number">9</span><span class="step-label">Checkpointing &amp; Human-in-the-Loop</span></button>
+                <button class="step-btn" data-step="10"><span class="step-number">10</span><span class="step-label">Complete Project &ndash; Multi-Agent System</span></button>
+                <button class="step-btn" data-step="11"><span class="step-number">11</span><span class="step-label">Django Integration</span></button>
+        </div>
+    </div>
 
         <!-- ==================== STEP 1 ==================== -->
-        <div class="step-content active" id="step-1">
-            <h2><span class="step-tag">Step 1 of 11</span>Introduction to LangGraph</h2>
+        <div class="section step-content active" id="step-1">
+            <span class="step-tag">Step 1 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-book-open"></i> Introduction to LangGraph</h2>
 
             <p>LangGraph is a framework for building <strong>stateful, multi-actor applications</strong> powered by large language models. Developed by LangChain Inc., it lets you model agent workflows as <strong>graphs</strong> rather than linear chains, enabling cycles, branching, and complex orchestration patterns that traditional sequential pipelines simply cannot express.</p>
 
@@ -502,7 +163,7 @@
             <h3>LangGraph vs. LangChain</h3>
             <p>LangGraph is <strong>not a replacement</strong> for LangChain. They serve different purposes and work together.</p>
 
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Feature</th>
@@ -542,7 +203,7 @@
                         <td>Checkpointing built-in</td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
 
             <h3>Core Philosophy: Agents as Graphs</h3>
             <p>In LangGraph, every agent workflow is modeled using three primitives:</p>
@@ -618,20 +279,21 @@
                 <li>Complex pipelines with <strong>conditional branching</strong> and error handling</li>
             </ul>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>What you will build:</strong> By the end of this tutorial, you will create a multi-agent research assistant system with tool integration, conditional routing, memory persistence, and human-in-the-loop capabilities.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn disabled" disabled><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(2)">Next: Installation &amp; Setup <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev disabled" disabled><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(2)">Next: Installation &amp; Setup <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 2 ==================== -->
-        <div class="step-content" id="step-2">
-            <h2><span class="step-tag">Step 2 of 11</span>Installation &amp; Setup</h2>
+        <div class="section step-content" id="step-2">
+            <span class="step-tag">Step 2 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-download"></i> Installation &amp; Setup</h2>
 
             <p>Before we start building graphs, let's set up our development environment with all the necessary packages and configuration.</p>
 
@@ -641,7 +303,7 @@
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">bash</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python"># Install core LangGraph and LangChain packages
 pip install langgraph langchain-openai langchain-core
@@ -659,7 +321,7 @@ python -c "import langgraph; print(f'LangGraph version: {langgraph.__version__}'
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">import os
 
@@ -675,7 +337,7 @@ load_dotenv()  # reads from .env file in project root
 os.environ["TAVILY_API_KEY"] = "tvly-your-key-here"</code></pre>
             </div>
 
-            <div class="warning-box">
+            <div class="info-box warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div><strong>Security Warning:</strong> Never hardcode API keys in your source code. Use environment variables or a <code>.env</code> file that is listed in your <code>.gitignore</code>.</div>
             </div>
@@ -686,7 +348,7 @@ os.environ["TAVILY_API_KEY"] = "tvly-your-key-here"</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">text</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">langgraph-tutorial/
 ├── .env                  # API keys (add to .gitignore!)
@@ -704,7 +366,7 @@ os.environ["TAVILY_API_KEY"] = "tvly-your-key-here"</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python"># --- Graph construction ---
 from langgraph.graph import StateGraph, START, END
@@ -740,7 +402,7 @@ import operator</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
@@ -752,20 +414,21 @@ print(response.content)
 # Expected output: LangGraph is ready!</code></pre>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>Checkpoint:</strong> If you see a response from the LLM, your environment is correctly set up. You are ready to start building graphs.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(3)">Next: Core Concepts &ndash; State <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(3)">Next: Core Concepts &ndash; State <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 3 ==================== -->
-        <div class="step-content" id="step-3">
-            <h2><span class="step-tag">Step 3 of 11</span>Core Concepts &ndash; State</h2>
+        <div class="section step-content" id="step-3">
+            <span class="step-tag">Step 3 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-database"></i> Core Concepts &ndash; State</h2>
 
             <p><strong>State</strong> is the central nervous system of every LangGraph application. It is a shared data structure that flows through every node in the graph, carrying all the information the agent needs to make decisions.</p>
 
@@ -798,7 +461,7 @@ print(response.content)
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from typing import TypedDict
 
@@ -818,7 +481,7 @@ class AgentState(TypedDict):
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph.message import MessagesState
 
@@ -844,7 +507,7 @@ class AgentState(TypedDict):
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from typing import TypedDict, Annotated
 from langchain_core.messages import AnyMessage
@@ -869,7 +532,7 @@ class ResearchState(TypedDict):
             </div>
 
             <h4>Reducer Behavior Summary</h4>
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Reducer</th>
@@ -894,7 +557,7 @@ class ResearchState(TypedDict):
                         <td><code>[a, b]</code> + <code>[c]</code> = <code>[a, b, c]</code></td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
 
             <h3>Complete State Example</h3>
             <p>Here is a practical example showing how state flows through a simple two-node graph:</p>
@@ -902,7 +565,7 @@ class ResearchState(TypedDict):
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from typing import TypedDict, Annotated
 import operator
@@ -932,20 +595,21 @@ def add_ten(state: CounterState) -> dict:
 # After add_ten:   {"value": 20, "history": ["doubled to 10", "added 10 to get 20"]}</code></pre>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>Key Takeaway:</strong> State design is the most important decision in a LangGraph application. Choose your keys and reducers carefully - they determine how data flows through your entire system.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(4)">Next: Core Concepts &ndash; Nodes <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(4)">Next: Core Concepts &ndash; Nodes <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 4 ==================== -->
-        <div class="step-content" id="step-4">
-            <h2><span class="step-tag">Step 4 of 11</span>Core Concepts &ndash; Nodes</h2>
+        <div class="section step-content" id="step-4">
+            <span class="step-tag">Step 4 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-circle-nodes"></i> Core Concepts &ndash; Nodes</h2>
 
             <p><strong>Nodes</strong> are the workhorses of a LangGraph graph. Each node is simply a Python function that takes the current state as input, performs some operation, and returns a partial state update.</p>
 
@@ -955,7 +619,7 @@ def add_ten(state: CounterState) -> dict:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">def my_node(state: MyState) -> dict:
     """
@@ -987,7 +651,7 @@ def add_ten(state: CounterState) -> dict:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph.message import MessagesState
 from langchain_openai import ChatOpenAI
@@ -1009,7 +673,7 @@ def chatbot_node(state: MessagesState) -> dict:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langchain_core.messages import ToolMessage
 import json
@@ -1046,7 +710,7 @@ def tool_executor_node(state: MessagesState) -> dict:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from typing import TypedDict, Annotated
 import operator
@@ -1086,7 +750,7 @@ def summarize_text(state: AnalysisState) -> dict:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph
 
@@ -1100,25 +764,26 @@ graph.add_node("summarize", summarize_text)
 # Node names are used when defining edges (next step!)</code></pre>
             </div>
 
-            <div class="warning-box">
+            <div class="info-box warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div><strong>Common Mistake:</strong> Node names must be unique strings within a graph. If you add two nodes with the same name, the second one will overwrite the first.</div>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>Key Takeaway:</strong> Nodes are just Python functions. They can call LLMs, execute tools, process data, make API calls, or anything else. The only requirement is: take state in, return partial state out.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(3)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(5)">Next: Core Concepts &ndash; Edges <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(3)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(5)">Next: Core Concepts &ndash; Edges <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 5 ==================== -->
-        <div class="step-content" id="step-5">
-            <h2><span class="step-tag">Step 5 of 11</span>Core Concepts &ndash; Edges</h2>
+        <div class="section step-content" id="step-5">
+            <span class="step-tag">Step 5 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-arrows-turn-to-dots"></i> Core Concepts &ndash; Edges</h2>
 
             <p><strong>Edges</strong> define the flow of execution between nodes. They determine which node runs next after the current node finishes. LangGraph supports three types of edges: normal edges, conditional edges, and entry/finish points.</p>
 
@@ -1128,7 +793,7 @@ graph.add_node("summarize", summarize_text)
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph, START, END
 
@@ -1163,7 +828,7 @@ graph.add_edge("generate_report", END)       # Exit point</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from typing import Literal
 
@@ -1199,7 +864,7 @@ graph.add_conditional_edges(
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python"># This creates the classic ReAct agent loop:
 #   START -> agent -> (tools -> agent -> tools -> ...) -> END
@@ -1246,7 +911,7 @@ graph.add_edge("tool_node", "agent")   # This creates the cycle!</code></pre>
             </div>
 
             <h3>Edge Types Summary</h3>
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Edge Type</th>
@@ -1276,17 +941,18 @@ graph.add_edge("tool_node", "agent")   # This creates the cycle!</code></pre>
                         <td>Graph termination</td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(4)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(6)">Next: Building Your First Graph <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(4)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(6)">Next: Building Your First Graph <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 6 ==================== -->
-        <div class="step-content" id="step-6">
-            <h2><span class="step-tag">Step 6 of 11</span>Building Your First Graph</h2>
+        <div class="section step-content" id="step-6">
+            <span class="step-tag">Step 6 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-hammer"></i> Building Your First Graph</h2>
 
             <p>Now that you understand State, Nodes, and Edges, let's put them all together and build a <strong>complete, runnable chatbot</strong> using LangGraph. This is the "Hello World" of graph-based agents.</p>
 
@@ -1304,7 +970,7 @@ graph.add_edge("tool_node", "agent")   # This creates the cycle!</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import MessagesState
@@ -1344,7 +1010,7 @@ result = graph.invoke({
 print(result["messages"][-1].content)</code></pre>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>That's it!</strong> You have just built your first LangGraph application. The five steps above (LLM, node, graph, compile, invoke) are the pattern you will use for every LangGraph project.</div>
             </div>
@@ -1372,7 +1038,7 @@ print(result["messages"][-1].content)</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import MessagesState
@@ -1408,7 +1074,7 @@ while True:
     print(f"\nBot: {ai_message.content}")</code></pre>
             </div>
 
-            <div class="warning-box">
+            <div class="info-box warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div><strong>No Memory Yet:</strong> This chatbot does not remember previous messages across invocations. Each <code>invoke()</code> call starts fresh. We will add memory with checkpointing in Step 9.</div>
             </div>
@@ -1419,7 +1085,7 @@ while True:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python"># Stream events from the graph
 for event in graph.stream(
@@ -1431,15 +1097,16 @@ for event in graph.stream(
     last_msg.pretty_print()</code></pre>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(5)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(7)">Next: Tool Integration <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(5)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(7)">Next: Tool Integration <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 7 ==================== -->
-        <div class="step-content" id="step-7">
-            <h2><span class="step-tag">Step 7 of 11</span>Tool Integration</h2>
+        <div class="section step-content" id="step-7">
+            <span class="step-tag">Step 7 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-wrench"></i> Tool Integration</h2>
 
             <p>Tools give your agent the ability to <strong>take actions</strong> in the real world: search the web, query databases, call APIs, perform calculations, and more. LangGraph makes tool integration seamless with the <code>@tool</code> decorator and prebuilt components.</p>
 
@@ -1449,7 +1116,7 @@ for event in graph.stream(
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langchain_core.tools import tool
 
@@ -1492,7 +1159,7 @@ tools = [web_search, calculator]</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langchain_openai import ChatOpenAI
 
@@ -1508,7 +1175,7 @@ llm_with_tools = llm.bind_tools(tools)</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.prebuilt import ToolNode
 
@@ -1528,7 +1195,7 @@ tool_node = ToolNode(tools)
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.prebuilt import tools_condition
 
@@ -1546,7 +1213,7 @@ graph.add_conditional_edges("chatbot", tools_condition)</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import MessagesState
@@ -1612,15 +1279,16 @@ for msg in result["messages"]:
                 <div><strong>How It Works:</strong> The LLM sees the user message, decides it needs to call <code>web_search</code> and <code>calculator</code>, the <code>ToolNode</code> executes them, and the results are sent back to the LLM which then generates a final response combining all the information.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(6)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(8)">Next: Conditional Routing &amp; Cycles <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(6)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(8)">Next: Conditional Routing &amp; Cycles <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 8 ==================== -->
-        <div class="step-content" id="step-8">
-            <h2><span class="step-tag">Step 8 of 11</span>Conditional Routing &amp; Cycles</h2>
+        <div class="section step-content" id="step-8">
+            <span class="step-tag">Step 8 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-code-branch"></i> Conditional Routing &amp; Cycles</h2>
 
             <p>The real power of LangGraph lies in its ability to express <strong>cycles</strong> -- loops where the agent repeatedly reasons and acts until a task is complete. This is the foundation of the <strong>ReAct (Reason + Act)</strong> pattern.</p>
 
@@ -1640,7 +1308,7 @@ for msg in result["messages"]:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from typing import Literal
 
@@ -1671,7 +1339,7 @@ def should_continue(state: MessagesState) -> Literal["tools", "__end__"]:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import MessagesState
@@ -1794,7 +1462,7 @@ for msg in result["messages"]:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">MAX_ITERATIONS = 5
 
@@ -1817,20 +1485,21 @@ def should_continue_with_limit(state: MessagesState) -> Literal["tools", "__end_
     return "__end__"</code></pre>
             </div>
 
-            <div class="warning-box">
+            <div class="info-box warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div><strong>Safety Tip:</strong> Always consider adding iteration limits to prevent runaway agents. LangGraph also supports a <code>recursion_limit</code> parameter in the config when invoking: <code>graph.invoke(input, config={"recursion_limit": 25})</code>.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(7)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(9)">Next: Checkpointing &amp; Human-in-the-Loop <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(7)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(9)">Next: Checkpointing &amp; Human-in-the-Loop <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 9 ==================== -->
-        <div class="step-content" id="step-9">
-            <h2><span class="step-tag">Step 9 of 11</span>Checkpointing &amp; Human-in-the-Loop</h2>
+        <div class="section step-content" id="step-9">
+            <span class="step-tag">Step 9 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-floppy-disk"></i> Checkpointing &amp; Human-in-the-Loop</h2>
 
             <p>Real-world agents need <strong>memory</strong> and <strong>human oversight</strong>. LangGraph provides built-in support for both through its checkpointing system.</p>
 
@@ -1845,7 +1514,7 @@ def should_continue_with_limit(state: MessagesState) -> Literal["tools", "__end_
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START, END
@@ -1876,7 +1545,7 @@ graph = graph_builder.compile(checkpointer=memory)</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python"># ── Conversation with memory ──────────────────────────────
 config = {"configurable": {"thread_id": "user-123"}}
@@ -1907,7 +1576,7 @@ print(result3["messages"][-1].content)
 # Output: "I don't know your name. Could you tell me?"</code></pre>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>Key Insight:</strong> The <code>thread_id</code> acts like a session ID. All invocations with the same <code>thread_id</code> share the same conversation history. Different <code>thread_id</code> values are completely isolated.</div>
             </div>
@@ -1918,7 +1587,7 @@ print(result3["messages"][-1].content)
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import MessagesState
@@ -1984,7 +1653,7 @@ else:
             </div>
 
             <h3>How Interruption Works</h3>
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Parameter</th>
@@ -2004,22 +1673,23 @@ else:
                         <td>Review agent's reasoning</td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
 
             <div class="info-box">
                 <i class="fa-solid fa-lightbulb"></i>
                 <div><strong>Production Usage:</strong> In production, <code>MemorySaver</code> stores state in memory (lost on restart). For persistence, use <code>SqliteSaver</code> or <code>PostgresSaver</code> from <code>langgraph-checkpoint-sqlite</code> or <code>langgraph-checkpoint-postgres</code>.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(8)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(10)">Next: Complete Project <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(8)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(10)">Next: Complete Project <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 10 ==================== -->
-        <div class="step-content" id="step-10">
-            <h2><span class="step-tag">Step 10 of 11</span>Complete Project &ndash; Multi-Agent Task System</h2>
+        <div class="section step-content" id="step-10">
+            <span class="step-tag">Step 10 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-people-group"></i> Complete Project &ndash; Multi-Agent Task System</h2>
 
             <p>In this final step, we bring everything together to build a <strong>multi-agent research assistant</strong> using the <strong>supervisor pattern</strong>. A supervisor agent decides which specialized worker agent should handle each part of a task.</p>
 
@@ -2073,7 +1743,7 @@ else:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">python</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">"""
 Multi-Agent Research Assistant with Supervisor Pattern
@@ -2333,7 +2003,7 @@ for msg in result["messages"]:
     print(f"  {msg.content[:100]}")</code></pre>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-check-circle"></i>
                 <div><strong>Congratulations!</strong> You have built a complete multi-agent system with a supervisor orchestrator, specialized worker agents, tools, state management, and memory persistence.</div>
             </div>
@@ -2348,7 +2018,7 @@ for msg in result["messages"]:
             </ul>
 
             <h3>Next Steps &amp; Resources</h3>
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Resource</th>
@@ -2373,22 +2043,23 @@ for msg in result["messages"]:
                         <td><a href="https://smith.langchain.com/" target="_blank">smith.langchain.com</a></td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
 
             <div class="info-box">
                 <i class="fa-solid fa-lightbulb"></i>
                 <div><strong>Pro Tip:</strong> Use <a href="https://smith.langchain.com/" target="_blank">LangSmith</a> to trace and debug your LangGraph applications in production. It shows you exactly which nodes executed, what state was passed, and how long each step took.</div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(9)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn" onclick="goToStep(11)">Next: Django Integration <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(9)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next" onclick="goToStep(11)">Next: Django Integration <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
 
         <!-- ==================== STEP 11 ==================== -->
-        <div class="step-content" id="step-11">
-            <h2><span class="step-tag">Step 11 of 11</span>Django Integration &ndash; Full Stack LangGraph App</h2>
+        <div class="section step-content" id="step-11">
+            <span class="step-tag">Step 11 of 11</span>
+            <h2 class="section-title"><i class="fa-solid fa-server"></i> Django Integration &ndash; Full Stack LangGraph App</h2>
 
             <p>In this step, we build a <strong>fully functional Django web application</strong> that integrates LangGraph as the AI backend. Users can chat with an AI agent through a web interface, and the LangGraph pipeline handles tool calls, state management, and conversation memory.</p>
 
@@ -2401,7 +2072,7 @@ for msg in result["messages"]:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">Project Layout</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">langgraph_django/
 ├── manage.py
@@ -2429,7 +2100,7 @@ for msg in result["messages"]:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">bash</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-bash"># Create project directory
 mkdir langgraph_django && cd langgraph_django
@@ -2450,7 +2121,7 @@ python manage.py startapp chat</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">requirements.txt</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">django>=5.0
 langgraph>=0.2.0
@@ -2464,14 +2135,14 @@ python-dotenv>=1.0.0</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">.env</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-bash">OPENAI_API_KEY=sk-your-openai-api-key-here
 DJANGO_SECRET_KEY=your-django-secret-key
 DEBUG=True</code></pre>
             </div>
 
-            <div class="warning-box">
+            <div class="info-box warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div><strong>Security:</strong> Never commit your <code>.env</code> file to version control. Add it to <code>.gitignore</code>.</div>
             </div>
@@ -2480,7 +2151,7 @@ DEBUG=True</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">config/settings.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">import os
 from pathlib import Path
@@ -2551,7 +2222,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"</code></pre>
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">chat/agent.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">"""
 LangGraph Agent for Django Integration
@@ -2693,7 +2364,7 @@ def chat_with_agent(user_message: str, thread_id: str = "default") -> str:
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">config/urls.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from django.contrib import admin
 from django.urls import path, include
@@ -2707,7 +2378,7 @@ urlpatterns = [
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">chat/urls.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">from django.urls import path
 from . import views
@@ -2723,7 +2394,7 @@ urlpatterns = [
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">chat/views.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">import json
 import uuid
@@ -2789,7 +2460,7 @@ def reset_chat(request):
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">chat/templates/chat/index.html</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-python">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
@@ -2968,7 +2639,7 @@ async function resetChat() {
             <div class="code-wrapper">
                 <div class="code-header">
                     <span class="code-lang">bash</span>
-                    <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="code-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                 </div>
                 <pre><code class="language-bash"># Apply migrations
 python manage.py migrate
@@ -2979,7 +2650,7 @@ python manage.py runserver
 # Open in browser: http://127.0.0.1:8000/</code></pre>
             </div>
 
-            <div class="success-box">
+            <div class="info-box success">
                 <i class="fa-solid fa-circle-check"></i>
                 <div><strong>That's it!</strong> Open <code>http://127.0.0.1:8000</code> in your browser. You'll see the chat UI. Try these messages:
                     <ul style="margin-top:8px;padding-left:18px;">
@@ -3050,19 +2721,18 @@ python manage.py runserver
                 </div>
             </div>
 
-            <div class="step-nav-buttons">
-                <button class="nav-btn" onclick="goToStep(10)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="nav-btn next-btn disabled" disabled>Tutorial Complete <i class="fa-solid fa-check"></i></button>
+            <div class="page-nav">
+                <button class="nav-btn prev" onclick="goToStep(10)"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="nav-btn next disabled" disabled>Tutorial Complete <i class="fa-solid fa-check"></i></button>
             </div>
         </div>
 
-    </main>
+
+    <div class="page-nav"><a class="nav-btn prev" href="/">← Home</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
 </div>
 
-<!-- Footer -->
-<footer class="site-footer">
-    <p>&copy; 2026 albanna-tutorials.com &mdash; Week 5: LangGraph Tutorial &mdash; Built for AI Engineering Course</p>
-</footer>
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
 <!-- Prism.js for syntax highlighting -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -3088,9 +2758,10 @@ function goToStep(step) {
 
     // Hide all step contents, show target
     document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-    document.getElementById('step-' + step).classList.add('active');
+    const pane = document.getElementById('step-' + step);
+    pane.classList.add('active');
 
-    // Update sidebar buttons
+    // Update step picker buttons
     document.querySelectorAll('.step-btn').forEach(btn => {
         const btnStep = parseInt(btn.dataset.step);
         btn.classList.remove('active');
@@ -3106,13 +2777,8 @@ function goToStep(step) {
     const progress = (step / totalSteps) * 100;
     document.getElementById('progress-bar').style.width = progress + '%';
 
-    // Scroll content area to top
-    document.querySelector('.content-area').scrollTop = 0;
-    window.scrollTo({top: 0, behavior: 'smooth'});
-
-    // Close mobile sidebar if open
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebarOverlay').classList.remove('open');
+    // Scroll to the top of the selected step (below the fixed navbar)
+    window.scrollTo({top: pane.getBoundingClientRect().top + window.pageYOffset - 84, behavior: 'smooth'});
 
     // Re-highlight code
     if (typeof Prism !== 'undefined') {
@@ -3120,21 +2786,19 @@ function goToStep(step) {
     }
 }
 
-// ── Sidebar click handlers ─────────────────────────────
+// ── Step picker click handlers ─────────────────────────
 document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         goToStep(parseInt(btn.dataset.step));
     });
 });
 
-// ── Mobile sidebar toggle ──────────────────────────────
-document.getElementById('sidebarToggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebarOverlay').classList.toggle('open');
-});
-document.getElementById('sidebarOverlay').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebarOverlay').classList.remove('open');
+// ── Navbar / mobile-menu step links ────────────────────
+document.querySelectorAll('a[data-step]').forEach(a => {
+    a.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToStep(parseInt(a.dataset.step));
+    });
 });
 
 // ── Copy button ────────────────────────────────────────
@@ -3167,41 +2831,6 @@ function copyCode(button) {
     });
 }
 
-// ── Theme toggle ───────────────────────────────────────
-const themeToggle = document.getElementById('themeToggle');
-const prismDark = document.getElementById('prism-theme-dark');
-const prismLight = document.getElementById('prism-theme-light');
-
-function setTheme(mode) {
-    if (mode === 'light') {
-        document.body.classList.add('light-mode');
-        themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-        prismDark.disabled = true;
-        prismLight.disabled = false;
-        localStorage.setItem('theme', 'light');
-    } else {
-        document.body.classList.remove('light-mode');
-        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        prismDark.disabled = false;
-        prismLight.disabled = true;
-        localStorage.setItem('theme', 'dark');
-    }
-    if (typeof Prism !== 'undefined') {
-        Prism.highlightAll();
-    }
-}
-
-themeToggle.addEventListener('click', () => {
-    const isLight = document.body.classList.contains('light-mode');
-    setTheme(isLight ? 'dark' : 'light');
-});
-
-// Load saved theme
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    setTheme(savedTheme);
-}
-
 // ── Keyboard navigation ────────────────────────────────
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && currentStep > 1) {
@@ -3218,6 +2847,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
+<script src="/assets/theme.js"></script>
 </body>
 </html>

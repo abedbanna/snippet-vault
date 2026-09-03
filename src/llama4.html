@@ -13,827 +13,423 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLAMA4 - Meta's Advanced AI Models</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="An interactive guide to Meta's LLAMA4 Scout and Maverick: mixture-of-experts architecture, native multimodality, 10M-token context, benchmarks and how to use them.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-        .section-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-        }
-        .section-expanded .section-content {
-            max-height: 5000px;
-        }
-        .section-header {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .section-header:hover {
-            transform: translateX(5px);
-        }
-        .section-icon {
-            transition: transform 0.3s ease;
-        }
-        .section-expanded .section-icon {
-            transform: rotate(90deg);
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted #2563eb;
-            cursor: help;
-        }
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 300px;
-            background-color: #2563eb;
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-        .image-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-        .image-container:hover {
-            transform: scale(1.02);
-        }
-        .image-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 16px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .image-container:hover .image-caption {
-            opacity: 1;
-        }
-        .nav-pill {
-            transition: all 0.3s ease;
-        }
-        .nav-pill:hover {
-            transform: translateY(-3px);
-        }
-        .nav-pill.active {
-            background-color: #2563eb;
-            color: white;
-        }
-        .highlight-box {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-left: 4px solid #2563eb;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-            }
-        }
-        .code-block {
-            background-color: #1e293b;
-            color: #f8fafc;
-            font-family: monospace;
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-        }
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .model-comparison-table td, .model-comparison-table th {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .model-comparison-table th {
-            background-color: #f3f4f6;
-            font-weight: 600;
-        }
-        .feature-icon {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
+        :root{--primary:#6366f1;--primary-hover:#818cf8;--glow:rgba(99,102,241,.14)}
+        /* page-specific */
+        .nav-logo img{width:26px;height:26px;border-radius:6px;object-fit:cover}
+        .grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+        .grid.three{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+        .grid.stack{grid-template-columns:1fr}
+        .grid+.grid,.grid+.info-box,.info-box+.grid,.grid+figure,figure+.grid{margin-top:24px}
+        .card>h3:first-child,.card .card-head{margin-top:0}
+        .card h3{font-size:1.15rem}
+        .card h3.accent{color:var(--primary)}
+        .card-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+        .card-head i{font-size:1.5rem;color:var(--primary)}
+        .card-head h3{margin:0;font-size:1.35rem}
+        .card-lead{margin-bottom:12px}
+        .section .icon-list{list-style:none;padding-left:0;margin:8px 0 4px}
+        .section .icon-list li{display:flex;align-items:flex-start;gap:10px;margin:8px 0;color:var(--text2);line-height:1.6}
+        .section .icon-list li>i{margin-top:5px;flex-shrink:0;color:var(--primary)}
+        .section .icon-list li>i.ok{color:var(--success)}
+        .section .icon-list li>i.gold{color:var(--warning)}
+        .section .icon-list.two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:4px 20px}
+        .spec-list{margin:6px 0 4px}
+        .spec-row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.9rem;color:var(--text2)}
+        .spec-row span:first-child{font-weight:600;color:var(--text);flex-shrink:0}
+        .spec-row span:last-child{text-align:right}
+        .tags{margin-top:6px}
+        .feature-card{text-align:center}
+        .feature-card h3{justify-content:center;font-size:1.1rem}
+        .feature-icon{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary-hover) 0%,var(--primary) 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 14px}
+        .use-card{padding:0;overflow:hidden}
+        .use-head{background:var(--primary);color:#fff;padding:16px 22px;font-size:1.9rem;display:flex;align-items:center;justify-content:center}
+        .use-body{padding:22px}
+        .use-body .icon-list li{font-size:.9rem;font-weight:500;margin:5px 0}
+        .use-body .icon-list li>i{margin-top:4px}
+        .mini{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:14px 16px}
+        .mini h4{margin:0 0 6px;color:var(--primary)}
+        .mini p{margin:0;font-size:.9rem}
+        .info-box h4{color:var(--primary);margin:0 0 6px}
+        .info-box h3.lg{font-size:1.15rem}
+        .tooltip{position:relative;display:inline-block;border-bottom:1px dotted var(--primary);cursor:help;color:var(--primary);font-weight:600}
+        .tooltip .tooltip-text{visibility:hidden;width:300px;max-width:80vw;background:var(--primary);color:#fff;text-align:center;border-radius:6px;padding:8px;position:absolute;z-index:5;bottom:125%;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .3s;font-size:.8rem;font-weight:400;line-height:1.5}
+        .tooltip:hover .tooltip-text{visibility:visible;opacity:1}
+        .section-title.collapsible{cursor:pointer;user-select:none}
+        .section-title .chev{margin-left:auto;font-size:1rem;color:var(--text2);transition:transform .25s}
+        .section.collapsed .chev{transform:rotate(-90deg)}
+        .section.collapsed .section-body{display:none}
+        .faq-list{display:flex;flex-direction:column;gap:14px}
+        .faq-list .card:hover{transform:none}
+        .faq-list h3{font-size:1.1rem}
+        .faq-list p{margin:0}
+        .btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+        .btn-row.center{justify-content:center}
+        .centered{text-align:center;margin-top:32px}
+        .centered h3{justify-content:center}
+        .centered p{max-width:680px;margin:0 auto 16px}
+        .cta{background:linear-gradient(135deg,var(--primary) 0%,#4338ca 100%);border-color:transparent}
+        .cta h2{color:#fff;font-size:1.8rem;font-weight:700;margin-bottom:12px;line-height:1.2}
+        .cta p{color:rgba(255,255,255,.9);font-size:1.05rem;max-width:640px}
+        .cta .btn-light{background:#fff;color:var(--primary)}
+        .cta .btn-light:hover{background:#eef2ff;color:#4338ca}
+        .cta .btn-ghost{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)}
+        .cta .btn-ghost:hover{background:rgba(255,255,255,.28);color:#fff}
+        body.light-mode .cta{box-shadow:0 4px 14px rgba(99,102,241,.25)}
+        .section .link-list{list-style:none;padding-left:0}
+        .section .link-list li{margin:6px 0}
+        .resources-bottom{border-top:1px solid var(--border2);margin-top:24px;padding-top:20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+        .resources-bottom p{margin:0;font-size:.85rem}
+        .social{display:flex;gap:18px;font-size:1.3rem}
+        .social a{color:var(--text2)}.social a:hover{color:var(--primary)}
+        @media(max-width:768px){.cta h2{font-size:1.5rem}.spec-row{flex-direction:column;gap:2px}.spec-row span:last-child{text-align:left}}
     </style>
-<style id="dark-theme-override">
-:root {
-    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-    --text:#f1f5f9;--text2:#94a3b8;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-    --code:#0d1117;
-}
-body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
-.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
-.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
-.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
-h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
-.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
-pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
-table, th, td { border-color:var(--border2)!important; }
-th { background:var(--surface2)!important; color:var(--text)!important; }
-td { background:var(--surface)!important; color:var(--text2)!important; }
-tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
-a { color:var(--primary)!important; }
-a:hover { color:#60a5fa!important; }
-.badge { opacity:0.9; }
-nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
-nav a, .navbar a, .nav-link { color:var(--text2)!important; }
-nav a:hover, .navbar a:hover { color:var(--text)!important; }
-.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
-.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
-.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
-.sidebar a, aside a { color:var(--text2)!important; }
-.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
-.sidebar a.active, aside a.active { color:var(--primary)!important; }
-footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
-img { border-radius:8px; }
-.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
-/* Light mode */
-body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
-body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
-body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
-body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
-body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
-body.light-mode footer { background:#e2e8f0!important; }
-body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
-</style>
 </head>
-<body class="bg-gray-50">
-<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 px-4 relative overflow-hidden">
-        <div class="container mx-auto max-w-5xl relative z-10">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">LLAMA4: Meta's Most Advanced AI Models</h1>
-            <p class="text-xl md:text-2xl mb-6 max-w-3xl">The next generation of open-weight natively multimodal large language models</p>
-            <p class="text-lg opacity-90 max-w-3xl">An interactive guide to understanding LLAMA4 Scout and Maverick, their capabilities, and implementation</p>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><img src="images/logo.png" alt="LLAMA Logo"> LLAMA4</a>
+  <div class="nav-links">
+    <a href="#what-is-llama4">What is LLAMA4</a>
+    <a href="#models">Models</a>
+    <a href="#features">Features</a>
+    <a href="#technical-specs">Technical Specs</a>
+    <a href="#benchmarks">Benchmarks</a>
+    <a href="#how-to-use">How to Use</a>
+    <a href="#use-cases">Use Cases</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="#what-is-llama4">What is LLAMA4</a>
+  <a href="#models">Models</a>
+  <a href="#features">Features</a>
+  <a href="#technical-specs">Technical Specs</a>
+  <a href="#benchmarks">Benchmarks</a>
+  <a href="#how-to-use">How to Use</a>
+  <a href="#use-cases">Use Cases</a>
+  <a href="/cs/index.html">Back to Course</a>
+</div>
+
+<section class="hero"><div class="hero-content">
+  <h1>LLAMA4: Meta's Most Advanced AI Models</h1>
+  <p class="hero-sub">The next generation of open-weight natively multimodal large language models</p>
+  <p class="hero-meta">An interactive guide to understanding LLAMA4 Scout and Maverick, their capabilities, and implementation</p>
+  <span class="diff-badge">Interactive Guide</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~30 min</span>
+</div></section>
+
+<div class="container">
+
+  <!-- Introduction -->
+  <div class="section fade-up" id="intro">
+    <div class="info-box">
+      <p>LLAMA4 represents Meta's most advanced AI models to date, designed as natively multimodal models that can process both text and images with exceptional performance. The LLAMA4 herd introduces <span class="tooltip">mixture-of-experts architecture<span class="tooltip-text">A technique that divides tasks into smaller jobs and assigns each to specialized neural networks, achieving better performance with fewer active parameters</span></span> — providing breakthrough capabilities while maintaining efficiency.</p>
+    </div>
+    <div class="grid two">
+      <figure>
+        <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb433bedf-52ff-4a80-a603-c4e35b3aae12_960x540.jpeg" alt="LLAMA4 Visual Guide" loading="lazy">
+        <figcaption>Meta's LLAMA4 Models - The Next Generation of AI</figcaption>
+      </figure>
+      <div class="subsection" style="margin:0">
+        <h3><i class="fas fa-lightbulb"></i> Why LLAMA4 Matters</h3>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle ok"></i><span>First open-weight natively multimodal models with unprecedented context length</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Revolutionary mixture-of-experts architecture for enhanced efficiency</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Industry-leading context window of up to 10 million tokens (LLAMA4 Scout)</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Outperforms competing models like GPT-4o and Gemini 2.0 on various benchmarks</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Pre-trained on 200 languages with support for 12 major languages</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- What is LLAMA4 Section -->
+  <div class="section fade-up" id="what-is-llama4">
+    <h2 class="section-title collapsible"><i class="fas fa-circle-info"></i> What is LLAMA4? <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">LLAMA4 (Large Language and Multimodal AI) is Meta's most advanced suite of AI models, building upon the success of previous Llama generations. Released on April 5, 2025, LLAMA4 represents a significant leap forward in AI capabilities, introducing the first open-weight natively multimodal models with unprecedented context length support and the company's first built using a mixture-of-experts (MoE) architecture.</p>
+
+      <div class="grid two">
+        <div class="card">
+          <h3 class="accent">The LLAMA4 Herd</h3>
+          <p>LLAMA4 introduces three models in its herd: Scout, Maverick, and Behemoth (still in training). Each model is designed for different use cases while sharing the core capabilities of multimodal understanding and advanced reasoning.</p>
         </div>
-        <div class="absolute top-0 right-0 w-full h-full opacity-10">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full">
-                <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="#fff"></path>
-                <path d="M0,0 C40,40 60,40 100,0 V100 H0 Z" fill="#fff"></path>
-            </svg>
+        <div class="card">
+          <h3 class="accent">Natively Multimodal</h3>
+          <p>Unlike previous generations, LLAMA4 models are built with native multimodality from the ground up, incorporating early fusion to seamlessly integrate text and vision tokens into a unified model backbone.</p>
         </div>
-    </header>
+      </div>
 
-    <!-- Navigation -->
-    <nav class="bg-white py-4 px-4 sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto max-w-5xl flex flex-wrap items-center justify-between">
-            <div class="flex items-center space-x-1">
-                <img src="images/logo.png" alt="LLAMA Logo" class="w-8 h-8">
-                <span class="font-bold text-blue-600"><a href="index.html"> Home</a></span>
-            </div>
+      <figure>
+        <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/488655517_650996354186993_1043942188415715102_n.png?_nc_cat=105&ccb=1-7&_nc_sid=e280be&_nc_ohc=nJ9Kn4jb2jYQ7kNvwFFW_Co&_nc_oc=Adma7dipJU6Ab3JB1yXyXSiaEGCy4oGV4bHG0OrpQSUzpRzzGj1C7Y4grH42erwpkxc&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYEO4EOFvR2qL9B0tJdf3phPM7lF9LrIhjd-JiG-ngWOVQ&oe=680BD6C0" alt="LLAMA4 Architecture" loading="lazy">
+        <figcaption>LLAMA4 Mixture-of-Experts Architecture</figcaption>
+      </figure>
 
-            <div class="hidden md:flex space-x-2">
-                <a href="#what-is-llama4" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">What is LLAMA4</a>
-                <a href="#models" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Models</a>
-                <a href="#features" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Features</a>
-                <a href="#technical-specs" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Technical Specs</a>
-                <a href="#benchmarks" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Benchmarks</a>
-                <a href="#how-to-use" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">How to Use</a>
-                <a href="#use-cases" class="nav-pill px-3 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition">Use Cases</a>
-            </div>
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-star"></i> Key Differences from Previous Generations</h3>
+        <ul class="icon-list two-col">
+          <li><i class="fas fa-star"></i><span><strong>Mixture-of-Experts:</strong> First Llama models to use MoE architecture</span></li>
+          <li><i class="fas fa-star"></i><span><strong>Multimodal:</strong> Built with native multimodality from the ground up</span></li>
+          <li><i class="fas fa-star"></i><span><strong>Context Length:</strong> Up to 10M tokens (vs 128K in Llama 3)</span></li>
+          <li><i class="fas fa-star"></i><span><strong>Training Data:</strong> Trained on ~40T tokens vs ~15T in Llama 3</span></li>
+        </ul>
+      </div>
 
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
+      <p class="section-desc">LLAMA4 continues Meta's commitment to open AI development, making the models available for commercial and research use under the Llama 4 Community License. This approach enables developers, researchers, and enterprises to build upon these advanced models for various applications while encouraging innovation in the AI ecosystem.</p>
+    </div>
+  </div>
+
+  <!-- Models Section -->
+  <div class="section fade-up" id="models">
+    <h2 class="section-title collapsible"><i class="fas fa-layer-group"></i> LLAMA4 Models: Scout &amp; Maverick <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">The LLAMA4 herd currently consists of two publicly available models—Scout and Maverick—each designed with specific strengths and use cases in mind. A third model, Behemoth, is still in training and serves as a teacher for the smaller models.</p>
+
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head"><i class="fas fa-rocket"></i><h3>LLAMA4 Scout</h3></div>
+          <p class="card-lead">The efficient specialist with unprecedented context length</p>
+          <div class="spec-list">
+            <div class="spec-row"><span>Active Parameters:</span><span>17 billion</span></div>
+            <div class="spec-row"><span>Total Parameters:</span><span>109 billion (16 experts)</span></div>
+            <div class="spec-row"><span>Context Window:</span><span>10 million tokens</span></div>
+            <div class="spec-row"><span>Training Tokens:</span><span>~40 trillion</span></div>
+            <div class="spec-row"><span>Hardware:</span><span>Fits on single H100 GPU with int4 quantization</span></div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-new">Multi-document summarization</span>
+            <span class="tag tag-new">Long context reasoning</span>
+            <span class="tag tag-new">Efficiency-focused</span>
+          </div>
         </div>
 
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden mt-3 container mx-auto max-w-5xl">
-            <div class="flex flex-col space-y-2 bg-white p-2 rounded-lg shadow-lg">
-                <a href="#what-is-llama4" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">What is LLAMA4</a>
-                <a href="#models" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Models</a>
-                <a href="#features" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Features</a>
-                <a href="#technical-specs" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Technical Specs</a>
-                <a href="#benchmarks" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Benchmarks</a>
-                <a href="#how-to-use" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">How to Use</a>
-                <a href="#use-cases" class="px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Use Cases</a>
-            </div>
+        <div class="card">
+          <div class="card-head"><i class="fas fa-fighter-jet"></i><h3>LLAMA4 Maverick</h3></div>
+          <p class="card-lead">The performance powerhouse with advanced multimodal capabilities</p>
+          <div class="spec-list">
+            <div class="spec-row"><span>Active Parameters:</span><span>17 billion</span></div>
+            <div class="spec-row"><span>Total Parameters:</span><span>400 billion (128 experts)</span></div>
+            <div class="spec-row"><span>Context Window:</span><span>1 million tokens</span></div>
+            <div class="spec-row"><span>Training Tokens:</span><span>~22 trillion</span></div>
+            <div class="spec-row"><span>Hardware:</span><span>Fits on single H100 DGX host with FP8 quantization</span></div>
+          </div>
+          <div class="tags">
+            <span class="tag tag-new">Advanced reasoning</span>
+            <span class="tag tag-new">Superior multimodal</span>
+            <span class="tag tag-new">Production workhorse</span>
+          </div>
         </div>
-    </nav>
+      </div>
 
-    <!-- Main Content -->
-    <main class="container mx-auto max-w-5xl px-4 py-8">
-        <!-- Introduction -->
-        <section class="mb-12">
-            <div class="highlight-box p-6 rounded-lg mb-8">
-                <p class="text-lg">LLAMA4 represents Meta's most advanced AI models to date, designed as natively multimodal models that can process both text and images with exceptional performance. The LLAMA4 herd introduces <span class="tooltip font-semibold text-blue-600">mixture-of-experts architecture<span class="tooltip-text">A technique that divides tasks into smaller jobs and assigns each to specialized neural networks, achieving better performance with fewer active parameters</span></span> — providing breakthrough capabilities while maintaining efficiency.</p>
+      <div class="grid stack">
+        <div class="card">
+          <div class="card-head"><i class="fas fa-dragon"></i><h3>LLAMA4 Behemoth (Coming Soon)</h3></div>
+          <p class="card-lead">The massive teacher model powering the next generation of AI</p>
+          <div class="grid two">
+            <div class="spec-list">
+              <div class="spec-row"><span>Active Parameters:</span><span>288 billion</span></div>
+              <div class="spec-row"><span>Total Parameters:</span><span>~2 trillion (16 experts)</span></div>
             </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="image-container">
-                    <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb433bedf-52ff-4a80-a603-c4e35b3aae12_960x540.jpeg" alt="LLAMA4 Visual Guide" class="w-full h-auto rounded-lg shadow-lg">
-                    <div class="image-caption">
-                        Meta's LLAMA4 Models - The Next Generation of AI
-                    </div>
-                </div>
-
-                <div class="flex flex-col justify-center">
-                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Why LLAMA4 Matters</h2>
-                    <ul class="space-y-3">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>First open-weight natively multimodal models with unprecedented context length</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Revolutionary mixture-of-experts architecture for enhanced efficiency</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Industry-leading context window of up to 10 million tokens (LLAMA4 Scout)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Outperforms competing models like GPT-4o and Gemini 2.0 on various benchmarks</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Pre-trained on 200 languages with support for 12 major languages</span>
-                        </li>
-                    </ul>
-                </div>
+            <div class="spec-list">
+              <div class="spec-row"><span>Status:</span><span>Still in training</span></div>
+              <div class="spec-row"><span>Performance:</span><span>Outperforms GPT-4.5, Claude 3.7, Gemini 2.0 Pro</span></div>
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
 
-        <!-- What is LLAMA4 Section -->
-        <section id="what-is-llama4" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">What is LLAMA4?</h2>
-            </div>
+      <figure>
+        <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/489031501_1656960988514372_2535138154557835854_n.png?_nc_cat=108&ccb=1-7&_nc_sid=e280be&_nc_ohc=2Qty7deCJHsQ7kNvwE70ciW&_nc_oc=AdkIUPfgoRCEFxzR2WR7pvN4bTpztgvwYBdr6owSsUqjA7YWB41TnNVSW275aI5hJ0w&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYEm2NFebNsKXWbMyJCYGEuMOPm2gd_i07jyz-cXYoXrjw&oe=680BD232" alt="LLAMA4 Model Benchmark Comparison" loading="lazy">
+        <figcaption>LLAMA4 Benchmark Comparison with Competing Models</figcaption>
+      </figure>
 
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">LLAMA4 (Large Language and Multimodal AI) is Meta's most advanced suite of AI models, building upon the success of previous Llama generations. Released on April 5, 2025, LLAMA4 represents a significant leap forward in AI capabilities, introducing the first open-weight natively multimodal models with unprecedented context length support and the company's first built using a mixture-of-experts (MoE) architecture.</p>
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-scale-balanced"></i> When to Choose Each Model</h3>
+        <div class="grid two">
+          <div class="mini">
+            <h4>Choose Scout When:</h4>
+            <ul class="icon-list">
+              <li><i class="fas fa-check ok"></i><span>You need extremely long context handling (up to 10M tokens)</span></li>
+              <li><i class="fas fa-check ok"></i><span>You have hardware constraints (fits on single H100 GPU)</span></li>
+              <li><i class="fas fa-check ok"></i><span>You need to process large documents or codebases</span></li>
+              <li><i class="fas fa-check ok"></i><span>You want balance between performance and efficiency</span></li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h4>Choose Maverick When:</h4>
+            <ul class="icon-list">
+              <li><i class="fas fa-check ok"></i><span>You need state-of-the-art performance in multimodal tasks</span></li>
+              <li><i class="fas fa-check ok"></i><span>You require advanced reasoning and coding capabilities</span></li>
+              <li><i class="fas fa-check ok"></i><span>You're building production-grade AI assistants</span></li>
+              <li><i class="fas fa-check ok"></i><span>You can deploy on a more powerful infrastructure</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">The LLAMA4 Herd</h3>
-                        <p>LLAMA4 introduces three models in its herd: Scout, Maverick, and Behemoth (still in training). Each model is designed for different use cases while sharing the core capabilities of multimodal understanding and advanced reasoning.</p>
-                    </div>
+  <!-- Key Features Section -->
+  <div class="section fade-up" id="features">
+    <h2 class="section-title collapsible"><i class="fas fa-star"></i> Key Features of LLAMA4 <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">LLAMA4 introduces several groundbreaking features that set it apart from previous generations and competing models. These innovations enable new capabilities and use cases while maintaining efficient operation.</p>
 
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Natively Multimodal</h3>
-                        <p>Unlike previous generations, LLAMA4 models are built with native multimodality from the ground up, incorporating early fusion to seamlessly integrate text and vision tokens into a unified model backbone.</p>
-                    </div>
-                </div>
+      <div class="grid three">
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-network-wired"></i></div>
+          <h3>Mixture-of-Experts Architecture</h3>
+          <p>LLAMA4 uses a mixture-of-experts approach where each token activates only a subset of parameters, making models more efficient while maintaining high performance.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-images"></i></div>
+          <h3>Native Multimodality</h3>
+          <p>Built with early fusion to seamlessly integrate text and vision tokens, enabling sophisticated image understanding without specialized connectors.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-expand"></i></div>
+          <h3>Unprecedented Context Length</h3>
+          <p>LLAMA4 Scout offers an industry-leading 10M token context window, nearly 80 times larger than Llama 3's 128K tokens.</p>
+        </div>
+      </div>
 
-                <div class="image-container mb-8">
-                    <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/488655517_650996354186993_1043942188415715102_n.png?_nc_cat=105&ccb=1-7&_nc_sid=e280be&_nc_ohc=nJ9Kn4jb2jYQ7kNvwFFW_Co&_nc_oc=Adma7dipJU6Ab3JB1yXyXSiaEGCy4oGV4bHG0OrpQSUzpRzzGj1C7Y4grH42erwpkxc&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYEO4EOFvR2qL9B0tJdf3phPM7lF9LrIhjd-JiG-ngWOVQ&oe=680BD6C0" alt="LLAMA4 Architecture" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Mixture-of-Experts Architecture
-                    </div>
-                </div>
+      <div class="grid two">
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-globe"></i></div>
+          <h3>Enhanced Multilingual Support</h3>
+          <p>Pre-trained on 200 languages with 10x more multilingual tokens than Llama 3, supporting 12 major languages with deep fluency.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-code"></i></div>
+          <h3>Superior Code Generation</h3>
+          <p>Significantly improved coding capabilities, outperforming GPT-4o on many coding benchmarks and supporting complex programming tasks.</p>
+        </div>
+      </div>
 
-                <div class="highlight-box p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Key Differences from Previous Generations</h3>
-                    <ul class="grid md:grid-cols-2 gap-4">
-                        <li class="flex items-start">
-                            <i class="fas fa-star text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Mixture-of-Experts:</span> First Llama models to use MoE architecture</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-star text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Multimodal:</span> Built with native multimodality from the ground up</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-star text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Context Length:</span> Up to 10M tokens (vs 128K in Llama 3)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-star text-blue-600 mt-1 mr-2"></i>
-                            <span><span class="font-medium">Training Data:</span> Trained on ~40T tokens vs ~15T in Llama 3</span>
-                        </li>
-                    </ul>
-                </div>
+      <figure>
+        <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/488955260_630849766606664_4970227915274398227_n.png?_nc_cat=100&ccb=1-7&_nc_sid=e280be&_nc_ohc=kVCignj9cH8Q7kNvwHjRtcy&_nc_oc=AdkBdKIWZNDNVspQgfINfb9GBpOpSXli1sdoUVkKs0P4qmZt7I7ysWnQ0vTVkZINQvc&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYHDNrkhLJnCuZAHDW2g5XJR227L3Ufv72Z5f2WlkTqbCw&oe=680BB860" alt="LLAMA4 Long Context Capability" loading="lazy">
+        <figcaption>LLAMA4 Scout's Long Context Capability Visualization</figcaption>
+      </figure>
 
-                <p>LLAMA4 continues Meta's commitment to open AI development, making the models available for commercial and research use under the Llama 4 Community License. This approach enables developers, researchers, and enterprises to build upon these advanced models for various applications while encouraging innovation in the AI ecosystem.</p>
-            </div>
-        </section>
+      <div class="grid three">
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
+          <h3>Image Grounding</h3>
+          <p>Best-in-class image grounding capabilities, allowing precise visual question answering and object localization within images.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-microchip"></i></div>
+          <h3>Efficient Inference</h3>
+          <p>Advanced quantization techniques enable deployment on consumer-grade hardware without significant performance degradation.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Enhanced Safety</h3>
+          <p>Built with comprehensive safety features and protections, including reduced political bias and improved refusal handling.</p>
+        </div>
+      </div>
 
-        <!-- Models Section -->
-        <section id="models" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">LLAMA4 Models: Scout & Maverick</h2>
-            </div>
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-diagram-project"></i> Innovative Architecture Design</h3>
+        <p>One of the key innovations in LLAMA4 is the iRoPE architecture (interleaved attention layers without positional embeddings), which enables the unprecedented context window length:</p>
+        <div class="grid two" style="margin-top:14px">
+          <div class="mini">
+            <h4>Interleaved Attention Layers</h4>
+            <p>LLAMA4 uses alternating dense and mixture-of-experts layers for inference efficiency. In Maverick, each token is sent to a shared expert and one of 128 routed experts.</p>
+          </div>
+          <div class="mini">
+            <h4>Inference Time Temperature Scaling</h4>
+            <p>LLAMA4 employs inference time temperature scaling of attention to enhance length generalization, enabling the processing of extremely long documents.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">The LLAMA4 herd currently consists of two publicly available models—Scout and Maverick—each designed with specific strengths and use cases in mind. A third model, Behemoth, is still in training and serves as a teacher for the smaller models.</p>
+  <!-- Technical Specifications Section -->
+  <div class="section fade-up" id="technical-specs">
+    <h2 class="section-title collapsible"><i class="fas fa-microchip"></i> Technical Specifications <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">LLAMA4 models incorporate cutting-edge AI technologies and architectural innovations. Here are the detailed technical specifications for each model in the LLAMA4 family:</p>
 
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-gradient-to-br from-blue-50 to-indigo-100 p-6 relative overflow-hidden">
-                        <div class="relative z-10">
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-rocket text-blue-600 mr-3 text-2xl"></i>
-                                <h3 class="text-2xl font-bold">LLAMA4 Scout</h3>
-                            </div>
-                            <p class="mb-4 text-gray-700">The efficient specialist with unprecedented context length</p>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Active Parameters:</span>
-                                    <span>17 billion</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Total Parameters:</span>
-                                    <span>109 billion (16 experts)</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Context Window:</span>
-                                    <span>10 million tokens</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Training Tokens:</span>
-                                    <span>~40 trillion</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Hardware:</span>
-                                    <span>Fits on single H100 GPU with int4 quantization</span>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <span class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">Multi-document summarization</span>
-                                <span class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">Long context reasoning</span>
-                                <span class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">Efficiency-focused</span>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-0 right-0 opacity-10">
-                            <svg width="150" height="150" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13 10H18L12 16L6 10H11V3H13V10Z" fill="#2563EB"/>
-                                <path d="M4 19H20V12H22V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V12H4V19Z" fill="#2563EB"/>
-                            </svg>
-                        </div>
-                    </div>
+      <div class="table-wrap">
+        <table class="dark-table">
+          <thead>
+            <tr><th>Specification</th><th>LLAMA4 Scout</th><th>LLAMA4 Maverick</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Model Architecture</strong></td><td>Auto-regressive with MoE, early fusion multimodal</td><td>Auto-regressive with MoE, early fusion multimodal</td></tr>
+            <tr><td><strong>Active Parameters</strong></td><td>17 billion</td><td>17 billion</td></tr>
+            <tr><td><strong>Total Parameters</strong></td><td>109 billion</td><td>400 billion</td></tr>
+            <tr><td><strong>Expert Structure</strong></td><td>16 experts</td><td>128 experts</td></tr>
+            <tr><td><strong>Context Window</strong></td><td>10 million tokens</td><td>1 million tokens</td></tr>
+            <tr><td><strong>Pretraining Tokens</strong></td><td>~40 trillion</td><td>~22 trillion</td></tr>
+            <tr><td><strong>Supported Languages</strong></td><td>Arabic, English, French, German, Hindi, Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, Vietnamese</td><td>Arabic, English, French, German, Hindi, Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, Vietnamese</td></tr>
+            <tr><td><strong>Input Modalities</strong></td><td>Multilingual text and images</td><td>Multilingual text and images</td></tr>
+            <tr><td><strong>Output Modalities</strong></td><td>Multilingual text and code</td><td>Multilingual text and code</td></tr>
+            <tr><td><strong>Multi-image Support</strong></td><td>Up to 8 images tested, 48 in training</td><td>Up to 8 images tested, 48 in training</td></tr>
+            <tr><td><strong>Knowledge Cutoff</strong></td><td>August 2024</td><td>August 2024</td></tr>
+            <tr><td><strong>Hardware Requirements</strong></td><td>Single H100 GPU with int4 quantization</td><td>Single H100 DGX host with FP8 quantization</td></tr>
+            <tr><td><strong>License</strong></td><td>Llama 4 Community License</td><td>Llama 4 Community License</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-                    <div class="card bg-gradient-to-br from-indigo-50 to-purple-100 p-6 relative overflow-hidden">
-                        <div class="relative z-10">
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-fighter-jet text-indigo-600 mr-3 text-2xl"></i>
-                                <h3 class="text-2xl font-bold">LLAMA4 Maverick</h3>
-                            </div>
-                            <p class="mb-4 text-gray-700">The performance powerhouse with advanced multimodal capabilities</p>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Active Parameters:</span>
-                                    <span>17 billion</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Total Parameters:</span>
-                                    <span>400 billion (128 experts)</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Context Window:</span>
-                                    <span>1 million tokens</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Training Tokens:</span>
-                                    <span>~22 trillion</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Hardware:</span>
-                                    <span>Fits on single H100 DGX host with FP8 quantization</span>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <span class="inline-block bg-indigo-100 text-indigo-800 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">Advanced reasoning</span>
-                                <span class="inline-block bg-indigo-100 text-indigo-800 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">Superior multimodal</span>
-                                <span class="inline-block bg-indigo-100 text-indigo-800 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">Production workhorse</span>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-0 right-0 opacity-10">
-                            <svg width="150" height="150" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 5.41L18.59 4L7 15.59V9H5V19H15V17H8.41L20 5.41Z" fill="#4F46E5"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-server"></i> Training Infrastructure</h3>
+        <div class="grid two">
+          <div>
+            <h4>Training Compute</h4>
+            <ul class="icon-list">
+              <li><i class="fas fa-microchip"></i><span><strong>Scout:</strong> 5.0M GPU hours on H100-80GB (TDP 700W)</span></li>
+              <li><i class="fas fa-microchip"></i><span><strong>Maverick:</strong> 2.38M GPU hours on H100-80GB (TDP 700W)</span></li>
+              <li><i class="fas fa-microchip"></i><span><strong>FP8 Precision:</strong> Used for efficient model training</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Environmental Impact</h4>
+            <ul class="icon-list">
+              <li><i class="fas fa-leaf ok"></i><span><strong>Location-based emissions:</strong> 1,999 tons CO2eq</span></li>
+              <li><i class="fas fa-leaf ok"></i><span><strong>Market-based emissions:</strong> 0 tons CO2eq (100% renewable energy)</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-                <div class="card bg-gradient-to-br from-gray-50 to-gray-100 p-6 mb-8 relative overflow-hidden">
-                    <div class="relative z-10">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-dragon text-gray-600 mr-3 text-2xl"></i>
-                            <h3 class="text-2xl font-bold">LLAMA4 Behemoth (Coming Soon)</h3>
-                        </div>
-                        <p class="mb-4 text-gray-700">The massive teacher model powering the next generation of AI</p>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Active Parameters:</span>
-                                    <span>288 billion</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Total Parameters:</span>
-                                    <span>~2 trillion (16 experts)</span>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Status:</span>
-                                    <span>Still in training</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="font-medium">Performance:</span>
-                                    <span>Outperforms GPT-4.5, Claude 3.7, Gemini 2.0 Pro</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="absolute bottom-0 right-0 opacity-10">
-                        <svg width="150" height="150" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#6B7280"/>
-                        </svg>
-                    </div>
-                </div>
+      <figure>
+        <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/489511937_1627813884508038_4209289296588372348_n.png?_nc_cat=107&ccb=1-7&_nc_sid=e280be&_nc_ohc=GMvgkp0ChSYQ7kNvwFHLlby&_nc_oc=AdnpsRVfdnIkHUHAwxWzHXmk1ngXDK59ZgijSta2sFgZRjeo2ylDyBqBISqoEBR4aqg&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYEF9xmcAR-DxDKujyeFutn2YUTMBsCUzW2a2H_STeHsqw&oe=680BD209" alt="LLAMA4 Behemoth Architecture" loading="lazy">
+        <figcaption>LLAMA4 Behemoth Architecture Overview</figcaption>
+      </figure>
 
-                <div class="image-container mb-8">
-                    <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/489031501_1656960988514372_2535138154557835854_n.png?_nc_cat=108&ccb=1-7&_nc_sid=e280be&_nc_ohc=2Qty7deCJHsQ7kNvwE70ciW&_nc_oc=AdkIUPfgoRCEFxzR2WR7pvN4bTpztgvwYBdr6owSsUqjA7YWB41TnNVSW275aI5hJ0w&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYEm2NFebNsKXWbMyJCYGEuMOPm2gd_i07jyz-cXYoXrjw&oe=680BD232" alt="LLAMA4 Model Benchmark Comparison" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Benchmark Comparison with Competing Models
-                    </div>
-                </div>
+      <div class="grid two">
+        <div class="card">
+          <h3 class="accent">MoE Implementation Details</h3>
+          <p>LLAMA4 models implement the mixture-of-experts architecture in different ways:</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-angle-right"></i><span><strong>Scout:</strong> Full MoE with 16 experts, all layers are MoE</span></li>
+            <li><i class="fas fa-angle-right"></i><span><strong>Maverick:</strong> Alternating dense and MoE layers with 128 experts</span></li>
+            <li><i class="fas fa-angle-right"></i><span><strong>Token Routing:</strong> Each token activates one specific expert from the pool plus a shared expert</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="accent">Multimodal Architecture</h3>
+          <p>LLAMA4's native multimodality uses an improved vision encoder:</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-angle-right"></i><span><strong>Early Fusion:</strong> Integration of text and vision tokens into the unified model backbone</span></li>
+            <li><i class="fas fa-angle-right"></i><span><strong>Vision Encoder:</strong> Based on MetaCLIP but trained separately with a frozen Llama model</span></li>
+            <li><i class="fas fa-angle-right"></i><span><strong>Multi-image Input:</strong> Pre-trained on up to 48 images, tested with good results up to 8 images</span></li>
+          </ul>
+        </div>
+      </div>
 
-                <div class="highlight-box p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-3">When to Choose Each Model</h3>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-bold text-blue-600 mb-2">Choose Scout When:</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You need extremely long context handling (up to 10M tokens)</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You have hardware constraints (fits on single H100 GPU)</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You need to process large documents or codebases</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You want balance between performance and efficiency</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-bold text-indigo-600 mb-2">Choose Maverick When:</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You need state-of-the-art performance in multimodal tasks</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You require advanced reasoning and coding capabilities</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You're building production-grade AI assistants</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                    <span>You can deploy on a more powerful infrastructure</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Key Features Section -->
-        <section id="features" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Key Features of LLAMA4</h2>
-            </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-8">LLAMA4 introduces several groundbreaking features that set it apart from previous generations and competing models. These innovations enable new capabilities and use cases while maintaining efficient operation.</p>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-network-wired"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Mixture-of-Experts Architecture</h3>
-                        <p>LLAMA4 uses a mixture-of-experts approach where each token activates only a subset of parameters, making models more efficient while maintaining high performance.</p>
-                    </div>
-
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-images"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Native Multimodality</h3>
-                        <p>Built with early fusion to seamlessly integrate text and vision tokens, enabling sophisticated image understanding without specialized connectors.</p>
-                    </div>
-
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-expand"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Unprecedented Context Length</h3>
-                        <p>LLAMA4 Scout offers an industry-leading 10M token context window, nearly 80 times larger than Llama 3's 128K tokens.</p>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Enhanced Multilingual Support</h3>
-                        <p>Pre-trained on 200 languages with 10x more multilingual tokens than Llama 3, supporting 12 major languages with deep fluency.</p>
-                    </div>
-
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-code"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Superior Code Generation</h3>
-                        <p>Significantly improved coding capabilities, outperforming GPT-4o on many coding benchmarks and supporting complex programming tasks.</p>
-                    </div>
-                </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/488955260_630849766606664_4970227915274398227_n.png?_nc_cat=100&ccb=1-7&_nc_sid=e280be&_nc_ohc=kVCignj9cH8Q7kNvwHjRtcy&_nc_oc=AdkBdKIWZNDNVspQgfINfb9GBpOpSXli1sdoUVkKs0P4qmZt7I7ysWnQ0vTVkZINQvc&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYHDNrkhLJnCuZAHDW2g5XJR227L3Ufv72Z5f2WlkTqbCw&oe=680BB860" alt="LLAMA4 Long Context Capability" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Scout's Long Context Capability Visualization
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-bullseye"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Image Grounding</h3>
-                        <p>Best-in-class image grounding capabilities, allowing precise visual question answering and object localization within images.</p>
-                    </div>
-
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-microchip"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Efficient Inference</h3>
-                        <p>Advanced quantization techniques enable deployment on consumer-grade hardware without significant performance degradation.</p>
-                    </div>
-
-                    <div class="card p-6 flex flex-col items-center text-center">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Enhanced Safety</h3>
-                        <p>Built with comprehensive safety features and protections, including reduced political bias and improved refusal handling.</p>
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-3">Innovative Architecture Design</h3>
-                    <p class="mb-4">One of the key innovations in LLAMA4 is the iRoPE architecture (interleaved attention layers without positional embeddings), which enables the unprecedented context window length:</p>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-medium text-blue-600 mb-1">Interleaved Attention Layers</h4>
-                            <p>LLAMA4 uses alternating dense and mixture-of-experts layers for inference efficiency. In Maverick, each token is sent to a shared expert and one of 128 routed experts.</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-medium text-blue-600 mb-1">Inference Time Temperature Scaling</h4>
-                            <p>LLAMA4 employs inference time temperature scaling of attention to enhance length generalization, enabling the processing of extremely long documents.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Technical Specifications Section -->
-        <section id="technical-specs" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Technical Specifications</h2>
-            </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">LLAMA4 models incorporate cutting-edge AI technologies and architectural innovations. Here are the detailed technical specifications for each model in the LLAMA4 family:</p>
-
-                <div class="overflow-x-auto mb-8">
-                    <table class="model-comparison-table w-full border-collapse">
-                        <thead>
-                            <tr class="bg-blue-50">
-                                <th class="border-b w-1/4">Specification</th>
-                                <th class="border-b w-1/3">LLAMA4 Scout</th>
-                                <th class="border-b w-1/3">LLAMA4 Maverick</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="border-b font-medium">Model Architecture</td>
-                                <td class="border-b">Auto-regressive with MoE, early fusion multimodal</td>
-                                <td class="border-b">Auto-regressive with MoE, early fusion multimodal</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Active Parameters</td>
-                                <td class="border-b">17 billion</td>
-                                <td class="border-b">17 billion</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Total Parameters</td>
-                                <td class="border-b">109 billion</td>
-                                <td class="border-b">400 billion</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Expert Structure</td>
-                                <td class="border-b">16 experts</td>
-                                <td class="border-b">128 experts</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Context Window</td>
-                                <td class="border-b">10 million tokens</td>
-                                <td class="border-b">1 million tokens</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Pretraining Tokens</td>
-                                <td class="border-b">~40 trillion</td>
-                                <td class="border-b">~22 trillion</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Supported Languages</td>
-                                <td class="border-b">Arabic, English, French, German, Hindi, Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, Vietnamese</td>
-                                <td class="border-b">Arabic, English, French, German, Hindi, Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, Vietnamese</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Input Modalities</td>
-                                <td class="border-b">Multilingual text and images</td>
-                                <td class="border-b">Multilingual text and images</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Output Modalities</td>
-                                <td class="border-b">Multilingual text and code</td>
-                                <td class="border-b">Multilingual text and code</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Multi-image Support</td>
-                                <td class="border-b">Up to 8 images tested, 48 in training</td>
-                                <td class="border-b">Up to 8 images tested, 48 in training</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Knowledge Cutoff</td>
-                                <td class="border-b">August 2024</td>
-                                <td class="border-b">August 2024</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">Hardware Requirements</td>
-                                <td class="border-b">Single H100 GPU with int4 quantization</td>
-                                <td class="border-b">Single H100 DGX host with FP8 quantization</td>
-                            </tr>
-                            <tr>
-                                <td class="border-b font-medium">License</td>
-                                <td class="border-b">Llama 4 Community License</td>
-                                <td class="border-b">Llama 4 Community License</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-3">Training Infrastructure</h3>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-2">Training Compute</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-microchip text-blue-600 mt-1 mr-2"></i>
-                                    <span><span class="font-medium">Scout:</span> 5.0M GPU hours on H100-80GB (TDP 700W)</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-microchip text-blue-600 mt-1 mr-2"></i>
-                                    <span><span class="font-medium">Maverick:</span> 2.38M GPU hours on H100-80GB (TDP 700W)</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-microchip text-blue-600 mt-1 mr-2"></i>
-                                    <span><span class="font-medium">FP8 Precision:</span> Used for efficient model training</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-2">Environmental Impact</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-leaf text-green-600 mt-1 mr-2"></i>
-                                    <span><span class="font-medium">Location-based emissions:</span> 1,999 tons CO2eq</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-leaf text-green-600 mt-1 mr-2"></i>
-                                    <span><span class="font-medium">Market-based emissions:</span> 0 tons CO2eq (100% renewable energy)</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/489511937_1627813884508038_4209289296588372348_n.png?_nc_cat=107&ccb=1-7&_nc_sid=e280be&_nc_ohc=GMvgkp0ChSYQ7kNvwFHLlby&_nc_oc=AdnpsRVfdnIkHUHAwxWzHXmk1ngXDK59ZgijSta2sFgZRjeo2ylDyBqBISqoEBR4aqg&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYEF9xmcAR-DxDKujyeFutn2YUTMBsCUzW2a2H_STeHsqw&oe=680BD209" alt="LLAMA4 Behemoth Architecture" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Behemoth Architecture Overview
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">MoE Implementation Details</h3>
-                        <p class="mb-3">LLAMA4 models implement the mixture-of-experts architecture in different ways:</p>
-                        <ul class="space-y-2">
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span><span class="font-medium">Scout:</span> Full MoE with 16 experts, all layers are MoE</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span><span class="font-medium">Maverick:</span> Alternating dense and MoE layers with 128 experts</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span><span class="font-medium">Token Routing:</span> Each token activates one specific expert from the pool plus a shared expert</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Multimodal Architecture</h3>
-                        <p class="mb-3">LLAMA4's native multimodality uses an improved vision encoder:</p>
-                        <ul class="space-y-2">
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span><span class="font-medium">Early Fusion:</span> Integration of text and vision tokens into the unified model backbone</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span><span class="font-medium">Vision Encoder:</span> Based on MetaCLIP but trained separately with a frozen Llama model</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span><span class="font-medium">Multi-image Input:</span> Pre-trained on up to 48 images, tested with good results up to 8 images</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="code-block mb-6">
-                    <h3 class="text-lg font-semibold mb-3 text-white">Example System Prompt for LLAMA4</h3>
-                    <pre class="text-sm">
-You are an expert conversationalist who responds to the best of your ability. You are companionable and confident,
+      <div class="subsection">
+        <h3><i class="fas fa-comment-dots"></i> Example System Prompt for LLAMA4</h3>
+        <div class="code-block"><button class="copy-btn">Copy</button>You are an expert conversationalist who responds to the best of your ability. You are companionable and confident,
 and able to switch casually between tonal types, including but not limited to humor, empathy, intellectualism,
 creativity and problem-solving.
 
@@ -855,405 +451,211 @@ access information.
 
 You are Llama 4. Your knowledge cutoff date is August 2024. You speak Arabic, English, French, German, Hindi,
 Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, and Vietnamese. Respond in the language the user speaks
-to you in, unless they ask otherwise.
-                    </pre>
-                </div>
+to you in, unless they ask otherwise.</div>
+      </div>
 
-                <p>The LLAMA4 models can be quantized to different precision levels to balance performance and computational requirements. The official release includes BF16 weights for Scout and both BF16 and FP8 quantized weights for Maverick, with code provided for on-the-fly int4 quantization.</p>
-            </div>
-        </section>
+      <p class="section-desc">The LLAMA4 models can be quantized to different precision levels to balance performance and computational requirements. The official release includes BF16 weights for Scout and both BF16 and FP8 quantized weights for Maverick, with code provided for on-the-fly int4 quantization.</p>
+    </div>
+  </div>
 
-        <!-- Benchmarks Section -->
-        <section id="benchmarks" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Benchmarks & Performance</h2>
-            </div>
+  <!-- Benchmarks Section -->
+  <div class="section fade-up" id="benchmarks">
+    <h2 class="section-title collapsible"><i class="fas fa-chart-line"></i> Benchmarks &amp; Performance <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">LLAMA4 models have demonstrated exceptional performance across a wide range of benchmarks, often outperforming much larger models from competitors. Here's how LLAMA4 Scout and Maverick stack up in various categories:</p>
 
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">LLAMA4 models have demonstrated exceptional performance across a wide range of benchmarks, often outperforming much larger models from competitors. Here's how LLAMA4 Scout and Maverick stack up in various categories:</p>
+      <div class="grid two">
+        <div class="card">
+          <h3 class="accent">Pre-trained Model Benchmarks</h3>
+          <div class="table-wrap">
+            <table class="dark-table">
+              <thead><tr><th>Benchmark</th><th>Llama 3.1 70B</th><th>Llama 4 Scout</th><th>Llama 4 Maverick</th></tr></thead>
+              <tbody>
+                <tr><td><strong>MMLU</strong></td><td>79.3</td><td>79.6</td><td>85.5</td></tr>
+                <tr><td><strong>MMLU-Pro</strong></td><td>53.8</td><td>58.2</td><td>62.9</td></tr>
+                <tr><td><strong>MATH</strong></td><td>41.6</td><td>50.3</td><td>61.2</td></tr>
+                <tr><td><strong>MBPP (Code)</strong></td><td>66.4</td><td>67.8</td><td>77.6</td></tr>
+                <tr><td><strong>TydiQA</strong></td><td>29.9</td><td>31.5</td><td>31.7</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="accent">Instruction-tuned Model Benchmarks</h3>
+          <div class="table-wrap">
+            <table class="dark-table">
+              <thead><tr><th>Benchmark</th><th>Llama 3.3 70B</th><th>Llama 4 Scout</th><th>Llama 4 Maverick</th></tr></thead>
+              <tbody>
+                <tr><td><strong>MMLU Pro</strong></td><td>68.9</td><td>74.3</td><td>80.5</td></tr>
+                <tr><td><strong>GPQA Diamond</strong></td><td>50.5</td><td>57.2</td><td>69.8</td></tr>
+                <tr><td><strong>LiveCodeBench</strong></td><td>33.3</td><td>32.8</td><td>43.4</td></tr>
+                <tr><td><strong>MGSM</strong></td><td>91.1</td><td>90.6</td><td>92.3</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Pre-trained Model Benchmarks</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-blue-50">
-                                        <th class="p-2 border text-left">Benchmark</th>
-                                        <th class="p-2 border text-left">Llama 3.1 70B</th>
-                                        <th class="p-2 border text-left">Llama 4 Scout</th>
-                                        <th class="p-2 border text-left">Llama 4 Maverick</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MMLU</td>
-                                        <td class="p-2 border">79.3</td>
-                                        <td class="p-2 border">79.6</td>
-                                        <td class="p-2 border">85.5</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MMLU-Pro</td>
-                                        <td class="p-2 border">53.8</td>
-                                        <td class="p-2 border">58.2</td>
-                                        <td class="p-2 border">62.9</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MATH</td>
-                                        <td class="p-2 border">41.6</td>
-                                        <td class="p-2 border">50.3</td>
-                                        <td class="p-2 border">61.2</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MBPP (Code)</td>
-                                        <td class="p-2 border">66.4</td>
-                                        <td class="p-2 border">67.8</td>
-                                        <td class="p-2 border">77.6</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">TydiQA</td>
-                                        <td class="p-2 border">29.9</td>
-                                        <td class="p-2 border">31.5</td>
-                                        <td class="p-2 border">31.7</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+      <figure>
+        <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/488658055_1347378876402143_3412007366291908454_n.png?_nc_cat=109&ccb=1-7&_nc_sid=e280be&_nc_ohc=DEK1XtK560sQ7kNvwG56Yck&_nc_oc=AdkjXmiSgYaV35qY8tbiIfnvsjVm08dXGm0ZdlLuO1J0gjOp7olf1qPAJ1BGtPTvnzM&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYHYg4fApvjVoXEgZC1NcaudN7IVDYGhezcsrhgRTXpp6Q&oe=680BAC9F" alt="LLAMA4 Image Understanding Benchmarks" loading="lazy">
+        <figcaption>LLAMA4 Performance on Image Understanding Benchmarks</figcaption>
+      </figure>
 
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Instruction-tuned Model Benchmarks</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-blue-50">
-                                        <th class="p-2 border text-left">Benchmark</th>
-                                        <th class="p-2 border text-left">Llama 3.3 70B</th>
-                                        <th class="p-2 border text-left">Llama 4 Scout</th>
-                                        <th class="p-2 border text-left">Llama 4 Maverick</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MMLU Pro</td>
-                                        <td class="p-2 border">68.9</td>
-                                        <td class="p-2 border">74.3</td>
-                                        <td class="p-2 border">80.5</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">GPQA Diamond</td>
-                                        <td class="p-2 border">50.5</td>
-                                        <td class="p-2 border">57.2</td>
-                                        <td class="p-2 border">69.8</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">LiveCodeBench</td>
-                                        <td class="p-2 border">33.3</td>
-                                        <td class="p-2 border">32.8</td>
-                                        <td class="p-2 border">43.4</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MGSM</td>
-                                        <td class="p-2 border">91.1</td>
-                                        <td class="p-2 border">90.6</td>
-                                        <td class="p-2 border">92.3</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+      <div class="grid two">
+        <div class="card">
+          <h3 class="accent">Multimodal Benchmarks</h3>
+          <div class="table-wrap">
+            <table class="dark-table">
+              <thead><tr><th>Benchmark</th><th>Llama 4 Scout</th><th>Llama 4 Maverick</th></tr></thead>
+              <tbody>
+                <tr><td><strong>MMMU</strong></td><td>69.4</td><td>73.4</td></tr>
+                <tr><td><strong>MMMU Pro</strong></td><td>52.2</td><td>59.6</td></tr>
+                <tr><td><strong>MathVista</strong></td><td>70.7</td><td>73.7</td></tr>
+                <tr><td><strong>ChartQA</strong></td><td>88.8</td><td>90.0</td></tr>
+                <tr><td><strong>DocVQA</strong></td><td>94.4</td><td>94.4</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="accent">Long Context Benchmarks</h3>
+          <div class="table-wrap">
+            <table class="dark-table">
+              <thead><tr><th>Benchmark</th><th>Llama 3.3 70B</th><th>Llama 4 Scout</th><th>Llama 4 Maverick</th></tr></thead>
+              <tbody>
+                <tr><td><strong>MTOB (half book) eng→kgv</strong></td><td>Context window is 128K</td><td>54.0</td><td>42.2</td></tr>
+                <tr><td><strong>MTOB (half book) kgv→eng</strong></td><td>Context window is 128K</td><td>46.4</td><td>36.6</td></tr>
+                <tr><td><strong>MTOB (full book) eng→kgv</strong></td><td>Context window is 128K</td><td>50.8</td><td>39.7</td></tr>
+                <tr><td><strong>MTOB (full book) kgv→eng</strong></td><td>Context window is 128K</td><td>46.7</td><td>36.3</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-                <div class="image-container mb-8">
-                    <img src="https://scontent.xx.fbcdn.net/v/t39.2365-6/488658055_1347378876402143_3412007366291908454_n.png?_nc_cat=109&ccb=1-7&_nc_sid=e280be&_nc_ohc=DEK1XtK560sQ7kNvwG56Yck&_nc_oc=AdkjXmiSgYaV35qY8tbiIfnvsjVm08dXGm0ZdlLuO1J0gjOp7olf1qPAJ1BGtPTvnzM&_nc_zt=14&_nc_ht=scontent.xx&_nc_gid=V83JoOTjjjmPqYaU0I3Y-Q&oh=00_AYHYg4fApvjVoXEgZC1NcaudN7IVDYGhezcsrhgRTXpp6Q&oe=680BAC9F" alt="LLAMA4 Image Understanding Benchmarks" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Performance on Image Understanding Benchmarks
-                    </div>
-                </div>
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-trophy"></i> LLAMA4 vs. Competitors</h3>
+        <p>In comparative benchmarks, LLAMA4 models show remarkable performance against top competitors:</p>
+        <div class="grid two" style="margin-top:14px">
+          <div>
+            <h4>LLAMA4 Maverick vs. GPT-4o</h4>
+            <ul class="icon-list">
+              <li><i class="fas fa-trophy gold"></i><span>Exceeds GPT-4o on coding, reasoning, multilingual, and image benchmarks</span></li>
+              <li><i class="fas fa-trophy gold"></i><span>Experimental chat version scores 1417 ELO on LMArena</span></li>
+              <li><i class="fas fa-trophy gold"></i><span>Competitive with DeepSeek v3.1 on coding and reasoning, with fewer active parameters</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4>LLAMA4 Scout vs. Similar-sized Models</h4>
+            <ul class="icon-list">
+              <li><i class="fas fa-trophy gold"></i><span>Outperforms Gemma 3, Gemini 2.0 Flash-Lite, and Mistral 3.1 across key benchmarks</span></li>
+              <li><i class="fas fa-trophy gold"></i><span>Best-in-class image grounding capabilities</span></li>
+              <li><i class="fas fa-trophy gold"></i><span>Industry-leading 10M context window for its size class</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Multimodal Benchmarks</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-blue-50">
-                                        <th class="p-2 border text-left">Benchmark</th>
-                                        <th class="p-2 border text-left">Llama 4 Scout</th>
-                                        <th class="p-2 border text-left">Llama 4 Maverick</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MMMU</td>
-                                        <td class="p-2 border">69.4</td>
-                                        <td class="p-2 border">73.4</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MMMU Pro</td>
-                                        <td class="p-2 border">52.2</td>
-                                        <td class="p-2 border">59.6</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MathVista</td>
-                                        <td class="p-2 border">70.7</td>
-                                        <td class="p-2 border">73.7</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">ChartQA</td>
-                                        <td class="p-2 border">88.8</td>
-                                        <td class="p-2 border">90.0</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">DocVQA</td>
-                                        <td class="p-2 border">94.4</td>
-                                        <td class="p-2 border">94.4</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+      <figure>
+        <img src="https://www.zealousys.com/wp-content/uploads/2025/04/Meta-Llama-4-Is-Here-%E2%80%94Three-Reasons-Why-Its-A-Big-Deal-1.webp" alt="LLAMA4 Competitive Performance" loading="lazy">
+        <figcaption>LLAMA4 Setting New Standards in AI Performance</figcaption>
+      </figure>
 
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Long Context Benchmarks</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-blue-50">
-                                        <th class="p-2 border text-left">Benchmark</th>
-                                        <th class="p-2 border text-left">Llama 3.3 70B</th>
-                                        <th class="p-2 border text-left">Llama 4 Scout</th>
-                                        <th class="p-2 border text-left">Llama 4 Maverick</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MTOB (half book) eng→kgv</td>
-                                        <td class="p-2 border">Context window is 128K</td>
-                                        <td class="p-2 border">54.0</td>
-                                        <td class="p-2 border">42.2</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MTOB (half book) kgv→eng</td>
-                                        <td class="p-2 border">Context window is 128K</td>
-                                        <td class="p-2 border">46.4</td>
-                                        <td class="p-2 border">36.6</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MTOB (full book) eng→kgv</td>
-                                        <td class="p-2 border">Context window is 128K</td>
-                                        <td class="p-2 border">50.8</td>
-                                        <td class="p-2 border">39.7</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2 border font-medium">MTOB (full book) kgv→eng</td>
-                                        <td class="p-2 border">Context window is 128K</td>
-                                        <td class="p-2 border">46.7</td>
-                                        <td class="p-2 border">36.3</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+      <p class="section-desc">LLAMA4 Behemoth, still in training, is showing even more impressive results, outperforming GPT-4.5, Claude Sonnet 3.7, and Gemini 2.0 Pro on several STEM benchmarks. Its performance as a teacher model has significantly enhanced the capabilities of both Scout and Maverick through distillation.</p>
+    </div>
+  </div>
 
-                <div class="highlight-box p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-3">LLAMA4 vs. Competitors</h3>
-                    <p class="mb-4">In comparative benchmarks, LLAMA4 models show remarkable performance against top competitors:</p>
+  <!-- How to Use Section -->
+  <div class="section fade-up" id="how-to-use">
+    <h2 class="section-title collapsible"><i class="fas fa-terminal"></i> How to Use LLAMA4 <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">Getting started with LLAMA4 is straightforward, with multiple options for deployment and usage depending on your needs and technical capabilities. Here's how you can start using LLAMA4 models:</p>
 
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-2">LLAMA4 Maverick vs. GPT-4o</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-trophy text-amber-500 mt-1 mr-2"></i>
-                                    <span>Exceeds GPT-4o on coding, reasoning, multilingual, and image benchmarks</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-trophy text-amber-500 mt-1 mr-2"></i>
-                                    <span>Experimental chat version scores 1417 ELO on LMArena</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-trophy text-amber-500 mt-1 mr-2"></i>
-                                    <span>Competitive with DeepSeek v3.1 on coding and reasoning, with fewer active parameters</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-blue-600 mb-2">LLAMA4 Scout vs. Similar-sized Models</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-trophy text-amber-500 mt-1 mr-2"></i>
-                                    <span>Outperforms Gemma 3, Gemini 2.0 Flash-Lite, and Mistral 3.1 across key benchmarks</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-trophy text-amber-500 mt-1 mr-2"></i>
-                                    <span>Best-in-class image grounding capabilities</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-trophy text-amber-500 mt-1 mr-2"></i>
-                                    <span>Industry-leading 10M context window for its size class</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+      <div class="grid three">
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-cloud"></i></div>
+          <div class="use-body">
+            <h3>Cloud Platforms</h3>
+            <p>Access LLAMA4 through leading cloud service providers with pre-configured environments.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>AWS</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Microsoft Azure</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Google Cloud</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Hugging Face</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Together AI</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-download"></i></div>
+          <div class="use-body">
+            <h3>Direct Download</h3>
+            <p>Download and run LLAMA4 models on your own infrastructure for maximum control.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>llama.com/llama-downloads</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Hugging Face (meta-llama)</span></li>
+              <li><i class="fas fa-check-circle"></i><span>GitHub (meta-llama)</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Requirements: H100 GPU or equivalent</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-robot"></i></div>
+          <div class="use-body">
+            <h3>Pre-built Applications</h3>
+            <p>Try LLAMA4 through Meta's applications without any setup required.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>Meta AI (web interface)</span></li>
+              <li><i class="fas fa-check-circle"></i><span>WhatsApp (integrated)</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Messenger (integrated)</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Instagram Direct (integrated)</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-                <div class="image-container mb-6">
-                    <img src="https://www.zealousys.com/wp-content/uploads/2025/04/Meta-Llama-4-Is-Here-%E2%80%94Three-Reasons-Why-Its-A-Big-Deal-1.webp" alt="LLAMA4 Competitive Performance" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Setting New Standards in AI Performance
-                    </div>
-                </div>
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-list-ol"></i> Getting Started Steps</h3>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Choose Your Deployment Method</h3>
+            <p>Decide whether to use cloud services, local installation, or pre-built applications based on your use case and technical requirements.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Select the Right Model</h3>
+            <p>Choose between LLAMA4 Scout for long context handling and efficiency, or LLAMA4 Maverick for superior performance and advanced reasoning.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Set Up Your Environment</h3>
+            <p>If self-hosting, ensure you have the necessary hardware (H100 GPU or equivalent) and follow the installation instructions from llama.com or GitHub.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Optimize for Your Use Case</h3>
+            <p>Configure system prompts, adjust generation parameters, and implement safety measures according to your specific requirements.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h3>Integrate and Deploy</h3>
+            <p>Integrate LLAMA4 into your applications using the provided APIs or SDKs, and deploy to your users or internal systems.</p>
+          </div>
+        </div>
+      </div>
 
-                <p>LLAMA4 Behemoth, still in training, is showing even more impressive results, outperforming GPT-4.5, Claude Sonnet 3.7, and Gemini 2.0 Pro on several STEM benchmarks. Its performance as a teacher model has significantly enhanced the capabilities of both Scout and Maverick through distillation.</p>
-            </div>
-        </section>
-
-        <!-- How to Use Section -->
-        <section id="how-to-use" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">How to Use LLAMA4</h2>
-            </div>
-
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-6">Getting started with LLAMA4 is straightforward, with multiple options for deployment and usage depending on your needs and technical capabilities. Here's how you can start using LLAMA4 models:</p>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-blue-600 p-4 rounded-t-lg">
-                            <i class="fas fa-cloud text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Cloud Platforms</h3>
-                            <p class="mb-4">Access LLAMA4 through leading cloud service providers with pre-configured environments.</p>
-                            <div class="text-sm text-blue-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>AWS</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Microsoft Azure</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Google Cloud</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Hugging Face</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Together AI</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-indigo-600 p-4 rounded-t-lg">
-                            <i class="fas fa-download text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Direct Download</h3>
-                            <p class="mb-4">Download and run LLAMA4 models on your own infrastructure for maximum control.</p>
-                            <div class="text-sm text-indigo-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>llama.com/llama-downloads</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Hugging Face (meta-llama)</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>GitHub (meta-llama)</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Requirements: H100 GPU or equivalent</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-purple-600 p-4 rounded-t-lg">
-                            <i class="fas fa-robot text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Pre-built Applications</h3>
-                            <p class="mb-4">Try LLAMA4 through Meta's applications without any setup required.</p>
-                            <div class="text-sm text-purple-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Meta AI (web interface)</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>WhatsApp (integrated)</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Messenger (integrated)</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Instagram Direct (integrated)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-3">Getting Started Steps</h3>
-
-                    <div class="relative">
-                        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-200"></div>
-
-                        <div class="relative pl-12 pb-6">
-                            <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">1</div>
-                            <h4 class="text-lg font-medium mb-2">Choose Your Deployment Method</h4>
-                            <p>Decide whether to use cloud services, local installation, or pre-built applications based on your use case and technical requirements.</p>
-                        </div>
-
-                        <div class="relative pl-12 pb-6">
-                            <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">2</div>
-                            <h4 class="text-lg font-medium mb-2">Select the Right Model</h4>
-                            <p>Choose between LLAMA4 Scout for long context handling and efficiency, or LLAMA4 Maverick for superior performance and advanced reasoning.</p>
-                        </div>
-
-                        <div class="relative pl-12 pb-6">
-                            <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">3</div>
-                            <h4 class="text-lg font-medium mb-2">Set Up Your Environment</h4>
-                            <p>If self-hosting, ensure you have the necessary hardware (H100 GPU or equivalent) and follow the installation instructions from llama.com or GitHub.</p>
-                        </div>
-
-                        <div class="relative pl-12 pb-6">
-                            <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">4</div>
-                            <h4 class="text-lg font-medium mb-2">Optimize for Your Use Case</h4>
-                            <p>Configure system prompts, adjust generation parameters, and implement safety measures according to your specific requirements.</p>
-                        </div>
-
-                        <div class="relative pl-12">
-                            <div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">5</div>
-                            <h4 class="text-lg font-medium mb-2">Integrate and Deploy</h4>
-                            <p>Integrate LLAMA4 into your applications using the provided APIs or SDKs, and deploy to your users or internal systems.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Using with Hugging Face</h3>
-                        <div class="code-block text-sm mb-4">
-<pre>from transformers import AutoTokenizer, AutoModelForCausalLM
+      <div class="subsection">
+        <h3><i class="fas fa-code"></i> Using with Hugging Face</h3>
+        <div class="code-block"><button class="copy-btn">Copy</button>from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
 # Load tokenizer
@@ -1268,15 +670,15 @@ model = AutoModelForCausalLM.from_pretrained(
 
 # Create prompt
 prompt = """
-<|system|>
+&lt;|system|&gt;
 You are an expert assistant that helps users with information about technology.
-</|system|>
+&lt;/|system|&gt;
 
-<|user|>
+&lt;|user|&gt;
 What are the key features of LLAMA4?
-</|user|>
+&lt;/|user|&gt;
 
-<|assistant|>
+&lt;|assistant|&gt;
 """
 
 # Tokenize prompt
@@ -1291,15 +693,12 @@ outputs = model.generate(
 )
 
 # Decode and print response
-print(tokenizer.decode(outputs[0], skip_special_tokens=False))
-</pre>
-                        </div>
-                    </div>
+print(tokenizer.decode(outputs[0], skip_special_tokens=False))</div>
+      </div>
 
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Using with vLLM</h3>
-                        <div class="code-block text-sm mb-4">
-<pre>from vllm import LLM, SamplingParams
+      <div class="subsection">
+        <h3><i class="fas fa-code"></i> Using with vLLM</h3>
+        <div class="code-block"><button class="copy-btn">Copy</button>from vllm import LLM, SamplingParams
 
 # Initialize the model
 llm = LLM(
@@ -1317,33 +716,28 @@ sampling_params = SamplingParams(
 
 # Create prompt
 prompt = """
-<|system|>
+&lt;|system|&gt;
 You are an expert assistant that helps users with information about technology.
-</|system|>
+&lt;/|system|&gt;
 
-<|user|>
+&lt;|user|&gt;
 What are the key features of LLAMA4?
-</|user|>
+&lt;/|user|&gt;
 
-<|assistant|>
+&lt;|assistant|&gt;
 """
 
 # Generate response
 outputs = llm.generate([prompt], sampling_params)
 
 # Print response
-print(outputs[0].outputs[0].text)
-</pre>
-                        </div>
-                    </div>
-                </div>
+print(outputs[0].outputs[0].text)</div>
+      </div>
 
-                <div class="highlight-box p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-3">Using LLAMA4 with Images</h3>
-                    <p class="mb-4">LLAMA4 models support multimodal inputs, allowing you to process both text and images:</p>
-
-                    <div class="code-block text-sm">
-<pre>from transformers import AutoProcessor, LlavaForConditionalGeneration
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-image"></i> Using LLAMA4 with Images</h3>
+        <p>LLAMA4 models support multimodal inputs, allowing you to process both text and images:</p>
+        <div class="code-block"><button class="copy-btn">Copy</button>from transformers import AutoProcessor, LlavaForConditionalGeneration
 import torch
 from PIL import Image
 import requests
@@ -1366,489 +760,280 @@ inputs = processor(prompt, image, return_tensors="pt").to(model.device)
 outputs = model.generate(**inputs, max_new_tokens=100)
 
 # Decode and print response
-print(processor.decode(outputs[0], skip_special_tokens=True))
-</pre>
-                    </div>
-                </div>
+print(processor.decode(outputs[0], skip_special_tokens=True))</div>
+      </div>
 
-                <div class="image-container mb-6">
-                    <img src="https://imgproxy.divecdn.com/N2cVbgYEzsmA8tgPHSidITs1SAmdrGBP_GvFPA79TKI/g:ce/rs:fit:1600:0/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9sbGFtYV80LnBuZw==.webp" alt="LLAMA4 Interface" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        Meta AI interface powered by LLAMA4
-                    </div>
-                </div>
+      <figure>
+        <img src="https://imgproxy.divecdn.com/N2cVbgYEzsmA8tgPHSidITs1SAmdrGBP_GvFPA79TKI/g:ce/rs:fit:1600:0/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9sbGFtYV80LnBuZw==.webp" alt="LLAMA4 Interface" loading="lazy">
+        <figcaption>Meta AI interface powered by LLAMA4</figcaption>
+      </figure>
 
-                <p>Remember that LLAMA4 models are covered by the Llama 4 Community License, which allows for commercial and research use with certain restrictions. Be sure to review the license terms and ensure your usage complies with Meta's acceptable use policies.</p>
-            </div>
-        </section>
+      <p class="section-desc">Remember that LLAMA4 models are covered by the Llama 4 Community License, which allows for commercial and research use with certain restrictions. Be sure to review the license terms and ensure your usage complies with Meta's acceptable use policies.</p>
+    </div>
+  </div>
 
-        <!-- Use Cases Section -->
-        <section id="use-cases" class="mb-16 section-expandable">
-            <div class="section-header flex items-center bg-white p-4 mb-1 rounded-lg shadow-sm">
-                <i class="fas fa-chevron-right section-icon text-blue-600 mr-3"></i>
-                <h2 class="text-2xl font-bold">Use Cases & Applications</h2>
-            </div>
+  <!-- Use Cases Section -->
+  <div class="section fade-up" id="use-cases">
+    <h2 class="section-title collapsible"><i class="fas fa-lightbulb"></i> Use Cases &amp; Applications <i class="fas fa-chevron-down chev"></i></h2>
+    <div class="section-body">
+      <p class="section-desc">LLAMA4's advanced capabilities enable a wide range of innovative applications across industries. Here are some of the key use cases where LLAMA4 models excel:</p>
 
-            <div class="section-content bg-white p-6 rounded-lg shadow-md">
-                <p class="mb-8">LLAMA4's advanced capabilities enable a wide range of innovative applications across industries. Here are some of the key use cases where LLAMA4 models excel:</p>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-blue-600 p-4 rounded-t-lg">
-                            <i class="fas fa-code text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Software Development</h3>
-                            <p class="mb-4">LLAMA4 assists developers with code generation, debugging, and documentation, understanding entire codebases with its extensive context window.</p>
-                            <div class="text-sm text-blue-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Complete application generation</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Legacy code modernization</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Bug identification and fixing</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Large-scale codebase understanding</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-indigo-600 p-4 rounded-t-lg">
-                            <i class="fas fa-chart-bar text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Data Analysis</h3>
-                            <p class="mb-4">Leverage LLAMA4's multimodal capabilities for chart interpretation, data summarization, and insight generation from diverse data sources.</p>
-                            <div class="text-sm text-indigo-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Chart and visualization analysis</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Multi-source data integration</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Trend identification</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Financial report analysis</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-green-600 p-4 rounded-t-lg">
-                            <i class="fas fa-book text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Education & Research</h3>
-                            <p class="mb-4">Transform educational experiences with personalized tutoring, research assistance, and comprehensive content creation.</p>
-                            <div class="text-sm text-green-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Personalized tutoring</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Research paper synthesis</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Educational content creation</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Literature analysis</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-red-600 p-4 rounded-t-lg">
-                            <i class="fas fa-hospital text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Healthcare</h3>
-                            <p class="mb-4">Enhance medical research, patient care, and health informatics with LLAMA4's advanced reasoning and multimodal capabilities.</p>
-                            <div class="text-sm text-red-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Medical literature review</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Medical image analysis assistance</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Patient record summarization</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Clinical trial documentation</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card hover:shadow-xl">
-                        <div class="bg-purple-600 p-4 rounded-t-lg">
-                            <i class="fas fa-desktop text-white text-4xl"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-3">Content Creation</h3>
-                            <p class="mb-4">Generate high-quality written content, analyze visual media, and create comprehensive multimedia materials for various platforms.</p>
-                            <div class="text-sm text-purple-600 font-medium">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Long-form article writing</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Image and video content analysis</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Marketing material creation</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span>Multilingual content adaptation</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="image-container mb-8">
-                    <img src="https://www.geeky-gadgets.com/wp-content/uploads/2025/04/meta-llama-4-maverick-scout-variants.webp" alt="LLAMA4 Applications" class="w-full h-auto rounded-lg">
-                    <div class="image-caption">
-                        LLAMA4 Powering Various Real-World Applications
-                    </div>
-                </div>
-
-                <div class="highlight-box p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-3">LLAMA4 Scout-Specific Use Cases</h3>
-                    <p class="mb-4">The unprecedented 10M token context window of LLAMA4 Scout enables entirely new types of applications:</p>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-medium text-blue-600 mb-1">Book-Length Content Analysis</h4>
-                            <p>Process and analyze entire books or multiple research papers in a single context, maintaining coherence across the full text.</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-medium text-blue-600 mb-1">Multi-Document Comparison</h4>
-                            <p>Compare and contrast multiple lengthy documents, identifying similarities, differences, and patterns across the entire corpus.</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-medium text-blue-600 mb-1">Entire Codebase Understanding</h4>
-                            <p>Analyze complete codebases with millions of lines, understanding architectural patterns and dependencies holistically.</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <h4 class="font-medium text-blue-600 mb-1">Long Conversation History</h4>
-                            <p>Maintain context over extremely long conversations, remembering details from hours of previous interaction.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-8">
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Enterprise Applications</h3>
-                        <ul class="space-y-2">
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Customer support automation with multimodal understanding</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Legal document analysis and contract review</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Enterprise knowledge base enrichment</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Multimodal business intelligence</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Creative Applications</h3>
-                        <ul class="space-y-2">
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Script and screenplay development</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Visual content analysis for inspiration</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Interactive storytelling experiences</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Music and art analysis and critique</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="card bg-white p-6">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-600">Personal Applications</h3>
-                        <ul class="space-y-2">
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Personal knowledge management and note-taking</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Photo collection management and analysis</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Learning assistance across multiple subjects</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-angle-right text-blue-600 mt-1 mr-2"></i>
-                                <span>Travel planning with visual understanding</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <h3 class="text-xl font-semibold mb-4">Start Building with LLAMA4</h3>
-                    <p class="mb-6 max-w-2xl mx-auto">LLAMA4's open-weight approach enables developers and organizations to build innovative applications with state-of-the-art AI capabilities. Whether you're creating consumer applications, enterprise solutions, or research tools, LLAMA4 provides the performance and flexibility you need.</p>
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <a href="https://www.llama.com/llama-downloads/" target="_blank" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-md hover:shadow-lg flex items-center">
-                            <i class="fas fa-download mr-2"></i>
-                            Download LLAMA4
-                        </a>
-                        <a href="https://github.com/meta-llama" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-md hover:shadow-lg flex items-center">
-                            <i class="fab fa-github mr-2"></i>
-                            Explore GitHub Resources
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section class="mb-16">
-            <h2 class="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-
-            <div class="space-y-4">
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold mb-2">What makes LLAMA4 different from previous Llama models?</h3>
-                    <p>LLAMA4 introduces several major innovations: it's the first Llama model to use a mixture-of-experts architecture, it's natively multimodal with early fusion of text and images, it offers unprecedented context lengths (up to 10M tokens), and it's trained on significantly more data (up to 40T tokens).</p>
-                </div>
-
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold mb-2">How do I choose between LLAMA4 Scout and Maverick?</h3>
-                    <p>Choose Scout if you need extremely long context handling (10M tokens), have hardware constraints, or are processing large documents. Choose Maverick for state-of-the-art performance in multimodal tasks, advanced reasoning, and production-grade applications where you can support more powerful infrastructure.</p>
-                </div>
-
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold mb-2">What hardware do I need to run LLAMA4 models?</h3>
-                    <p>LLAMA4 Scout can run on a single H100 GPU with int4 quantization, while LLAMA4 Maverick requires a single H100 DGX host with FP8 quantization. Alternative options include using cloud providers that offer LLAMA4 as a service, which eliminates the need for specialized hardware.</p>
-                </div>
-
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold mb-2">What languages does LLAMA4 support?</h3>
-                    <p>LLAMA4 officially supports 12 languages: Arabic, English, French, German, Hindi, Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, and Vietnamese. However, it was pre-trained on 200 languages, including over 100 with more than 1 billion tokens each, so it has capabilities in many additional languages.</p>
-                </div>
-
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold mb-2">Is LLAMA4 available for commercial use?</h3>
-                    <p>Yes, LLAMA4 is available under the Llama 4 Community License, which allows for commercial use with certain restrictions. You can use LLAMA4 in commercial applications as long as you comply with the license terms and Meta's acceptable use policies.</p>
-                </div>
-
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold mb-2">When will LLAMA4 Behemoth be released?</h3>
-                    <p>LLAMA4 Behemoth is still in training and Meta has not announced a specific release date. It currently serves as a teacher model for Scout and Maverick, and Meta has shared that it outperforms models like GPT-4.5 and Claude Sonnet 3.7 on several STEM benchmarks.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Call to Action -->
-        <section class="mb-16 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-lg overflow-hidden">
-            <div class="relative p-8 md:p-12">
-                <div class="relative z-10">
-                    <h2 class="text-3xl font-bold text-white mb-4">Start Building with LLAMA4 Today</h2>
-                    <p class="text-white text-lg mb-6 max-w-2xl">Join the growing community of developers, researchers, and organizations leveraging LLAMA4's advanced capabilities to create the next generation of AI applications.</p>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="https://www.llama.com/llama-downloads/" target="_blank" class="px-6 py-3 bg-white text-blue-600 hover:bg-gray-100 font-medium rounded-lg transition flex items-center">
-                            <i class="fas fa-download mr-2"></i>
-                            Download LLAMA4
-                        </a>
-                        <a href="https://meta.ai/" target="_blank" class="px-6 py-3 bg-blue-500 hover:bg-blue-400 text-white font-medium rounded-lg transition flex items-center">
-                            <i class="fas fa-robot mr-2"></i>
-                            Try Meta AI
-                        </a>
-                    </div>
-                </div>
-
-                <div class="absolute top-0 right-0 opacity-10 w-full h-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full">
-                        <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="#fff"></path>
-                        <circle cx="80" cy="20" r="20" fill="#fff"></circle>
-                        <circle cx="20" cy="80" r="30" fill="#fff"></circle>
-                    </svg>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 px-4">
-        <div class="container mx-auto max-w-5xl">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">LLAMA4</h3>
-                    <p class="text-gray-300">Meta's most advanced open-weight natively multimodal large language models, designed to enable the next generation of AI applications.</p>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Resources</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://www.llama.com" target="_blank" class="text-gray-300 hover:text-white transition">Official Website</a></li>
-                        <li><a href="https://github.com/meta-llama" target="_blank" class="text-gray-300 hover:text-white transition">GitHub Repository</a></li>
-                        <li><a href="https://www.llama.com/docs/" target="_blank" class="text-gray-300 hover:text-white transition">Documentation</a></li>
-                        <li><a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/" target="_blank" class="text-gray-300 hover:text-white transition">Technical Blog</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Connect</h3>
-                    <ul class="space-y-2">
-                        <li><a href="https://www.meta.com/ai/" target="_blank" class="text-gray-300 hover:text-white transition">Meta AI</a></li>
-                        <li><a href="https://ai.meta.com/" target="_blank" class="text-gray-300 hover:text-white transition">Meta AI Research</a></li>
-                        <li><a href="https://huggingface.co/meta-llama" target="_blank" class="text-gray-300 hover:text-white transition">Hugging Face</a></li>
-                        <li><a href="https://discord.gg/meta-llama" target="_blank" class="text-gray-300 hover:text-white transition">Discord Community</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-400 mb-4 md:mb-0">© 2025 Meta AI. LLAMA4 is a registered trademark of Meta. All images used are from public sources.</p>
-                <div class="flex space-x-4">
-                    <a href="https://github.com/meta-llama" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-github text-xl"></i>
-                    </a>
-                    <a href="https://twitter.com/MetaAI" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-twitter text-xl"></i>
-                    </a>
-                    <a href="https://www.linkedin.com/company/meta/" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-linkedin text-xl"></i>
-                    </a>
-                </div>
-            </div>
+      <div class="grid three">
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-code"></i></div>
+          <div class="use-body">
+            <h3>Software Development</h3>
+            <p>LLAMA4 assists developers with code generation, debugging, and documentation, understanding entire codebases with its extensive context window.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>Complete application generation</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Legacy code modernization</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Bug identification and fixing</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Large-scale codebase understanding</span></li>
+            </ul>
+          </div>
         </div>
-    </footer>
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-chart-bar"></i></div>
+          <div class="use-body">
+            <h3>Data Analysis</h3>
+            <p>Leverage LLAMA4's multimodal capabilities for chart interpretation, data summarization, and insight generation from diverse data sources.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>Chart and visualization analysis</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Multi-source data integration</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Trend identification</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Financial report analysis</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-book"></i></div>
+          <div class="use-body">
+            <h3>Education &amp; Research</h3>
+            <p>Transform educational experiences with personalized tutoring, research assistance, and comprehensive content creation.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>Personalized tutoring</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Research paper synthesis</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Educational content creation</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Literature analysis</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-    <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+      <div class="grid two">
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-hospital"></i></div>
+          <div class="use-body">
+            <h3>Healthcare</h3>
+            <p>Enhance medical research, patient care, and health informatics with LLAMA4's advanced reasoning and multimodal capabilities.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>Medical literature review</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Medical image analysis assistance</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Patient record summarization</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Clinical trial documentation</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card use-card">
+          <div class="use-head"><i class="fas fa-desktop"></i></div>
+          <div class="use-body">
+            <h3>Content Creation</h3>
+            <p>Generate high-quality written content, analyze visual media, and create comprehensive multimedia materials for various platforms.</p>
+            <ul class="icon-list">
+              <li><i class="fas fa-check-circle"></i><span>Long-form article writing</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Image and video content analysis</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Marketing material creation</span></li>
+              <li><i class="fas fa-check-circle"></i><span>Multilingual content adaptation</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+      <figure>
+        <img src="https://www.geeky-gadgets.com/wp-content/uploads/2025/04/meta-llama-4-maverick-scout-variants.webp" alt="LLAMA4 Applications" loading="lazy">
+        <figcaption>LLAMA4 Powering Various Real-World Applications</figcaption>
+      </figure>
 
-        // Expandable sections
-        const sectionHeaders = document.querySelectorAll('.section-header');
+      <div class="info-box">
+        <h3 class="lg"><i class="fas fa-book-open"></i> LLAMA4 Scout-Specific Use Cases</h3>
+        <p>The unprecedented 10M token context window of LLAMA4 Scout enables entirely new types of applications:</p>
+        <div class="grid two" style="margin-top:14px">
+          <div class="mini">
+            <h4>Book-Length Content Analysis</h4>
+            <p>Process and analyze entire books or multiple research papers in a single context, maintaining coherence across the full text.</p>
+          </div>
+          <div class="mini">
+            <h4>Multi-Document Comparison</h4>
+            <p>Compare and contrast multiple lengthy documents, identifying similarities, differences, and patterns across the entire corpus.</p>
+          </div>
+          <div class="mini">
+            <h4>Entire Codebase Understanding</h4>
+            <p>Analyze complete codebases with millions of lines, understanding architectural patterns and dependencies holistically.</p>
+          </div>
+          <div class="mini">
+            <h4>Long Conversation History</h4>
+            <p>Maintain context over extremely long conversations, remembering details from hours of previous interaction.</p>
+          </div>
+        </div>
+      </div>
 
-        sectionHeaders.forEach(header => {
-            header.addEventListener('click', () => {
-                const parent = header.parentElement;
-                parent.classList.toggle('section-expanded');
-            });
-        });
+      <div class="grid three">
+        <div class="card">
+          <h3 class="accent">Enterprise Applications</h3>
+          <ul class="icon-list">
+            <li><i class="fas fa-angle-right"></i><span>Customer support automation with multimodal understanding</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Legal document analysis and contract review</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Enterprise knowledge base enrichment</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Multimodal business intelligence</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="accent">Creative Applications</h3>
+          <ul class="icon-list">
+            <li><i class="fas fa-angle-right"></i><span>Script and screenplay development</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Visual content analysis for inspiration</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Interactive storytelling experiences</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Music and art analysis and critique</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="accent">Personal Applications</h3>
+          <ul class="icon-list">
+            <li><i class="fas fa-angle-right"></i><span>Personal knowledge management and note-taking</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Photo collection management and analysis</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Learning assistance across multiple subjects</span></li>
+            <li><i class="fas fa-angle-right"></i><span>Travel planning with visual understanding</span></li>
+          </ul>
+        </div>
+      </div>
 
-        // Auto-expand the first section
-        const firstSection = document.querySelector('.section-expandable');
-        if (firstSection) {
-            firstSection.classList.add('section-expanded');
-        }
+      <div class="centered">
+        <h3><i class="fas fa-rocket"></i> Start Building with LLAMA4</h3>
+        <p>LLAMA4's open-weight approach enables developers and organizations to build innovative applications with state-of-the-art AI capabilities. Whether you're creating consumer applications, enterprise solutions, or research tools, LLAMA4 provides the performance and flexibility you need.</p>
+        <div class="btn-row center">
+          <a href="https://www.llama.com/llama-downloads/" target="_blank" rel="noopener" class="btn btn-primary"><i class="fas fa-download"></i> Download LLAMA4</a>
+          <a href="https://github.com/meta-llama" target="_blank" rel="noopener" class="btn btn-outline"><i class="fab fa-github"></i> Explore GitHub Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        // Active navigation based on scroll
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('.nav-pill');
+  <!-- FAQ Section -->
+  <div class="section fade-up" id="faq">
+    <h2 class="section-title"><i class="fas fa-circle-question"></i> Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <div class="card">
+        <h3>What makes LLAMA4 different from previous Llama models?</h3>
+        <p>LLAMA4 introduces several major innovations: it's the first Llama model to use a mixture-of-experts architecture, it's natively multimodal with early fusion of text and images, it offers unprecedented context lengths (up to 10M tokens), and it's trained on significantly more data (up to 40T tokens).</p>
+      </div>
+      <div class="card">
+        <h3>How do I choose between LLAMA4 Scout and Maverick?</h3>
+        <p>Choose Scout if you need extremely long context handling (10M tokens), have hardware constraints, or are processing large documents. Choose Maverick for state-of-the-art performance in multimodal tasks, advanced reasoning, and production-grade applications where you can support more powerful infrastructure.</p>
+      </div>
+      <div class="card">
+        <h3>What hardware do I need to run LLAMA4 models?</h3>
+        <p>LLAMA4 Scout can run on a single H100 GPU with int4 quantization, while LLAMA4 Maverick requires a single H100 DGX host with FP8 quantization. Alternative options include using cloud providers that offer LLAMA4 as a service, which eliminates the need for specialized hardware.</p>
+      </div>
+      <div class="card">
+        <h3>What languages does LLAMA4 support?</h3>
+        <p>LLAMA4 officially supports 12 languages: Arabic, English, French, German, Hindi, Indonesian, Italian, Portuguese, Spanish, Tagalog, Thai, and Vietnamese. However, it was pre-trained on 200 languages, including over 100 with more than 1 billion tokens each, so it has capabilities in many additional languages.</p>
+      </div>
+      <div class="card">
+        <h3>Is LLAMA4 available for commercial use?</h3>
+        <p>Yes, LLAMA4 is available under the Llama 4 Community License, which allows for commercial use with certain restrictions. You can use LLAMA4 in commercial applications as long as you comply with the license terms and Meta's acceptable use policies.</p>
+      </div>
+      <div class="card">
+        <h3>When will LLAMA4 Behemoth be released?</h3>
+        <p>LLAMA4 Behemoth is still in training and Meta has not announced a specific release date. It currently serves as a teacher model for Scout and Maverick, and Meta has shared that it outperforms models like GPT-4.5 and Claude Sonnet 3.7 on several STEM benchmarks.</p>
+      </div>
+    </div>
+  </div>
 
-        function setActiveNavLink() {
-            const scrollPosition = window.scrollY + 100;
+  <!-- Call to Action -->
+  <div class="section fade-up cta" id="cta">
+    <h2>Start Building with LLAMA4 Today</h2>
+    <p>Join the growing community of developers, researchers, and organizations leveraging LLAMA4's advanced capabilities to create the next generation of AI applications.</p>
+    <div class="btn-row">
+      <a href="https://www.llama.com/llama-downloads/" target="_blank" rel="noopener" class="btn btn-light"><i class="fas fa-download"></i> Download LLAMA4</a>
+      <a href="https://meta.ai/" target="_blank" rel="noopener" class="btn btn-ghost"><i class="fas fa-robot"></i> Try Meta AI</a>
+    </div>
+  </div>
 
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
+  <!-- Resources (from the original page footer) -->
+  <div class="section fade-up" id="resources">
+    <div class="grid three">
+      <div>
+        <h3><i class="fas fa-brain"></i> LLAMA4</h3>
+        <p>Meta's most advanced open-weight natively multimodal large language models, designed to enable the next generation of AI applications.</p>
+      </div>
+      <div>
+        <h3><i class="fas fa-link"></i> Resources</h3>
+        <ul class="link-list">
+          <li><a href="https://www.llama.com" target="_blank" rel="noopener">Official Website</a></li>
+          <li><a href="https://github.com/meta-llama" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="https://www.llama.com/docs/" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/" target="_blank" rel="noopener">Technical Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3><i class="fas fa-users"></i> Connect</h3>
+        <ul class="link-list">
+          <li><a href="https://www.meta.com/ai/" target="_blank" rel="noopener">Meta AI</a></li>
+          <li><a href="https://ai.meta.com/" target="_blank" rel="noopener">Meta AI Research</a></li>
+          <li><a href="https://huggingface.co/meta-llama" target="_blank" rel="noopener">Hugging Face</a></li>
+          <li><a href="https://discord.gg/meta-llama" target="_blank" rel="noopener">Discord Community</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="resources-bottom">
+      <p>© 2025 Meta AI. LLAMA4 is a registered trademark of Meta. All images used are from public sources.</p>
+      <div class="social">
+        <a href="https://github.com/meta-llama" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://twitter.com/MetaAI" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.linkedin.com/company/meta/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+  </div>
 
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${sectionId}`) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            });
-        }
+  <div class="page-nav"><a class="nav-btn prev" href="/cs/index.html">← Back to Course</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
+</div>
 
-        window.addEventListener('scroll', setActiveNavLink);
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
-        // Set active on page load
-        setActiveNavLink();
-    </script>
-<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
 <script>
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-    const btn=document.getElementById('themeToggleBtn');
-    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
-    const back=document.querySelector('a[href="/cs/index.html"]');
-    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
-}
 (function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
-        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
-    }
-})();
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn'))return;
-        pre.classList.add('has-copy');pre.style.position='relative';
-        var btn=document.createElement('button');btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
-        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
-        pre.appendChild(btn);
+  // Collapsible sections (all expanded by default; click a heading to collapse)
+  var heads=document.querySelectorAll('.section-title.collapsible');
+  for(var i=0;i<heads.length;i++){
+    heads[i].addEventListener('click',function(){
+      var sec=this.closest('.section');
+      if(sec) sec.classList.toggle('collapsed');
     });
-});
+  }
+  // Make sure a section targeted by an anchor is expanded
+  function expandHash(){
+    if(!location.hash) return;
+    var el=document.getElementById(location.hash.slice(1));
+    if(el&&el.classList.contains('collapsed')) el.classList.remove('collapsed');
+  }
+  window.addEventListener('hashchange',expandHash); expandHash();
+
+  // Active navigation based on scroll
+  var sections=document.querySelectorAll('.section[id]');
+  var navLinks=document.querySelectorAll('.nav-links a');
+  function setActiveNavLink(){
+    var scrollPosition=window.scrollY+100, current=null;
+    for(var s=0;s<sections.length;s++){
+      var sec=sections[s], top=sec.offsetTop, h=sec.offsetHeight;
+      if(scrollPosition>=top&&scrollPosition<top+h) current='#'+sec.getAttribute('id');
+    }
+    for(var l=0;l<navLinks.length;l++) navLinks[l].classList.toggle('active',navLinks[l].getAttribute('href')===current);
+  }
+  window.addEventListener('scroll',setActiveNavLink,{passive:true});
+  setActiveNavLink();
+})();
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

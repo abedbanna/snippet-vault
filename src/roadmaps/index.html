@@ -40,6 +40,11 @@
         .rm-how-item p{font-size:.84rem;color:var(--text2)}
         body.light-mode .rm-card,body.light-mode .rm-how-inner{background:#fff;border-color:rgba(0,0,0,.08)}
     </style>
+<style>
+.scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+.scroll-top.visible{opacity:1;pointer-events:auto}
+.scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+</style>
 </head>
 <body>
     <nav class="navbar">
@@ -221,8 +226,8 @@
     <footer class="footer"><div class="footer-bottom">Roadmaps &middot; albanna-tutorials.com</div></footer>
 
     <script>
-        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('rm-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
-        (function(){const s=localStorage.getItem('rm-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+        function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ab-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+        (function(){const s=localStorage.getItem('ab-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
         document.querySelectorAll('.rm-card').forEach(card=>{
             let st={};
             try{st=JSON.parse(localStorage.getItem('rm-'+card.dataset.id)||'{}');}catch(e){}
@@ -235,5 +240,7 @@
             card.querySelector('.rm-fill').style.width=pct+'%';
         });
     </script>
+<button class="scroll-top" id="scrollTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+<script>window.addEventListener('scroll',function(){document.getElementById('scrollTop').classList.toggle('visible',window.pageYOffset>400);},{passive:true});</script>
 </body>
 </html>

@@ -11,83 +11,41 @@
 </script>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transformer — شرح كامل بمثال واحد</title>
-<style>
-  @page { size: A4; margin: 2cm; }
-  body { 
-    font-family: 'Geeza Pro', 'Arial', 'Tahoma', sans-serif; 
-    font-size: 14px; 
-    line-height: 1.8; 
-    direction: rtl;
-    color: #1a1a1a;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  h1 { color: #4C1D95; font-size: 24px; border-bottom: 3px solid #4C1D95; padding-bottom: 10px; }
-  h2 { color: #6D28D9; font-size: 20px; margin-top: 30px; border-right: 4px solid #6D28D9; padding-right: 10px; }
-  h3 { color: #7C3AED; font-size: 16px; }
-  code { 
-    font-family: 'Menlo', 'Courier New', monospace; 
-    background: #f3f0ff; 
-    padding: 2px 6px; 
-    border-radius: 4px;
-    direction: ltr;
-    display: inline-block;
-  }
-  pre { 
-    background: #f8f6ff; 
-    border: 1px solid #e0d8f0; 
-    border-radius: 8px; 
-    padding: 15px; 
-    direction: ltr; 
-    text-align: left;
-    font-family: 'Menlo', 'Courier New', monospace;
-    font-size: 12px;
-    overflow-x: auto;
-    line-height: 1.5;
-  }
-  blockquote { 
-    background: #fef3c7; 
-    border-right: 4px solid #f59e0b; 
-    padding: 10px 15px; 
-    margin: 15px 0;
-    border-radius: 4px;
-  }
-  table { border-collapse: collapse; width: 100%; margin: 15px 0; }
-  th { background: #4C1D95; color: white; padding: 10px; text-align: right; }
-  td { border: 1px solid #ddd; padding: 8px; text-align: right; }
-  tr:nth-child(even) { background: #f8f6ff; }
-  .note { background: #ecfdf5; border-right: 4px solid #10b981; padding: 10px 15px; border-radius: 4px; margin: 10px 0; }
-  .important { background: #fef2f2; border-right: 4px solid #ef4444; padding: 10px 15px; border-radius: 4px; margin: 10px 0; }
-  .ltr { direction: ltr; text-align: left; }
-  hr { border: none; border-top: 2px solid #e5e7eb; margin: 25px 0; }
-  .diagram { 
-    background: #1e1b2e; color: #e0d8f0; padding: 20px; border-radius: 8px; 
-    font-family: 'Menlo', monospace; font-size: 11px; direction: ltr; text-align: left;
-    white-space: pre; line-height: 1.4;
-  }
+<meta name="description" content="شرح خطوة بخطوة لمعمارية Transformer بمثال واحد: الـ Embedding، ترميز الموقع، الـ Attention، الـ Decoder، والتنبؤ بالكلمة النهائية.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/assets/theme.css">
+<style>:root{--primary:#7c3aed;--primary-hover:#a78bfa;--glow:rgba(124,58,237,.14)}
+.info-box{color:var(--text2);font-size:.95rem}
+.info-box.formula{font-size:1.05rem;color:var(--text)}
+.info-box.result{text-align:center;font-size:1.15rem;color:var(--text)}
+.section pre{font-size:.82rem}
+pre.diagram{font-size:.76rem;line-height:1.4;width:max-content;max-width:100%;margin:14px auto}
+.hero .cat-badge i{margin:0 5px}
 </style>
 </head>
 <body>
-
-<p style="margin-bottom: 10px; direction: ltr; text-align: left;">
-  <a href="transformer.html" style="color: #6D28D9; text-decoration: none; font-size: 14px;">← Back to Transformer Overview</a>
-  &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="transformer-step-by-step.html" style="color: #6D28D9; text-decoration: none; font-size: 14px;">🇬🇧 English Version</a>
-</p>
-<h1>Transformer — شرح كامل بمثال واحد خطوة بخطوة</h1>
-
-<blockquote>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fas fa-robot"></i> Transformer</a>
+  <div class="nav-links"><a href="#embedding">Embedding</a><a href="#positional">الموقع</a><a href="#attention">Attention</a><a href="#decoder">Decoder</a><a href="#pipeline">الملخص</a><a href="#facts">للامتحان</a><a href="transformer-step-by-step.html">English</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="#embedding">Embedding</a><a href="#positional">الموقع</a><a href="#attention">Attention</a><a href="#decoder">Decoder</a><a href="#pipeline">الملخص</a><a href="#facts">للامتحان</a><a href="transformer-step-by-step.html">English</a></div>
+<section class="hero"><div class="hero-content"><h1>Transformer — شرح كامل بمثال واحد خطوة بخطوة</h1><p class="hero-sub">كل خطوة في الـ Transformer محسوبة بالأرقام على جملة وحدة من الإنجليزي للعربي: الـ Embedding، ترميز الموقع، الـ Attention، الـ Decoder والـ Softmax النهائي.</p><span class="diff-badge">متوسط</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~30 دقيقة</span> <span class="cat-badge"><i class="fas fa-robot"></i> AI Applications</span></div></section>
+<div class="container">
+<div class="section fade-up" id="example">
+<div class="info-box warning">
 <strong>المثال اللي رح نمشي فيه طول الشرح:</strong><br>
 ترجمة من إنجليزي لعربي:<br>
 Input: <strong>"I love learning"</strong><br>
 Output: <strong>"أنا أحب التعلم"</strong>
-</blockquote>
-
-<hr>
-
-<h2>1. Input Embedding (تحويل الكلمات لأرقام)</h2>
+</div>
+</div>
+<div class="section fade-up" id="embedding">
+<h2 class="section-title"><i class="fas fa-hashtag"></i> <span>1. Input Embedding (تحويل الكلمات لأرقام)</span></h2>
 
 <p>أول خطوة: كل كلمة بتتحول لـ <strong>vector</strong> (قائمة أرقام). نفترض الـ embedding dimension = <strong>4</strong> (بالواقع 512).</p>
 
@@ -98,10 +56,9 @@ Output: <strong>"أنا أحب التعلم"</strong>
 </pre>
 
 <p>هاي الأرقام الموديل بتعلمها وقت التدريب — كلمات بمعنى قريب بكون vectors قريبة من بعض.</p>
-
-<hr>
-
-<h2>2. Positional Encoding (ترميز الموقع)</h2>
+</div>
+<div class="section fade-up" id="positional">
+<h2 class="section-title"><i class="fas fa-clock"></i> <span>2. Positional Encoding (ترميز الموقع)</span></h2>
 
 <h3>المشكلة:</h3>
 <p>الـ Transformer بعالج كل الكلمات <strong>بنفس الوقت</strong> (بالتوازي)، فما بعرف إنه "I" أول كلمة و"learning" ثالث كلمة.</p>
@@ -152,11 +109,10 @@ PE(2,3) = cos(0.02) = 1.00
 "learning" = [0.4, 0.6, 0.5, 0.9] + [0.91,-0.42, 0.02, 1.00] = [1.31, 0.18, 0.52, 1.90]
 </pre>
 
-<div class="note">هلأ كل كلمة بتعرف <strong>شو هي</strong> (embedding) و<strong>وين هي</strong> (position). ✅</div>
-
-<hr>
-
-<h2>3. Self-Attention (آلية الانتباه الذاتي)</h2>
+<div class="info-box success">هلأ كل كلمة بتعرف <strong>شو هي</strong> (embedding) و<strong>وين هي</strong> (position). ✅</div>
+</div>
+<div class="section fade-up" id="attention">
+<h2 class="section-title"><i class="fas fa-eye"></i> <span>3. Self-Attention (آلية الانتباه الذاتي)</span></h2>
 
 <h3>الفكرة:</h3>
 <p>كل كلمة بتسأل: <strong>"مين من الكلمات الثانية مهم إلي عشان أفهم معناي؟"</strong></p>
@@ -181,7 +137,7 @@ V = X × Wv    (Value — شو القيمة اللي بعطيها؟)
 
 <h3>الخطوة الثانية: حساب Attention Scores</h3>
 
-<div class="important">
+<div class="info-box danger">
 <strong>المعادلة الأساسية:</strong><br>
 Attention(Q, K, V) = softmax(Q × Kᵀ / √dₖ) × V
 </div>
@@ -213,7 +169,7 @@ dₖ = 3  →  √3 ≈ 1.73
 "learn"  →  [0.00,   1.15,    0.58]
 </pre>
 
-<div class="note"><strong>ليش بنقسم؟</strong> لأن بدون القسمة الأرقام بتكبر كتير → softmax بصير يعطي 0 و 1 بس (مش تدرجات) → الموديل ما بتعلم منيح.</div>
+<div class="info-box success"><strong>ليش بنقسم؟</strong> لأن بدون القسمة الأرقام بتكبر كتير → softmax بصير يعطي 0 و 1 بس (مش تدرجات) → الموديل ما بتعلم منيح.</div>
 
 <p><strong>ج) تطبيق Softmax (تحويل لاحتمالات):</strong></p>
 <p>softmax بحول كل صف لاحتمالات مجموعها = 1:</p>
@@ -224,7 +180,7 @@ dₖ = 3  →  √3 ≈ 1.73
 "learn"  →  [0.19,   0.59,    0.22]   ← بنتبه لـ "love" أكتر!
 </pre>
 
-<div class="note"><strong>ملاحظة:</strong> "learning" بنتبه أكتر لـ "love" — منطقي! "love learning" مرتبطين.</div>
+<div class="info-box success"><strong>ملاحظة:</strong> "learning" بنتبه أكتر لـ "love" — منطقي! "love learning" مرتبطين.</div>
 
 <p><strong>د) الضرب بـ V (الحصول على المخرج):</strong></p>
 <pre>
@@ -233,11 +189,10 @@ output_love  = 0.39×[1,0,0] + 0.39×[0,1,0] + 0.22×[0,0,1] = [0.39, 0.39, 0.22
 output_learn = 0.19×[1,0,0] + 0.59×[0,1,0] + 0.22×[0,0,1] = [0.19, 0.59, 0.22]
 </pre>
 
-<div class="note">هلأ كل كلمة صارت تحمل معلومات من الكلمات اللي مهمة إلها. ✅</div>
-
-<hr>
-
-<h2>4. Multi-Head Attention (انتباه متعدد الرؤوس)</h2>
+<div class="info-box success">هلأ كل كلمة صارت تحمل معلومات من الكلمات اللي مهمة إلها. ✅</div>
+</div>
+<div class="section fade-up" id="multihead">
+<h2 class="section-title"><i class="fas fa-layer-group"></i> <span>4. Multi-Head Attention (انتباه متعدد الرؤوس)</span></h2>
 
 <h3>الفكرة:</h3>
 <p>بدل ما نعمل attention وحدة، نعمل <strong>8 بالتوازي</strong> — كل وحدة اسمها <strong>head</strong>.</p>
@@ -270,10 +225,9 @@ Head 2 output for "learn": [0.45, 0.10, 0.45]  (تعلم علاقة الموقع
 Concat: [0.19, 0.59, 0.22, 0.45, 0.10, 0.45]
 × Wᴼ → [0.30, 0.40, 0.30]  (النتيجة النهائية)
 </pre>
-
-<hr>
-
-<h2>5. Residual Connection + Layer Normalization</h2>
+</div>
+<div class="section fade-up" id="residual">
+<h2 class="section-title"><i class="fas fa-code-branch"></i> <span>5. Residual Connection + Layer Normalization</span></h2>
 
 <h3>Residual (Skip) Connection:</h3>
 <pre>
@@ -281,7 +235,7 @@ output = x + Sublayer(x)
 </pre>
 <p>يعني: <strong>المدخل الأصلي بنجمعه مع مخرج الطبقة</strong>.</p>
 
-<div class="note"><strong>ليش؟</strong> بمنع مشكلة <strong>Vanishing Gradients</strong> (التدرجات بتختفي بالشبكات العميقة) وبضمن إنه المعلومات الأصلية ما تضيع.</div>
+<div class="info-box success"><strong>ليش؟</strong> بمنع مشكلة <strong>Vanishing Gradients</strong> (التدرجات بتختفي بالشبكات العميقة) وبضمن إنه المعلومات الأصلية ما تضيع.</div>
 
 <h3>Layer Normalization:</h3>
 <pre>
@@ -303,10 +257,9 @@ attention output:                   [0.19, 0.59, 0.22]
 LayerNorm = [(1.50-1.00)/0.35, (0.77-1.00)/0.35, (0.74-1.00)/0.35]
           = [1.43, -0.66, -0.74]
 </pre>
-
-<hr>
-
-<h2>6. Feed-Forward Network (شبكة أمامية)</h2>
+</div>
+<div class="section fade-up" id="ffn">
+<h2 class="section-title"><i class="fas fa-network-wired"></i> <span>6. Feed-Forward Network (شبكة أمامية)</span></h2>
 
 <p>بعد الـ attention، كل كلمة بتمر بشبكة عصبية صغيرة:</p>
 <pre>
@@ -328,11 +281,10 @@ input: [1.43, -0.66, -0.74]
 بعد W₂ + b₂:        [0.8,  0.5, 0.3]           ← رجع للحجم الأصلي
 </pre>
 
-<div class="note">+ Residual + LayerNorm مرة ثانية ← <strong>مخرج الـ Encoder جاهز!</strong> ✅</div>
-
-<hr>
-
-<h2>7. Decoder — الجزء اللي بولّد الترجمة</h2>
+<div class="info-box success">+ Residual + LayerNorm مرة ثانية ← <strong>مخرج الـ Encoder جاهز!</strong> ✅</div>
+</div>
+<div class="section fade-up" id="decoder">
+<h2 class="section-title"><i class="fas fa-language"></i> <span>7. Decoder — الجزء اللي بولّد الترجمة</span></h2>
 
 <p>الـ Decoder بشتغل كلمة كلمة. نفترض وصلنا لمرحلة توليد الكلمة الثالثة وعندنا:</p>
 <pre>
@@ -362,7 +314,7 @@ Mask (المثلث السفلي فقط):
   ???     →  [0.17,   0.37,  0.46]
 </pre>
 
-<div class="important"><strong>ليش الـ Mask؟</strong> لأن وقت التوليد ما لازم الموديل يغش ويشوف الكلمات اللي لسه ما ولّدها!</div>
+<div class="info-box danger"><strong>ليش الـ Mask؟</strong> لأن وقت التوليد ما لازم الموديل يغش ويشوف الكلمات اللي لسه ما ولّدها!</div>
 
 <h3>7.2 Cross-Attention (انتباه متقاطع)</h3>
 
@@ -385,11 +337,10 @@ Scores مع كل كلمة إنجليزية:
 بعد softmax: [0.22, 0.40, 0.38]
 </pre>
 
-<div class="note">يعني الكلمة الثالثة بالعربي بتنتبه أكتر لـ <strong>"love"</strong> و <strong>"learning"</strong> — منطقي لأن "التعلم" ترجمة "learning"! ✅</div>
-
-<hr>
-
-<h2>8. Linear + Softmax (التنبؤ بالكلمة)</h2>
+<div class="info-box success">يعني الكلمة الثالثة بالعربي بتنتبه أكتر لـ <strong>"love"</strong> و <strong>"learning"</strong> — منطقي لأن "التعلم" ترجمة "learning"! ✅</div>
+</div>
+<div class="section fade-up" id="output">
+<h2 class="section-title"><i class="fas fa-bullseye"></i> <span>8. Linear + Softmax (التنبؤ بالكلمة)</span></h2>
 
 <p>آخر خطوة — مخرج الـ Decoder بمر بـ:</p>
 
@@ -405,15 +356,14 @@ Scores مع كل كلمة إنجليزية:
 أعلى احتمال → "التعلم" (0.85) ✅
 </pre>
 
-<div class="note" style="background: #f0fdf4; border-color: #22c55e; text-align: center; font-size: 18px;">
+<div class="info-box success result">
 <strong>النتيجة: "أنا أحب التعلم" 🎉</strong>
 </div>
+</div>
+<div class="section fade-up" id="pipeline">
+<h2 class="section-title"><i class="fas fa-diagram-project"></i> <span>9. ملخص العملية الكاملة</span></h2>
 
-<hr>
-
-<h2>9. ملخص العملية الكاملة</h2>
-
-<div class="diagram">
+<pre class="diagram">
 ┌──────────────────────── ENCODER ────────────────────────┐
 │                                                          │
 │  "I love learning"                                       │
@@ -457,13 +407,12 @@ Scores مع كل كلمة إنجليزية:
 │  ══► "التعلم" ← الكلمة اللي احتمالها أعلى                 │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
+</pre>
 </div>
+<div class="section fade-up" id="facts">
+<h2 class="section-title"><i class="fas fa-list-check"></i> <span>10. معلومات أساسية للامتحان</span></h2>
 
-<hr>
-
-<h2>10. معلومات أساسية للامتحان</h2>
-
-<table>
+<div class="table-wrap"><table class="dark-table">
 <tr><th>المعلومة</th><th>القيمة</th></tr>
 <tr><td>عدد طبقات الـ Encoder بالورقة الأصلية</td><td><strong>6</strong></td></tr>
 <tr><td>عدد طبقات الـ Decoder</td><td><strong>6</strong></td></tr>
@@ -474,7 +423,12 @@ Scores مع كل كلمة إنجليزية:
 <tr><td>الورقة الأصلية</td><td>"Attention Is All You Need" (2017)</td></tr>
 <tr><td>المؤلفين</td><td>Vaswani et al. (Google)</td></tr>
 <tr><td>الـ Optimizer</td><td>Adam (مع learning rate متغير)</td></tr>
-</table>
-
+</table></div>
+</div>
+  <div class="page-nav"><a class="nav-btn prev" href="transformer.html">← Back to Transformer Overview</a><a class="nav-btn next" href="transformer-step-by-step.html">🇬🇧 English Version</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

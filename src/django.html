@@ -13,350 +13,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getting Started with Django: Build Your First Web App</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <meta name="description" content="Step-by-step Django tutorial for beginners: set up Python, create a project and app, add models, views, templates and forms, then style and deploy.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-okaidia.min.css">
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 240px;
-            background-color: #f8f9fa;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-            z-index: 20;
-        }
-        .sidebar.hidden {
-            transform: translateX(-100%);
-        }
-        #content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-        #content.full-width {
-            margin-left: 0;
-        }
-        .nav-link {
-            display: block;
-            padding: 0.5rem 1rem;
-            color: #4a5568;
-            border-left: 3px solid transparent;
-        }
-        .nav-link:hover {
-            background-color: #edf2f7;
-            color: #2d3748;
-        }
-        .nav-link.active {
-            background-color: #e2e8f0;
-            color: #2b6cb0;
-            border-left: 3px solid #4299e1;
-        }
-        .section {
-            scroll-margin-top: 2rem;
-            max-width: 100%;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        pre {
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-        }
-        code {
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-        }
-        .terminal {
-            background-color: #2d3748;
-            color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            margin: 1rem 0;
-            overflow-x: auto;
-        }
-        .note {
-            background-color: #ebf8ff;
-            border-left: 4px solid #4299e1;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0.25rem;
-        }
-        .warning {
-            background-color: #fffbeb;
-            border-left: 4px solid #ecc94b;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0.25rem;
-        }
-        .tip {
-            background-color: #f0fff4;
-            border-left: 4px solid #48bb78;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0.25rem;
-        }
-        .quiz-container {
-            background-color: #e6f7ff;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .quiz-option {
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            background-color: white;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quiz-option:hover {
-            background-color: #f3f4f6;
-        }
-        .quiz-option.correct {
-            background-color: #d1fae5;
-            border-color: #34d399;
-        }
-        .quiz-option.incorrect {
-            background-color: #fee2e2;
-            border-color: #f87171;
-        }
-        .quiz-feedback {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            display: none;
-        }
-        .code-tabs {
-            margin: 1.5rem 0;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .tab {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border: 1px solid transparent;
-            border-bottom: none;
-            border-radius: 0.25rem 0.25rem 0 0;
-            margin-right: 0.25rem;
-            background-color: #f8fafc;
-        }
-        .tab.active {
-            border-color: #e2e8f0;
-            background-color: white;
-            margin-bottom: -1px;
-        }
-        .tab-content {
-            display: none;
-            border: 1px solid #e2e8f0;
-            border-top: none;
-            padding: 1rem;
-            border-radius: 0 0 0.25rem 0.25rem;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
-        /* For PDF export optimization */
-        @media print {
-            .sidebar, .toggle-sidebar {
-                display: none;
-            }
-            #content {
-                margin-left: 0;
-            }
-            .section {
-                page-break-inside: avoid;
-            }
-            .quiz-container, .terminal, pre, .note, .warning, .tip {
-                page-break-inside: avoid;
-            }
-            body {
-                padding: 2rem;
-            }
-        }
-
-        /* Progress tracking */
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            position: fixed;
-            top: 0;
-            z-index: 30;
-        }
-        #progressBar {
-            height: 8px;
-            background: #4299e1;
-            width: 0%;
-        }
-
-        /* Visual diagram styles */
-        .diagram {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .folder-structure {
-            font-family: 'Fira Code', monospace;
-            line-height: 1.5;
-        }
-        .folder-structure .folder {
-            position: relative;
-            padding-left: 1.5rem;
-        }
-        .folder-structure .folder::before {
-            content: "📁";
-            position: absolute;
-            left: 0;
-        }
-        .folder-structure .file {
-            position: relative;
-            padding-left: 1.5rem;
-        }
-        .folder-structure .file::before {
-            content: "📄";
-            position: absolute;
-            left: 0;
-        }
-
-        /* Steps counter */
-        .steps-container {
-            counter-reset: step;
-        }
-        .step {
-            position: relative;
-            padding-left: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .step::before {
-            counter-increment: step;
-            content: counter(step);
-            position: absolute;
-            left: 0;
-            top: 0;
-            background-color: #4299e1;
-            color: white;
-            width: 1.75rem;
-            height: 1.75rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        /* Checkboxes for tracking progress */
-        .progress-checkbox {
-            margin-right: 0.5rem;
-        }
-
-        /* Flow diagram */
-        .flow-diagram {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 2rem 0;
-        }
-        .flow-item {
-            padding: 1rem 2rem;
-            background-color: #e6f7ff;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            text-align: center;
-            position: relative;
-            width: 80%;
-            max-width: 400px;
-        }
-        .flow-item::after {
-            content: "↓";
-            position: absolute;
-            bottom: -1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.5rem;
-            color: #4299e1;
-        }
-        .flow-item:last-child::after {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#44b78b;--primary-hover:#6cc9a4;--glow:rgba(68,183,139,.14)}
+.progress-container{position:fixed;top:0;left:0;width:100%;height:3px;z-index:1001;pointer-events:none}
+#progressBar{height:3px;background:var(--primary);width:0%}
+.code-block code{background:none;padding:0;color:inherit;font-size:inherit;font-family:inherit}
+pre code[class*="language-"]{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;text-shadow:none;font-size:inherit;line-height:inherit;background:none}
+.quiz-container{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:22px;margin:24px 0}
+.quiz-container h3{margin-top:0}
+.section .quiz-q{color:var(--text);font-weight:600}
+.quiz-option{padding:12px 16px;margin:8px 0;background:var(--surface);border:1px solid var(--border2);border-radius:8px;cursor:pointer;transition:all .2s;color:var(--text2)}
+.quiz-option:hover{border-color:var(--primary);color:var(--text)}
+.quiz-option.correct{background:rgba(16,185,129,.15);border-color:var(--success);color:var(--text)}
+.quiz-option.incorrect{background:rgba(239,68,68,.15);border-color:var(--danger);color:var(--text)}
+.quiz-feedback{display:none;margin-top:14px;padding:12px 16px;border-radius:8px;font-size:.92rem;line-height:1.7;color:var(--text)}
+.quiz-feedback.correct{background:rgba(16,185,129,.12);border:1px solid var(--success)}
+.quiz-feedback.incorrect{background:rgba(239,68,68,.12);border:1px solid var(--danger)}
+.code-tabs{margin:14px 0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border2)}
+.tab{padding:8px 16px;cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;font-size:.85rem;font-weight:600;color:var(--text2);transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{border-color:var(--border2);background:var(--surface2);color:var(--primary);margin-bottom:-1px}
+.tab-content{display:none;border:1px solid var(--border2);border-top:none;padding:2px 14px;border-radius:0 0 8px 8px}
+.tab-content.active{display:block}
+.diagram{margin:24px 0;padding:20px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+.diagram h3{margin-top:0}
+.flow-diagram{display:flex;flex-direction:column;align-items:center;margin:8px 0}
+.flow-item{padding:14px 28px;background:var(--surface);border:1px solid var(--primary);border-radius:10px;margin-bottom:36px;text-align:center;position:relative;width:80%;max-width:400px;color:var(--text)}
+.flow-item p{font-size:.85rem;margin:0}
+.flow-item::after{content:"\2193";position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);font-size:1.5rem;color:var(--primary);line-height:1}
+.flow-item:last-child{margin-bottom:0}.flow-item:last-child::after{display:none}
+.folder-structure{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem;line-height:1.8;direction:ltr;text-align:left;color:var(--text2);overflow-x:auto}
+.folder-structure .folder,.folder-structure .file{position:relative;padding-left:1.6rem;white-space:nowrap}
+.folder-structure .folder::before{content:"\1F4C1";position:absolute;left:0}
+.folder-structure .file::before{content:"\1F4C4";position:absolute;left:0}
+.section .file-list{list-style:none;padding:0}
+.section .file-list li{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;margin:8px 0}
+.file-list li strong{color:var(--primary)}
+.panel{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:22px;margin:20px 0}
+.panel h3{margin-top:0}
+.section .card h4{margin-top:0}.card p{margin-bottom:8px}.card ul{margin-bottom:10px}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:5px 0;color:var(--text2)}
+.check-item input{margin-top:7px;accent-color:var(--primary);flex-shrink:0}
+.check-item input:checked+label{text-decoration:line-through;opacity:.7}
+.step-body>p:last-child{margin-bottom:0}
+</style>
 </head>
-<body class="bg-gray-50">
-    <div class="progress-container">
-        <div id="progressBar"></div>
-    </div>
+<body>
+<div class="progress-container"><div id="progressBar"></div></div>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fab fa-python"></i> Django Tutorial</a>
+  <div class="nav-links"><a href="django_ar.html">عربي</a><a href="#introduction">Intro</a><a href="#setup">Setup</a><a href="#models">Models</a><a href="#views">Views</a><a href="#forms">Forms</a><a href="#deployment">Deploy</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="django_ar.html">عربي</a>
+    <a href="#introduction">1. Introduction to Django</a>
+    <a href="#setup">2. Setting Up Environment</a>
+    <a href="#project-creation">3. Creating Django Project</a>
+    <a href="#folder-structure">4. Django Folder Structure</a>
+    <a href="#models">5. Creating Models</a>
+    <a href="#views">6. Views, Templates & URLs</a>
+    <a href="#forms">7. Adding Forms</a>
+    <a href="#styling">8. Styling with Bootstrap</a>
+    <a href="#testing">9. Running & Testing</a>
+    <a href="#deployment">10. Deployment Options</a>
+    <a href="#final-project">11. Final Project Summary</a>
+</div>
+<section class="hero"><div class="hero-content"><h1>Getting Started with Django: Build Your First Web App</h1><p class="hero-sub">A step-by-step interactive tutorial for complete beginners</p><span class="diff-badge">Beginner</span> <span class="cat-badge"><i class="fas fa-clock"></i> Estimated time: 90 minutes</span></div></section>
+<div class="container">
 
-    <!-- Sidebar toggle button -->
-    <button id="sidebarToggle" class="toggle-sidebar fixed top-4 left-4 z-30 bg-blue-500 text-white p-2 rounded-full shadow-lg hidden md:block">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <!-- Sidebar Navigation -->
-    <div id="sidebar" class="sidebar shadow-lg">
-        <div class="p-4 bg-blue-600 text-white">
-            <h2 class="text-xl font-bold">Tutorial Navigation</h2>
-        </div>
-        <div class="p-2">
-            <a href="index.html" class="nav-link rounded">Home</a>
-            <a href="django_ar.html" class="nav-link rounded">عربي</a>
-            <a href="#introduction" class="nav-link rounded">1. Introduction to Django</a>
-            <a href="#setup" class="nav-link rounded">2. Setting Up Environment</a>
-            <a href="#project-creation" class="nav-link rounded">3. Creating Django Project</a>
-            <a href="#folder-structure" class="nav-link rounded">4. Django Folder Structure</a>
-            <a href="#models" class="nav-link rounded">5. Creating Models</a>
-            <a href="#views" class="nav-link rounded">6. Views, Templates & URLs</a>
-            <a href="#forms" class="nav-link rounded">7. Adding Forms</a>
-            <a href="#styling" class="nav-link rounded">8. Styling with Bootstrap</a>
-            <a href="#testing" class="nav-link rounded">9. Running & Testing</a>
-            <a href="#deployment" class="nav-link rounded">10. Deployment Options</a>
-            <a href="#final-project" class="nav-link rounded">11. Final Project Summary</a>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div id="content" class="py-8 px-6 md:px-12 bg-white min-h-screen">
-        <header class="mb-10 text-center">
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">Getting Started with Django: Build Your First Web App</h1>
-            <p class="text-xl text-gray-600 mb-6">A step-by-step interactive tutorial for complete beginners</p>
-            <div class="flex justify-center">
-                <span class="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium text-sm">
-                    <i class="fas fa-clock mr-2"></i>Estimated time: 90 minutes
-                </span>
-            </div>
-        </header>
 
         <!-- Introduction -->
-        <section id="introduction" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">1. Introduction to Django</h2>
+        <div class="section fade-up" id="introduction">
+            <h2 class="section-title"><i class="fas fa-book-open"></i> 1. Introduction to Django</h2>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">What is Django?</h3>
-                <p class="mb-4">
+            <div class="subsection">
+                <h3>What is Django?</h3>
+                <p>
                     Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. It takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel.
                 </p>
-                <p class="mb-4">
+                <p>
                     Django follows the "batteries-included" philosophy and provides almost everything developers might want to do "out of the box". Because everything you need is part of the one "product", it all works seamlessly together, follows consistent design principles, and has extensive and up-to-date documentation.
                 </p>
             </div>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Why Django?</h3>
-                <ul class="list-disc pl-6 mb-4 space-y-2">
+            <div class="subsection">
+                <h3>Why Django?</h3>
+                <ul>
                     <li><strong>Ridiculously fast</strong> - Django was designed to help developers take applications from concept to completion as quickly as possible.</li>
                     <li><strong>Reassuringly secure</strong> - Django takes security seriously and helps developers avoid many common security mistakes.</li>
                     <li><strong>Exceedingly scalable</strong> - Some of the busiest sites on the web use Django to handle their heaviest traffic demands.</li>
@@ -364,204 +114,178 @@
                 </ul>
             </div>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Django's Architecture</h3>
-                <p class="mb-4">
+            <div class="subsection">
+                <h3>Django's Architecture</h3>
+                <p>
                     Django follows the Model-View-Template (MVT) architectural pattern, a variant of the classic Model-View-Controller (MVC) pattern:
                 </p>
 
                 <div class="diagram">
                     <div class="flow-diagram">
-                        <div class="flow-item bg-green-100 border border-green-300">
+                        <div class="flow-item">
                             <strong>Model</strong>
-                            <p class="text-sm">Data structure & database</p>
+                            <p>Data structure & database</p>
                         </div>
-                        <div class="flow-item bg-blue-100 border border-blue-300">
+                        <div class="flow-item">
                             <strong>View</strong>
-                            <p class="text-sm">Business logic & data processing</p>
+                            <p>Business logic & data processing</p>
                         </div>
-                        <div class="flow-item bg-yellow-100 border border-yellow-300">
+                        <div class="flow-item">
                             <strong>Template</strong>
-                            <p class="text-sm">Presentation & display logic</p>
+                            <p>Presentation & display logic</p>
                         </div>
-                        <div class="flow-item bg-purple-100 border border-purple-300">
+                        <div class="flow-item">
                             <strong>URLs</strong>
-                            <p class="text-sm">Routing & mapping</p>
+                            <p>Routing & mapping</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Django Basics</h3>
-                <p class="mb-4">Test your understanding of Django's basics:</p>
+                <h3>Quick Quiz: Django Basics</h3>
+                <p>Test your understanding of Django's basics:</p>
 
                 <div class="quiz" data-question="1">
-                    <p class="font-medium mb-2">Which architectural pattern does Django follow?</p>
+                    <p class="quiz-q">Which architectural pattern does Django follow?</p>
                     <div class="quiz-option" data-correct="true">Model-View-Template (MVT)</div>
                     <div class="quiz-option">Model-View-Controller (MVC)</div>
                     <div class="quiz-option">View-Template-Controller (VTC)</div>
                     <div class="quiz-option">Template-Model-View (TMV)</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! Django follows the MVT (Model-View-Template) pattern, which is similar to MVC but with some Django-specific terminology.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. Django follows the MVT (Model-View-Template) pattern, which is similar to MVC but with some Django-specific terminology.
                     </div>
                 </div>
             </div>
 
-            <div class="note mt-8">
-                <strong>What we'll build:</strong> In this tutorial, we'll create a simple note-taking application where users can create, view, and list notes. Each note will have a title and body content.
-            </div>
-        </section>
+            <div class="info-box"><p><strong>What we'll build:</strong> In this tutorial, we'll create a simple note-taking application where users can create, view, and list notes. Each note will have a title and body content.</p></div>
+        </div>
 
         <!-- Setting Up Environment -->
-        <section id="setup" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">2. Setting Up Your Environment</h2>
+        <div class="section fade-up" id="setup">
+            <h2 class="section-title"><i class="fas fa-screwdriver-wrench"></i> 2. Setting Up Your Environment</h2>
 
-            <p class="mb-4">
+            <p>
                 Before we can start building our Django application, we need to set up our development environment. This includes installing Python, creating a virtual environment, and installing Django.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Install Python</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Install Python</h3>
+                    <p>
                         Django is a Python framework, so we need to install Python first. Django 4.0+ requires Python 3.8 or higher.
                     </p>
-                    <ul class="list-disc pl-6 mb-4 space-y-1">
-                        <li>Download Python from <a href="https://www.python.org/downloads/" class="text-blue-600 hover:underline" target="_blank">python.org/downloads</a></li>
+                    <ul>
+                        <li>Download Python from <a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a></li>
                         <li>During installation, make sure to check "Add Python to PATH"</li>
                     </ul>
-                    <p class="mb-2">Verify your installation by opening a terminal or command prompt and typing:</p>
-                    <div class="terminal">
-                        <code>python --version</code>
-                    </div>
+                    <p>Verify your installation by opening a terminal or command prompt and typing:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python --version</code></div>
                     <p>You should see something like <code>Python 3.10.0</code> (your version may differ).</p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create a Virtual Environment</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Create a Virtual Environment</h3>
+                    <p>
                         Virtual environments allow you to have isolated Python environments for different projects, so their dependencies don't interfere with each other.
                     </p>
-                    <p class="mb-2">Open a terminal and navigate to where you want to create your project:</p>
-                    <div class="terminal">
-                        <code>cd path/to/your/projects/folder</code>
-                    </div>
-                    <p class="mb-2">Create a new directory for your project:</p>
-                    <div class="terminal">
-                        <code>mkdir mynotes</code><br>
-                        <code>cd mynotes</code>
-                    </div>
-                    <p class="mb-2">Create a virtual environment:</p>
+                    <p>Open a terminal and navigate to where you want to create your project:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>cd path/to/your/projects/folder</code></div>
+                    <p>Create a new directory for your project:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>mkdir mynotes</code>
+<code>cd mynotes</code></div>
+                    <p>Create a virtual environment:</p>
                     <div class="code-tabs">
                         <div class="tabs">
                             <div class="tab active" data-tab="windows">Windows</div>
                             <div class="tab" data-tab="mac-linux">Mac/Linux</div>
                         </div>
                         <div class="tab-content active" id="windows">
-                            <div class="terminal">
-                                <code>python -m venv venv</code>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button><code>python -m venv venv</code></div>
                         </div>
                         <div class="tab-content" id="mac-linux">
-                            <div class="terminal">
-                                <code>python3 -m venv venv</code>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button><code>python3 -m venv venv</code></div>
                         </div>
                     </div>
-                    <p class="mb-2">Activate the virtual environment:</p>
+                    <p>Activate the virtual environment:</p>
                     <div class="code-tabs">
                         <div class="tabs">
                             <div class="tab active" data-tab="windows-activate">Windows</div>
                             <div class="tab" data-tab="mac-linux-activate">Mac/Linux</div>
                         </div>
                         <div class="tab-content active" id="windows-activate">
-                            <div class="terminal">
-                                <code>venv\Scripts\activate</code>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button><code>venv\Scripts\activate</code></div>
                         </div>
                         <div class="tab-content" id="mac-linux-activate">
-                            <div class="terminal">
-                                <code>source venv/bin/activate</code>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button><code>source venv/bin/activate</code></div>
                         </div>
                     </div>
                     <p>You'll know your virtual environment is active when you see <code>(venv)</code> at the beginning of your command prompt.</p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Install Django</h3>
-                    <p class="mb-2">With your virtual environment activated, install Django:</p>
-                    <div class="terminal">
-                        <code>pip install django</code>
-                    </div>
-                    <p class="mb-2">Verify the installation:</p>
-                    <div class="terminal">
-                        <code>python -m django --version</code>
-                    </div>
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Install Django</h3>
+                    <p>With your virtual environment activated, install Django:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>pip install django</code></div>
+                    <p>Verify the installation:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python -m django --version</code></div>
                     <p>You should see the Django version number, like <code>4.2.1</code> (your version may differ).</p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="tip mt-8">
-                <strong>Pro Tip:</strong> Always activate your virtual environment before working on your project. If you close your terminal and come back later, you'll need to activate it again.
-            </div>
+            <div class="info-box success"><p><strong>Pro Tip:</strong> Always activate your virtual environment before working on your project. If you close your terminal and come back later, you'll need to activate it again.</p></div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Virtual Environments</h3>
+                <h3>Quick Quiz: Virtual Environments</h3>
                 <div class="quiz" data-question="2">
-                    <p class="font-medium mb-2">Why should you use a virtual environment for your Django projects?</p>
+                    <p class="quiz-q">Why should you use a virtual environment for your Django projects?</p>
                     <div class="quiz-option">To make your code run faster</div>
                     <div class="quiz-option" data-correct="true">To isolate project dependencies and avoid conflicts</div>
                     <div class="quiz-option">To make your project compatible with all operating systems</div>
                     <div class="quiz-option">To enable Django's security features</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! Virtual environments isolate dependencies for different projects, preventing conflicts between them.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. Virtual environments are used to isolate project dependencies and prevent conflicts between different projects that might require different versions of the same packages.
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Creating Django Project -->
-        <section id="project-creation" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">3. Creating a Django Project and App</h2>
+        <div class="section fade-up" id="project-creation">
+            <h2 class="section-title"><i class="fas fa-folder-plus"></i> 3. Creating a Django Project and App</h2>
 
-            <p class="mb-4">
+            <p>
                 In Django, a <strong>project</strong> is the entire web application, while an <strong>app</strong> is a module within the project that handles a specific functionality. A project can contain multiple apps.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create a Django Project</h3>
-                    <p class="mb-2">With your virtual environment activated, run:</p>
-                    <div class="terminal">
-                        <code>django-admin startproject mynotes .</code>
-                    </div>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Create a Django Project</h3>
+                    <p>With your virtual environment activated, run:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>django-admin startproject mynotes .</code></div>
+                    <p>
                         Note the dot <code>.</code> at the end, which tells Django to create the project in the current directory instead of creating a new directory.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create a Django App</h3>
-                    <p class="mb-2">Now, let's create an app within our project:</p>
-                    <div class="terminal">
-                        <code>python manage.py startapp notes</code>
-                    </div>
-                </div>
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Create a Django App</h3>
+                    <p>Now, let's create an app within our project:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py startapp notes</code></div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Register the App</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Register the App</h3>
+                    <p>
                         Open the <code>mynotes/settings.py</code> file and add your app to the <code>INSTALLED_APPS</code> list:
                     </p>
-                    <pre><code class="language-python">INSTALLED_APPS = [
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -570,63 +294,57 @@
     'django.contrib.staticfiles',
     'notes',  # Add this line
 ]</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Run Initial Migrations</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">4</div><div class="step-body">
+                    <h3>Run Initial Migrations</h3>
+                    <p>
                         Django uses migrations to keep track of changes to your models and update the database schema accordingly. Let's run the initial migrations:
                     </p>
-                    <div class="terminal">
-                        <code>python manage.py migrate</code>
-                    </div>
-                    <p class="mb-2">
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py migrate</code></div>
+                    <p>
                         This applies the built-in migrations for the default apps listed in <code>INSTALLED_APPS</code>.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Start the Development Server</h3>
-                    <p class="mb-2">Let's verify everything is working by starting the development server:</p>
-                    <div class="terminal">
-                        <code>python manage.py runserver</code>
-                    </div>
-                    <p class="mb-2">
-                        Open a web browser and navigate to <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a>. You should see the Django welcome page.
+                <div class="step"><div class="step-num">5</div><div class="step-body">
+                    <h3>Start the Development Server</h3>
+                    <p>Let's verify everything is working by starting the development server:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py runserver</code></div>
+                    <p>
+                        Open a web browser and navigate to <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a>. You should see the Django welcome page.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Press <code>CTRL+C</code> in the terminal to stop the server when you're done.
                     </p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="warning mt-8">
-                <strong>Note:</strong> Never use the development server in a production environment. It's not designed to be particularly secure, stable, or efficient.
-            </div>
+            <div class="info-box warning"><p><strong>Note:</strong> Never use the development server in a production environment. It's not designed to be particularly secure, stable, or efficient.</p></div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Projects vs Apps</h3>
+                <h3>Quick Quiz: Projects vs Apps</h3>
                 <div class="quiz" data-question="3">
-                    <p class="font-medium mb-2">What is the relationship between Django projects and apps?</p>
+                    <p class="quiz-q">What is the relationship between Django projects and apps?</p>
                     <div class="quiz-option">Projects and apps are the same thing</div>
                     <div class="quiz-option">Projects are made up of multiple websites, each containing one app</div>
                     <div class="quiz-option" data-correct="true">A project can contain multiple apps, each handling specific functionality</div>
                     <div class="quiz-option">Apps are standalone and can't be part of a project</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! A Django project is the entire web application, which can contain multiple apps that each handle specific functionality.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. A Django project represents the entire web application and can contain multiple apps, each handling a specific functionality or feature of the website.
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Django Folder Structure -->
-        <section id="folder-structure" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">4. Understanding Django Folder Structure</h2>
+        <div class="section fade-up" id="folder-structure">
+            <h2 class="section-title"><i class="fas fa-sitemap"></i> 4. Understanding Django Folder Structure</h2>
 
-            <p class="mb-4">
+            <p>
                 Let's explore the directory structure Django has created for us and understand what each file does.
             </p>
 
@@ -665,65 +383,63 @@
                 </div>
             </div>
 
-            <div class="mb-6 mt-8">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Key Files and Their Purposes</h3>
-                <ul class="space-y-3">
-                    <li class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <strong class="text-blue-600">manage.py</strong>: A command-line utility that lets you interact with your Django project. You'll use it to run the server, create migrations, apply migrations, and more.
+            <div class="subsection">
+                <h3>Key Files and Their Purposes</h3>
+                <ul class="file-list">
+                    <li>
+                        <strong>manage.py</strong>: A command-line utility that lets you interact with your Django project. You'll use it to run the server, create migrations, apply migrations, and more.
                     </li>
-                    <li class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <strong class="text-blue-600">settings.py</strong>: Contains all the project settings, including database configuration, installed apps, middleware, and more.
+                    <li>
+                        <strong>settings.py</strong>: Contains all the project settings, including database configuration, installed apps, middleware, and more.
                     </li>
-                    <li class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <strong class="text-blue-600">urls.py</strong>: A "table of contents" for your Django site, mapping URLs to views.
+                    <li>
+                        <strong>urls.py</strong>: A "table of contents" for your Django site, mapping URLs to views.
                     </li>
-                    <li class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <strong class="text-blue-600">models.py</strong>: Defines your data models, which Django converts to database tables.
+                    <li>
+                        <strong>models.py</strong>: Defines your data models, which Django converts to database tables.
                     </li>
-                    <li class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <strong class="text-blue-600">views.py</strong>: Contains view functions or classes that process requests and return responses.
+                    <li>
+                        <strong>views.py</strong>: Contains view functions or classes that process requests and return responses.
                     </li>
-                    <li class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <strong class="text-blue-600">admin.py</strong>: Configuration for the built-in Django admin interface.
+                    <li>
+                        <strong>admin.py</strong>: Configuration for the built-in Django admin interface.
                     </li>
                 </ul>
             </div>
 
-            <div class="note mt-8">
-                <strong>Project vs. App Directory:</strong> Notice that Django created a directory with the same name as your project (<code>mynotes/</code>). This can be confusing at first. The outer <code>mynotes/</code> is your project container, while the inner <code>mynotes/</code> is a Python package containing your project's settings.
-            </div>
+            <div class="info-box"><p><strong>Project vs. App Directory:</strong> Notice that Django created a directory with the same name as your project (<code>mynotes/</code>). This can be confusing at first. The outer <code>mynotes/</code> is your project container, while the inner <code>mynotes/</code> is a Python package containing your project's settings.</p></div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Django Files</h3>
+                <h3>Quick Quiz: Django Files</h3>
                 <div class="quiz" data-question="4">
-                    <p class="font-medium mb-2">Which file defines the data models that Django will convert to database tables?</p>
+                    <p class="quiz-q">Which file defines the data models that Django will convert to database tables?</p>
                     <div class="quiz-option">views.py</div>
                     <div class="quiz-option">settings.py</div>
                     <div class="quiz-option" data-correct="true">models.py</div>
                     <div class="quiz-option">admin.py</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! The models.py file is where you define your data models, which Django converts to database tables.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. The models.py file is where you define your data models, which Django converts to database tables.
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Creating Models -->
-        <section id="models" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">5. Creating a Model and Database Migration</h2>
+        <div class="section fade-up" id="models">
+            <h2 class="section-title"><i class="fas fa-database"></i> 5. Creating a Model and Database Migration</h2>
 
-            <p class="mb-4">
+            <p>
                 Models are the single, definitive source of information about your data. They contain the essential fields and behaviors of the data you're storing. In our note-taking app, we need a model to represent a note.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Define the Note Model</h3>
-                    <p class="mb-2">Open <code>notes/models.py</code> and add the following code:</p>
-                    <pre><code class="language-python">from django.db import models
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Define the Note Model</h3>
+                    <p>Open <code>notes/models.py</code> and add the following code:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.db import models
 from django.utils import timezone
 
 class Note(models.Model):
@@ -733,136 +449,126 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title</code></pre>
-                    <p class="mb-2">This code:</p>
-                    <ul class="list-disc pl-6 mb-4 space-y-1">
+                    <p>This code:</p>
+                    <ul>
                         <li>Creates a <code>Note</code> model with title, content, and created_at fields</li>
                         <li>Sets the <code>created_at</code> field to default to the current date and time</li>
                         <li>Defines a <code>__str__</code> method that returns the title when the object is converted to a string</li>
                     </ul>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create and Apply Migrations</h3>
-                    <p class="mb-2">Migrations are Django's way of propagating changes you make to your models into your database schema. First, we create a migration file:</p>
-                    <div class="terminal">
-                        <code>python manage.py makemigrations notes</code>
-                    </div>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Create and Apply Migrations</h3>
+                    <p>Migrations are Django's way of propagating changes you make to your models into your database schema. First, we create a migration file:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py makemigrations notes</code></div>
+                    <p>
                         This creates a migration file in the <code>notes/migrations/</code> directory. Now, apply the migration to update the database:
                     </p>
-                    <div class="terminal">
-                        <code>python manage.py migrate</code>
-                    </div>
-                </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py migrate</code></div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Register the Model with Admin</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Register the Model with Admin</h3>
+                    <p>
                         Django comes with a built-in admin interface that we can use to manage our data. Let's register our model with it.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Open <code>notes/admin.py</code> and add the following code:
                     </p>
-                    <pre><code class="language-python">from django.contrib import admin
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.contrib import admin
 from .models import Note
 
 admin.site.register(Note)</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create a Superuser</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">4</div><div class="step-body">
+                    <h3>Create a Superuser</h3>
+                    <p>
                         To access the admin interface, we need to create a superuser account:
                     </p>
-                    <div class="terminal">
-                        <code>python manage.py createsuperuser</code>
-                    </div>
-                    <p class="mb-2">
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py createsuperuser</code></div>
+                    <p>
                         Follow the prompts to create a username, email, and password.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Explore the Admin Interface</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">5</div><div class="step-body">
+                    <h3>Explore the Admin Interface</h3>
+                    <p>
                         Start the development server:
                     </p>
-                    <div class="terminal">
-                        <code>python manage.py runserver</code>
-                    </div>
-                    <p class="mb-2">
-                        Visit <a href="http://127.0.0.1:8000/admin/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/admin/</a> and log in with the superuser credentials you just created.
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py runserver</code></div>
+                    <p>
+                        Visit <a href="http://127.0.0.1:8000/admin/" target="_blank">http://127.0.0.1:8000/admin/</a> and log in with the superuser credentials you just created.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         You should see the Django admin interface with your Notes model listed. Try adding a few notes to test it out.
                     </p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="diagram mt-8">
-                <h3 class="text-xl font-semibold text-gray-700 mb-3">Model-Database Relationship</h3>
+            <div class="diagram">
+                <h3>Model-Database Relationship</h3>
                 <div class="flow-diagram">
-                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                    <div class="flow-item">
                         <strong>models.py</strong>
-                        <p class="text-sm">Define Note model</p>
+                        <p>Define Note model</p>
                     </div>
-                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                    <div class="flow-item">
                         <strong>makemigrations</strong>
-                        <p class="text-sm">Create migration files</p>
+                        <p>Create migration files</p>
                     </div>
-                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                    <div class="flow-item">
                         <strong>migrate</strong>
-                        <p class="text-sm">Apply to database</p>
+                        <p>Apply to database</p>
                     </div>
-                    <div class="flow-item bg-indigo-100 border border-indigo-300">
+                    <div class="flow-item">
                         <strong>Database</strong>
-                        <p class="text-sm">Tables created/updated</p>
+                        <p>Tables created/updated</p>
                     </div>
                 </div>
             </div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Django Models</h3>
+                <h3>Quick Quiz: Django Models</h3>
                 <div class="quiz" data-question="5">
-                    <p class="font-medium mb-2">After changing a model, what two commands do you need to run to update the database?</p>
+                    <p class="quiz-q">After changing a model, what two commands do you need to run to update the database?</p>
                     <div class="quiz-option">python manage.py createsuperuser and python manage.py runserver</div>
                     <div class="quiz-option" data-correct="true">python manage.py makemigrations and python manage.py migrate</div>
                     <div class="quiz-option">python manage.py startapp and python manage.py makemigrations</div>
                     <div class="quiz-option">python manage.py migrate and python manage.py createsuperuser</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! First, you run makemigrations to create the migration files, then migrate to apply them to the database.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. The correct sequence is: first run makemigrations to create the migration files, then migrate to apply them to the database.
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Views, Templates, and URLs -->
-        <section id="views" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">6. Creating Views, Templates, and URLs</h2>
+        <div class="section fade-up" id="views">
+            <h2 class="section-title"><i class="fas fa-eye"></i> 6. Creating Views, Templates, and URLs</h2>
 
-            <p class="mb-4">
+            <p>
                 Now that we have our model set up, we need to create views, templates, and URLs to display our notes to users.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create Templates Directory</h3>
-                    <p class="mb-2">First, create a directory structure for your templates:</p>
-                    <div class="terminal">
-                        <code>mkdir -p notes/templates/notes</code>
-                    </div>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Create Templates Directory</h3>
+                    <p>First, create a directory structure for your templates:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>mkdir -p notes/templates/notes</code></div>
+                    <p>
                         Django looks for templates in a "templates" directory within each app. We add an extra "notes" directory inside the templates directory to namespace our templates and avoid conflicts with other apps.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create Base Template</h3>
-                    <p class="mb-2">Create a base template at <code>notes/templates/notes/base.html</code>:</p>
-                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Create Base Template</h3>
+                    <p>Create a base template at <code>notes/templates/notes/base.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
@@ -901,15 +607,15 @@ admin.site.register(Note)</code></pre>
     &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-                    <p class="mb-2">
+                    <p>
                         This base template includes Bootstrap for styling and defines blocks that child templates will fill in.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create Home Template</h3>
-                    <p class="mb-2">Create <code>notes/templates/notes/home.html</code>:</p>
-                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Create Home Template</h3>
+                    <p>Create <code>notes/templates/notes/home.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">{% extends 'notes/base.html' %}
 
 {% block title %}Home | My Notes App{% endblock %}
 
@@ -923,12 +629,12 @@ admin.site.register(Note)</code></pre>
     &lt;a class="btn btn-secondary btn-lg" href="{% url 'note_list' %}" role="button"&gt;View All Notes&lt;/a&gt;
 &lt;/div&gt;
 {% endblock %}</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create Note List Template</h3>
-                    <p class="mb-2">Create <code>notes/templates/notes/note_list.html</code>:</p>
-                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+                <div class="step"><div class="step-num">4</div><div class="step-body">
+                    <h3>Create Note List Template</h3>
+                    <p>Create <code>notes/templates/notes/note_list.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">{% extends 'notes/base.html' %}
 
 {% block title %}All Notes | My Notes App{% endblock %}
 
@@ -953,12 +659,12 @@ admin.site.register(Note)</code></pre>
     &lt;p&gt;No notes yet. &lt;a href="{% url 'note_new' %}"&gt;Create one&lt;/a&gt;!&lt;/p&gt;
 {% endif %}
 {% endblock %}</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create Views</h3>
-                    <p class="mb-2">Open <code>notes/views.py</code> and add the following code:</p>
-                    <pre><code class="language-python">from django.shortcuts import render
+                <div class="step"><div class="step-num">5</div><div class="step-body">
+                    <h3>Create Views</h3>
+                    <p>Open <code>notes/views.py</code> and add the following code:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.shortcuts import render
 from .models import Note
 
 def home(request):
@@ -967,110 +673,108 @@ def home(request):
 def note_list(request):
     notes = Note.objects.all().order_by('-created_at')
     return render(request, 'notes/note_list.html', {'notes': notes})</code></pre>
-                    <p class="mb-2">
+                    <p>
                         This creates two views: one for the home page and one for the note list page.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create App URLs</h3>
-                    <p class="mb-2">Create a new file <code>notes/urls.py</code>:</p>
-                    <pre><code class="language-python">from django.urls import path
+                <div class="step"><div class="step-num">6</div><div class="step-body">
+                    <h3>Create App URLs</h3>
+                    <p>Create a new file <code>notes/urls.py</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.urls import path
 from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
     path('notes/', views.note_list, name='note_list'),
 ]</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Include App URLs in Project URLs</h3>
-                    <p class="mb-2">Open <code>mynotes/urls.py</code> and modify it:</p>
-                    <pre><code class="language-python">from django.contrib import admin
+                <div class="step"><div class="step-num">7</div><div class="step-body">
+                    <h3>Include App URLs in Project URLs</h3>
+                    <p>Open <code>mynotes/urls.py</code> and modify it:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('notes.urls')),
 ]</code></pre>
-                    <p class="mb-2">
+                    <p>
                         This includes our app's URLs in the project's URL configuration.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test Your Views</h3>
-                    <p class="mb-2">Start the development server:</p>
-                    <div class="terminal">
-                        <code>python manage.py runserver</code>
-                    </div>
-                    <p class="mb-2">
-                        Visit <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a> to see the home page and <a href="http://127.0.0.1:8000/notes/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/notes/</a> to see the note list.
+                <div class="step"><div class="step-num">8</div><div class="step-body">
+                    <h3>Test Your Views</h3>
+                    <p>Start the development server:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py runserver</code></div>
+                    <p>
+                        Visit <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a> to see the home page and <a href="http://127.0.0.1:8000/notes/" target="_blank">http://127.0.0.1:8000/notes/</a> to see the note list.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Note: The "New Note" link won't work yet because we haven't created the view for it. We'll do that in the next section.
                     </p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="diagram mt-8">
-                <h3 class="text-xl font-semibold text-gray-700 mb-3">Django's MVT Flow</h3>
+            <div class="diagram">
+                <h3>Django's MVT Flow</h3>
                 <div class="flow-diagram">
-                    <div class="flow-item bg-blue-100 border border-blue-300">
+                    <div class="flow-item">
                         <strong>URL</strong>
-                        <p class="text-sm">User requests a URL</p>
+                        <p>User requests a URL</p>
                     </div>
-                    <div class="flow-item bg-blue-100 border border-blue-300">
+                    <div class="flow-item">
                         <strong>View</strong>
-                        <p class="text-sm">Processes the request</p>
+                        <p>Processes the request</p>
                     </div>
-                    <div class="flow-item bg-blue-100 border border-blue-300">
+                    <div class="flow-item">
                         <strong>Model</strong>
-                        <p class="text-sm">Interacts with database</p>
+                        <p>Interacts with database</p>
                     </div>
-                    <div class="flow-item bg-blue-100 border border-blue-300">
+                    <div class="flow-item">
                         <strong>Template</strong>
-                        <p class="text-sm">Renders HTML</p>
+                        <p>Renders HTML</p>
                     </div>
-                    <div class="flow-item bg-blue-100 border border-blue-300">
+                    <div class="flow-item">
                         <strong>Response</strong>
-                        <p class="text-sm">Returns to user</p>
+                        <p>Returns to user</p>
                     </div>
                 </div>
             </div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Django Templates</h3>
+                <h3>Quick Quiz: Django Templates</h3>
                 <div class="quiz" data-question="6">
-                    <p class="font-medium mb-2">What template tag is used to inherit from a base template?</p>
+                    <p class="quiz-q">What template tag is used to inherit from a base template?</p>
                     <div class="quiz-option">{% include 'base.html' %}</div>
                     <div class="quiz-option" data-correct="true">{% extends 'base.html' %}</div>
                     <div class="quiz-option">{% load 'base.html' %}</div>
                     <div class="quiz-option">{% inherit 'base.html' %}</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! The {% extends %} tag is used to inherit from a base template.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. The {% extends %} tag is used to inherit from a base template.
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Adding Forms -->
-        <section id="forms" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">7. Adding Forms to Create New Notes</h2>
+        <div class="section fade-up" id="forms">
+            <h2 class="section-title"><i class="fas fa-pen-to-square"></i> 7. Adding Forms to Create New Notes</h2>
 
-            <p class="mb-4">
+            <p>
                 Now, let's create a form to allow users to add new notes to our application.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create a Form</h3>
-                    <p class="mb-2">Create a new file <code>notes/forms.py</code>:</p>
-                    <pre><code class="language-python">from django import forms
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Create a Form</h3>
+                    <p>Create a new file <code>notes/forms.py</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django import forms
 from .models import Note
 
 class NoteForm(forms.ModelForm):
@@ -1081,15 +785,15 @@ class NoteForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
         }</code></pre>
-                    <p class="mb-2">
+                    <p>
                         This creates a form based on our Note model with fields for title and content. We also add Bootstrap classes to style the form.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Create a Template for the Form</h3>
-                    <p class="mb-2">Create <code>notes/templates/notes/note_form.html</code>:</p>
-                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Create a Template for the Form</h3>
+                    <p>Create <code>notes/templates/notes/note_form.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">{% extends 'notes/base.html' %}
 
 {% block title %}New Note | My Notes App{% endblock %}
 
@@ -1118,12 +822,12 @@ class NoteForm(forms.ModelForm):
     &lt;a href="{% url 'note_list' %}" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
 &lt;/form&gt;
 {% endblock %}</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Add View for Creating Notes</h3>
-                    <p class="mb-2">Update <code>notes/views.py</code> to add a view for creating notes:</p>
-                    <pre><code class="language-python">from django.shortcuts import render, redirect
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Add View for Creating Notes</h3>
+                    <p>Update <code>notes/views.py</code> to add a view for creating notes:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.shortcuts import render, redirect
 from .models import Note
 from .forms import NoteForm
 
@@ -1143,20 +847,20 @@ def note_new(request):
     else:
         form = NoteForm()
     return render(request, 'notes/note_form.html', {'form': form})</code></pre>
-                    <p class="mb-2">
+                    <p>
                         This adds a new view that:
                     </p>
-                    <ul class="list-disc pl-6 mb-4 space-y-1">
+                    <ul>
                         <li>Shows an empty form when the page is first loaded (GET request)</li>
                         <li>Processes the form data when it's submitted (POST request)</li>
                         <li>Redirects to the note list page after successfully saving the note</li>
                     </ul>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Update URLs</h3>
-                    <p class="mb-2">Update <code>notes/urls.py</code> to add the URL for creating notes:</p>
-                    <pre><code class="language-python">from django.urls import path
+                <div class="step"><div class="step-num">4</div><div class="step-body">
+                    <h3>Update URLs</h3>
+                    <p>Update <code>notes/urls.py</code> to add the URL for creating notes:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-python">from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -1164,58 +868,54 @@ urlpatterns = [
     path('notes/', views.note_list, name='note_list'),
     path('notes/new/', views.note_new, name='note_new'),
 ]</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test the Form</h3>
-                    <p class="mb-2">Start the development server:</p>
-                    <div class="terminal">
-                        <code>python manage.py runserver</code>
-                    </div>
-                    <p class="mb-2">
-                        Visit <a href="http://127.0.0.1:8000/notes/new/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/notes/new/</a> to see the form for creating a new note.
+                <div class="step"><div class="step-num">5</div><div class="step-body">
+                    <h3>Test the Form</h3>
+                    <p>Start the development server:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py runserver</code></div>
+                    <p>
+                        Visit <a href="http://127.0.0.1:8000/notes/new/" target="_blank">http://127.0.0.1:8000/notes/new/</a> to see the form for creating a new note.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Try creating a new note and verify that it appears in the note list.
                     </p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="note mt-8">
-                <strong>Django Forms Security:</strong> The <code>{% csrf_token %}</code> in our form template is important for security. It adds a Cross-Site Request Forgery token that helps protect against certain types of attacks.
-            </div>
+            <div class="info-box"><p><strong>Django Forms Security:</strong> The <code>{% csrf_token %}</code> in our form template is important for security. It adds a Cross-Site Request Forgery token that helps protect against certain types of attacks.</p></div>
 
             <div class="quiz-container">
-                <h3 class="text-xl font-semibold mb-3">Quick Quiz: Django Forms</h3>
+                <h3>Quick Quiz: Django Forms</h3>
                 <div class="quiz" data-question="7">
-                    <p class="font-medium mb-2">When creating a form based on a model, which class should you inherit from?</p>
+                    <p class="quiz-q">When creating a form based on a model, which class should you inherit from?</p>
                     <div class="quiz-option">forms.Form</div>
                     <div class="quiz-option" data-correct="true">forms.ModelForm</div>
                     <div class="quiz-option">models.Form</div>
                     <div class="quiz-option">models.ModelForm</div>
-                    <div class="quiz-feedback correct bg-green-100 text-green-800">
+                    <div class="quiz-feedback correct">
                         Correct! When creating a form based on a model, you should inherit from forms.ModelForm.
                     </div>
-                    <div class="quiz-feedback incorrect bg-red-100 text-red-800">
+                    <div class="quiz-feedback incorrect">
                         Not quite. When creating a form based on a model, you should inherit from forms.ModelForm, which provides functionality for creating forms directly from your models.
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Styling with Bootstrap -->
-        <section id="styling" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">8. Styling with Bootstrap</h2>
+        <div class="section fade-up" id="styling">
+            <h2 class="section-title"><i class="fas fa-palette"></i> 8. Styling with Bootstrap</h2>
 
-            <p class="mb-4">
+            <p>
                 We've already included Bootstrap in our base template, but let's enhance the styling a bit more to make our app look more polished.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Update the Base Template</h3>
-                    <p class="mb-2">Let's add some custom CSS to our base template. Update <code>notes/templates/notes/base.html</code>:</p>
-                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Update the Base Template</h3>
+                    <p>Let's add some custom CSS to our base template. Update <code>notes/templates/notes/base.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
@@ -1294,12 +994,12 @@ urlpatterns = [
     &lt;script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/js/all.min.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Update the Note List Template</h3>
-                    <p class="mb-2">Enhance <code>notes/templates/notes/note_list.html</code>:</p>
-                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Update the Note List Template</h3>
+                    <p>Enhance <code>notes/templates/notes/note_list.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">{% extends 'notes/base.html' %}
 
 {% block title %}All Notes | My Notes App{% endblock %}
 
@@ -1333,12 +1033,12 @@ urlpatterns = [
     &lt;/div&gt;
 {% endif %}
 {% endblock %}</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Update the Home Template</h3>
-                    <p class="mb-2">Enhance <code>notes/templates/notes/home.html</code>:</p>
-                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Update the Home Template</h3>
+                    <p>Enhance <code>notes/templates/notes/home.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">{% extends 'notes/base.html' %}
 
 {% block title %}Home | My Notes App{% endblock %}
 
@@ -1371,12 +1071,12 @@ urlpatterns = [
     &lt;/div&gt;
 &lt;/div&gt;
 {% endblock %}</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Update the Form Template</h3>
-                    <p class="mb-2">Enhance <code>notes/templates/notes/note_form.html</code>:</p>
-                    <pre><code class="language-html">{% extends 'notes/base.html' %}
+                <div class="step"><div class="step-num">4</div><div class="step-body">
+                    <h3>Update the Form Template</h3>
+                    <p>Enhance <code>notes/templates/notes/note_form.html</code>:</p>
+                    <pre><button class="copy-btn">Copy</button><code class="language-html">{% extends 'notes/base.html' %}
 
 {% block title %}New Note | My Notes App{% endblock %}
 
@@ -1416,114 +1116,104 @@ urlpatterns = [
     &lt;/div&gt;
 &lt;/div&gt;
 {% endblock %}</code></pre>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test the Styled App</h3>
-                    <p class="mb-2">Start the development server:</p>
-                    <div class="terminal">
-                        <code>python manage.py runserver</code>
-                    </div>
-                    <p class="mb-2">
-                        Visit <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a> to see your beautifully styled app.
+                <div class="step"><div class="step-num">5</div><div class="step-body">
+                    <h3>Test the Styled App</h3>
+                    <p>Start the development server:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py runserver</code></div>
+                    <p>
+                        Visit <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a> to see your beautifully styled app.
                     </p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="tip mt-8">
-                <strong>Styling Tip:</strong> Bootstrap provides many components and utilities out of the box, but you can always add custom CSS to tailor the appearance to your specific needs. Add your custom styles in the <code>&lt;style&gt;</code> section of the base template or in a separate CSS file.
-            </div>
-        </section>
+            <div class="info-box success"><p><strong>Styling Tip:</strong> Bootstrap provides many components and utilities out of the box, but you can always add custom CSS to tailor the appearance to your specific needs. Add your custom styles in the <code>&lt;style&gt;</code> section of the base template or in a separate CSS file.</p></div>
+        </div>
 
         <!-- Running and Testing -->
-        <section id="testing" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">9. Running and Testing the App</h2>
+        <div class="section fade-up" id="testing">
+            <h2 class="section-title"><i class="fas fa-flask"></i> 9. Running and Testing the App</h2>
 
-            <p class="mb-4">
+            <p>
                 Let's make sure our application is working correctly and test all the features we've implemented.
             </p>
 
             <div class="steps-container">
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Run the Development Server</h3>
-                    <p class="mb-2">Start the development server:</p>
-                    <div class="terminal">
-                        <code>python manage.py runserver</code>
-                    </div>
-                    <p class="mb-2">
-                        The server will start at <a href="http://127.0.0.1:8000/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/</a>
+                <div class="step"><div class="step-num">1</div><div class="step-body">
+                    <h3>Run the Development Server</h3>
+                    <p>Start the development server:</p>
+                    <div class="code-block"><button class="copy-btn">Copy</button><code>python manage.py runserver</code></div>
+                    <p>
+                        The server will start at <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a>
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test the Home Page</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">2</div><div class="step-body">
+                    <h3>Test the Home Page</h3>
+                    <p>
                         Visit the home page and verify that it displays correctly with links to create and view notes.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Ensure that the "New Note" and "View Notes" buttons work correctly.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test Creating a Note</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">3</div><div class="step-body">
+                    <h3>Test Creating a Note</h3>
+                    <p>
                         Click on "New Note" and create a note with a title and content.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Submit the form and verify that you are redirected to the note list page and that your new note appears in the list.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test the Note List</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">4</div><div class="step-body">
+                    <h3>Test the Note List</h3>
+                    <p>
                         Visit the note list page and verify that all your notes are displayed correctly.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Create multiple notes and ensure they all appear in the list.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test the Navigation</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">5</div><div class="step-body">
+                    <h3>Test the Navigation</h3>
+                    <p>
                         Verify that the navigation links in the header work correctly and take you to the appropriate pages.
                     </p>
-                </div>
+                </div></div>
 
-                <div class="step">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Test Form Validation</h3>
-                    <p class="mb-2">
+                <div class="step"><div class="step-num">6</div><div class="step-body">
+                    <h3>Test Form Validation</h3>
+                    <p>
                         Try submitting the note form with empty fields to ensure validation works correctly.
                     </p>
-                    <p class="mb-2">
+                    <p>
                         Verify that error messages are displayed appropriately.
                     </p>
-                </div>
+                </div></div>
             </div>
 
-            <div class="note mt-8">
-                <strong>Django Admin:</strong> Don't forget that you can also use the admin interface at <a href="http://127.0.0.1:8000/admin/" class="text-blue-600 hover:underline" target="_blank">http://127.0.0.1:8000/admin/</a> to manage your notes. Log in with the superuser credentials you created earlier.
-            </div>
+            <div class="info-box"><p><strong>Django Admin:</strong> Don't forget that you can also use the admin interface at <a href="http://127.0.0.1:8000/admin/" target="_blank">http://127.0.0.1:8000/admin/</a> to manage your notes. Log in with the superuser credentials you created earlier.</p></div>
 
-            <div class="warning mt-4">
-                <strong>Testing in Different Browsers:</strong> It's a good practice to test your application in different browsers to ensure compatibility. Try opening your app in Chrome, Firefox, Safari, or Edge to verify that it looks and works correctly across different browsers.
-            </div>
-        </section>
+            <div class="info-box warning"><p><strong>Testing in Different Browsers:</strong> It's a good practice to test your application in different browsers to ensure compatibility. Try opening your app in Chrome, Firefox, Safari, or Edge to verify that it looks and works correctly across different browsers.</p></div>
+        </div>
 
         <!-- Deployment -->
-        <section id="deployment" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">10. Deployment Options (Overview)</h2>
+        <div class="section fade-up" id="deployment">
+            <h2 class="section-title"><i class="fas fa-rocket"></i> 10. Deployment Options (Overview)</h2>
 
-            <p class="mb-4">
+            <p>
                 Once you've built and tested your Django application, you might want to deploy it to make it accessible to others. Here's a brief overview of deployment options.
             </p>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Preparation for Deployment</h3>
-                <p class="mb-2">Before deploying, you need to make some changes to your settings:</p>
-                <pre><code class="language-python"># In settings.py
+            <div class="subsection">
+                <h3>Preparation for Deployment</h3>
+                <p>Before deploying, you need to make some changes to your settings:</p>
+                <pre><button class="copy-btn">Copy</button><code class="language-python"># In settings.py
 
 # Set DEBUG to False in production
 DEBUG = False
@@ -1551,46 +1241,46 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'</code></pre>
             </div>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Deployment Platforms</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">PythonAnywhere</h4>
-                        <p class="mb-2">A beginner-friendly platform specifically designed for Python and Django applications.</p>
-                        <ul class="list-disc pl-6 mb-2">
+            <div class="subsection">
+                <h3>Deployment Platforms</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>PythonAnywhere</h4>
+                        <p>A beginner-friendly platform specifically designed for Python and Django applications.</p>
+                        <ul>
                             <li>Free tier available</li>
                             <li>Easy to set up</li>
                             <li>Good for beginners</li>
                         </ul>
-                        <a href="https://www.pythonanywhere.com/" class="text-blue-600 hover:underline" target="_blank">Learn more</a>
+                        <a href="https://www.pythonanywhere.com/" target="_blank">Learn more</a>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Heroku</h4>
-                        <p class="mb-2">A platform as a service (PaaS) that enables developers to build, run, and operate applications.</p>
-                        <ul class="list-disc pl-6 mb-2">
+                    <div class="card">
+                        <h4>Heroku</h4>
+                        <p>A platform as a service (PaaS) that enables developers to build, run, and operate applications.</p>
+                        <ul>
                             <li>Free tier available (with limitations)</li>
                             <li>Good scaling options</li>
                             <li>Extensive documentation</li>
                         </ul>
-                        <a href="https://www.heroku.com/" class="text-blue-600 hover:underline" target="_blank">Learn more</a>
+                        <a href="https://www.heroku.com/" target="_blank">Learn more</a>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">DigitalOcean</h4>
-                        <p class="mb-2">Cloud infrastructure provider that offers Droplets (virtual machines) and App Platform.</p>
-                        <ul class="list-disc pl-6 mb-2">
+                    <div class="card">
+                        <h4>DigitalOcean</h4>
+                        <p>Cloud infrastructure provider that offers Droplets (virtual machines) and App Platform.</p>
+                        <ul>
                             <li>More control over your server</li>
                             <li>Requires more setup knowledge</li>
                             <li>Affordable pricing</li>
                         </ul>
-                        <a href="https://www.digitalocean.com/" class="text-blue-600 hover:underline" target="_blank">Learn more</a>
+                        <a href="https://www.digitalocean.com/" target="_blank">Learn more</a>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">AWS, Google Cloud, Azure</h4>
-                        <p class="mb-2">Major cloud platforms offering various services for deploying web applications.</p>
-                        <ul class="list-disc pl-6 mb-2">
+                    <div class="card">
+                        <h4>AWS, Google Cloud, Azure</h4>
+                        <p>Major cloud platforms offering various services for deploying web applications.</p>
+                        <ul>
                             <li>Extensive feature sets</li>
                             <li>Highly scalable</li>
                             <li>Steeper learning curve</li>
@@ -1600,9 +1290,9 @@ STATIC_URL = '/static/'</code></pre>
                 </div>
             </div>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">General Deployment Steps</h3>
-                <ol class="list-decimal pl-6 mb-4 space-y-2">
+            <div class="subsection">
+                <h3>General Deployment Steps</h3>
+                <ol>
                     <li>Set up a production database (e.g., PostgreSQL)</li>
                     <li>Configure your settings for production</li>
                     <li>Collect static files: <code>python manage.py collectstatic</code></li>
@@ -1614,29 +1304,27 @@ STATIC_URL = '/static/'</code></pre>
                 </ol>
             </div>
 
-            <div class="tip mt-8">
-                <strong>Deployment Recommendation:</strong> For beginners, PythonAnywhere or Heroku are good choices due to their simpler setup processes and good documentation. As you become more experienced, you might want to explore other options that give you more control over your environment.
-            </div>
-        </section>
+            <div class="info-box success"><p><strong>Deployment Recommendation:</strong> For beginners, PythonAnywhere or Heroku are good choices due to their simpler setup processes and good documentation. As you become more experienced, you might want to explore other options that give you more control over your environment.</p></div>
+        </div>
 
         <!-- Final Project Summary -->
-        <section id="final-project" class="section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">11. Final Project Summary and Checklist</h2>
+        <div class="section fade-up" id="final-project">
+            <h2 class="section-title"><i class="fas fa-flag-checkered"></i> 11. Final Project Summary and Checklist</h2>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">What We've Built</h3>
-                <p class="mb-4">
+            <div class="subsection">
+                <h3>What We've Built</h3>
+                <p>
                     Congratulations! You've successfully built a simple Django web application that allows users to:
                 </p>
-                <ul class="list-disc pl-6 mb-4 space-y-1">
+                <ul>
                     <li>View a styled home page with links to create and view notes</li>
                     <li>Create new notes with a title and content</li>
                     <li>View a list of all notes</li>
                 </ul>
-                <p class="mb-4">
+                <p>
                     Along the way, you've learned:
                 </p>
-                <ul class="list-disc pl-6 mb-4 space-y-1">
+                <ul>
                     <li>How to set up a Django development environment</li>
                     <li>How to create a Django project and app</li>
                     <li>How to define models and work with databases</li>
@@ -1648,122 +1336,121 @@ STATIC_URL = '/static/'</code></pre>
                 </ul>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Project Checklist</h3>
-                <p class="mb-2">
+            <div class="panel">
+                <h3>Project Checklist</h3>
+                <p>
                     Use this checklist to make sure you've completed all the necessary steps:
                 </p>
-                <div class="space-y-2">
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check1">
-                        <label for="check1" class="ml-2">Set up the development environment with Python and Django</label>
+                <div class="checklist">
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check1">
+                        <label for="check1">Set up the development environment with Python and Django</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check2">
-                        <label for="check2" class="ml-2">Create a Django project and app</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check2">
+                        <label for="check2">Create a Django project and app</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check3">
-                        <label for="check3" class="ml-2">Define the Note model with appropriate fields</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check3">
+                        <label for="check3">Define the Note model with appropriate fields</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check4">
-                        <label for="check4" class="ml-2">Create and apply migrations</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check4">
+                        <label for="check4">Create and apply migrations</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check5">
-                        <label for="check5" class="ml-2">Create views for the home page, note list, and note creation</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check5">
+                        <label for="check5">Create views for the home page, note list, and note creation</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check6">
-                        <label for="check6" class="ml-2">Create templates for the home page, note list, and note form</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check6">
+                        <label for="check6">Create templates for the home page, note list, and note form</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check7">
-                        <label for="check7" class="ml-2">Create URLs for all the views</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check7">
+                        <label for="check7">Create URLs for all the views</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check8">
-                        <label for="check8" class="ml-2">Create forms for handling user input</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check8">
+                        <label for="check8">Create forms for handling user input</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check9">
-                        <label for="check9" class="ml-2">Style the application with Bootstrap or custom CSS</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check9">
+                        <label for="check9">Style the application with Bootstrap or custom CSS</label>
                     </div>
-                    <div class="flex items-start">
-                        <input type="checkbox" class="progress-checkbox mt-1" id="check10">
-                        <label for="check10" class="ml-2">Test all functionality to ensure it works correctly</label>
+                    <div class="check-item">
+                        <input type="checkbox" class="progress-checkbox" id="check10">
+                        <label for="check10">Test all functionality to ensure it works correctly</label>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-6">
-                <h3 class="text-2xl font-semibold text-gray-700 mb-3">Next Steps</h3>
-                <p class="mb-4">
+            <div class="subsection">
+                <h3>Next Steps</h3>
+                <p>
                     You've built a basic Django application, but there are many ways you can expand it:
                 </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Add User Authentication</h4>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Add User Authentication</h4>
                         <p>Allow users to register, log in, and have their own private notes.</p>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Add CRUD Operations</h4>
+                    <div class="card">
+                        <h4>Add CRUD Operations</h4>
                         <p>Implement functionality to update and delete notes.</p>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Add Categories/Tags</h4>
+                    <div class="card">
+                        <h4>Add Categories/Tags</h4>
                         <p>Allow users to categorize notes and filter by category.</p>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Add Rich Text Editing</h4>
+                    <div class="card">
+                        <h4>Add Rich Text Editing</h4>
                         <p>Implement a rich text editor for note content.</p>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Add Search Functionality</h4>
+                    <div class="card">
+                        <h4>Add Search Functionality</h4>
                         <p>Allow users to search through their notes.</p>
                     </div>
 
-                    <div class="p-4 bg-white rounded-lg shadow">
-                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Add API</h4>
+                    <div class="card">
+                        <h4>Add API</h4>
                         <p>Create a REST API for your notes app using Django REST framework.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="p-6 bg-blue-50 rounded-lg border border-blue-200 mb-6">
-                <h3 class="text-2xl font-semibold text-blue-800 mb-3">Resources for Further Learning</h3>
-                <ul class="list-disc pl-6 space-y-2 text-blue-700">
-                    <li><a href="https://docs.djangoproject.com/en/stable/" class="hover:underline" target="_blank">Django Official Documentation</a> - Comprehensive reference and tutorials</li>
-                    <li><a href="https://www.djangoproject.com/download/" class="hover:underline" target="_blank">Django Download Page</a> - Get the latest version of Django</li>
-                    <li><a href="https://docs.python.org/3/" class="hover:underline" target="_blank">Python Documentation</a> - Python language reference</li>
-                    <li><a href="https://www.geeksforgeeks.org/django-tutorial/" class="hover:underline" target="_blank">GeeksforGeeks Django Tutorial</a> - Additional tutorials and examples</li>
-                    <li><a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/" class="hover:underline" target="_blank">Bootstrap Documentation</a> - Learn more about styling with Bootstrap</li>
+            <div class="info-box">
+                <h3>Resources for Further Learning</h3>
+                <ul>
+                    <li><a href="https://docs.djangoproject.com/en/stable/" target="_blank">Django Official Documentation</a> - Comprehensive reference and tutorials</li>
+                    <li><a href="https://www.djangoproject.com/download/" target="_blank">Django Download Page</a> - Get the latest version of Django</li>
+                    <li><a href="https://docs.python.org/3/" target="_blank">Python Documentation</a> - Python language reference</li>
+                    <li><a href="https://www.geeksforgeeks.org/django-tutorial/" target="_blank">GeeksforGeeks Django Tutorial</a> - Additional tutorials and examples</li>
+                    <li><a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/" target="_blank">Bootstrap Documentation</a> - Learn more about styling with Bootstrap</li>
                 </ul>
             </div>
 
-            <div class="text-center p-8 bg-gray-50 rounded-lg">
-                <h3 class="text-2xl font-bold text-gray-700 mb-4">Congratulations!</h3>
-                <p class="text-lg mb-4">You've completed the Django tutorial and built your first web application!</p>
+            <div class="panel text-center">
+                <h3>Congratulations!</h3>
+                <p>You've completed the Django tutorial and built your first web application!</p>
                 <p>Continue exploring Django and building more complex applications to enhance your skills.</p>
             </div>
-        </section>
-    </div>
+        </div>
+    
+        <div class="page-nav"><a class="nav-btn prev" href="/">← Home</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-    <script>
-        // Toggle sidebar
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('hidden');
-            document.getElementById('content').classList.toggle('full-width');
-        });
+</div>
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script>
 
         // Active link highlighting
-        const navLinks = document.querySelectorAll('.nav-link');
+        const navLinks = document.querySelectorAll('.nav-links a, .mobile-menu a');
         const sections = document.querySelectorAll('.section');
 
         // Set active nav link based on scroll position
@@ -1856,5 +1543,6 @@ STATIC_URL = '/static/'</code></pre>
             updateProgress();
         });
     </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

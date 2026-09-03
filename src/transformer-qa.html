@@ -13,581 +13,447 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transformer — Questions & Answers</title>
+<meta name="description" content="21 exam-ready questions and answers covering every component of the Transformer architecture: self-attention, Q/K/V, multi-head attention, positional encoding, masking, cross-attention and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/assets/theme.css">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { 
-    font-family: 'Helvetica Neue', 'Arial', sans-serif; 
-    font-size: 15px; 
-    line-height: 1.7; 
-    color: #1a1a1a;
-    background: #f5f3ff;
-  }
-  .container { max-width: 860px; margin: 0 auto; padding: 20px; }
-  
-  /* Header */
-  .header {
-    background: linear-gradient(135deg, #4C1D95, #7C3AED);
-    color: white;
-    padding: 40px 20px;
-    text-align: center;
-  }
-  .header h1 { font-size: 28px; margin-bottom: 10px; }
-  .header p { color: #ddd6fe; font-size: 16px; }
-  .header .nav-links { margin-top: 15px; }
-  .header .nav-links a { color: #c4b5fd; text-decoration: none; font-size: 14px; margin: 0 10px; }
-  .header .nav-links a:hover { color: white; }
-  
-  /* Stats bar */
-  .stats {
-    display: flex; justify-content: center; gap: 30px;
-    background: #1e1b2e; color: #a78bfa; padding: 12px; font-size: 14px; font-weight: 600;
-  }
-  
-  /* TOC */
-  .toc {
-    background: white; border-radius: 12px; padding: 24px; margin: 24px auto;
-    max-width: 860px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  .toc h2 { font-size: 18px; color: #4C1D95; margin-bottom: 12px; }
-  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
-  .toc a { color: #6D28D9; text-decoration: none; font-size: 13px; padding: 3px 0; display: block; }
-  .toc a:hover { color: #4C1D95; text-decoration: underline; }
-  .toc a .qnum { color: #9ca3af; font-weight: 600; margin-right: 4px; }
-  
-  /* Question cards */
-  .qa-card {
-    background: white;
-    border-radius: 12px;
-    margin: 20px auto;
-    max-width: 860px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    overflow: hidden;
-  }
-  .qa-card .question {
-    background: linear-gradient(135deg, #4C1D95, #6D28D9);
-    color: white;
-    padding: 16px 24px;
-    font-size: 17px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .qa-card .question:hover { background: linear-gradient(135deg, #3b1578, #5b21b6); }
-  .qa-card .question .num {
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0; margin-right: 12px;
-  }
-  .qa-card .question .arrow { font-size: 20px; transition: transform 0.3s; }
-  .qa-card.open .question .arrow { transform: rotate(180deg); }
-  .qa-card .answer {
-    padding: 0 24px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, padding 0.3s ease;
-  }
-  .qa-card.open .answer {
-    padding: 20px 24px;
-    max-height: 3000px;
-  }
-  .answer p { margin-bottom: 12px; }
-  .answer strong { color: #4C1D95; }
-  
-  /* Tables */
-  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; }
-  th { background: #4C1D95; color: white; padding: 8px 12px; text-align: left; }
-  td { border: 1px solid #e5e7eb; padding: 7px 12px; }
-  tr:nth-child(even) { background: #f8f6ff; }
-  
-  /* Code */
-  pre {
-    background: #1e1b2e; color: #e0d8f0; border-radius: 8px;
-    padding: 14px; font-family: 'Menlo', monospace; font-size: 13px;
-    overflow-x: auto; margin: 12px 0; line-height: 1.5;
-  }
-  code {
-    font-family: 'Menlo', monospace; background: #f3f0ff;
-    padding: 2px 6px; border-radius: 4px; font-size: 13px;
-  }
-  pre code { background: none; padding: 0; }
-  
-  /* Boxes */
-  .note { background: #ecfdf5; border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 4px; margin: 12px 0; font-size: 14px; }
-  .formula { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 4px; margin: 12px 0; font-size: 15px; text-align: center; }
-  
-  /* Tags */
-  .tag { display: inline-block; background: #ede9fe; color: #6D28D9; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin: 2px; }
-  
-  /* Responsive */
-  @media (max-width: 600px) {
-    .toc-grid { grid-template-columns: 1fr; }
-    .stats { flex-wrap: wrap; gap: 10px; font-size: 12px; }
-  }
-  
-  /* Expand all button */
-  .expand-btn {
-    display: block; margin: 20px auto; padding: 10px 24px;
-    background: #4C1D95; color: white; border: none; border-radius: 8px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-  }
-  .expand-btn:hover { background: #3b1578; }
+:root{--primary:#a855f7;--primary-hover:#c084fc;--glow:rgba(168,85,247,.14)}
+.qa-toc{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px}
+.qa-toc a{display:block;padding:4px 8px;border-radius:6px;font-size:.9rem;color:var(--text2)}
+.qa-toc a:hover{color:var(--text);background:rgba(255,255,255,.04)}
+body.light-mode .qa-toc a:hover{background:rgba(0,0,0,.04)}
+.qa-toc .qnum{color:var(--primary);font-weight:700;margin-right:4px;font-size:.8rem}
+details.solution{scroll-margin-top:90px}
+details.solution summary{display:flex;align-items:center;gap:12px;list-style:none}
+details.solution summary::-webkit-details-marker{display:none}
+details.solution summary .num{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700}
+details.solution summary .arrow{margin-left:auto;color:var(--text2);transition:transform .3s;font-size:.8rem}
+details.solution[open] summary .arrow{transform:rotate(180deg)}
+details.solution.bonus summary{border-color:var(--warning)}
+details.solution.bonus summary .num{background:var(--warning)}
+.formula{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--secondary);border-radius:8px;padding:12px 16px;margin:12px 0;text-align:center;color:var(--text);font-size:1rem;line-height:1.9}
+.answer p{color:var(--text2);margin-bottom:12px}
+.answer strong{color:var(--text)}
+.answer ul,.answer ol{padding-left:22px;margin:8px 0 14px;color:var(--text2)}
+.answer ul{list-style:disc}.answer ol{list-style:decimal}
+.answer pre{white-space:pre-wrap}
+.expand-wrap{text-align:center;margin:8px 0 0}
+.credit{text-align:center;color:var(--text2);font-size:.85rem;margin-top:32px}
+@media(max-width:600px){.qa-toc{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🧠 Transformer — Questions & Answers</h1>
-  <p>21 questions covering every component of the Transformer architecture</p>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fas fa-brain"></i> Transformer Q&amp;A</a>
   <div class="nav-links">
+    <a href="#toc">Contents</a>
+    <a href="#questions">Questions</a>
     <a href="transformer.html">← Transformer Overview</a>
     <a href="transformer-step-by-step.html">📝 Step-by-Step Guide</a>
     <a href="transformer-step-by-step-ar.html">🇯🇴 الشرح بالعربي</a>
   </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="#toc">Contents</a>
+  <a href="#questions">Questions</a>
+  <a href="transformer.html">← Transformer Overview</a>
+  <a href="transformer-step-by-step.html">📝 Step-by-Step Guide</a>
+  <a href="transformer-step-by-step-ar.html">🇯🇴 الشرح بالعربي</a>
 </div>
 
-<div class="stats">
-  <span>📝 21 Questions</span>
-  <span>📊 Covers All Components</span>
-  <span>🎯 Exam Ready</span>
-</div>
+<section class="hero"><div class="hero-content">
+  <h1>🧠 Transformer — Questions &amp; Answers</h1>
+  <p class="hero-sub">21 questions covering every component of the Transformer architecture</p>
+  <span class="diff-badge">Intermediate</span>
+  <span class="cat-badge">📝 21 Questions</span>
+  <span class="cat-badge">📊 Covers All Components</span>
+  <span class="cat-badge">🎯 Exam Ready</span>
+</div></section>
 
-<!-- Table of Contents -->
-<div class="toc">
-  <h2>📋 Table of Contents</h2>
-  <div class="toc-grid">
-    <a href="#q1"><span class="qnum">Q1</span> What is a Transformer?</a>
-    <a href="#q2"><span class="qnum">Q2</span> Transformer vs RNN/LSTM</a>
-    <a href="#q3"><span class="qnum">Q3</span> Main components</a>
-    <a href="#q4"><span class="qnum">Q4</span> Self-Attention explained</a>
-    <a href="#q5"><span class="qnum">Q5</span> What are Q, K, V?</a>
-    <a href="#q6"><span class="qnum">Q6</span> Self-Attention formula</a>
-    <a href="#q7"><span class="qnum">Q7</span> Multi-Head Attention</a>
-    <a href="#q8"><span class="qnum">Q8</span> Why Positional Encoding?</a>
-    <a href="#q9"><span class="qnum">Q9</span> PE formula (sin/cos)</a>
-    <a href="#q10"><span class="qnum">Q10</span> Masked Attention</a>
-    <a href="#q11"><span class="qnum">Q11</span> Cross-Attention</a>
-    <a href="#q12"><span class="qnum">Q12</span> Residual Connections</a>
-    <a href="#q13"><span class="qnum">Q13</span> Layer Normalization</a>
-    <a href="#q14"><span class="qnum">Q14</span> Feed-Forward Network</a>
-    <a href="#q15"><span class="qnum">Q15</span> Three model types</a>
-    <a href="#q16"><span class="qnum">Q16</span> Key hyperparameters</a>
-    <a href="#q17"><span class="qnum">Q17</span> Teacher Forcing</a>
-    <a href="#q18"><span class="qnum">Q18</span> Full translation pipeline</a>
-    <a href="#q19"><span class="qnum">Q19</span> Encoder vs Decoder attention</a>
-    <a href="#q20"><span class="qnum">Q20</span> Transformer vs CNN</a>
-    <a href="#q21"><span class="qnum">Bonus</span> Why is generation sequential?</a>
-  </div>
-</div>
+<div class="container">
 
-<button class="expand-btn" onclick="toggleAll()">Expand / Collapse All</button>
-
-<!-- Q1 -->
-<div class="qa-card" id="q1">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">1</div> What is a Transformer?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>A Transformer is a deep learning architecture introduced in the 2017 paper <strong>"Attention Is All You Need"</strong> by Vaswani et al. (Google).</p>
-    <p>It processes entire sequences <strong>in parallel</strong> using a mechanism called <strong>self-attention</strong> — no recurrence (RNN) or convolution (CNN) needed.</p>
-    <p>It consists of an <strong>Encoder</strong> (understands the input) and a <strong>Decoder</strong> (generates the output).</p>
-    <div class="note">Key insight: "Attention Is All You Need" — the entire architecture is built around the attention mechanism.</div>
-  </div>
-</div>
-
-<!-- Q2 -->
-<div class="qa-card" id="q2">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">2</div> What problems does the Transformer solve compared to RNNs/LSTMs?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th>Problem with RNN/LSTM</th><th>Transformer Solution</th></tr>
-      <tr><td>Sequential processing (slow)</td><td>Parallel processing (fast)</td></tr>
-      <tr><td>Vanishing gradients</td><td>Residual connections + LayerNorm</td></tr>
-      <tr><td>Hard to capture long-range dependencies</td><td>Self-attention sees ALL words at once</td></tr>
-      <tr><td>Can't scale well</td><td>Scales efficiently with GPU parallelism</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- Q3 -->
-<div class="qa-card" id="q3">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">3</div> What are the main components of the Transformer?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th>#</th><th>Component</th><th>Purpose</th></tr>
-      <tr><td>1</td><td><strong>Input Embedding</strong></td><td>Converts words to vectors</td></tr>
-      <tr><td>2</td><td><strong>Positional Encoding</strong></td><td>Adds position information (sin/cos)</td></tr>
-      <tr><td>3</td><td><strong>Multi-Head Self-Attention</strong></td><td>Each word attends to all others</td></tr>
-      <tr><td>4</td><td><strong>Feed-Forward Network</strong></td><td>Two-layer neural net per position</td></tr>
-      <tr><td>5</td><td><strong>Residual + LayerNorm</strong></td><td>Stabilize training</td></tr>
-      <tr><td>6</td><td><strong>Linear + Softmax</strong></td><td>Predict next word (Decoder output)</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- Q4 -->
-<div class="qa-card" id="q4">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">4</div> What is Self-Attention? Explain with an example.</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>Self-Attention allows each word to look at <strong>all other words</strong> in the sentence to understand its context.</p>
-    <p><strong>Example:</strong> In "The cat sat on the mat because <strong>it</strong> was soft"</p>
-    <ul>
-      <li>What does "it" refer to? The model needs to attend to "mat" (not "cat").</li>
-      <li>Self-Attention computes a score between "it" and every other word.</li>
-      <li>"mat" gets the highest score → the model understands "it" = "mat".</li>
-    </ul>
-    <p><strong>Steps:</strong></p>
-    <ol>
-      <li>Create <strong>Q</strong> (Query), <strong>K</strong> (Key), <strong>V</strong> (Value) for each word</li>
-      <li>Score = Q × K<sup>T</sup> (how relevant is each word?)</li>
-      <li>Scale by √d<sub>k</sub></li>
-      <li>Apply Softmax → probabilities</li>
-      <li>Multiply by V → weighted output</li>
-    </ol>
-  </div>
-</div>
-
-<!-- Q5 -->
-<div class="qa-card" id="q5">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">5</div> What are Q, K, and V? Why three separate vectors?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th>Vector</th><th>Name</th><th>Meaning</th></tr>
-      <tr><td><strong>Q</strong></td><td>Query</td><td>"What am I looking for?"</td></tr>
-      <tr><td><strong>K</strong></td><td>Key</td><td>"What do I contain?"</td></tr>
-      <tr><td><strong>V</strong></td><td>Value</td><td>"What information do I give?"</td></tr>
-    </table>
-    <p><strong>Why three?</strong> Separating them allows the model to learn <strong>different</strong> representations for "what to search for" vs "what to match against" vs "what to output". Using one vector for all three would be much less expressive.</p>
-    <div class="note"><strong>Analogy — Library:</strong> Q = your search query | K = book titles (index) | V = book content (what you actually read)</div>
-  </div>
-</div>
-
-<!-- Q6 -->
-<div class="qa-card" id="q6">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">6</div> Write the Self-Attention formula and explain each part.</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <div class="formula"><strong>Attention(Q, K, V) = softmax(Q × K<sup>T</sup> / √d<sub>k</sub>) × V</strong></div>
-    <table>
-      <tr><th>Part</th><th>What it does</th></tr>
-      <tr><td>Q × K<sup>T</sup></td><td>Dot product → compatibility scores between queries and keys</td></tr>
-      <tr><td>√d<sub>k</sub></td><td>Scaling factor (d<sub>k</sub> = dimension of keys) to prevent large values</td></tr>
-      <tr><td>softmax</td><td>Converts scores to probabilities (sum = 1)</td></tr>
-      <tr><td>× V</td><td>Weighted sum of values based on attention weights</td></tr>
-    </table>
-    <div class="note"><strong>Why divide by √d<sub>k</sub>?</strong> Without scaling, large d<sub>k</sub> → large dot products → softmax outputs near 0 and 1 only → gradients vanish → model can't learn.</div>
-  </div>
-</div>
-
-<!-- Q7 -->
-<div class="qa-card" id="q7">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">7</div> What is Multi-Head Attention? Why not single attention?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>Multi-Head Attention runs <strong>multiple self-attention operations in parallel</strong>, each with different learned weight matrices.</p>
-    <div class="formula">
-      MultiHead(Q, K, V) = Concat(head<sub>1</sub>, ..., head<sub>h</sub>) × W<sup>O</sup><br>
-      where head<sub>i</sub> = Attention(Q×W<sub>i</sub><sup>Q</sup>, K×W<sub>i</sub><sup>K</sup>, V×W<sub>i</sub><sup>V</sup>)
+  <!-- Table of Contents -->
+  <div class="section fade-up" id="toc">
+    <h2 class="section-title"><i class="fas fa-list"></i> 📋 Table of Contents</h2>
+    <div class="qa-toc">
+      <a href="#q1"><span class="qnum">Q1</span> What is a Transformer?</a>
+      <a href="#q2"><span class="qnum">Q2</span> Transformer vs RNN/LSTM</a>
+      <a href="#q3"><span class="qnum">Q3</span> Main components</a>
+      <a href="#q4"><span class="qnum">Q4</span> Self-Attention explained</a>
+      <a href="#q5"><span class="qnum">Q5</span> What are Q, K, V?</a>
+      <a href="#q6"><span class="qnum">Q6</span> Self-Attention formula</a>
+      <a href="#q7"><span class="qnum">Q7</span> Multi-Head Attention</a>
+      <a href="#q8"><span class="qnum">Q8</span> Why Positional Encoding?</a>
+      <a href="#q9"><span class="qnum">Q9</span> PE formula (sin/cos)</a>
+      <a href="#q10"><span class="qnum">Q10</span> Masked Attention</a>
+      <a href="#q11"><span class="qnum">Q11</span> Cross-Attention</a>
+      <a href="#q12"><span class="qnum">Q12</span> Residual Connections</a>
+      <a href="#q13"><span class="qnum">Q13</span> Layer Normalization</a>
+      <a href="#q14"><span class="qnum">Q14</span> Feed-Forward Network</a>
+      <a href="#q15"><span class="qnum">Q15</span> Three model types</a>
+      <a href="#q16"><span class="qnum">Q16</span> Key hyperparameters</a>
+      <a href="#q17"><span class="qnum">Q17</span> Teacher Forcing</a>
+      <a href="#q18"><span class="qnum">Q18</span> Full translation pipeline</a>
+      <a href="#q19"><span class="qnum">Q19</span> Encoder vs Decoder attention</a>
+      <a href="#q20"><span class="qnum">Q20</span> Transformer vs CNN</a>
+      <a href="#q21"><span class="qnum">Bonus</span> Why is generation sequential?</a>
     </div>
-    <p><strong>Why multiple heads?</strong> Each head learns <strong>different relationships</strong>:</p>
-    <ul>
-      <li><strong>Head 1:</strong> might learn grammar (subject-verb)</li>
-      <li><strong>Head 2:</strong> might learn proximity (nearby words)</li>
-      <li><strong>Head 3:</strong> might learn meaning (semantic similarity)</li>
-    </ul>
-    <p>Original paper: <strong>8 heads</strong>, each with dimension 64 (512/8).</p>
+    <div class="expand-wrap"><button class="btn btn-primary expand-btn" onclick="toggleAll()"><i class="fas fa-angles-down"></i> Expand / Collapse All</button></div>
   </div>
-</div>
 
-<!-- Q8 -->
-<div class="qa-card" id="q8">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">8</div> Why do we need Positional Encoding?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>Transformers process all words <strong>simultaneously</strong> — they have <strong>no inherent sense of word order</strong>.</p>
-    <p>Without positional encoding:</p>
-    <pre><code>"The cat ate the fish"  =  "The fish ate the cat"</code></pre>
-    <p>Same words, same embeddings — but completely different meanings!</p>
-    <p>Positional Encoding adds a <strong>unique vector</strong> to each position so the model knows word order.</p>
-  </div>
-</div>
+  <div class="section fade-up" id="questions">
+    <h2 class="section-title"><i class="fas fa-circle-question"></i> Questions &amp; Answers</h2>
 
-<!-- Q9 -->
-<div class="qa-card" id="q9">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">9</div> Write the Positional Encoding formula. Why sin/cos?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <div class="formula">
-      PE(pos, 2i) = sin(pos / 10000<sup>2i/d</sup>)<br>
-      PE(pos, 2i+1) = cos(pos / 10000<sup>2i/d</sup>)
-    </div>
-    <p><strong>Why sin and cos?</strong></p>
-    <table>
-      <tr><th>Reason</th><th>Explanation</th></tr>
-      <tr><td>Unique fingerprint</td><td>Every position gets a different combination of values</td></tr>
-      <tr><td>Relative positions</td><td>sin(A+B) = linear function of sin(A), cos(A) → model learns relative distances</td></tr>
-      <tr><td>No length limit</td><td>Works for any sequence length (unlike learned embeddings)</td></tr>
-      <tr><td>Both sin AND cos</td><td>sin alone repeats (sin(0) = sin(π) = 0), cos distinguishes them</td></tr>
-    </table>
-    <div class="note"><strong>Why 10000?</strong> Controls frequency range — early dimensions = fast (like seconds hand), later dimensions = slow (like hours hand). This covers both nearby and distant position differences.</div>
-  </div>
-</div>
+    <!-- Q1 -->
+    <details class="solution" id="q1">
+      <summary><span class="num">1</span> What is a Transformer? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>A Transformer is a deep learning architecture introduced in the 2017 paper <strong>"Attention Is All You Need"</strong> by Vaswani et al. (Google).</p>
+        <p>It processes entire sequences <strong>in parallel</strong> using a mechanism called <strong>self-attention</strong> — no recurrence (RNN) or convolution (CNN) needed.</p>
+        <p>It consists of an <strong>Encoder</strong> (understands the input) and a <strong>Decoder</strong> (generates the output).</p>
+        <div class="info-box success"><p>Key insight: "Attention Is All You Need" — the entire architecture is built around the attention mechanism.</p></div>
+      </div>
+    </details>
 
-<!-- Q10 -->
-<div class="qa-card" id="q10">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">10</div> What is Masked Self-Attention? Why is it needed?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>Same as Self-Attention, but future positions are <strong>masked out</strong> (set to -∞ before softmax).</p>
-    <pre><code>When generating "love" in "I love learning":
+    <!-- Q2 -->
+    <details class="solution" id="q2">
+      <summary><span class="num">2</span> What problems does the Transformer solve compared to RNNs/LSTMs? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Problem with RNN/LSTM</th><th>Transformer Solution</th></tr>
+          <tr><td>Sequential processing (slow)</td><td>Parallel processing (fast)</td></tr>
+          <tr><td>Vanishing gradients</td><td>Residual connections + LayerNorm</td></tr>
+          <tr><td>Hard to capture long-range dependencies</td><td>Self-attention sees ALL words at once</td></tr>
+          <tr><td>Can't scale well</td><td>Scales efficiently with GPU parallelism</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <!-- Q3 -->
+    <details class="solution" id="q3">
+      <summary><span class="num">3</span> What are the main components of the Transformer? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>#</th><th>Component</th><th>Purpose</th></tr>
+          <tr><td>1</td><td><strong>Input Embedding</strong></td><td>Converts words to vectors</td></tr>
+          <tr><td>2</td><td><strong>Positional Encoding</strong></td><td>Adds position information (sin/cos)</td></tr>
+          <tr><td>3</td><td><strong>Multi-Head Self-Attention</strong></td><td>Each word attends to all others</td></tr>
+          <tr><td>4</td><td><strong>Feed-Forward Network</strong></td><td>Two-layer neural net per position</td></tr>
+          <tr><td>5</td><td><strong>Residual + LayerNorm</strong></td><td>Stabilize training</td></tr>
+          <tr><td>6</td><td><strong>Linear + Softmax</strong></td><td>Predict next word (Decoder output)</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <!-- Q4 -->
+    <details class="solution" id="q4">
+      <summary><span class="num">4</span> What is Self-Attention? Explain with an example. <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>Self-Attention allows each word to look at <strong>all other words</strong> in the sentence to understand its context.</p>
+        <p><strong>Example:</strong> In "The cat sat on the mat because <strong>it</strong> was soft"</p>
+        <ul>
+          <li>What does "it" refer to? The model needs to attend to "mat" (not "cat").</li>
+          <li>Self-Attention computes a score between "it" and every other word.</li>
+          <li>"mat" gets the highest score → the model understands "it" = "mat".</li>
+        </ul>
+        <p><strong>Steps:</strong></p>
+        <ol>
+          <li>Create <strong>Q</strong> (Query), <strong>K</strong> (Key), <strong>V</strong> (Value) for each word</li>
+          <li>Score = Q × K<sup>T</sup> (how relevant is each word?)</li>
+          <li>Scale by √d<sub>k</sub></li>
+          <li>Apply Softmax → probabilities</li>
+          <li>Multiply by V → weighted output</li>
+        </ol>
+      </div>
+    </details>
+
+    <!-- Q5 -->
+    <details class="solution" id="q5">
+      <summary><span class="num">5</span> What are Q, K, and V? Why three separate vectors? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Vector</th><th>Name</th><th>Meaning</th></tr>
+          <tr><td><strong>Q</strong></td><td>Query</td><td>"What am I looking for?"</td></tr>
+          <tr><td><strong>K</strong></td><td>Key</td><td>"What do I contain?"</td></tr>
+          <tr><td><strong>V</strong></td><td>Value</td><td>"What information do I give?"</td></tr>
+        </table></div>
+        <p><strong>Why three?</strong> Separating them allows the model to learn <strong>different</strong> representations for "what to search for" vs "what to match against" vs "what to output". Using one vector for all three would be much less expressive.</p>
+        <div class="info-box success"><p><strong>Analogy — Library:</strong> Q = your search query | K = book titles (index) | V = book content (what you actually read)</p></div>
+      </div>
+    </details>
+
+    <!-- Q6 -->
+    <details class="solution" id="q6">
+      <summary><span class="num">6</span> Write the Self-Attention formula and explain each part. <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="formula"><strong>Attention(Q, K, V) = softmax(Q × K<sup>T</sup> / √d<sub>k</sub>) × V</strong></div>
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Part</th><th>What it does</th></tr>
+          <tr><td>Q × K<sup>T</sup></td><td>Dot product → compatibility scores between queries and keys</td></tr>
+          <tr><td>√d<sub>k</sub></td><td>Scaling factor (d<sub>k</sub> = dimension of keys) to prevent large values</td></tr>
+          <tr><td>softmax</td><td>Converts scores to probabilities (sum = 1)</td></tr>
+          <tr><td>× V</td><td>Weighted sum of values based on attention weights</td></tr>
+        </table></div>
+        <div class="info-box success"><p><strong>Why divide by √d<sub>k</sub>?</strong> Without scaling, large d<sub>k</sub> → large dot products → softmax outputs near 0 and 1 only → gradients vanish → model can't learn.</p></div>
+      </div>
+    </details>
+
+    <!-- Q7 -->
+    <details class="solution" id="q7">
+      <summary><span class="num">7</span> What is Multi-Head Attention? Why not single attention? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>Multi-Head Attention runs <strong>multiple self-attention operations in parallel</strong>, each with different learned weight matrices.</p>
+        <div class="formula">
+          MultiHead(Q, K, V) = Concat(head<sub>1</sub>, ..., head<sub>h</sub>) × W<sup>O</sup><br>
+          where head<sub>i</sub> = Attention(Q×W<sub>i</sub><sup>Q</sup>, K×W<sub>i</sub><sup>K</sup>, V×W<sub>i</sub><sup>V</sup>)
+        </div>
+        <p><strong>Why multiple heads?</strong> Each head learns <strong>different relationships</strong>:</p>
+        <ul>
+          <li><strong>Head 1:</strong> might learn grammar (subject-verb)</li>
+          <li><strong>Head 2:</strong> might learn proximity (nearby words)</li>
+          <li><strong>Head 3:</strong> might learn meaning (semantic similarity)</li>
+        </ul>
+        <p>Original paper: <strong>8 heads</strong>, each with dimension 64 (512/8).</p>
+      </div>
+    </details>
+
+    <!-- Q8 -->
+    <details class="solution" id="q8">
+      <summary><span class="num">8</span> Why do we need Positional Encoding? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>Transformers process all words <strong>simultaneously</strong> — they have <strong>no inherent sense of word order</strong>.</p>
+        <p>Without positional encoding:</p>
+        <pre><code>"The cat ate the fish"  =  "The fish ate the cat"</code></pre>
+        <p>Same words, same embeddings — but completely different meanings!</p>
+        <p>Positional Encoding adds a <strong>unique vector</strong> to each position so the model knows word order.</p>
+      </div>
+    </details>
+
+    <!-- Q9 -->
+    <details class="solution" id="q9">
+      <summary><span class="num">9</span> Write the Positional Encoding formula. Why sin/cos? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="formula">
+          PE(pos, 2i) = sin(pos / 10000<sup>2i/d</sup>)<br>
+          PE(pos, 2i+1) = cos(pos / 10000<sup>2i/d</sup>)
+        </div>
+        <p><strong>Why sin and cos?</strong></p>
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Reason</th><th>Explanation</th></tr>
+          <tr><td>Unique fingerprint</td><td>Every position gets a different combination of values</td></tr>
+          <tr><td>Relative positions</td><td>sin(A+B) = linear function of sin(A), cos(A) → model learns relative distances</td></tr>
+          <tr><td>No length limit</td><td>Works for any sequence length (unlike learned embeddings)</td></tr>
+          <tr><td>Both sin AND cos</td><td>sin alone repeats (sin(0) = sin(π) = 0), cos distinguishes them</td></tr>
+        </table></div>
+        <div class="info-box success"><p><strong>Why 10000?</strong> Controls frequency range — early dimensions = fast (like seconds hand), later dimensions = slow (like hours hand). This covers both nearby and distant position differences.</p></div>
+      </div>
+    </details>
+
+    <!-- Q10 -->
+    <details class="solution" id="q10">
+      <summary><span class="num">10</span> What is Masked Self-Attention? Why is it needed? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>Same as Self-Attention, but future positions are <strong>masked out</strong> (set to -∞ before softmax).</p>
+        <pre><code>When generating "love" in "I love learning":
   Can see: "I"        ✅
   Can see: "love"     ✅ (itself)
   Cannot see: "learning" ❌ (future — not generated yet)</code></pre>
-    <p><strong>Why?</strong> During generation, the model produces words <strong>one at a time</strong>. If it could see future words, it would be <strong>cheating</strong> — copying the answer instead of learning to predict.</p>
-    <p>The mask sets future positions to -∞ → after softmax they become 0 → ignored.</p>
-  </div>
-</div>
+        <p><strong>Why?</strong> During generation, the model produces words <strong>one at a time</strong>. If it could see future words, it would be <strong>cheating</strong> — copying the answer instead of learning to predict.</p>
+        <p>The mask sets future positions to -∞ → after softmax they become 0 → ignored.</p>
+      </div>
+    </details>
 
-<!-- Q11 -->
-<div class="qa-card" id="q11">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">11</div> What is Cross-Attention? How is it different from Self-Attention?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th></th><th>Self-Attention</th><th>Cross-Attention</th></tr>
-      <tr><td><strong>Q from</strong></td><td>Same sequence</td><td>Decoder</td></tr>
-      <tr><td><strong>K, V from</strong></td><td>Same sequence</td><td>Encoder output</td></tr>
-      <tr><td><strong>Purpose</strong></td><td>Understand within a sequence</td><td>Connect Decoder to Encoder</td></tr>
-      <tr><td><strong>Used in</strong></td><td>Both Encoder and Decoder</td><td>Decoder only</td></tr>
-    </table>
-    <p><strong>Example (English → Arabic):</strong> Generating "التعلم":</p>
-    <ul>
-      <li>Q = from Decoder ("what Arabic word am I generating?")</li>
-      <li>K, V = from Encoder ("I", "love", "learning")</li>
-      <li>Attends most to "learning" → generates "التعلم"</li>
-    </ul>
-  </div>
-</div>
+    <!-- Q11 -->
+    <details class="solution" id="q11">
+      <summary><span class="num">11</span> What is Cross-Attention? How is it different from Self-Attention? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th></th><th>Self-Attention</th><th>Cross-Attention</th></tr>
+          <tr><td><strong>Q from</strong></td><td>Same sequence</td><td>Decoder</td></tr>
+          <tr><td><strong>K, V from</strong></td><td>Same sequence</td><td>Encoder output</td></tr>
+          <tr><td><strong>Purpose</strong></td><td>Understand within a sequence</td><td>Connect Decoder to Encoder</td></tr>
+          <tr><td><strong>Used in</strong></td><td>Both Encoder and Decoder</td><td>Decoder only</td></tr>
+        </table></div>
+        <p><strong>Example (English → Arabic):</strong> Generating "التعلم":</p>
+        <ul>
+          <li>Q = from Decoder ("what Arabic word am I generating?")</li>
+          <li>K, V = from Encoder ("I", "love", "learning")</li>
+          <li>Attends most to "learning" → generates "التعلم"</li>
+        </ul>
+      </div>
+    </details>
 
-<!-- Q12 -->
-<div class="qa-card" id="q12">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">12</div> What are Residual (Skip) Connections?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <div class="formula"><strong>output = x + Sublayer(x)</strong></div>
-    <p>The <strong>original input</strong> is added directly to the sublayer's output.</p>
-    <p><strong>Why?</strong></p>
-    <ol>
-      <li><strong>Prevents vanishing gradients</strong> — gradients flow directly through the skip connection</li>
-      <li><strong>Preserves information</strong> — original input is never lost</li>
-      <li><strong>Enables deeper networks</strong> — without them, 6+ layers would be very hard to train</li>
-    </ol>
-    <div class="note"><strong>Analogy:</strong> Taking notes in class. Even after processing (Sublayer), you keep your original notes (x) and add new insights on top.</div>
-  </div>
-</div>
+    <!-- Q12 -->
+    <details class="solution" id="q12">
+      <summary><span class="num">12</span> What are Residual (Skip) Connections? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="formula"><strong>output = x + Sublayer(x)</strong></div>
+        <p>The <strong>original input</strong> is added directly to the sublayer's output.</p>
+        <p><strong>Why?</strong></p>
+        <ol>
+          <li><strong>Prevents vanishing gradients</strong> — gradients flow directly through the skip connection</li>
+          <li><strong>Preserves information</strong> — original input is never lost</li>
+          <li><strong>Enables deeper networks</strong> — without them, 6+ layers would be very hard to train</li>
+        </ol>
+        <div class="info-box success"><p><strong>Analogy:</strong> Taking notes in class. Even after processing (Sublayer), you keep your original notes (x) and add new insights on top.</p></div>
+      </div>
+    </details>
 
-<!-- Q13 -->
-<div class="qa-card" id="q13">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">13</div> What is Layer Normalization?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <div class="formula"><strong>LayerNorm(x) = γ × (x - μ) / √(σ² + ε) + β</strong></div>
-    <table>
-      <tr><th>Symbol</th><th>Meaning</th></tr>
-      <tr><td>μ</td><td>Mean of the vector</td></tr>
-      <tr><td>σ²</td><td>Variance</td></tr>
-      <tr><td>γ, β</td><td>Learnable parameters (scale and shift)</td></tr>
-      <tr><td>ε</td><td>Small constant to prevent division by zero</td></tr>
-    </table>
-    <p><strong>Purpose:</strong> Normalizes values to mean ≈ 0, variance ≈ 1, which stabilizes training, allows higher learning rates, and reduces sensitivity to initialization.</p>
-  </div>
-</div>
+    <!-- Q13 -->
+    <details class="solution" id="q13">
+      <summary><span class="num">13</span> What is Layer Normalization? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="formula"><strong>LayerNorm(x) = γ × (x - μ) / √(σ² + ε) + β</strong></div>
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Symbol</th><th>Meaning</th></tr>
+          <tr><td>μ</td><td>Mean of the vector</td></tr>
+          <tr><td>σ²</td><td>Variance</td></tr>
+          <tr><td>γ, β</td><td>Learnable parameters (scale and shift)</td></tr>
+          <tr><td>ε</td><td>Small constant to prevent division by zero</td></tr>
+        </table></div>
+        <p><strong>Purpose:</strong> Normalizes values to mean ≈ 0, variance ≈ 1, which stabilizes training, allows higher learning rates, and reduces sensitivity to initialization.</p>
+      </div>
+    </details>
 
-<!-- Q14 -->
-<div class="qa-card" id="q14">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">14</div> What is the Feed-Forward Network?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <div class="formula"><strong>FFN(x) = max(0, x·W₁ + b₁) · W₂ + b₂</strong></div>
-    <ul>
-      <li>Two linear layers with <strong>ReLU</strong> activation in between</li>
-      <li>Inner dimension = <strong>4× model dimension</strong> (512 → 2048 → 512)</li>
-      <li>Applied to each position <strong>independently</strong></li>
-    </ul>
-    <p><strong>Why needed?</strong> Self-attention only computes weighted averages (linear). The FFN adds <strong>non-linear transformation</strong>, allowing the model to learn complex patterns.</p>
-  </div>
-</div>
+    <!-- Q14 -->
+    <details class="solution" id="q14">
+      <summary><span class="num">14</span> What is the Feed-Forward Network? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="formula"><strong>FFN(x) = max(0, x·W₁ + b₁) · W₂ + b₂</strong></div>
+        <ul>
+          <li>Two linear layers with <strong>ReLU</strong> activation in between</li>
+          <li>Inner dimension = <strong>4× model dimension</strong> (512 → 2048 → 512)</li>
+          <li>Applied to each position <strong>independently</strong></li>
+        </ul>
+        <p><strong>Why needed?</strong> Self-attention only computes weighted averages (linear). The FFN adds <strong>non-linear transformation</strong>, allowing the model to learn complex patterns.</p>
+      </div>
+    </details>
 
-<!-- Q15 -->
-<div class="qa-card" id="q15">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">15</div> What are the three types of Transformer models?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th>Type</th><th>Examples</th><th>Best For</th><th>Direction</th></tr>
-      <tr><td><strong>Encoder-only</strong></td><td>BERT, RoBERTa</td><td>Classification, NER, understanding</td><td>Bidirectional</td></tr>
-      <tr><td><strong>Decoder-only</strong></td><td>GPT, GPT-4</td><td>Text generation</td><td>Left → Right</td></tr>
-      <tr><td><strong>Encoder-Decoder</strong></td><td>BART, T5</td><td>Translation, summarization</td><td>Full seq-to-seq</td></tr>
-    </table>
-  </div>
-</div>
+    <!-- Q15 -->
+    <details class="solution" id="q15">
+      <summary><span class="num">15</span> What are the three types of Transformer models? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Type</th><th>Examples</th><th>Best For</th><th>Direction</th></tr>
+          <tr><td><strong>Encoder-only</strong></td><td>BERT, RoBERTa</td><td>Classification, NER, understanding</td><td>Bidirectional</td></tr>
+          <tr><td><strong>Decoder-only</strong></td><td>GPT, GPT-4</td><td>Text generation</td><td>Left → Right</td></tr>
+          <tr><td><strong>Encoder-Decoder</strong></td><td>BART, T5</td><td>Translation, summarization</td><td>Full seq-to-seq</td></tr>
+        </table></div>
+      </div>
+    </details>
 
-<!-- Q16 -->
-<div class="qa-card" id="q16">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">16</div> What are the key hyperparameters of the original Transformer?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th>Parameter</th><th>Value</th></tr>
-      <tr><td>Encoder layers</td><td><strong>6</strong></td></tr>
-      <tr><td>Decoder layers</td><td><strong>6</strong></td></tr>
-      <tr><td>d_model (embedding size)</td><td><strong>512</strong></td></tr>
-      <tr><td>Number of heads (h)</td><td><strong>8</strong></td></tr>
-      <tr><td>d_k (per head)</td><td>512/8 = <strong>64</strong></td></tr>
-      <tr><td>FFN inner dimension</td><td><strong>2048</strong></td></tr>
-      <tr><td>Optimizer</td><td><strong>Adam</strong> (with warmup schedule)</td></tr>
-      <tr><td>Training technique</td><td><strong>Teacher Forcing</strong></td></tr>
-    </table>
-  </div>
-</div>
+    <!-- Q16 -->
+    <details class="solution" id="q16">
+      <summary><span class="num">16</span> What are the key hyperparameters of the original Transformer? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Parameter</th><th>Value</th></tr>
+          <tr><td>Encoder layers</td><td><strong>6</strong></td></tr>
+          <tr><td>Decoder layers</td><td><strong>6</strong></td></tr>
+          <tr><td>d_model (embedding size)</td><td><strong>512</strong></td></tr>
+          <tr><td>Number of heads (h)</td><td><strong>8</strong></td></tr>
+          <tr><td>d_k (per head)</td><td>512/8 = <strong>64</strong></td></tr>
+          <tr><td>FFN inner dimension</td><td><strong>2048</strong></td></tr>
+          <tr><td>Optimizer</td><td><strong>Adam</strong> (with warmup schedule)</td></tr>
+          <tr><td>Training technique</td><td><strong>Teacher Forcing</strong></td></tr>
+        </table></div>
+      </div>
+    </details>
 
-<!-- Q17 -->
-<div class="qa-card" id="q17">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">17</div> What is Teacher Forcing?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>During <strong>training</strong>, instead of feeding the model its own (possibly wrong) predictions, we feed it the <strong>correct previous token</strong>.</p>
-    <p><strong>Example:</strong> Target = "أنا أحب التعلم"</p>
-    <pre><code>Step 1: Input = [START]              → predict "أنا"
+    <!-- Q17 -->
+    <details class="solution" id="q17">
+      <summary><span class="num">17</span> What is Teacher Forcing? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>During <strong>training</strong>, instead of feeding the model its own (possibly wrong) predictions, we feed it the <strong>correct previous token</strong>.</p>
+        <p><strong>Example:</strong> Target = "أنا أحب التعلم"</p>
+        <pre><code>Step 1: Input = [START]              → predict "أنا"
 Step 2: Input = [START, أنا]         → predict "أحب"     (correct "أنا", not model's guess)
 Step 3: Input = [START, أنا, أحب]    → predict "التعلم"</code></pre>
-    <p><strong>Why?</strong> Speeds up training and prevents error accumulation (one wrong prediction causing all subsequent ones to be wrong).</p>
+        <p><strong>Why?</strong> Speeds up training and prevents error accumulation (one wrong prediction causing all subsequent ones to be wrong).</p>
+      </div>
+    </details>
+
+    <!-- Q18 -->
+    <details class="solution" id="q18">
+      <summary><span class="num">18</span> How does the complete pipeline work for translation? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p>Translating <strong>"I love learning"</strong> → <strong>"أنا أحب التعلم"</strong>:</p>
+        <p><strong>Encoder:</strong></p>
+        <ol>
+          <li>Embed each English word → vectors</li>
+          <li>Add Positional Encoding</li>
+          <li>Pass through 6 encoder layers (Self-Attention → FFN)</li>
+          <li>Output: contextualized representations</li>
+        </ol>
+        <p><strong>Decoder (one word at a time):</strong></p>
+        <ol>
+          <li>Start with [START] token</li>
+          <li>Embed + Positional Encoding</li>
+          <li>Masked Self-Attention (can't see future)</li>
+          <li>Cross-Attention (attend to Encoder output)</li>
+          <li>FFN → Linear → Softmax → predict <strong>"أنا"</strong></li>
+          <li>Repeat with [START, أنا] → predict <strong>"أحب"</strong></li>
+          <li>Repeat → predict <strong>"التعلم"</strong></li>
+          <li>Repeat → predict <strong>[END]</strong> → stop</li>
+        </ol>
+      </div>
+    </details>
+
+    <!-- Q19 -->
+    <details class="solution" id="q19">
+      <summary><span class="num">19</span> Encoder attention vs Decoder attention? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th></th><th>Encoder</th><th>Decoder</th></tr>
+          <tr><td><strong>Self-Attention</strong></td><td>Unmasked — sees all words</td><td><strong>Masked</strong> — can't see future</td></tr>
+          <tr><td><strong>Cross-Attention</strong></td><td>None</td><td>Yes — Q from Decoder, K/V from Encoder</td></tr>
+          <tr><td><strong>Sub-layers per layer</strong></td><td>2 (Attention + FFN)</td><td>3 (Masked Attn + Cross Attn + FFN)</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <!-- Q20 -->
+    <details class="solution" id="q20">
+      <summary><span class="num">20</span> Why is the Transformer better than CNN for NLP? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <div class="table-wrap"><table class="dark-table">
+          <tr><th>Aspect</th><th>CNN</th><th>Transformer</th></tr>
+          <tr><td>Context window</td><td>Limited (kernel size)</td><td><strong>Global</strong> (entire sequence)</td></tr>
+          <tr><td>Long-range dependencies</td><td>Needs many layers</td><td><strong>Single attention layer</strong></td></tr>
+          <tr><td>Parallelization</td><td>Good</td><td><strong>Excellent</strong></td></tr>
+          <tr><td>Position awareness</td><td>Built-in (local)</td><td>Needs Positional Encoding</td></tr>
+          <tr><td>Dominant in NLP?</td><td>No</td><td><strong>Yes (since 2018)</strong></td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <!-- Bonus -->
+    <details class="solution bonus" id="q21">
+      <summary><span class="num">⭐</span> Bonus: If Transformers are parallel, why is generation sequential? <i class="fas fa-chevron-down arrow"></i></summary>
+      <div class="answer">
+        <p><strong>Training:</strong> Parallel ✅ — we have the full target sentence, so we use teacher forcing and process all positions at once (with masking).</p>
+        <p><strong>Inference (generation):</strong> Sequential ❌ — we don't know the next word until we predict it, so we must generate <strong>one token at a time</strong>.</p>
+        <div class="info-box success"><p>This is why large language models like GPT-4 still output words one by one, even though internally each step processes all previous tokens in parallel.</p></div>
+      </div>
+    </details>
+
+    <div class="expand-wrap"><button class="btn btn-outline expand-btn" onclick="toggleAll()"><i class="fas fa-angles-down"></i> Expand / Collapse All</button></div>
   </div>
+
+  <p class="credit">
+    Prepared by Dr. Abdulkarim Albanna — AI Applications Course<br>
+    <a href="transformer.html">Back to Transformer Overview</a>
+  </p>
+
+  <div class="page-nav"><a class="nav-btn prev" href="/">← Home</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
 </div>
 
-<!-- Q18 -->
-<div class="qa-card" id="q18">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">18</div> How does the complete pipeline work for translation?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p>Translating <strong>"I love learning"</strong> → <strong>"أنا أحب التعلم"</strong>:</p>
-    <p><strong>Encoder:</strong></p>
-    <ol>
-      <li>Embed each English word → vectors</li>
-      <li>Add Positional Encoding</li>
-      <li>Pass through 6 encoder layers (Self-Attention → FFN)</li>
-      <li>Output: contextualized representations</li>
-    </ol>
-    <p><strong>Decoder (one word at a time):</strong></p>
-    <ol>
-      <li>Start with [START] token</li>
-      <li>Embed + Positional Encoding</li>
-      <li>Masked Self-Attention (can't see future)</li>
-      <li>Cross-Attention (attend to Encoder output)</li>
-      <li>FFN → Linear → Softmax → predict <strong>"أنا"</strong></li>
-      <li>Repeat with [START, أنا] → predict <strong>"أحب"</strong></li>
-      <li>Repeat → predict <strong>"التعلم"</strong></li>
-      <li>Repeat → predict <strong>[END]</strong> → stop</li>
-    </ol>
-  </div>
-</div>
-
-<!-- Q19 -->
-<div class="qa-card" id="q19">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">19</div> Encoder attention vs Decoder attention?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th></th><th>Encoder</th><th>Decoder</th></tr>
-      <tr><td><strong>Self-Attention</strong></td><td>Unmasked — sees all words</td><td><strong>Masked</strong> — can't see future</td></tr>
-      <tr><td><strong>Cross-Attention</strong></td><td>None</td><td>Yes — Q from Decoder, K/V from Encoder</td></tr>
-      <tr><td><strong>Sub-layers per layer</strong></td><td>2 (Attention + FFN)</td><td>3 (Masked Attn + Cross Attn + FFN)</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- Q20 -->
-<div class="qa-card" id="q20">
-  <div class="question" onclick="toggle(this)">
-    <div style="display:flex;align-items:center"><div class="num">20</div> Why is the Transformer better than CNN for NLP?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <table>
-      <tr><th>Aspect</th><th>CNN</th><th>Transformer</th></tr>
-      <tr><td>Context window</td><td>Limited (kernel size)</td><td><strong>Global</strong> (entire sequence)</td></tr>
-      <tr><td>Long-range dependencies</td><td>Needs many layers</td><td><strong>Single attention layer</strong></td></tr>
-      <tr><td>Parallelization</td><td>Good</td><td><strong>Excellent</strong></td></tr>
-      <tr><td>Position awareness</td><td>Built-in (local)</td><td>Needs Positional Encoding</td></tr>
-      <tr><td>Dominant in NLP?</td><td>No</td><td><strong>Yes (since 2018)</strong></td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- Bonus -->
-<div class="qa-card" id="q21">
-  <div class="question" onclick="toggle(this)" style="background: linear-gradient(135deg, #b45309, #d97706);">
-    <div style="display:flex;align-items:center"><div class="num">⭐</div> Bonus: If Transformers are parallel, why is generation sequential?</div>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="answer">
-    <p><strong>Training:</strong> Parallel ✅ — we have the full target sentence, so we use teacher forcing and process all positions at once (with masking).</p>
-    <p><strong>Inference (generation):</strong> Sequential ❌ — we don't know the next word until we predict it, so we must generate <strong>one token at a time</strong>.</p>
-    <div class="note">This is why large language models like GPT-4 still output words one by one, even though internally each step processes all previous tokens in parallel.</div>
-  </div>
-</div>
-
-<br><br>
-
-<!-- Footer -->
-<div style="text-align:center; color:#9ca3af; font-size:13px; padding: 20px;">
-  Prepared by Dr. Abdulkarim Albanna — AI Applications Course<br>
-  <a href="transformer.html" style="color:#6D28D9;">Back to Transformer Overview</a>
-</div>
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
 <script>
 function toggle(el) {
@@ -595,14 +461,23 @@ function toggle(el) {
 }
 
 function toggleAll() {
-  const cards = document.querySelectorAll('.qa-card');
-  const anyOpen = [...cards].some(c => c.classList.contains('open'));
+  const cards = document.querySelectorAll('details.solution');
+  const anyOpen = [...cards].some(c => c.open);
   cards.forEach(c => {
-    if (anyOpen) c.classList.remove('open');
-    else c.classList.add('open');
+    if (anyOpen) c.open = false;
+    else c.open = true;
   });
 }
-</script>
 
+// Open the answer when arriving via a #qN link (TOC or external)
+function openFromHash() {
+  const id = location.hash.replace('#', '');
+  const d = id && document.getElementById(id);
+  if (d && d.tagName === 'DETAILS') d.open = true;
+}
+window.addEventListener('hashchange', openFromHash);
+openFromHash();
+</script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

@@ -12,766 +12,85 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROS 2 Task Management with Services - Tutorial</title>    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>ROS 2 Task Management with Services - Tutorial</title>
+    <meta name="description" content="Step-by-step ROS 2 tutorial: build a task management system with custom services, a priority queue, a task server and a task client, then build and test it.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-
-        .main-content {
-            display: flex;
-            min-height: 600px;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: #f8f9fa;
-            border-right: 2px solid #e0e0e0;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .step-nav {
-            list-style: none;
-        }
-
-        .step-nav li {
-            margin-bottom: 10px;
-        }
-
-        .step-btn {
-            width: 100%;
-            padding: 15px;
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 14px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .step-btn:hover {
-            border-color: #667eea;
-            transform: translateX(5px);
-        }
-
-        .step-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-        }
-
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background: #667eea;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .step-btn.active .step-number {
-            background: white;
-            color: #667eea;
-        }
-
-        .content-area {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            max-height: 800px;
-        }
-
-        .step-content {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .step-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .step-content h2 {
-            color: #1e3c72;
-            font-size: 2em;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .step-content h3 {
-            color: #2a5298;
-            font-size: 1.5em;
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-
-        .step-content p {
-            line-height: 1.8;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .code-block {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow-x: auto;
-            position: relative;
-        }
-
-        .code-block pre {
-            margin: 0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-
-        .copy-btn:hover {
-            background: #764ba2;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .warning-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .success-box {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .architecture-diagram {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 30px;
-            margin: 30px 0;
-            text-align: center;
-        }
-
-        .service-flow {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .service-box {
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 150px;
-            text-align: center;
-        }
-
-        .client-box {
-            background: #e3f2fd;
-            border: 2px solid #2196F3;
-        }
-
-        .server-box {
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-        }
-
-        .arrow {
-            font-size: 24px;
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .nav-btn {
-            padding: 12px 30px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .nav-btn:hover:not(:disabled) {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-
-        .nav-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        ul, ol {
-            margin-left: 30px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            margin-bottom: 8px;
-            line-height: 1.6;
-        }
-
-        .file-structure {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s;
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #e0e0e0;
-        }
-
-        .comparison-table th {
-            background: #667eea;
-            color: white;
-        }
-
-        .comparison-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-    
-        /* DARK THEME OVERRIDE */
-        *{box-sizing:border-box}
-        :root{
-            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-            --warning:#f59e0b;--danger:#ef4444;
-            --text:#f1f5f9;--text2:#94a3b8;
-            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-            --code:#0d1117;
-        }
-        body.light-mode{
-            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
-            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
-            --warning:#d97706;--danger:#dc2626;
-            --text:#0f172a;--text2:#334155;
-            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
-            --code:#1e293b;
-        }
-        body{
-            font-family:'Inter',sans-serif !important;
-            background:var(--bg) !important;
-            color:var(--text) !important;
-            line-height:1.7;
-        }
-        a{color:var(--primary);transition:color .2s}
-        a:hover{color:#60a5fa}
-
-        /* Bootstrap overrides */
-        .navbar{
-            background:rgba(11,15,25,.92) !important;
-            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-            border-bottom:1px solid var(--border) !important;
-            padding:0 24px !important;
-            box-shadow:none !important;
-        }
-        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
-        .navbar-brand{
-            font-weight:700 !important;font-size:1.15rem !important;
-            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
-        }
-        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
-        .navbar-nav .nav-link{
-            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
-            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
-        }
-        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
-        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
-        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
-        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
-        .navbar-toggler-icon{filter:invert(1) !important}
-        body.light-mode .navbar-toggler-icon{filter:none !important}
-        .navbar-collapse{background:transparent !important}
-        @media(max-width:991px){
-            .navbar-collapse{
-                background:rgba(11,15,25,.98) !important;
-                border-radius:0 0 12px 12px;padding:12px 0;
-                border:1px solid var(--border);border-top:none;
-            }
-            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
-        }
-
-        /* Theme toggle button */
-        .theme-toggle{
-            background:none !important;border:1px solid var(--border2) !important;
-            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
-            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
-            transition:all .2s;margin-left:8px;
-        }
-        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
-
-        /* Hero */
-        .hero, .hero-section{
-            background:var(--bg) !important;
-            color:var(--text) !important;
-            position:relative;overflow:hidden;
-            padding:80px 0 60px !important;
-            margin-bottom:0 !important;
-        }
-        .hero::before,.hero-section::before{
-            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
-            transform:translate(-50%,-50%);
-            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
-        }
-        .hero::after,.hero-section::after{
-            content:'';position:absolute;inset:0;
-            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
-            background-size:32px 32px;pointer-events:none;
-        }
-        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
-        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
-        .hero h1,.hero-section h1{
-            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
-            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
-            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
-            color:transparent !important;
-        }
-        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
-            color:var(--text2) !important;opacity:1 !important;
-        }
-        .hero .display-4{font-size:2.8rem !important}
-
-        /* Cards */
-        .card{
-            background:var(--surface) !important;
-            border:1px solid var(--border2) !important;
-            border-radius:12px !important;
-            box-shadow:none !important;
-            color:var(--text) !important;
-        }
-        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
-        .card-body{background:transparent !important;color:var(--text) !important}
-        .card-header{
-            background:var(--surface2) !important;
-            color:var(--text) !important;
-            border-bottom:1px solid var(--border) !important;
-            font-weight:600;
-        }
-        .card-title{color:var(--text) !important}
-        .card-text{color:var(--text2) !important}
-
-        /* Section titles */
-        .section-title, h2.section-title, h3.section-title{
-            color:var(--text) !important;
-            border-bottom-color:var(--primary) !important;
-        }
-        .section-title::before{background:var(--primary) !important}
-        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
-        p{color:var(--text2)}
-
-        /* Info/Warning/Success boxes */
-        .info-box,.alert-info-custom,.alert-info,.key-concept{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--primary) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
-        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
-        
-        .warning-box,.alert-warning-custom,.alert-warning{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--warning) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
-        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
-        
-        .success-box,.alert-success-custom,.alert-success{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--success) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .success-box strong{color:var(--success) !important}
-        .success-box p{color:var(--text2) !important}
-
-        .alert-tip-custom{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--secondary) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .alert-danger,.alert-danger-custom{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--danger) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
-
-        /* Code blocks */
-        pre, pre[class*="language-"]{
-            background:var(--code) !important;
-            border:1px solid var(--border2) !important;
-            border-radius:8px !important;
-            color:#e6edf3 !important;
-            font-family:'JetBrains Mono',monospace !important;
-            font-size:.875rem !important;
-            line-height:1.6 !important;
-            padding:20px !important;
-        }
-        code{
-            font-family:'JetBrains Mono',monospace !important;
-            background:var(--surface2) !important;
-            color:var(--primary) !important;
-            padding:2px 6px;border-radius:4px;
-            font-size:.85em !important;
-        }
-        pre code{
-            background:transparent !important;
-            color:#e6edf3 !important;
-            padding:0 !important;
-        }
-        .code-block{position:relative;margin:16px 0}
-        .code-block .copy-btn, .copy-btn{
-            position:absolute;top:10px;right:10px;
-            background:var(--surface2) !important;border:1px solid var(--border2) !important;
-            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
-            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
-        }
-        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
-
-        /* Tables */
-        .table,.dark-table,table{
-            color:var(--text) !important;
-            border-color:var(--border) !important;
-        }
-        .table th,table th{
-            background:var(--surface2) !important;
-            color:var(--text) !important;
-            border-color:var(--border2) !important;
-            font-weight:600;
-        }
-        .table td,table td{
-            color:var(--text2) !important;
-            border-color:var(--border) !important;
-            background:transparent !important;
-        }
-        .table-striped>tbody>tr:nth-of-type(odd)>*{
-            background:rgba(255,255,255,.02) !important;
-            color:var(--text2) !important;
-        }
-        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
-        .table-bordered{border-color:var(--border2) !important}
-        thead{border-bottom:2px solid var(--border2) !important}
-        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
-        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
-
-        /* Sidebar / TOC */
-        .sidebar,.toc{
-            background:var(--surface) !important;
-            border:1px solid var(--border2) !important;
-            border-radius:10px !important;
-            padding:16px !important;
-        }
-        .sidebar a,.toc a,.toc .nav-link{
-            color:var(--text2) !important;
-            border-left-color:transparent !important;
-        }
-        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
-            color:var(--primary) !important;
-            border-left-color:var(--primary) !important;
-            background:rgba(59,130,246,.05) !important;
-        }
-        .list-group-item{
-            background:var(--surface) !important;
-            border-color:var(--border) !important;
-            color:var(--text2) !important;
-        }
-        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
-
-        /* Badges */
-        .badge,.badge-custom{
-            background:var(--surface2) !important;
-            color:var(--primary) !important;
-            border:1px solid var(--border2);
-        }
-        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
-        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
-        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
-        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
-        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
-        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
-
-        /* Buttons */
-        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
-        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
-        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
-        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
-        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
-        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
-        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
-        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
-        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
-        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
-
-        /* Misc Bootstrap */
-        .breadcrumb{background:var(--surface) !important}
-        .breadcrumb-item a{color:var(--primary) !important}
-        .breadcrumb-item.active{color:var(--text2) !important}
-        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
-        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
-        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
-        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
-        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
-        .modal-header{border-bottom-color:var(--border) !important}
-        .modal-footer{border-top-color:var(--border) !important}
-        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
-        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
-        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
-        .nav-tabs{border-bottom-color:var(--border2) !important}
-        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
-        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
-        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
-        .nav-pills .nav-link{color:var(--text2) !important}
-        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
-        .progress{background:var(--surface2) !important}
-        .progress-bar{background:var(--primary) !important}
-        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
-        hr{border-color:var(--border) !important;opacity:.5}
-        .text-muted{color:var(--text2) !important}
-        .text-dark{color:var(--text) !important}
-        .bg-light{background:var(--surface2) !important}
-        .bg-white{background:var(--surface) !important}
-        .border{border-color:var(--border2) !important}
-        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
-        .lead{color:var(--text2) !important}
-        strong,b{color:var(--text) !important}
-        ::selection{background:rgba(59,130,246,.3);color:#fff}
-
-        /* Step cards / numbered steps */
-        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
-        .step-number{background:var(--primary) !important;color:#fff !important}
-
-        /* Scroll to top */
-        .scroll-top{
-            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
-            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
-            color:var(--text2);display:flex;align-items:center;justify-content:center;
-            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
-        }
-        .scroll-top.visible{opacity:1;pointer-events:auto}
-        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
-
-        /* Tutorial page overrides for dark mode */
-        .container{background:var(--surface) !important;box-shadow:0 20px 60px rgba(0,0,0,.5) !important}
-        body.light-mode .container{background:#fff !important;box-shadow:0 20px 60px rgba(0,0,0,.3) !important}
-
-        header{background:linear-gradient(135deg,#0f1f3d 0%,#1a3a6e 100%) !important}
-
-        .step-btn{
-            background:var(--surface2) !important;
-            border-color:var(--border2) !important;
-            color:var(--text) !important;
-        }
-        .step-btn:hover{border-color:var(--primary) !important}
-        .step-btn.active{
-            background:linear-gradient(135deg,#667eea 0%,#764ba2 100%) !important;
-            color:#fff !important;border-color:#667eea !important;
-        }
-        body.light-mode .step-btn{background:#fff !important;border-color:#e0e0e0 !important;color:#333 !important}
-        body.light-mode .step-btn.active{color:#fff !important}
-
-        .content-area{color:var(--text) !important}
-
-        .architecture-diagram{
-            background:var(--surface2) !important;
-            border-color:var(--border2) !important;
-            color:var(--text) !important;
-        }
-        body.light-mode .architecture-diagram{background:#fff !important;border-color:#e0e0e0 !important}
-
-        .service-flow{background:var(--surface2) !important;color:var(--text) !important}
-        body.light-mode .service-flow{background:#f8f9fa !important}
-
-        .service-box{color:var(--text) !important}
-        .client-box{background:rgba(59,130,246,.1) !important;border-color:var(--primary) !important}
-        .server-box{background:rgba(16,185,129,.1) !important;border-color:var(--success) !important}
-        body.light-mode .client-box{background:#e3f2fd !important;border-color:#2196F3 !important}
-        body.light-mode .server-box{background:#e8f5e9 !important;border-color:#4caf50 !important}
-
-        .file-structure{
-            background:var(--surface2) !important;
-            border-color:var(--border2) !important;
-            color:var(--text) !important;
-        }
-        body.light-mode .file-structure{background:#f8f9fa !important;border-color:#e0e0e0 !important}
-
-        .nav-btn{background:var(--primary) !important;color:#fff !important}
-        .nav-btn:hover:not(:disabled){background:#2563eb !important}
-        .nav-btn:disabled{background:var(--surface2) !important;color:var(--text2) !important}
-        body.light-mode .nav-btn{background:#667eea !important}
-        body.light-mode .nav-btn:disabled{background:#ccc !important;color:#666 !important}
-
-        .nav-buttons{border-top-color:var(--border2) !important}
-
-        .comparison-table th{background:var(--surface2) !important;color:var(--text) !important;border-color:var(--border2) !important}
-        .comparison-table td{color:var(--text2) !important;border-color:var(--border) !important}
-        .comparison-table tr:nth-child(even){background:rgba(255,255,255,.02) !important}
-        body.light-mode .comparison-table th{background:#667eea !important;color:#fff !important}
-
-        .arrow{color:var(--primary) !important}
-
-        /* Footer override */
-        footer,.footer{
-            background:var(--surface) !important;
-            border-top:1px solid var(--border) !important;
-            color:var(--text2) !important;
-        }
-        footer a{color:var(--primary) !important}
-        footer p,footer span,footer div{color:var(--text2) !important}
-
+        :root{--primary:#3b82f6;--primary-hover:#60a5fa;--glow:rgba(59,130,246,.14)}
+        /* page-specific: step wizard layout */
+        .hero .progress-track{max-width:480px;margin:22px auto 0}
+        .hero .progress-fill{background:var(--primary);transition:width .3s}
+        .tut-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start}
+        .step-sidebar{position:sticky;top:84px}
+        .step-nav{list-style:none;padding:0;margin:0}
+        .step-nav li{margin:0 0 8px}
+        .step-btn{width:100%;padding:11px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);cursor:pointer;text-align:left;font-size:.85rem;font-family:inherit;font-weight:500;display:flex;align-items:center;gap:10px;transition:all .2s}
+        .step-btn:hover{border-color:var(--primary);transform:translateX(3px)}
+        .step-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .step-number{width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+        .step-btn.active .step-number{background:#fff;color:var(--primary)}
+        .step-content{display:none;animation:fadeIn .4s}
+        .step-content.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .service-flow{display:flex;align-items:center;justify-content:space-around;gap:12px;flex-wrap:wrap;margin:20px 0;padding:20px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text)}
+        .service-box{padding:18px;border-radius:10px;min-width:150px;text-align:center;color:var(--text);line-height:1.6}
+        .client-box{background:rgba(59,130,246,.1);border:2px solid var(--primary)}
+        .server-box{background:rgba(16,185,129,.1);border:2px solid var(--success)}
+        .arrow{font-size:24px;color:var(--primary);font-weight:700}
+        .architecture-diagram{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:24px;margin:20px 0;text-align:center;color:var(--text)}
+        .architecture-diagram .service-box{display:inline-block}
+        .nav-buttons{display:flex;justify-content:space-between;gap:12px;margin-top:36px;padding-top:20px;border-top:1px solid var(--border2)}
+        .btn:disabled{opacity:.45;cursor:not-allowed}
+        .section .info-box ul{margin:8px 0 12px}
+        .section .info-box pre{margin:10px 0 0}
+        @media(max-width:900px){.tut-layout{grid-template-columns:1fr}.step-sidebar{position:static}.step-nav{display:flex;flex-wrap:wrap;gap:8px}.step-nav li{margin:0}.step-btn{width:auto}}
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fa-solid fa-robot"></i> ROS 2 Task Management with Services</h1>
-            <p>Interactive Step-by-Step Tutorial - Service Architecture</p>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar" style="width: 10%"></div>
-            </div>
-        </header>
+    <nav class="navbar"><div class="nav-inner">
+        <a class="nav-logo" href="index.html"><i class="fa-solid fa-robot"></i> ROS2 Robotics</a>
+        <div class="nav-links">
+            <a href="index.html">All Modules</a>
+            <a href="week4.html">Week 4: Services</a>
+            <a href="#tutorial">Tutorial</a>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+    </div></nav>
+    <div class="mobile-menu">
+        <a href="index.html">All Modules</a>
+        <a href="week4.html">Week 4: Services</a>
+        <a href="#tutorial">Tutorial</a>
+    </div>
 
-        <div class="main-content">
-            <aside class="sidebar">
+    <section class="hero"><div class="hero-content">
+        <h1><i class="fa-solid fa-robot"></i> ROS 2 Task Management with Services</h1>
+        <p class="hero-sub">Interactive Step-by-Step Tutorial - Service Architecture</p>
+        <span class="diff-badge">Intermediate</span>
+        <span class="cat-badge"><i class="fas fa-list-ol"></i> 10 steps</span>
+        <span class="cat-badge"><i class="fas fa-clock"></i> ~60 min</span>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressBar" style="width: 10%"></div>
+        </div>
+    </div></section>
+
+    <div class="container wide">
+        <div class="section fade-up" id="tutorial">
+        <div class="tut-layout">
+            <aside class="step-sidebar">
                 <ul class="step-nav" id="stepNav">
                     <li><button class="step-btn active" data-step="0"><span class="step-number">1</span> Introduction</button></li>
-                    <li><button class="step-btn" data-step="1"><span class="step-number">2</span> Setup & Services</button></li>
+                    <li><button class="step-btn" data-step="1"><span class="step-number">2</span> Setup &amp; Services</button></li>
                     <li><button class="step-btn" data-step="2"><span class="step-number">3</span> Custom Service</button></li>
                     <li><button class="step-btn" data-step="3"><span class="step-number">4</span> Priority Queue</button></li>
                     <li><button class="step-btn" data-step="4"><span class="step-number">5</span> Task Executor</button></li>
                     <li><button class="step-btn" data-step="5"><span class="step-number">6</span> Task Server</button></li>
                     <li><button class="step-btn" data-step="6"><span class="step-number">7</span> Task Client</button></li>
                     <li><button class="step-btn" data-step="7"><span class="step-number">8</span> Configuration</button></li>
-                    <li><button class="step-btn" data-step="8"><span class="step-number">9</span> Build & Test</button></li>
+                    <li><button class="step-btn" data-step="8"><span class="step-number">9</span> Build &amp; Test</button></li>
                     <li><button class="step-btn" data-step="9"><span class="step-number">10</span> Demo</button></li>
                 </ul>
             </aside>
@@ -779,7 +98,7 @@
             <main class="content-area">
                 <!-- Step 0: Introduction -->
                 <div class="step-content active" data-step="0">
-                    <h2><i class="fa-solid fa-book"></i> Introduction: Service-Based Architecture</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-book"></i> Introduction: Service-Based Architecture</h2>
 
                     <p>Welcome! This tutorial demonstrates ROS 2 Task Management using <strong>Services</strong> instead of Topics. Services provide synchronous request-response communication, making them ideal for task management.</p>
 
@@ -804,7 +123,8 @@
                     </div>
 
                     <h3><i class="fa-solid fa-chart-bar"></i> Topics vs Services Comparison</h3>
-                    <table class="comparison-table">
+                    <div class="table-wrap">
+                    <table class="dark-table">
                         <thead>
                             <tr>
                                 <th>Feature</th>
@@ -835,6 +155,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
 
                     <h3><i class="fa-solid fa-rocket"></i> System Architecture</h3>
                     <div class="architecture-diagram">
@@ -845,7 +166,7 @@
                         <div style="margin: 10px 0; color: var(--text2);">↓ Service Call ↓</div>
                         <div class="service-box server-box" style="padding: 20px; border-radius: 10px; margin: 10px;">
                             <strong>Task Server</strong><br>
-                            Manages queue & executes tasks
+                            Manages queue &amp; executes tasks
                         </div>
                         <div style="margin: 10px 0; color: var(--text2);">↓ Controls ↓</div>
                         <div class="service-box" style="background: rgba(239,68,68,.1); border: 2px solid var(--danger); padding: 20px; border-radius: 10px; margin: 10px;">
@@ -855,7 +176,7 @@
                     </div>
 
                     <h3><i class="fa-solid fa-sparkles"></i> Key Features</h3>
-                    <div class="success-box">
+                    <div class="info-box success">
                         <ul>
                             <li><strong>Synchronous Communication:</strong> Client waits for immediate confirmation</li>
                             <li><strong>Priority Queue:</strong> Higher priority tasks execute first</li>
@@ -872,26 +193,23 @@
                     </ul>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" disabled>← Previous</button>
-                        <button class="nav-btn" id="next0">Next →</button>
+                        <button class="btn btn-outline" disabled>← Previous</button>
+                        <button class="btn btn-primary" id="next0">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 1: Setup -->
                 <div class="step-content" data-step="1">
-                    <h2><i class="fa-solid fa-wrench"></i> Step 1: Environment Setup</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-wrench"></i> Step 1: Environment Setup</h2>
 
-                    <h3>Create Workspace & Package</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre># Create workspace
+                    <h3>Create Workspace &amp; Package</h3>
+                    <pre class="code-block"><button class="copy-btn">Copy</button># Create workspace
 mkdir -p ~/task_service_ws/src
 cd ~/task_service_ws/src
 
 # Create package with service dependencies
 ros2 pkg create --build-type ament_python task_service_management \
     --dependencies rclpy std_msgs geometry_msgs</pre>
-                    </div>
 
                     <h3>Understanding Service Structure</h3>
                     <div class="info-box">
@@ -904,8 +222,7 @@ ros2 pkg create --build-type ament_python task_service_management \
                     </div>
 
                     <h3>Service Definition Format</h3>
-                    <div class="code-block">
-                        <pre># Service file structure (.srv)
+                    <pre class="code-block"># Service file structure (.srv)
 # --- Request ---
 field_type field_name
 field_type field_name
@@ -913,40 +230,34 @@ field_type field_name
 # --- Response ---
 field_type field_name
 field_type field_name</pre>
-                    </div>
 
-                    <div class="success-box">
+                    <div class="info-box success">
                         <strong><i class="fa-solid fa-lightbulb"></i> Example:</strong> AddTwoInts.srv
-                        <pre style="background: white; padding: 10px; margin-top: 10px; border-radius: 5px;">int64 a
+                        <pre>int64 a
 int64 b
 ---
 int64 sum</pre>
                     </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev1">← Previous</button>
-                        <button class="nav-btn" id="next1">Next →</button>
+                        <button class="btn btn-outline" id="prev1">← Previous</button>
+                        <button class="btn btn-primary" id="next1">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 2: Custom Service -->
                 <div class="step-content" data-step="2">
-                    <h2> Step 2: Create Custom Services</h2>
+                    <h2 class="section-title"> Step 2: Create Custom Services</h2>
 
                     <p>We'll create services for adding tasks and checking status.</p>
 
                     <h3>Create Service Directory</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>cd ~/task_service_ws/src/task_service_management
+                    <pre class="code-block"><button class="copy-btn">Copy</button>cd ~/task_service_ws/src/task_service_management
 mkdir srv</pre>
-                    </div>
 
                     <h3>AddTask Service (srv/AddTask.srv)</h3>
                     <p>Service to add a new task to the queue</p>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre># Request
+                    <pre class="code-block"><button class="copy-btn">Copy</button># Request
 string task_type
 uint8 priority
 string[] parameters
@@ -955,7 +266,6 @@ string[] parameters
 uint32 task_id
 bool success
 string message</pre>
-                    </div>
 
                     <div class="info-box">
                         <strong>Request Fields:</strong>
@@ -974,9 +284,7 @@ string message</pre>
 
                     <h3>GetTaskStatus Service (srv/GetTaskStatus.srv)</h3>
                     <p>Service to query the status of a task</p>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre># Request
+                    <pre class="code-block"><button class="copy-btn">Copy</button># Request
 uint32 task_id
 ---
 # Response
@@ -984,33 +292,27 @@ bool found
 string status
 string task_type
 float64 execution_time</pre>
-                    </div>
 
                     <h3>Update package.xml</h3>
                     <p>Add service generation dependencies:</p>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>&lt;buildtool_depend&gt;rosidl_default_generators&lt;/buildtool_depend&gt;
+                    <pre class="code-block"><button class="copy-btn">Copy</button>&lt;buildtool_depend&gt;rosidl_default_generators&lt;/buildtool_depend&gt;
 &lt;exec_depend&gt;rosidl_default_runtime&lt;/exec_depend&gt;
 &lt;member_of_group&gt;rosidl_interface_packages&lt;/member_of_group&gt;</pre>
-                    </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev2">← Previous</button>
-                        <button class="nav-btn" id="next2">Next →</button>
+                        <button class="btn btn-outline" id="prev2">← Previous</button>
+                        <button class="btn btn-primary" id="next2">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 3: Priority Queue -->
                 <div class="step-content" data-step="3">
-                    <h2><i class="fa-solid fa-chart-bar"></i> Step 3: Priority Queue Implementation</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-chart-bar"></i> Step 3: Priority Queue Implementation</h2>
 
                     <p>Same as before - manages task execution order by priority.</p>
 
                     <h3>Create priority_queue.py</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>import heapq
+                    <pre class="code-block"><button class="copy-btn">Copy</button>import heapq
 from typing import List, Optional
 from dataclasses import dataclass, field
 
@@ -1054,24 +356,21 @@ class TaskPriorityQueue:
 
     def is_empty(self) -> bool:
         return len(self._queue) == 0</pre>
-                    </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev3">← Previous</button>
-                        <button class="nav-btn" id="next3">Next →</button>
+                        <button class="btn btn-outline" id="prev3">← Previous</button>
+                        <button class="btn btn-primary" id="next3">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 4: Task Executor -->
                 <div class="step-content" data-step="4">
-                    <h2><i class="fa-solid fa-gear"></i> Step 4: Task Executor</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-gear"></i> Step 4: Task Executor</h2>
 
                     <p>Same executor as before - converts tasks to robot commands.</p>
 
                     <h3>Create task_executor.py</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>import rclpy
+                    <pre class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import time
@@ -1156,24 +455,21 @@ class TaskExecutor(Node):
             self.cmd_vel_pub.publish(twist)
             time.sleep(0.1)
         return True</pre>
-                    </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev4">← Previous</button>
-                        <button class="nav-btn" id="next4">Next →</button>
+                        <button class="btn btn-outline" id="prev4">← Previous</button>
+                        <button class="btn btn-primary" id="next4">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 5: Task Server -->
                 <div class="step-content" data-step="5">
-                    <h2><i class="fa-solid fa-desktop"></i> Step 5: Task Server with Services</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-desktop"></i> Step 5: Task Server with Services</h2>
 
                     <p>The server now uses services instead of topics for task management.</p>
 
                     <h3>Create task_server.py</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>import rclpy
+                    <pre class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 import threading
 from task_service_management.srv import AddTask, GetTaskStatus
@@ -1301,7 +597,6 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()</pre>
-                    </div>
 
                     <h3><i class="fa-solid fa-key"></i> Key Differences from Topic-Based</h3>
                     <div class="info-box">
@@ -1314,19 +609,17 @@ if __name__ == '__main__':
                     </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev5">← Previous</button>
-                        <button class="nav-btn" id="next5">Next →</button>
+                        <button class="btn btn-outline" id="prev5">← Previous</button>
+                        <button class="btn btn-primary" id="next5">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 6: Task Client -->
                 <div class="step-content" data-step="6">
-                    <h2><i class="fa-solid fa-laptop-code"></i> Step 6: Task Client with Service Calls</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-laptop-code"></i> Step 6: Task Client with Service Calls</h2>
 
                     <h3>Create task_client.py</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>import rclpy
+                    <pre class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 from task_service_management.srv import AddTask, GetTaskStatus
 import time
@@ -1419,7 +712,6 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()</pre>
-                    </div>
 
                     <h3><i class="fa-solid fa-arrows-rotate"></i> Service Call Flow</h3>
                     <div class="service-flow">
@@ -1444,19 +736,17 @@ if __name__ == '__main__':
                     </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev6">← Previous</button>
-                        <button class="nav-btn" id="next6">Next →</button>
+                        <button class="btn btn-outline" id="prev6">← Previous</button>
+                        <button class="btn btn-primary" id="next6">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 7: Configuration -->
                 <div class="step-content" data-step="7">
-                    <h2><i class="fa-solid fa-gear"></i> Step 7: Package Configuration</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-gear"></i> Step 7: Package Configuration</h2>
 
                     <h3>Update setup.py</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>from setuptools import setup
+                    <pre class="code-block"><button class="copy-btn">Copy</button>from setuptools import setup
 import os
 from glob import glob
 
@@ -1485,12 +775,9 @@ setup(
         ],
     },
 )</pre>
-                    </div>
 
                     <h3>Update package.xml</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>&lt;?xml version="1.0"?&gt;
+                    <pre class="code-block"><button class="copy-btn">Copy</button>&lt;?xml version="1.0"?&gt;
 &lt;package format="3"&gt;
   &lt;name&gt;task_service_management&lt;/name&gt;
   &lt;version&gt;0.0.1&lt;/version&gt;
@@ -1513,12 +800,9 @@ setup(
     &lt;build_type&gt;ament_python&lt;/build_type&gt;
   &lt;/export&gt;
 &lt;/package&gt;</pre>
-                    </div>
 
                     <h3>Update CMakeLists.txt (if needed)</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>cmake_minimum_required(VERSION 3.5)
+                    <pre class="code-block"><button class="copy-btn">Copy</button>cmake_minimum_required(VERSION 3.5)
 project(task_service_management)
 
 find_package(ament_cmake REQUIRED)
@@ -1531,42 +815,30 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 
 ament_package()</pre>
-                    </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev7">← Previous</button>
-                        <button class="nav-btn" id="next7">Next →</button>
+                        <button class="btn btn-outline" id="prev7">← Previous</button>
+                        <button class="btn btn-primary" id="next7">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 8: Build & Test -->
                 <div class="step-content" data-step="8">
-                    <h2><i class="fa-solid fa-hammer"></i> Step 8: Build and Test</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-hammer"></i> Step 8: Build and Test</h2>
 
                     <h3>Build the Package</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>cd ~/task_service_ws
+                    <pre class="code-block"><button class="copy-btn">Copy</button>cd ~/task_service_ws
 colcon build --packages-select task_service_management
 source install/setup.bash</pre>
-                    </div>
 
                     <h3>Terminal 1: Run Server</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>ros2 run task_service_management task_server</pre>
-                    </div>
+                    <pre class="code-block"><button class="copy-btn">Copy</button>ros2 run task_service_management task_server</pre>
 
                     <h3>Terminal 2: Run Client</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre>ros2 run task_service_management task_client</pre>
-                    </div>
+                    <pre class="code-block"><button class="copy-btn">Copy</button>ros2 run task_service_management task_client</pre>
 
                     <h3>Test Services Manually</h3>
-                    <div class="code-block">
-                        <button class="copy-btn">Copy</button>
-                        <pre># List available services
+                    <pre class="code-block"><button class="copy-btn">Copy</button># List available services
 ros2 service list
 
 # Call add_task service
@@ -1579,9 +851,8 @@ ros2 service call /get_task_status task_service_management/srv/GetTaskStatus \
 
 # View service type
 ros2 service type /add_task</pre>
-                    </div>
 
-                    <div class="success-box">
+                    <div class="info-box success">
                         <strong><i class="fa-solid fa-check"></i> Expected Output:</strong>
                         <pre>task_id: 0
 success: True
@@ -1589,19 +860,19 @@ message: "Task queued with ID 0"</pre>
                     </div>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev8">← Previous</button>
-                        <button class="nav-btn" id="next8">Next →</button>
+                        <button class="btn btn-outline" id="prev8">← Previous</button>
+                        <button class="btn btn-primary" id="next8">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 9: Demo -->
                 <div class="step-content" data-step="9">
-                    <h2><i class="fa-solid fa-party-horn"></i> Congratulations!</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-party-horn"></i> Congratulations!</h2>
 
                     <p>You've successfully built a ROS 2 Task Management System using Services!</p>
 
                     <h3><i class="fa-solid fa-sparkles"></i> What You've Learned</h3>
-                    <div class="success-box">
+                    <div class="info-box success">
                         <ul>
                             <li><i class="fa-solid fa-check"></i> Created custom ROS 2 service definitions (.srv files)</li>
                             <li><i class="fa-solid fa-check"></i> Implemented service server with request/response handling</li>
@@ -1612,7 +883,8 @@ message: "Task queued with ID 0"</pre>
                     </div>
 
                     <h3><i class="fa-solid fa-bullseye"></i> Service vs Topic Summary</h3>
-                    <table class="comparison-table">
+                    <div class="table-wrap">
+                    <table class="dark-table">
                         <tr>
                             <th>Aspect</th>
                             <th>Our Service Implementation</th>
@@ -1639,6 +911,7 @@ message: "Task queued with ID 0"</pre>
                             <td>Eventually via separate topic</td>
                         </tr>
                     </table>
+                    </div>
 
                     <h3><i class="fa-solid fa-rocket"></i> Next Steps</h3>
                     <div class="info-box">
@@ -1661,13 +934,22 @@ message: "Task queued with ID 0"</pre>
                     </ul>
 
                     <div class="nav-buttons">
-                        <button class="nav-btn" id="prev9">← Previous</button>
-                        <button class="nav-btn" id="restart"><i class="fa-solid fa-arrows-rotate"></i> Restart Tutorial</button>
+                        <button class="btn btn-outline" id="prev9">← Previous</button>
+                        <button class="btn btn-primary" id="restart"><i class="fa-solid fa-arrows-rotate"></i> Restart Tutorial</button>
                     </div>
                 </div>
             </main>
         </div>
+        </div>
+
+        <div class="page-nav">
+            <a class="nav-btn prev" href="week4.html"><i class="fa-solid fa-arrow-left"></i> Week 4: Services</a>
+            <a class="nav-btn next" href="index.html">All Modules <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
     </div>
+
+    <footer class="footer"><div class="footer-bottom">ROS2 Robotics Programming - University of Petra</div></footer>
+    <button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         let currentStep = 0;
@@ -1675,7 +957,6 @@ message: "Task queued with ID 0"</pre>
 
         window.addEventListener('DOMContentLoaded', function() {
             setupNavigation();
-            setupCopyButtons();
             updateProgress();
         });
 
@@ -1716,92 +997,16 @@ message: "Task queued with ID 0"</pre>
 
             currentStep = step;
             updateProgress();
-            document.querySelector('.content-area').scrollTop = 0;
+            const area = document.querySelector('.content-area');
+            const top = area.getBoundingClientRect().top + window.pageYOffset - 84;
+            if (window.pageYOffset > top) window.scrollTo({top: top, behavior: 'smooth'});
         }
 
         function updateProgress() {
             const progress = ((currentStep + 1) / totalSteps) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
         }
-
-        function setupCopyButtons() {
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const code = this.parentElement.querySelector('pre').textContent;
-                    navigator.clipboard.writeText(code).then(() => {
-                        this.textContent = 'Copied!';
-                        this.style.background = '#28a745';
-                        setTimeout(() => {
-                            this.textContent = 'Copy';
-                            this.style.background = '#667eea';
-                        }, 2000);
-                    });
-                });
-            });
-        }
     </script>
-
-<script>
-// Theme toggle
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');
-        if(icon) icon.className='fa-solid fa-moon';
-    }
-})();
-
-// Copy code
-function copyCode(btn){
-    const code=btn.closest('pre,.code-block,.code-container').querySelector('code,pre');
-    const text=code?code.textContent:btn.parentElement.textContent;
-    navigator.clipboard.writeText(text.replace(/^Copy\s*/,''));
-    btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
-    setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
-}
-
-// Add copy buttons to all code blocks
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn')) return;
-        pre.classList.add('has-copy');
-        pre.style.position='relative';
-        var btn=document.createElement('button');
-        btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5;transition:all .2s';
-        btn.onmouseover=function(){this.style.borderColor='#3b82f6';this.style.color='#3b82f6'};
-        btn.onmouseout=function(){this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'};
-        btn.onclick=function(e){
-            e.stopPropagation();
-            var code=pre.querySelector('code')||pre;
-            navigator.clipboard.writeText(code.textContent.replace(/^Copy\s*/,''));
-            this.innerHTML='<i class="fa-solid fa-check"></i> Copied';
-            var b=this;
-            setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);
-        };
-        pre.appendChild(btn);
-    });
-
-    // Scroll to top button
-    var st=document.createElement('button');
-    st.id='scrollTopBtn';
-    st.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
-    st.style.cssText='position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface,#111827);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;opacity:0;pointer-events:none;z-index:900;transition:all .2s';
-    st.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
-    document.body.appendChild(st);
-    window.addEventListener('scroll',function(){
-        st.style.opacity=window.scrollY>500?'1':'0';
-        st.style.pointerEvents=window.scrollY>500?'auto':'none';
-    });
-});
-</script>
+    <script src="/assets/theme.js"></script>
 </body>
 </html>

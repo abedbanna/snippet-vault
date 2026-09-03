@@ -13,329 +13,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Understanding Transformer Architecture</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <meta name="description" content="An interactive guide to the Transformer architecture: self-attention, multi-head attention, positional encoding, feed-forward layers, code, applications.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>
+:root{--primary:#f59e0b;--primary-hover:#fbbf24;--glow:rgba(245,158,11,.14)}
+.hidden{display:none!important}
+.block{margin-bottom:28px}
+.panel{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:16px;margin:12px 0}
+.panel.tint-blue{background:rgba(59,130,246,.10);border-color:rgba(59,130,246,.28)}
+.panel.tint-green{background:rgba(16,185,129,.10);border-color:rgba(16,185,129,.28)}
+.panel.tint-purple{background:rgba(139,92,246,.10);border-color:rgba(139,92,246,.28)}
+.panel.tint-yellow{background:rgba(250,204,21,.10);border-color:rgba(250,204,21,.28)}
+.panel>:last-child{margin-bottom:0}
+.interactive-diagram{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:16px;margin:20px 0;overflow-x:auto}
+.section svg,.section canvas{display:block;margin:0 auto;background:#f8fafc;border-radius:8px}
+.section canvas{max-width:100%}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin:14px 0}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:14px 0}
+@media(min-width:720px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+.grid-2>.panel,.grid-3>.panel{margin:0}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.row>*{flex:1 1 260px;min-width:0}
+.row>.col-1{flex:1 1 200px}.row>.col-2{flex:2 1 320px}
+.vstack{display:flex;flex-direction:column;gap:8px}
+.stack{display:flex;flex-direction:column;align-items:center;gap:8px}
+.center-row{display:flex;justify-content:center;align-items:center}
+.wrap{flex-wrap:wrap}
+.between{display:flex;justify-content:space-between}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.btn-row.center{justify-content:center}
+.ctrl{width:100%;max-width:32rem}
+.scroll-x{overflow-x:auto}
+.lbl{display:block;font-size:.85rem;font-weight:500;color:var(--text2);margin-bottom:4px}
+.strong-text{font-weight:600;color:var(--text)}
+.small{font-size:.9rem}.tiny{font-size:.75rem}.mono{font-family:'JetBrains Mono',monospace}
+.section h3.text-center{justify-content:center}
+.section h4.text-center,.section p.text-center,.section div.text-center{text-align:center}
+.section h5{font-size:.95rem;font-weight:600;color:var(--text);margin:8px 0 4px}
+.section ul.plain-list{list-style:none;padding-left:0}.section ul.plain-list>li{margin:8px 0}
+.section ul.list-circle{list-style:circle;margin:4px 0}
+.section ul.inline-list{display:inline-block;text-align:left;list-style:none;padding-left:0}
+.btn.active{box-shadow:0 0 0 2px var(--glow),0 0 0 3px var(--primary)}
+.btn.hue-blue{background:#3b82f6;color:#fff}.btn.hue-green{background:#10b981;color:#fff}.btn.hue-purple{background:#8b5cf6;color:#fff}.btn.hue-red{background:#ef4444;color:#fff}
+.btn.hue-blue:hover,.btn.hue-green:hover,.btn.hue-purple:hover,.btn.hue-red:hover{filter:brightness(1.12);color:#fff}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.hue-blue{background:#3b82f6}.hue-green{background:#10b981}.hue-purple{background:#8b5cf6}.hue-red{background:#ef4444}
+.clickable{cursor:pointer;transition:border-color .2s,transform .2s}.clickable:hover{border-color:var(--primary)}
+.panel.sel{border-left-width:4px}
+.panel.sel-yellow{border-left-color:#facc15}.panel.sel-green{border-left-color:#4ade80}.panel.sel-blue{border-left-color:#60a5fa}.panel.sel-purple{border-left-color:#a78bfa}
+.guide-banner{background:linear-gradient(135deg,#4C1D95,#7C3AED);border-radius:12px;padding:32px;margin:32px 0;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+.guide-banner h3{color:#fff;font-size:1.4rem;font-weight:700;margin-bottom:10px}
+.guide-banner p{color:#ddd6fe;margin-bottom:20px}
+.guide-banner .btn.banner-light{background:#fff;color:#6d28d9}.guide-banner .btn.banner-light:hover{background:#f5f3ff;color:#4c1d95}
+.guide-banner .btn.banner-dark{background:#5b21b6;color:#fff;border-color:#a78bfa}.guide-banner .btn.banner-dark:hover{background:#4c1d95;color:#fff}
+.token{display:inline-block;padding:.5rem;margin:.25rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:.9rem}
+.token.tok-selected{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.token.tok-blue{background:#bfdbfe;color:#1e293b}.token.tok-green{background:#bbf7d0;color:#1e293b}.token.tok-yellow{background:#fef08a;color:#1e293b}.token.tok-purple{background:#ddd6fe;color:#1e293b}
+@keyframes process-token{0%{transform:translateY(0);opacity:.7}50%{transform:translateY(-20px);opacity:1}100%{transform:translateY(0);opacity:.7}}
+.processing{animation:process-token 2s ease infinite;background:#93c5fd;color:#1e293b}
+.attention-matrix{display:grid;grid-template-columns:repeat(10,30px);gap:2px;background:#f8fafc;padding:6px;border-radius:8px}
+.section svg:empty{background:transparent}
+#parameter-output{white-space:pre-line}
+.attention-cell{width:100%;height:100%;transition:background-color .3s ease}
+.highlight{box-shadow:0 0 0 2px rgba(245,158,11,.6)}
+.slider{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:5px;background:var(--surface2);border:1px solid var(--border2);outline:none;margin:6px 0}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--primary);cursor:pointer}
+.slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--primary);cursor:pointer;border:0}
+.progress-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;margin-right:8px}.progress-dot.active{background:var(--primary)}
+.section .form-input,.section .form-select{margin:4px 0}
+#parameter-output{min-height:2.5rem;color:var(--text)}
+#step-description:empty{display:none}
+.toc h4{margin-top:14px}
+.toc .progress-track{margin:6px 0 4px}
+.toc .toc-guide{color:#a78bfa;font-weight:600}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.mobile-menu a{display:block}
+</style>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* Smooth scrolling for navigation */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Custom section styling */
-        .section {
-            padding: 2rem 0;
-        }
-
-        /* Interactive diagram styling */
-        .interactive-diagram {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            background-color: #f8fafc;
-        }
-
-        /* Code block styling */
-        .code-block {
-            background-color: #1e293b;
-            color: #f8fafc;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            position: relative;
-        }
-
-        /* Attention visualization */
-        .attention-matrix {
-            display: grid;
-            gap: 2px;
-        }
-
-        .attention-cell {
-            width: 100%;
-            height: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        /* Highlight for interactive elements */
-        .highlight {
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-        }
-
-        /* Tooltip styling */
-        .tooltip {
-            position: absolute;
-            padding: 0.5rem;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.25rem;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 10;
-            max-width: 300px;
-        }
-
-        /* Active navigation item */
-        .nav-item.active {
-            border-left: 4px solid #3b82f6;
-            font-weight: 600;
-        }
-
-        /* Animation for sequence processing */
-        @keyframes process-token {
-            0% { transform: translateY(0); opacity: 0.7; }
-            50% { transform: translateY(-20px); opacity: 1; }
-            100% { transform: translateY(0); opacity: 0.7; }
-        }
-
-        .token {
-            display: inline-block;
-            padding: 0.5rem;
-            margin: 0.25rem;
-            background-color: #e2e8f0;
-            border-radius: 0.25rem;
-        }
-
-        .processing {
-            animation: process-token 2s ease infinite;
-            background-color: #93c5fd;
-        }
-
-        /* Custom button styling */
-        .custom-button {
-            background-color: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .custom-button:hover {
-            background-color: #2563eb;
-        }
-
-        /* Responsive layout adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-        }
-
-        /* Sticky navigation */
-        .sticky-nav {
-            position: sticky;
-            top: 1rem;
-        }
-
-        /* Progress indicators */
-        .progress-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #cbd5e1;
-            margin-right: 8px;
-        }
-
-        .progress-dot.active {
-            background-color: #3b82f6;
-        }
-
-        /* Slider styling */
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #d1d5db;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-        }
-
-        .slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-        }
-    </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style id="dark-theme-override">
-:root {
-    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-    --text:#f1f5f9;--text2:#94a3b8;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-    --code:#0d1117;
-}
-body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
-.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
-.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
-.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
-h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
-.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
-pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
-table, th, td { border-color:var(--border2)!important; }
-th { background:var(--surface2)!important; color:var(--text)!important; }
-td { background:var(--surface)!important; color:var(--text2)!important; }
-tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
-a { color:var(--primary)!important; }
-a:hover { color:#60a5fa!important; }
-.badge { opacity:0.9; }
-nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
-nav a, .navbar a, .nav-link { color:var(--text2)!important; }
-nav a:hover, .navbar a:hover { color:var(--text)!important; }
-.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
-.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
-.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
-.sidebar a, aside a { color:var(--text2)!important; }
-.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
-.sidebar a.active, aside a.active { color:var(--primary)!important; }
-footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
-img { border-radius:8px; }
-.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
-/* Light mode */
-body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
-body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
-body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
-body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
-body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
-body.light-mode footer { background:#e2e8f0!important; }
-body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
-</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 </head>
-<body class="bg-gray-50">
-<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
-    <!-- Header with fixed navigation -->
-  <!-- Header with fixed navigation -->
-    <header class="bg-white shadow-md fixed w-full z-10">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <a href="index.html" class="flex items-center">
-                    <img src="images/logo.png" alt="Al-banna Tutorials Logo" class="h-10 mr-3">
-                    <h1 class="text-2xl font-bold text-blue-600">Understanding Transformer Architecture</h1>
-                </a>
-                <nav class="hidden md:block">
-                    <ul class="flex space-x-6">
-                        <li><a href="#introduction" class="text-gray-700 hover:text-blue-600 transition">Introduction</a></li>
-                        <li><a href="#evolution" class="text-gray-700 hover:text-blue-600 transition">Evolution</a></li>
-                        <li><a href="#architecture" class="text-gray-700 hover:text-blue-600 transition">Architecture</a></li>
-                        <li><a href="#components" class="text-gray-700 hover:text-blue-600 transition">Components</a></li>
-                        <li><a href="#demo" class="text-gray-700 hover:text-blue-600 transition">Interactive Demo</a></li>
-                        <li><a href="#code" class="text-gray-700 hover:text-blue-600 transition">Code Examples</a></li>
-                        <li><a href="#applications" class="text-gray-700 hover:text-blue-600 transition">Applications</a></li>
-                    </ul>
-                </nav>
-                <button id="mobile-menu-button" class="md:hidden text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-            <div id="mobile-menu" class="md:hidden hidden mt-2">
-                <ul class="space-y-2">
-                    <li><a href="../index.html" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Home</a></li>
-                    <li><a href="#introduction" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Introduction</a></li>
-                    <li><a href="#evolution" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Evolution</a></li>
-                    <li><a href="#architecture" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Architecture</a></li>
-                    <li><a href="#components" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Components</a></li>
-                    <li><a href="#demo" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Interactive Demo</a></li>
-                    <li><a href="#code" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Code Examples</a></li>
-                    <li><a href="#applications" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded">Applications</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main content -->
-    <main class="container mx-auto px-4 pt-24 pb-12">
-        <div class="flex flex-col md:flex-row">
-            <!-- Sidebar navigation for larger screens -->
-            <aside class="md:w-1/5 hidden md:block">
-                <div class="sticky-nav p-4 bg-white rounded-lg shadow-sm">
-                    <h2 class="text-xl font-semibold mb-4">Contents</h2>
-                    <ul class="space-y-2">
-                        <li class="nav-item pl-3"><a href="#introduction" class="block py-1 text-gray-700 hover:text-blue-600">Introduction</a></li>
-                        <li class="nav-item pl-3"><a href="#evolution" class="block py-1 text-gray-700 hover:text-blue-600">Evolution of Sequence Models</a></li>
-                        <li class="nav-item pl-3"><a href="#architecture" class="block py-1 text-gray-700 hover:text-blue-600">Transformer Architecture</a></li>
-                        <li class="nav-item pl-3 mt-2">Components:</li>
-                        <li class="nav-item pl-6"><a href="#self-attention" class="block py-1 text-gray-700 hover:text-blue-600">Self-Attention</a></li>
-                        <li class="nav-item pl-6"><a href="#multi-head" class="block py-1 text-gray-700 hover:text-blue-600">Multi-Head Attention</a></li>
-                        <li class="nav-item pl-6"><a href="#positional" class="block py-1 text-gray-700 hover:text-blue-600">Positional Encoding</a></li>
-                        <li class="nav-item pl-6"><a href="#feed-forward" class="block py-1 text-gray-700 hover:text-blue-600">Feed-Forward Networks</a></li>
-                        <li class="nav-item pl-3"><a href="#demo" class="block py-1 text-gray-700 hover:text-blue-600">Interactive Demonstration</a></li>
-                        <li class="nav-item pl-3"><a href="#code" class="block py-1 text-gray-700 hover:text-blue-600">Code Implementation</a></li>
-                        <li class="nav-item pl-3"><a href="#applications" class="block py-1 text-gray-700 hover:text-blue-600">Applications</a></li>
-                        <li class="nav-item pl-3"><a href="#resources" class="block py-1 text-gray-700 hover:text-blue-600">Further Resources</a></li>
-                        <li class="nav-item pl-3 mt-3 border-t pt-3">
-                            <span class="text-xs font-bold uppercase text-purple-600">📝 Step-by-Step Guides</span>
-                        </li>
-                        <li class="nav-item pl-3"><a href="transformer-step-by-step.html" class="block py-1 text-purple-600 hover:text-purple-800 font-medium">English Guide</a></li>
-                        <li class="nav-item pl-3"><a href="transformer-step-by-step-ar.html" class="block py-1 text-purple-600 hover:text-purple-800 font-medium">الشرح بالعربي</a></li>
-                        <li class="nav-item pl-3"><a href="transformer-qa.html" class="block py-1 text-purple-600 hover:text-purple-800 font-medium">🧠 Q&A (21 Questions)</a></li>
-                    </ul>
-
-                    <div class="mt-8">
-                        <h3 class="text-lg font-medium mb-2">Your Progress</h3>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main content area -->
-            <div class="md:w-4/5 md:pl-8">
-                <!-- Introduction Section -->
-                <section id="introduction" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Introduction to Transformers</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-4">
-                            The Transformer architecture, introduced in the groundbreaking 2017 paper <a href="https://arxiv.org/abs/1706.03762" class="text-blue-600 hover:underline" target="_blank">"Attention Is All You Need"</a> by Vaswani et al., has revolutionized natural language processing and beyond. Unlike previous sequence models that processed data sequentially, Transformers leverage the self-attention mechanism to process entire sequences simultaneously.
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="/"><i class="fas fa-brain"></i> Transformers</a>
+  <div class="nav-links"><a href="#introduction">Introduction</a><a href="#evolution">Evolution</a><a href="#architecture">Architecture</a><a href="#components">Components</a><a href="#demo">Interactive Demo</a><a href="#code">Code Examples</a><a href="#applications">Applications</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="/cs/index.html">Back to Course</a><a href="#introduction">Introduction</a><a href="#evolution">Evolution</a><a href="#architecture">Architecture</a><a href="#components">Components</a><a href="#demo">Interactive Demo</a><a href="#code">Code Examples</a><a href="#applications">Applications</a></div>
+<section class="hero"><div class="hero-content"><h1>Understanding Transformer Architecture</h1><p class="hero-sub">An interactive guide to modern neural networks</p><span class="diff-badge">Intermediate</span> <span class="cat-badge"><i class="fas fa-brain"></i> Deep Learning</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~60 min</span></div></section>
+<div class="container">
+                <div class="section fade-up" id="introduction">
+                    <h2 class="section-title"><i class="fas fa-book-open"></i> Introduction to Transformers</h2>
+                    <div class="block">
+                        <p>
+                            The Transformer architecture, introduced in the groundbreaking 2017 paper <a href="https://arxiv.org/abs/1706.03762" target="_blank">"Attention Is All You Need"</a> by Vaswani et al., has revolutionized natural language processing and beyond. Unlike previous sequence models that processed data sequentially, Transformers leverage the self-attention mechanism to process entire sequences simultaneously.
                         </p>
-                        <p class="mb-4">
+                        <p>
                             This parallel processing ability allows Transformers to:
                         </p>
-                        <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <ul>
                             <li>Capture long-range dependencies more effectively</li>
                             <li>Process sequences in parallel, enabling faster training</li>
                             <li>Scale to handle much larger datasets and model sizes</li>
                             <li>Achieve state-of-the-art results across numerous NLP tasks</li>
                         </ul>
 
-                        <div class="flex flex-col md:flex-row items-center justify-center bg-blue-50 rounded-lg p-4 mb-6">
-                            <div class="md:w-1/2 p-4">
-                                <h3 class="text-xl font-semibold mb-3">Key Innovations</h3>
+                        <div class="panel tint-blue row">
+                            <div class="col">
+                                <h3>Key Innovations</h3>
                                 <p>The Transformer architecture introduced several revolutionary concepts:</p>
-                                <ul class="list-disc pl-6 mt-2 space-y-1">
+                                <ul>
                                     <li>Self-attention mechanism</li>
                                     <li>Multi-head attention</li>
                                     <li>Positional encodings</li>
@@ -343,10 +132,10 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                                     <li>Residual connections</li>
                                 </ul>
                             </div>
-                            <div class="md:w-1/2 p-4">
-                                <h3 class="text-xl font-semibold mb-3">Impact on AI</h3>
+                            <div class="col">
+                                <h3>Impact on AI</h3>
                                 <p>Transformers have become the foundation for:</p>
-                                <ul class="list-disc pl-6 mt-2 space-y-1">
+                                <ul>
                                     <li>Large language models (GPT, LLaMA)</li>
                                     <li>Bidirectional encoders (BERT, RoBERTa)</li>
                                     <li>Text-to-image models (DALL-E, Stable Diffusion)</li>
@@ -357,30 +146,30 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                         </div>
 
                         <div class="interactive-diagram" id="transformer-overview">
-                            <h3 class="text-xl font-semibold mb-3 text-center">Transformer Architecture Overview</h3>
-                            <div class="flex justify-center">
-                                <svg id="transformer-svg" width="700" height="400" class="mx-auto"></svg>
+                            <h3 class="text-center">Transformer Architecture Overview</h3>
+                            <div class="center-row">
+                                <svg id="transformer-svg" width="700" height="400"></svg>
                             </div>
-                            <div class="text-center mt-3">
-                                <button id="animate-overview" class="custom-button">Animate Data Flow</button>
+                            <div class="text-center mt-2">
+                                <button id="animate-overview" class="btn btn-primary">Animate Data Flow</button>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Step-by-Step Guides Banner -->
-                <div class="mb-12 rounded-xl overflow-hidden shadow-lg" style="background: linear-gradient(135deg, #4C1D95, #7C3AED);">
-                    <div class="p-8">
-                        <h3 class="text-2xl font-bold text-white mb-3">📝 Step-by-Step Worked Example</h3>
-                        <p class="text-purple-200 mb-6">Follow one complete example — "I love learning" → "أنا أحب التعلم" — through every Transformer operation with actual calculations.</p>
-                        <div class="flex flex-wrap gap-4">
-                            <a href="transformer-step-by-step.html" class="inline-flex items-center px-6 py-3 bg-white text-purple-700 font-semibold rounded-lg hover:bg-purple-50 transition shadow">
+                <div>
+                    <div>
+                        <h3>📝 Step-by-Step Worked Example</h3>
+                        <p>Follow one complete example — "I love learning" → "أنا أحب التعلم" — through every Transformer operation with actual calculations.</p>
+                        <div class="center-row wrap">
+                            <a href="transformer-step-by-step.html" class="btn banner-light">
                                 🇬🇧 English Guide
                             </a>
-                            <a href="transformer-step-by-step-ar.html" class="inline-flex items-center px-6 py-3 bg-purple-800 text-white font-semibold rounded-lg hover:bg-purple-900 transition shadow border border-purple-400">
+                            <a href="transformer-step-by-step-ar.html" class="btn banner-dark">
                                 🇯🇴 الشرح بالعربي
                             </a>
-                            <a href="transformer-qa.html" class="inline-flex items-center px-6 py-3 bg-purple-800 text-white font-semibold rounded-lg hover:bg-purple-900 transition shadow border border-purple-400">
+                            <a href="transformer-qa.html" class="btn banner-dark">
                                 🧠 Questions & Answers (21 Q)
                             </a>
                         </div>
@@ -388,22 +177,22 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                 </div>
 
                 <!-- Evolution Section -->
-                <section id="evolution" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Evolution of Sequence Models</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-6">
+                <div class="section fade-up" id="evolution">
+                    <h2 class="section-title"><i class="fas fa-timeline"></i> Evolution of Sequence Models</h2>
+                    <div class="block">
+                        <p>
                             To understand the significance of Transformers, it's important to see how they evolved from previous neural network architectures for sequence processing.
                         </p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="grid-3 subsection">
                             <!-- RNN Card -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <h3 class="text-xl font-semibold mb-3">Recurrent Neural Networks (RNNs)</h3>
-                                <div class="h-48 flex items-center justify-center mb-3">
-                                    <svg id="rnn-diagram" width="200" height="160" class="mx-auto"></svg>
+                            <div class="panel tint-gray">
+                                <h3>Recurrent Neural Networks (RNNs)</h3>
+                                <div class="center-row">
+                                    <svg id="rnn-diagram" width="200" height="160"></svg>
                                 </div>
-                                <h4 class="font-medium mb-2">Limitations:</h4>
-                                <ul class="list-disc pl-5 text-sm">
+                                <h4>Limitations:</h4>
+                                <ul>
                                     <li>Sequential processing (slow)</li>
                                     <li>Vanishing/exploding gradients</li>
                                     <li>Limited context window</li>
@@ -412,13 +201,13 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                             </div>
 
                             <!-- LSTM Card -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <h3 class="text-xl font-semibold mb-3">Long Short-Term Memory (LSTM)</h3>
-                                <div class="h-48 flex items-center justify-center mb-3">
-                                    <svg id="lstm-diagram" width="200" height="160" class="mx-auto"></svg>
+                            <div class="panel tint-gray">
+                                <h3>Long Short-Term Memory (LSTM)</h3>
+                                <div class="center-row">
+                                    <svg id="lstm-diagram" width="200" height="160"></svg>
                                 </div>
-                                <h4 class="font-medium mb-2">Improvements:</h4>
-                                <ul class="list-disc pl-5 text-sm">
+                                <h4>Improvements:</h4>
+                                <ul>
                                     <li>Better handling of long-term dependencies</li>
                                     <li>Gates to control information flow</li>
                                     <li>Reduced vanishing gradient problem</li>
@@ -427,13 +216,13 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                             </div>
 
                             <!-- Transformer Card -->
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                                <h3 class="text-xl font-semibold mb-3">Transformer</h3>
-                                <div class="h-48 flex items-center justify-center mb-3">
-                                    <svg id="transformer-mini" width="200" height="160" class="mx-auto"></svg>
+                            <div class="panel tint-blue">
+                                <h3>Transformer</h3>
+                                <div class="center-row">
+                                    <svg id="transformer-mini" width="200" height="160"></svg>
                                 </div>
-                                <h4 class="font-medium mb-2">Breakthroughs:</h4>
-                                <ul class="list-disc pl-5 text-sm">
+                                <h4>Breakthroughs:</h4>
+                                <ul>
                                     <li>Parallel sequence processing</li>
                                     <li>Self-attention for global context</li>
                                     <li>Scales efficiently with computational resources</li>
@@ -443,26 +232,26 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                         </div>
 
                         <div class="interactive-diagram">
-                            <h3 class="text-xl font-semibold mb-4">Performance Comparison</h3>
-                            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
-                                <div class="w-full md:w-2/3">
-                                    <canvas id="model-comparison-chart" height="250" class="w-full"></canvas>
+                            <h3>Performance Comparison</h3>
+                            <div class="row">
+                                <div class="col-2">
+                                    <canvas id="model-comparison-chart" height="250"></canvas>
                                 </div>
-                                <div class="w-full md:w-1/3">
-                                    <h4 class="font-medium mb-2">Key Metrics:</h4>
-                                    <div class="space-y-3">
+                                <div class="col-1">
+                                    <h4>Key Metrics:</h4>
+                                    <div>
                                         <div>
-                                            <p class="text-sm font-medium">Sequence Length:</p>
+                                            <p class="strong-text small">Sequence Length:</p>
                                             <input type="range" id="sequence-length-slider" class="slider" min="10" max="1000" value="100">
-                                            <div class="flex justify-between text-xs text-gray-500">
+                                            <div class="between tiny text-muted">
                                                 <span>Short</span>
                                                 <span>Medium</span>
                                                 <span>Long</span>
                                             </div>
                                         </div>
-                                        <div class="mt-4">
-                                            <p class="text-sm font-medium">Task Complexity:</p>
-                                            <select id="task-complexity" class="w-full p-2 border border-gray-300 rounded">
+                                        <div class="mt-2">
+                                            <p class="strong-text small">Task Complexity:</p>
+                                            <select id="task-complexity" class="form-select">
                                                 <option value="translation">Machine Translation</option>
                                                 <option value="summarization">Text Summarization</option>
                                                 <option value="classification">Text Classification</option>
@@ -474,38 +263,38 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Architecture Section -->
-                <section id="architecture" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Transformer Architecture</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-6">
+                <div class="section fade-up" id="architecture">
+                    <h2 class="section-title"><i class="fas fa-sitemap"></i> Transformer Architecture</h2>
+                    <div class="block">
+                        <p>
                             The Transformer architecture consists of an encoder and a decoder, both composed of stacked layers. Each layer contains sublayers of multi-head self-attention mechanisms and position-wise feed-forward networks.
                         </p>
 
-                        <div class="interactive-diagram mb-8">
-                            <h3 class="text-xl font-semibold mb-4 text-center">Complete Transformer Architecture</h3>
-                            <div class="flex justify-center">
-                                <svg id="full-architecture" width="800" height="600" class="mx-auto"></svg>
+                        <div class="interactive-diagram subsection">
+                            <h3 class="text-center">Complete Transformer Architecture</h3>
+                            <div class="center-row">
+                                <svg id="full-architecture" width="800" height="600"></svg>
                             </div>
-                            <div class="flex justify-center mt-4 space-x-4">
-                                <button id="highlight-encoder" class="custom-button">Highlight Encoder</button>
-                                <button id="highlight-decoder" class="custom-button">Highlight Decoder</button>
-                                <button id="highlight-attention" class="custom-button">Highlight Attention</button>
-                                <button id="reset-highlights" class="custom-button bg-gray-500 hover:bg-gray-600">Reset</button>
+                            <div class="btn-row center mt-2">
+                                <button id="highlight-encoder" class="btn btn-primary">Highlight Encoder</button>
+                                <button id="highlight-decoder" class="btn btn-primary">Highlight Decoder</button>
+                                <button id="highlight-attention" class="btn btn-primary">Highlight Attention</button>
+                                <button id="reset-highlights" class="btn btn-outline">Reset</button>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="grid-2 subsection">
                             <!-- Encoder Section -->
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                                <h3 class="text-xl font-semibold mb-3">Encoder</h3>
-                                <p class="mb-3">The encoder processes the input sequence and generates representations:</p>
-                                <ul class="list-disc pl-5 mb-4">
+                            <div class="panel tint-blue">
+                                <h3>Encoder</h3>
+                                <p>The encoder processes the input sequence and generates representations:</p>
+                                <ul>
                                     <li>Consists of N identical layers (typically 6 in the original paper)</li>
                                     <li>Each layer has two sub-layers:
-                                        <ul class="list-circle pl-5 mt-1">
+                                        <ul class="list-circle">
                                             <li>Multi-head self-attention mechanism</li>
                                             <li>Position-wise feed-forward network</li>
                                         </ul>
@@ -514,18 +303,18 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                                     <li>Outputs a sequence of contextualized representations</li>
                                 </ul>
                                 <div class="text-center">
-                                    <svg id="encoder-detail" width="280" height="200" class="mx-auto"></svg>
+                                    <svg id="encoder-detail" width="280" height="200"></svg>
                                 </div>
                             </div>
 
                             <!-- Decoder Section -->
-                            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
-                                <h3 class="text-xl font-semibold mb-3">Decoder</h3>
-                                <p class="mb-3">The decoder generates output sequences based on encoder representations:</p>
-                                <ul class="list-disc pl-5 mb-4">
+                            <div class="panel tint-green">
+                                <h3>Decoder</h3>
+                                <p>The decoder generates output sequences based on encoder representations:</p>
+                                <ul>
                                     <li>Also consists of N identical layers</li>
                                     <li>Each layer has three sub-layers:
-                                        <ul class="list-circle pl-5 mt-1">
+                                        <ul class="list-circle">
                                             <li>Masked multi-head self-attention</li>
                                             <li>Multi-head attention over encoder output</li>
                                             <li>Position-wise feed-forward network</li>
@@ -535,85 +324,85 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                                     <li>Outputs probabilities for next token prediction</li>
                                 </ul>
                                 <div class="text-center">
-                                    <svg id="decoder-detail" width="280" height="200" class="mx-auto"></svg>
+                                    <svg id="decoder-detail" width="280" height="200"></svg>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">Mathematical Formulation</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <p class="mb-3">The Transformer can be expressed with these key equations:</p>
-                                <div class="overflow-x-auto">
-                                    <div class="mb-4">
-                                        <p class="font-medium">Self-Attention:</p>
-                                        <p class="ml-4 mt-2">\[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</p>
-                                    </div>
-                                    <div class="mb-4">
-                                        <p class="font-medium">Multi-Head Attention:</p>
-                                        <p class="ml-4 mt-2">\[ \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h)W^O \]</p>
-                                        <p class="ml-4 mt-1">\[ \text{where } \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V) \]</p>
-                                    </div>
-                                    <div class="mb-4">
-                                        <p class="font-medium">Feed-Forward Network:</p>
-                                        <p class="ml-4 mt-2">\[ \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2 \]</p>
+                        <div class="subsection">
+                            <h3>Mathematical Formulation</h3>
+                            <div class="panel tint-gray">
+                                <p>The Transformer can be expressed with these key equations:</p>
+                                <div class="scroll-x">
+                                    <div>
+                                        <p class="strong-text">Self-Attention:</p>
+                                        <p class="mt-1">\[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</p>
                                     </div>
                                     <div>
-                                        <p class="font-medium">Layer Normalization:</p>
-                                        <p class="ml-4 mt-2">\[ \text{LayerNorm}(x) = \gamma \cdot \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta \]</p>
+                                        <p class="strong-text">Multi-Head Attention:</p>
+                                        <p class="mt-1">\[ \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h)W^O \]</p>
+                                        <p class="mt-1">\[ \text{where } \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V) \]</p>
+                                    </div>
+                                    <div>
+                                        <p class="strong-text">Feed-Forward Network:</p>
+                                        <p class="mt-1">\[ \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2 \]</p>
+                                    </div>
+                                    <div>
+                                        <p class="strong-text">Layer Normalization:</p>
+                                        <p class="mt-1">\[ \text{LayerNorm}(x) = \gamma \cdot \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta \]</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Components Section -->
-                <section id="components" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Core Components of Transformers</h2>
+                <div class="section fade-up" id="components">
+                    <h2 class="section-title"><i class="fas fa-cubes"></i> Core Components of Transformers</h2>
 
                     <!-- Self-Attention Mechanism -->
-                    <div id="self-attention" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-                        <h3 class="text-2xl font-semibold mb-4">Self-Attention Mechanism</h3>
-                        <p class="mb-4">
+                    <div id="self-attention" class="block subsection">
+                        <h3>Self-Attention Mechanism</h3>
+                        <p>
                             Self-attention allows the model to weigh the importance of different words in the input sequence when representing each word. This enables the model to capture contextual relationships regardless of the distance between words.
                         </p>
 
-                        <div class="flex flex-col md:flex-row items-center mb-6">
-                            <div class="md:w-1/2 mb-4 md:mb-0 md:pr-4">
-                                <h4 class="text-lg font-medium mb-3">How Self-Attention Works</h4>
-                                <ol class="list-decimal pl-5 space-y-2">
+                        <div class="row">
+                            <div class="col">
+                                <h4>How Self-Attention Works</h4>
+                                <ol>
                                     <li>For each token, create query (Q), key (K), and value (V) vectors via linear projections</li>
                                     <li>Compute compatibility scores between the query and all keys</li>
                                     <li>Apply softmax to get attention weights</li>
                                     <li>Compute weighted sum of values based on attention weights</li>
                                 </ol>
                             </div>
-                            <div class="md:w-1/2">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <p class="font-medium mb-2">Self-Attention Equation:</p>
+                            <div class="col">
+                                <div class="panel tint-gray">
+                                    <p class="strong-text">Self-Attention Equation:</p>
                                     <p class="text-center">\[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</p>
-                                    <p class="text-sm text-gray-600 mt-2">The scaling factor \(\sqrt{d_k}\) prevents the softmax function from having extremely small gradients.</p>
+                                    <p class="small text-muted mt-1">The scaling factor \(\sqrt{d_k}\) prevents the softmax function from having extremely small gradients.</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="interactive-diagram">
-                            <h4 class="text-lg font-medium mb-3 text-center">Interactive Self-Attention Visualization</h4>
-                            <div class="mb-4">
-                                <p class="text-center mb-3">Example sentence: <span class="font-medium">"The cat sat on the mat because it was comfortable."</span></p>
-                                <p class="text-center text-sm text-gray-600 mb-4">Click on a word to see its attention to other words in the sentence</p>
+                            <h4 class="text-center">Interactive Self-Attention Visualization</h4>
+                            <div>
+                                <p class="text-center">Example sentence: <span class="strong-text">"The cat sat on the mat because it was comfortable."</span></p>
+                                <p class="small text-muted text-center">Click on a word to see its attention to other words in the sentence</p>
 
-                                <div id="self-attention-words" class="flex flex-wrap justify-center mb-6">
+                                <div id="self-attention-words" class="center-row wrap">
                                     <!-- Words will be added here by JavaScript -->
                                 </div>
 
-                                <div id="attention-visualization" class="flex justify-center mb-4">
+                                <div id="attention-visualization" class="center-row">
                                     <svg id="attention-svg" width="700" height="300"></svg>
                                 </div>
 
-                                <div class="flex justify-center">
-                                    <div class="grid grid-cols-9 attention-matrix" id="attention-matrix">
+                                <div class="center-row">
+                                    <div class="attention-matrix" id="attention-matrix">
                                         <!-- Attention matrix will be filled by JavaScript -->
                                     </div>
                                 </div>
@@ -622,16 +411,16 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                     </div>
 
                     <!-- Multi-Head Attention -->
-                    <div id="multi-head" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-                        <h3 class="text-2xl font-semibold mb-4">Multi-Head Attention</h3>
-                        <p class="mb-4">
+                    <div id="multi-head" class="block subsection">
+                        <h3>Multi-Head Attention</h3>
+                        <p>
                             Rather than performing a single attention function, multi-head attention runs multiple attention operations in parallel, each with different learned projection matrices. This allows the model to jointly attend to information from different representation subspaces.
                         </p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="grid-2">
                             <div>
-                                <h4 class="text-lg font-medium mb-3">Benefits of Multiple Heads</h4>
-                                <ul class="list-disc pl-5 space-y-2">
+                                <h4>Benefits of Multiple Heads</h4>
+                                <ul>
                                     <li>Captures different types of relationships simultaneously</li>
                                     <li>Some heads focus on syntactic relationships</li>
                                     <li>Other heads focus on semantic meanings</li>
@@ -640,37 +429,37 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                                 </ul>
                             </div>
                             <div>
-                                <div class="bg-gray-50 p-4 rounded-lg h-full flex flex-col justify-center">
-                                    <p class="font-medium mb-2">Multi-Head Attention Equations:</p>
+                                <div class="panel tint-gray vstack">
+                                    <p class="strong-text">Multi-Head Attention Equations:</p>
                                     <p>\[ \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h)W^O \]</p>
-                                    <p class="mt-2">\[ \text{where } \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V) \]</p>
-                                    <p class="text-sm text-gray-600 mt-3">Each head has its own set of projection matrices, allowing it to focus on different aspects of the input.</p>
+                                    <p class="mt-1">\[ \text{where } \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V) \]</p>
+                                    <p class="small text-muted mt-2">Each head has its own set of projection matrices, allowing it to focus on different aspects of the input.</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="interactive-diagram">
-                            <h4 class="text-lg font-medium mb-3 text-center">Interactive Multi-Head Attention</h4>
-                            <div class="flex flex-col items-center mb-6">
-                                <p class="mb-3">Example: "The movie was great but too long."</p>
-                                <div class="flex space-x-4 mb-4">
-                                    <button id="head-1-btn" class="custom-button bg-blue-500">Head 1</button>
-                                    <button id="head-2-btn" class="custom-button bg-green-500">Head 2</button>
-                                    <button id="head-3-btn" class="custom-button bg-purple-500">Head 3</button>
-                                    <button id="head-4-btn" class="custom-button bg-red-500">Head 4</button>
+                            <h4 class="text-center">Interactive Multi-Head Attention</h4>
+                            <div class="stack">
+                                <p>Example: "The movie was great but too long."</p>
+                                <div class="btn-row">
+                                    <button id="head-1-btn" class="btn hue-blue">Head 1</button>
+                                    <button id="head-2-btn" class="btn hue-green">Head 2</button>
+                                    <button id="head-3-btn" class="btn hue-purple">Head 3</button>
+                                    <button id="head-4-btn" class="btn hue-red">Head 4</button>
                                 </div>
 
-                                <div id="multi-head-visualization" class="w-full">
-                                    <svg id="multi-head-svg" width="700" height="350" class="mx-auto"></svg>
+                                <div id="multi-head-visualization">
+                                    <svg id="multi-head-svg" width="700" height="350"></svg>
                                 </div>
 
-                                <div class="mt-4 text-center text-sm text-gray-600">
+                                <div class="text-center small text-muted mt-2">
                                     <p>Notice how different attention heads focus on different relationships:</p>
-                                    <ul class="text-left inline-block mt-2">
-                                        <li><span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2"></span> Head 1: Subject-object relationships</li>
-                                        <li><span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span> Head 2: Adjective-noun relationships</li>
-                                        <li><span class="inline-block w-3 h-3 bg-purple-500 rounded-full mr-2"></span> Head 3: Entity recognition</li>
-                                        <li><span class="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span> Head 4: Conjunction relationships</li>
+                                    <ul class="inline-list">
+                                        <li><span class="dot hue-blue"></span> Head 1: Subject-object relationships</li>
+                                        <li><span class="dot hue-green"></span> Head 2: Adjective-noun relationships</li>
+                                        <li><span class="dot hue-purple"></span> Head 3: Entity recognition</li>
+                                        <li><span class="dot hue-red"></span> Head 4: Conjunction relationships</li>
                                     </ul>
                                 </div>
                             </div>
@@ -678,61 +467,61 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                     </div>
 
                     <!-- Positional Encoding -->
-                    <div id="positional" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-                        <h3 class="text-2xl font-semibold mb-4">Positional Encoding</h3>
-                        <p class="mb-4">
+                    <div id="positional" class="block subsection">
+                        <h3>Positional Encoding</h3>
+                        <p>
                             Since Transformers don't use recurrence or convolution, they have no inherent sense of token order. Positional encodings are added to the input embeddings to provide information about the position of tokens in the sequence.
                         </p>
 
-                        <div class="flex flex-col md:flex-row items-center mb-6">
-                            <div class="md:w-1/2 mb-4 md:mb-0 md:pr-4">
-                                <h4 class="text-lg font-medium mb-3">Sinusoidal Positional Encoding</h4>
-                                <p class="mb-3">
+                        <div class="row">
+                            <div class="col">
+                                <h4>Sinusoidal Positional Encoding</h4>
+                                <p>
                                     The original Transformer uses sine and cosine functions of different frequencies:
                                 </p>
-                                <div class="bg-gray-50 p-3 rounded-lg mb-3">
+                                <div class="panel tint-gray">
                                     <p>\[ PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}}) \]</p>
-                                    <p class="mt-2">\[ PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}}) \]</p>
+                                    <p class="mt-1">\[ PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}}) \]</p>
                                 </div>
-                                <p class="text-sm text-gray-600">
+                                <p class="small text-muted">
                                     Where <em>pos</em> is the position of the token and <em>i</em> is the dimension. This allows the model to learn to attend to relative positions.
                                 </p>
                             </div>
-                            <div class="md:w-1/2">
-                                <div class="flex justify-center">
+                            <div class="col">
+                                <div class="center-row">
                                     <svg id="positional-encoding-viz" width="400" height="300"></svg>
                                 </div>
                             </div>
                         </div>
 
                         <div class="interactive-diagram">
-                            <h4 class="text-lg font-medium mb-3 text-center">Interactive Positional Encoding Visualization</h4>
-                            <div class="flex flex-col items-center">
-                                <div class="w-full max-w-lg mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Sequence Length:</label>
+                            <h4 class="text-center">Interactive Positional Encoding Visualization</h4>
+                            <div class="stack">
+                                <div class="ctrl">
+                                    <label class="lbl">Sequence Length:</label>
                                     <input type="range" id="pos-encoding-length" class="slider" min="5" max="50" value="20">
-                                    <div class="flex justify-between text-xs text-gray-500">
+                                    <div class="between tiny text-muted">
                                         <span>5</span>
                                         <span>25</span>
                                         <span>50</span>
                                     </div>
                                 </div>
 
-                                <div class="w-full max-w-lg mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Encoding Dimension:</label>
+                                <div class="ctrl">
+                                    <label class="lbl">Encoding Dimension:</label>
                                     <input type="range" id="pos-encoding-dim" class="slider" min="8" max="64" step="8" value="32">
-                                    <div class="flex justify-between text-xs text-gray-500">
+                                    <div class="between tiny text-muted">
                                         <span>8</span>
                                         <span>32</span>
                                         <span>64</span>
                                     </div>
                                 </div>
 
-                                <div id="positional-heatmap" class="mt-4">
+                                <div id="positional-heatmap" class="mt-2">
                                     <canvas id="pos-encoding-canvas" width="600" height="300"></canvas>
                                 </div>
 
-                                <div class="mt-4 text-center text-sm text-gray-600">
+                                <div class="text-center small text-muted mt-2">
                                     <p>The heatmap shows how positional encodings vary across positions (rows) and dimensions (columns).</p>
                                     <p class="mt-1">Notice the sinusoidal patterns of different frequencies that help the model distinguish positions.</p>
                                 </div>
@@ -741,21 +530,21 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                     </div>
 
                     <!-- Feed-Forward Networks -->
-                    <div id="feed-forward" class="bg-white rounded-xl shadow-sm p-6">
-                        <h3 class="text-2xl font-semibold mb-4">Feed-Forward Networks</h3>
-                        <p class="mb-4">
+                    <div id="feed-forward" class="block">
+                        <h3>Feed-Forward Networks</h3>
+                        <p>
                             Each layer in both the encoder and decoder contains a fully connected feed-forward network. This network is applied to each position independently and identically, consisting of two linear transformations with a ReLU activation in between.
                         </p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="grid-2">
                             <div>
-                                <h4 class="text-lg font-medium mb-3">Feed-Forward Function</h4>
-                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                    <p class="mb-2 font-medium">Mathematical Definition:</p>
+                                <h4>Feed-Forward Function</h4>
+                                <div class="panel tint-gray">
+                                    <p class="strong-text">Mathematical Definition:</p>
                                     <p>\[ \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2 \]</p>
                                 </div>
-                                <p class="mb-3">Key characteristics:</p>
-                                <ul class="list-disc pl-5 space-y-1">
+                                <p>Key characteristics:</p>
+                                <ul>
                                     <li>Two linear transformations with ReLU in between</li>
                                     <li>Inner dimension typically 4x the model dimension</li>
                                     <li>Applied independently to each position</li>
@@ -764,29 +553,29 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                                 </ul>
                             </div>
                             <div>
-                                <div class="flex justify-center h-full items-center">
+                                <div class="center-row">
                                     <svg id="ffn-diagram" width="350" height="250"></svg>
                                 </div>
                             </div>
                         </div>
 
                         <div class="interactive-diagram">
-                            <h4 class="text-lg font-medium mb-3 text-center">Interactive Feed-Forward Visualization</h4>
-                            <div class="flex flex-col items-center">
-                                <div class="w-full max-w-lg mb-4 flex space-x-6">
-                                    <div class="w-1/2">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Input Value:</label>
+                            <h4 class="text-center">Interactive Feed-Forward Visualization</h4>
+                            <div class="stack">
+                                <div class="row ctrl">
+                                    <div class="col">
+                                        <label class="lbl">Input Value:</label>
                                         <input type="range" id="ffn-input" class="slider" min="-3" max="3" step="0.1" value="1">
-                                        <div class="flex justify-between text-xs text-gray-500">
+                                        <div class="between tiny text-muted">
                                             <span>-3</span>
                                             <span>0</span>
                                             <span>3</span>
                                         </div>
                                     </div>
-                                    <div class="w-1/2">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Hidden Layer Size:</label>
+                                    <div class="col">
+                                        <label class="lbl">Hidden Layer Size:</label>
                                         <input type="range" id="ffn-hidden" class="slider" min="1" max="8" step="1" value="4">
-                                        <div class="flex justify-between text-xs text-gray-500">
+                                        <div class="between tiny text-muted">
                                             <span>1x</span>
                                             <span>4x</span>
                                             <span>8x</span>
@@ -794,112 +583,110 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                                     </div>
                                 </div>
 
-                                <div id="ffn-visualization" class="mt-4 w-full">
-                                    <svg id="ffn-interactive" width="700" height="300" class="mx-auto"></svg>
+                                <div id="ffn-visualization" class="mt-2">
+                                    <svg id="ffn-interactive" width="700" height="300"></svg>
                                 </div>
 
-                                <div class="grid grid-cols-3 gap-4 mt-6 w-full max-w-lg">
+                                <div class="grid-3 ctrl mt-3">
                                     <div>
-                                        <div class="text-center font-medium mb-2">Input</div>
-                                        <div id="ffn-input-value" class="text-center bg-blue-100 p-2 rounded"></div>
+                                        <div class="text-center strong-text">Input</div>
+                                        <div id="ffn-input-value" class="text-center panel tint-blue"></div>
                                     </div>
                                     <div>
-                                        <div class="text-center font-medium mb-2">After First Layer</div>
-                                        <div id="ffn-hidden-value" class="text-center bg-green-100 p-2 rounded"></div>
+                                        <div class="text-center strong-text">After First Layer</div>
+                                        <div id="ffn-hidden-value" class="text-center panel tint-green"></div>
                                     </div>
                                     <div>
-                                        <div class="text-center font-medium mb-2">Output</div>
-                                        <div id="ffn-output-value" class="text-center bg-purple-100 p-2 rounded"></div>
+                                        <div class="text-center strong-text">Output</div>
+                                        <div id="ffn-output-value" class="text-center panel tint-purple"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Interactive Demo Section -->
-                <section id="demo" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Interactive Demonstration</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-6">
+                <div class="section fade-up" id="demo">
+                    <h2 class="section-title"><i class="fas fa-play"></i> Interactive Demonstration</h2>
+                    <div class="block">
+                        <p>
                             Experience how a Transformer processes text step-by-step, visualizing the flow of information through the network and seeing how attention works in practice.
                         </p>
 
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">Transformer Sequence Processing</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                                <textarea id="demo-input" rows="3" class="w-full p-3 border border-gray-300 rounded" placeholder="Enter a sentence to process...">The transformer model revolutionized natural language processing with its attention mechanism.</textarea>
-                                <div class="flex justify-center mt-4">
-                                    <button id="process-sentence" class="custom-button">Process Sentence</button>
+                        <div class="subsection">
+                            <h3>Transformer Sequence Processing</h3>
+                            <div class="panel tint-gray">
+                                <textarea id="demo-input" rows="3" class="form-input" placeholder="Enter a sentence to process...">The transformer model revolutionized natural language processing with its attention mechanism.</textarea>
+                                <div class="center-row mt-2">
+                                    <button id="process-sentence" class="btn btn-primary">Process Sentence</button>
                                 </div>
                             </div>
 
                             <div id="processing-visualization" class="interactive-diagram hidden">
-                                <div class="flex justify-center mb-6">
-                                    <div id="token-container" class="flex flex-wrap justify-center"></div>
+                                <div class="center-row">
+                                    <div id="token-container" class="center-row wrap"></div>
                                 </div>
 
-                                <div class="relative">
-                                    <svg id="transformer-process-viz" width="800" height="500" class="mx-auto"></svg>
-                                    <div id="process-controls" class="flex justify-center mt-4 space-x-4">
-                                        <button id="step-backward" class="custom-button">Previous Step</button>
-                                        <button id="step-forward" class="custom-button">Next Step</button>
-                                        <button id="auto-play" class="custom-button">Auto Play</button>
-                                        <button id="reset-demo" class="custom-button bg-gray-500 hover:bg-gray-600">Reset</button>
+                                <div>
+                                    <svg id="transformer-process-viz" width="800" height="500"></svg>
+                                    <div id="process-controls" class="btn-row center mt-2">
+                                        <button id="step-backward" class="btn btn-primary">Previous Step</button>
+                                        <button id="step-forward" class="btn btn-primary">Next Step</button>
+                                        <button id="auto-play" class="btn btn-primary">Auto Play</button>
+                                        <button id="reset-demo" class="btn btn-outline">Reset</button>
                                     </div>
-                                    <div id="step-description" class="mt-4 p-3 bg-blue-50 rounded-lg text-center"></div>
+                                    <div id="step-description" class="text-center panel tint-blue mt-2"></div>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <h3 class="text-xl font-semibold mb-4">Attention Patterns Exploration</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <h3>Attention Patterns Exploration</h3>
+                            <div class="grid-2">
                                 <div>
-                                    <h4 class="text-lg font-medium mb-3">Sample Tasks</h4>
-                                    <div class="space-y-3">
-                                        <div class="p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition" id="task-translation">
-                                            <h5 class="font-medium">Translation Example</h5>
-                                            <p class="text-sm">See how attention works for language translation</p>
+                                    <h4>Sample Tasks</h4>
+                                    <div>
+                                        <div class="panel tint-blue clickable" id="task-translation">
+                                            <h5>Translation Example</h5>
+                                            <p class="small">See how attention works for language translation</p>
                                         </div>
-                                        <div class="p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition" id="task-summarization">
-                                            <h5 class="font-medium">Summarization Example</h5>
-                                            <p class="text-sm">Explore how transformers focus on key information</p>
+                                        <div class="panel tint-green clickable" id="task-summarization">
+                                            <h5>Summarization Example</h5>
+                                            <p class="small">Explore how transformers focus on key information</p>
                                         </div>
-                                        <div class="p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition" id="task-qa">
-                                            <h5 class="font-medium">Question Answering</h5>
-                                            <p class="text-sm">Visualize how transformers find answers in text</p>
+                                        <div class="panel tint-purple clickable" id="task-qa">
+                                            <h5>Question Answering</h5>
+                                            <p class="small">Visualize how transformers find answers in text</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div id="task-visualization">
-                                    <div class="h-full flex items-center justify-center text-gray-500">
+                                    <div class="center-row text-muted">
                                         Select a task to view its attention pattern visualization
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Code Implementation Section -->
-                <section id="code" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Code Implementation Examples</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-6">
+                <div class="section fade-up" id="code">
+                    <h2 class="section-title"><i class="fas fa-code"></i> Code Implementation Examples</h2>
+                    <div class="block">
+                        <p>
                             Understanding the implementation details of Transformers helps solidify the theoretical concepts. Here are code examples in popular frameworks.
                         </p>
 
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">Self-Attention Implementation</h3>
-                            <div class="flex space-x-4 mb-4">
-                                <button id="python-btn" class="custom-button active">Python/PyTorch</button>
-                                <button id="js-btn" class="custom-button bg-gray-200 text-gray-800">JavaScript</button>
+                        <div class="subsection">
+                            <h3>Self-Attention Implementation</h3>
+                            <div class="btn-row">
+                                <button id="python-btn" class="btn btn-primary active">Python/PyTorch</button>
+                                <button id="js-btn" class="btn btn-outline">JavaScript</button>
                             </div>
 
-                            <div id="python-code" class="code-block">
-<pre>
-import torch
+                            <div id="python-code" class="code-block"><button class="copy-btn">Copy</button>import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
@@ -943,13 +730,9 @@ class SelfAttention(nn.Module):
 
         # Final linear projection
         out = self.fc_out(out)
-        return out
-</pre>
-                            </div>
+        return out</div>
 
-                            <div id="js-code" class="code-block hidden">
-<pre>
-// Self-Attention implementation in JavaScript
+                            <div id="js-code" class="hidden code-block"><button class="copy-btn">Copy</button>// Self-Attention implementation in JavaScript
 class SelfAttention {
   constructor(embedSize, heads) {
     this.embedSize = embedSize;
@@ -1046,16 +829,12 @@ class SelfAttention {
       matrix.map(row => row[colIndex])
     );
   }
-}
-</pre>
-                            </div>
+}</div>
                         </div>
 
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">Using Transformers with Libraries</h3>
-                            <div class="code-block">
-<pre>
-# PyTorch example using the transformers library
+                        <div class="subsection">
+                            <h3>Using Transformers with Libraries</h3>
+                            <div class="code-block"><button class="copy-btn">Copy</button># PyTorch example using the transformers library
 import torch
 from transformers import AutoModel, AutoTokenizer
 
@@ -1078,20 +857,18 @@ pooled_output = outputs.pooler_output
 
 # Shape info
 print(f"Hidden state shape: {last_hidden_state.shape}")  # [batch_size, sequence_length, hidden_size]
-print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_size]
-</pre>
-                            </div>
+print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_size]</div>
 
-                            <div class="mt-6">
-                                <h4 class="text-lg font-medium mb-3">Try It Yourself</h4>
-                                <p class="mb-3">
+                            <div class="mt-3">
+                                <h4>Try It Yourself</h4>
+                                <p>
                                     Experiment with the code by modifying parameters and observing how they affect the Transformer's behavior.
                                 </p>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="panel tint-gray">
+                                    <div class="grid-3">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Embedding Size:</label>
-                                            <select id="embed-size" class="w-full p-2 border border-gray-300 rounded">
+                                            <label class="lbl">Embedding Size:</label>
+                                            <select id="embed-size" class="form-select">
                                                 <option value="128">128</option>
                                                 <option value="256" selected>256</option>
                                                 <option value="512">512</option>
@@ -1099,8 +876,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Number of Heads:</label>
-                                            <select id="num-heads" class="w-full p-2 border border-gray-300 rounded">
+                                            <label class="lbl">Number of Heads:</label>
+                                            <select id="num-heads" class="form-select">
                                                 <option value="4">4</option>
                                                 <option value="8" selected>8</option>
                                                 <option value="12">12</option>
@@ -1108,8 +885,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Sequence Length:</label>
-                                            <select id="seq-length" class="w-full p-2 border border-gray-300 rounded">
+                                            <label class="lbl">Sequence Length:</label>
+                                            <select id="seq-length" class="form-select">
                                                 <option value="10">10</option>
                                                 <option value="20" selected>20</option>
                                                 <option value="50">50</option>
@@ -1117,28 +894,28 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="mt-4">
-                                        <div id="parameter-output" class="p-3 bg-gray-100 rounded font-mono text-sm"></div>
+                                    <div class="mt-2">
+                                        <div id="parameter-output" class="panel tint-gray mono small"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Applications Section -->
-                <section id="applications" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Applications in Modern AI Systems</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-6">
+                <div class="section fade-up" id="applications">
+                    <h2 class="section-title"><i class="fas fa-rocket"></i> Applications in Modern AI Systems</h2>
+                    <div class="block">
+                        <p>
                             Transformers have revolutionized AI and are the foundation of many cutting-edge systems. Here's how they're being applied across various domains.
                         </p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="grid-3 subsection">
                             <!-- Natural Language Processing -->
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                                <h3 class="text-xl font-semibold mb-3">NLP Applications</h3>
-                                <ul class="list-disc pl-5 space-y-2">
+                            <div class="panel tint-blue">
+                                <h3>NLP Applications</h3>
+                                <ul>
                                     <li>Machine Translation (Google Translate)</li>
                                     <li>Text Summarization</li>
                                     <li>Sentiment Analysis</li>
@@ -1146,15 +923,15 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                     <li>Question Answering</li>
                                     <li>Text Generation (GPT models)</li>
                                 </ul>
-                                <div class="mt-4 text-center">
-                                    <svg id="nlp-icon" width="100" height="100" class="mx-auto"></svg>
+                                <div class="text-center mt-2">
+                                    <svg id="nlp-icon" width="100" height="100"></svg>
                                 </div>
                             </div>
 
                             <!-- Computer Vision -->
-                            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
-                                <h3 class="text-xl font-semibold mb-3">Computer Vision</h3>
-                                <ul class="list-disc pl-5 space-y-2">
+                            <div class="panel tint-green">
+                                <h3>Computer Vision</h3>
+                                <ul>
                                     <li>Vision Transformers (ViT)</li>
                                     <li>Image Classification</li>
                                     <li>Object Detection</li>
@@ -1162,15 +939,15 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                     <li>Image Generation (DALL-E, Stable Diffusion)</li>
                                     <li>Video Understanding</li>
                                 </ul>
-                                <div class="mt-4 text-center">
-                                    <svg id="vision-icon" width="100" height="100" class="mx-auto"></svg>
+                                <div class="text-center mt-2">
+                                    <svg id="vision-icon" width="100" height="100"></svg>
                                 </div>
                             </div>
 
                             <!-- Multimodal Systems -->
-                            <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                                <h3 class="text-xl font-semibold mb-3">Multimodal AI</h3>
-                                <ul class="list-disc pl-5 space-y-2">
+                            <div class="panel tint-purple">
+                                <h3>Multimodal AI</h3>
+                                <ul>
                                     <li>CLIP (connecting text and images)</li>
                                     <li>Text-to-Image Generation</li>
                                     <li>Image Captioning</li>
@@ -1178,54 +955,54 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                     <li>Audio-Visual Understanding</li>
                                     <li>Multimodal Chatbots</li>
                                 </ul>
-                                <div class="mt-4 text-center">
-                                    <svg id="multimodal-icon" width="100" height="100" class="mx-auto"></svg>
+                                <div class="text-center mt-2">
+                                    <svg id="multimodal-icon" width="100" height="100"></svg>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">Notable Transformer-Based Models</h3>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full bg-white">
+                        <div class="subsection">
+                            <h3>Notable Transformer-Based Models</h3>
+                            <div class="table-wrap">
+                                <table class="dark-table">
                                     <thead>
                                         <tr>
-                                            <th class="py-3 px-4 bg-gray-100 text-left">Model</th>
-                                            <th class="py-3 px-4 bg-gray-100 text-left">Architecture Type</th>
-                                            <th class="py-3 px-4 bg-gray-100 text-left">Key Features</th>
-                                            <th class="py-3 px-4 bg-gray-100 text-left">Applications</th>
+                                            <th>Model</th>
+                                            <th>Architecture Type</th>
+                                            <th>Key Features</th>
+                                            <th>Applications</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="border-b border-gray-200">
-                                            <td class="py-3 px-4 font-medium">BERT</td>
-                                            <td class="py-3 px-4">Encoder-only</td>
-                                            <td class="py-3 px-4">Bidirectional training, masked language modeling</td>
-                                            <td class="py-3 px-4">Text classification, NER, question answering</td>
-                                        </tr>
-                                        <tr class="border-b border-gray-200">
-                                            <td class="py-3 px-4 font-medium">GPT (1-4)</td>
-                                            <td class="py-3 px-4">Decoder-only</td>
-                                            <td class="py-3 px-4">Autoregressive training, increasing model size</td>
-                                            <td class="py-3 px-4">Text generation, creative writing, coding, chatbots</td>
-                                        </tr>
-                                        <tr class="border-b border-gray-200">
-                                            <td class="py-3 px-4 font-medium">T5</td>
-                                            <td class="py-3 px-4">Encoder-Decoder</td>
-                                            <td class="py-3 px-4">Text-to-text format for all tasks</td>
-                                            <td class="py-3 px-4">Translation, summarization, classification</td>
-                                        </tr>
-                                        <tr class="border-b border-gray-200">
-                                            <td class="py-3 px-4 font-medium">ViT</td>
-                                            <td class="py-3 px-4">Encoder-only (Vision)</td>
-                                            <td class="py-3 px-4">Images as sequences of patches</td>
-                                            <td class="py-3 px-4">Image classification, object detection</td>
+                                        <tr>
+                                            <td>BERT</td>
+                                            <td>Encoder-only</td>
+                                            <td>Bidirectional training, masked language modeling</td>
+                                            <td>Text classification, NER, question answering</td>
                                         </tr>
                                         <tr>
-                                            <td class="py-3 px-4 font-medium">DALL-E/Stable Diffusion</td>
-                                            <td class="py-3 px-4">Diffusion models with transformers</td>
-                                            <td class="py-3 px-4">Text conditioning, latent diffusion</td>
-                                            <td class="py-3 px-4">Text-to-image generation, image editing</td>
+                                            <td>GPT (1-4)</td>
+                                            <td>Decoder-only</td>
+                                            <td>Autoregressive training, increasing model size</td>
+                                            <td>Text generation, creative writing, coding, chatbots</td>
+                                        </tr>
+                                        <tr>
+                                            <td>T5</td>
+                                            <td>Encoder-Decoder</td>
+                                            <td>Text-to-text format for all tasks</td>
+                                            <td>Translation, summarization, classification</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ViT</td>
+                                            <td>Encoder-only (Vision)</td>
+                                            <td>Images as sequences of patches</td>
+                                            <td>Image classification, object detection</td>
+                                        </tr>
+                                        <tr>
+                                            <td>DALL-E/Stable Diffusion</td>
+                                            <td>Diffusion models with transformers</td>
+                                            <td>Text conditioning, latent diffusion</td>
+                                            <td>Text-to-image generation, image editing</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1233,35 +1010,35 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                         </div>
 
                         <div>
-                            <h3 class="text-xl font-semibold mb-4">Interactive Model Explorer</h3>
-                            <div class="flex flex-col md:flex-row">
-                                <div class="md:w-1/3 p-4">
-                                    <div class="space-y-4">
-                                        <div id="bert-card" class="p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition border-l-4 border-yellow-400">
-                                            <h4 class="font-medium">BERT</h4>
-                                            <p class="text-sm">Bidirectional Encoder from Transformers</p>
+                            <h3>Interactive Model Explorer</h3>
+                            <div class="row">
+                                <div class="col-1">
+                                    <div>
+                                        <div id="bert-card" class="panel tint-yellow clickable sel sel-yellow">
+                                            <h4>BERT</h4>
+                                            <p class="small">Bidirectional Encoder from Transformers</p>
                                         </div>
-                                        <div id="gpt-card" class="p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition">
-                                            <h4 class="font-medium">GPT</h4>
-                                            <p class="text-sm">Generative Pre-trained Transformer</p>
+                                        <div id="gpt-card" class="panel tint-green clickable">
+                                            <h4>GPT</h4>
+                                            <p class="small">Generative Pre-trained Transformer</p>
                                         </div>
-                                        <div id="t5-card" class="p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                                            <h4 class="font-medium">T5</h4>
-                                            <p class="text-sm">Text-to-Text Transfer Transformer</p>
+                                        <div id="t5-card" class="panel tint-blue clickable">
+                                            <h4>T5</h4>
+                                            <p class="small">Text-to-Text Transfer Transformer</p>
                                         </div>
-                                        <div id="vit-card" class="p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition">
-                                            <h4 class="font-medium">ViT</h4>
-                                            <p class="text-sm">Vision Transformer</p>
+                                        <div id="vit-card" class="panel tint-purple clickable">
+                                            <h4>ViT</h4>
+                                            <p class="small">Vision Transformer</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="md:w-2/3 p-4" id="model-details">
-                                    <div class="bg-yellow-50 p-4 rounded-lg">
-                                        <h4 class="text-lg font-semibold mb-3">BERT (Bidirectional Encoder Representations from Transformers)</h4>
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="col-2" id="model-details">
+                                    <div class="panel tint-yellow">
+                                        <h4>BERT (Bidirectional Encoder Representations from Transformers)</h4>
+                                        <div class="grid-2">
                                             <div>
-                                                <h5 class="font-medium mb-2">Architecture:</h5>
-                                                <ul class="list-disc pl-5 text-sm space-y-1">
+                                                <h5>Architecture:</h5>
+                                                <ul>
                                                     <li>Uses only the encoder portion of Transformer</li>
                                                     <li>Trained bidirectionally (both left and right context)</li>
                                                     <li>Pre-trained on masked language modeling and next sentence prediction</li>
@@ -1269,8 +1046,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h5 class="font-medium mb-2">Applications:</h5>
-                                                <ul class="list-disc pl-5 text-sm space-y-1">
+                                                <h5>Applications:</h5>
+                                                <ul>
                                                     <li>Text classification</li>
                                                     <li>Named Entity Recognition</li>
                                                     <li>Question Answering</li>
@@ -1279,123 +1056,123 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="mt-4">
-                                            <h5 class="font-medium mb-2">Key Innovation:</h5>
-                                            <p class="text-sm">BERT was the first model to deeply leverage bidirectional context for all layers, enabling significantly better language understanding. Its masked language modeling approach allows it to consider both left and right context simultaneously during pre-training.</p>
+                                        <div class="mt-2">
+                                            <h5>Key Innovation:</h5>
+                                            <p class="small">BERT was the first model to deeply leverage bidirectional context for all layers, enabling significantly better language understanding. Its masked language modeling approach allows it to consider both left and right context simultaneously during pre-training.</p>
                                         </div>
-                                        <div class="flex justify-center mt-4">
-                                            <svg id="bert-architecture" width="400" height="200" class="mx-auto"></svg>
+                                        <div class="center-row mt-2">
+                                            <svg id="bert-architecture" width="400" height="200"></svg>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Resources Section -->
-                <section id="resources" class="section mb-12">
-                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Further Resources</h2>
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <p class="mb-6">
+                <div class="section fade-up" id="resources">
+                    <h2 class="section-title"><i class="fas fa-link"></i> Further Resources</h2>
+                    <div class="block">
+                        <p>
                             Continue your journey into Transformers with these valuable resources for further learning.
                         </p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="grid-2 subsection">
                             <!-- Academic Papers -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <h3 class="text-xl font-semibold mb-3">Key Academic Papers</h3>
-                                <ul class="space-y-3">
+                            <div class="panel tint-gray">
+                                <h3>Key Academic Papers</h3>
+                                <ul class="plain-list">
                                     <li>
-                                        <a href="https://arxiv.org/abs/1706.03762" class="text-blue-600 hover:underline" target="_blank">Attention Is All You Need</a>
-                                        <p class="text-sm text-gray-600">Vaswani et al. (2017) - The original Transformer paper</p>
+                                        <a href="https://arxiv.org/abs/1706.03762" target="_blank">Attention Is All You Need</a>
+                                        <p class="small text-muted">Vaswani et al. (2017) - The original Transformer paper</p>
                                     </li>
                                     <li>
-                                        <a href="https://arxiv.org/abs/1810.04805" class="text-blue-600 hover:underline" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers</a>
-                                        <p class="text-sm text-gray-600">Devlin et al. (2018) - Introduced the BERT model</p>
+                                        <a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers</a>
+                                        <p class="small text-muted">Devlin et al. (2018) - Introduced the BERT model</p>
                                     </li>
                                     <li>
-                                        <a href="https://arxiv.org/abs/2005.14165" class="text-blue-600 hover:underline" target="_blank">Language Models are Few-Shot Learners</a>
-                                        <p class="text-sm text-gray-600">Brown et al. (2020) - Introduced GPT-3</p>
+                                        <a href="https://arxiv.org/abs/2005.14165" target="_blank">Language Models are Few-Shot Learners</a>
+                                        <p class="small text-muted">Brown et al. (2020) - Introduced GPT-3</p>
                                     </li>
                                     <li>
-                                        <a href="https://arxiv.org/abs/2010.11929" class="text-blue-600 hover:underline" target="_blank">An Image is Worth 16x16 Words</a>
-                                        <p class="text-sm text-gray-600">Dosovitskiy et al. (2020) - Vision Transformer (ViT) paper</p>
+                                        <a href="https://arxiv.org/abs/2010.11929" target="_blank">An Image is Worth 16x16 Words</a>
+                                        <p class="small text-muted">Dosovitskiy et al. (2020) - Vision Transformer (ViT) paper</p>
                                     </li>
                                 </ul>
                             </div>
 
                             <!-- Tutorials and Courses -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <h3 class="text-xl font-semibold mb-3">Tutorials & Online Courses</h3>
-                                <ul class="space-y-3">
+                            <div class="panel tint-gray">
+                                <h3>Tutorials & Online Courses</h3>
+                                <ul class="plain-list">
                                     <li>
-                                        <a href="http://jalammar.github.io/illustrated-transformer/" class="text-blue-600 hover:underline" target="_blank">The Illustrated Transformer</a>
-                                        <p class="text-sm text-gray-600">Visual guide to understanding Transformers</p>
+                                        <a href="http://jalammar.github.io/illustrated-transformer/" target="_blank">The Illustrated Transformer</a>
+                                        <p class="small text-muted">Visual guide to understanding Transformers</p>
                                     </li>
                                     <li>
-                                        <a href="https://www.youtube.com/watch?v=TQQlZhbC5ps" class="text-blue-600 hover:underline" target="_blank">Attention Is All You Need (Video Explanation)</a>
-                                        <p class="text-sm text-gray-600">Comprehensive video walkthrough</p>
+                                        <a href="https://www.youtube.com/watch?v=TQQlZhbC5ps" target="_blank">Attention Is All You Need (Video Explanation)</a>
+                                        <p class="small text-muted">Comprehensive video walkthrough</p>
                                     </li>
                                     <li>
-                                        <a href="https://huggingface.co/course" class="text-blue-600 hover:underline" target="_blank">Hugging Face NLP Course</a>
-                                        <p class="text-sm text-gray-600">Free course on using Transformers in practice</p>
+                                        <a href="https://huggingface.co/course" target="_blank">Hugging Face NLP Course</a>
+                                        <p class="small text-muted">Free course on using Transformers in practice</p>
                                     </li>
                                     <li>
-                                        <a href="https://www.deeplearning.ai/courses/" class="text-blue-600 hover:underline" target="_blank">DeepLearning.AI NLP Specialization</a>
-                                        <p class="text-sm text-gray-600">In-depth courses covering Transformers and NLP</p>
+                                        <a href="https://www.deeplearning.ai/courses/" target="_blank">DeepLearning.AI NLP Specialization</a>
+                                        <p class="small text-muted">In-depth courses covering Transformers and NLP</p>
                                     </li>
                                 </ul>
                             </div>
                         </div>
 
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">Libraries & Implementations</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                                    <h4 class="font-medium mb-2">Hugging Face Transformers</h4>
-                                    <p class="text-sm mb-3">The most popular library for using pre-trained transformer models.</p>
-                                    <a href="https://github.com/huggingface/transformers" class="text-blue-600 hover:underline text-sm" target="_blank">GitHub Repository</a>
+                        <div class="subsection">
+                            <h3>Libraries & Implementations</h3>
+                            <div class="grid-3">
+                                <div class="panel tint-yellow">
+                                    <h4>Hugging Face Transformers</h4>
+                                    <p class="small">The most popular library for using pre-trained transformer models.</p>
+                                    <a href="https://github.com/huggingface/transformers" target="_blank">GitHub Repository</a>
                                 </div>
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                    <h4 class="font-medium mb-2">PyTorch</h4>
-                                    <p class="text-sm mb-3">Deep learning framework with native transformer implementations.</p>
-                                    <a href="https://pytorch.org/docs/stable/nn.html#transformer-layers" class="text-blue-600 hover:underline text-sm" target="_blank">Transformer Documentation</a>
+                                <div class="panel tint-blue">
+                                    <h4>PyTorch</h4>
+                                    <p class="small">Deep learning framework with native transformer implementations.</p>
+                                    <a href="https://pytorch.org/docs/stable/nn.html#transformer-layers" target="_blank">Transformer Documentation</a>
                                 </div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                                    <h4 class="font-medium mb-2">TensorFlow</h4>
-                                    <p class="text-sm mb-3">Google's deep learning platform with transformer layers.</p>
-                                    <a href="https://www.tensorflow.org/text/tutorials/transformer" class="text-blue-600 hover:underline text-sm" target="_blank">Transformer Tutorial</a>
+                                <div class="panel tint-green">
+                                    <h4>TensorFlow</h4>
+                                    <p class="small">Google's deep learning platform with transformer layers.</p>
+                                    <a href="https://www.tensorflow.org/text/tutorials/transformer" target="_blank">Transformer Tutorial</a>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <h3 class="text-xl font-semibold mb-4">Community & Discussion</h3>
-                            <p class="mb-4">
+                            <h3>Community & Discussion</h3>
+                            <p>
                                 Join these communities to discuss and learn more about Transformers and their applications:
                             </p>
-                            <ul class="list-disc pl-5 space-y-2">
-                                <li><a href="https://discuss.huggingface.co/" class="text-blue-600 hover:underline" target="_blank">Hugging Face Forums</a> - Discussions on using transformer models</li>
-                                <li><a href="https://www.reddit.com/r/MachineLearning/" class="text-blue-600 hover:underline" target="_blank">r/MachineLearning</a> - Reddit community for ML discussions</li>
-                                <li><a href="https://ai.stackexchange.com/" class="text-blue-600 hover:underline" target="_blank">AI Stack Exchange</a> - Q&A platform for AI topics</li>
-                                <li><a href="https://twitter.com/hashtag/NLProc" class="text-blue-600 hover:underline" target="_blank">#NLProc on Twitter</a> - NLP research and discussions</li>
+                            <ul>
+                                <li><a href="https://discuss.huggingface.co/" target="_blank">Hugging Face Forums</a> - Discussions on using transformer models</li>
+                                <li><a href="https://www.reddit.com/r/MachineLearning/" target="_blank">r/MachineLearning</a> - Reddit community for ML discussions</li>
+                                <li><a href="https://ai.stackexchange.com/" target="_blank">AI Stack Exchange</a> - Q&A platform for AI topics</li>
+                                <li><a href="https://twitter.com/hashtag/NLProc" target="_blank">#NLProc on Twitter</a> - NLP research and discussions</li>
                             </ul>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- Conclusion Section -->
-                <section id="conclusion" class="section">
-                    <div class="bg-blue-50 rounded-xl shadow-sm p-6">
-                        <h2 class="text-2xl font-bold mb-4 text-gray-800">Conclusion</h2>
-                        <p class="mb-4">
+                <div class="section fade-up" id="conclusion">
+                    <div class="block">
+                        <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Conclusion</h2>
+                        <p>
                             The Transformer architecture has fundamentally changed the landscape of artificial intelligence, enabling breakthrough capabilities in language understanding, generation, and multimodal reasoning. Its elegant design centered around the self-attention mechanism has proven remarkably effective and scalable.
                         </p>
-                        <p class="mb-4">
+                        <p>
                             As you've seen throughout this guide, Transformers provide:
                         </p>
-                        <ul class="list-disc pl-5 mb-6 space-y-1">
+                        <ul>
                             <li>Parallel processing of sequences, overcoming limitations of RNNs</li>
                             <li>Effective capturing of long-range dependencies through self-attention</li>
                             <li>Flexible architecture applicable to various domains beyond NLP</li>
@@ -1406,41 +1183,36 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                             We hope this interactive guide has provided you with a clear understanding of how Transformers work and their importance in modern AI. As the field continues to evolve, the principles and mechanisms of Transformers will remain fundamental to understanding the most powerful AI systems.
                         </p>
                     </div>
-                </section>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h2 class="text-xl font-bold">Understanding Transformer Architecture</h2>
-                    <p class="text-gray-400">An interactive guide to modern neural networks</p>
                 </div>
-                <div>
-                    <p class="text-gray-400">Created with JavaScript, D3.js, and MathJax</p>
-                </div>
-            </div>
-            <hr class="border-gray-700 my-6">
-            <p class="text-center text-gray-400 text-sm">
-                © 2023 Understanding Transformer Architecture. All visualizations and explanations are for educational purposes.
-            </p>
-        </div>
-    </footer>
 
-    <!-- JavaScript for interactive components -->
+  <div class="page-nav"><a class="nav-btn prev" href="/cs/index.html">← Back to Course</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">Understanding Transformer Architecture &middot; An interactive guide to modern neural networks &middot; Created with JavaScript, D3.js, and MathJax<br>© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+<div class="toc" id="toc"><h4>Contents</h4>
+  <a class="toc-item" href="#introduction">Introduction</a>
+  <a class="toc-item" href="#evolution">Evolution of Sequence Models</a>
+  <a class="toc-item" href="#architecture">Transformer Architecture</a>
+  <a class="toc-item" href="#components">Components:</a>
+  <a class="toc-item" href="#self-attention" style="padding-left:24px">Self-Attention</a>
+  <a class="toc-item" href="#multi-head" style="padding-left:24px">Multi-Head Attention</a>
+  <a class="toc-item" href="#positional" style="padding-left:24px">Positional Encoding</a>
+  <a class="toc-item" href="#feed-forward" style="padding-left:24px">Feed-Forward Networks</a>
+  <a class="toc-item" href="#demo">Interactive Demonstration</a>
+  <a class="toc-item" href="#code">Code Implementation</a>
+  <a class="toc-item" href="#applications">Applications</a>
+  <a class="toc-item" href="#resources">Further Resources</a>
+  <h4>📝 Step-by-Step Guides</h4>
+  <a class="toc-item toc-guide" href="transformer-step-by-step.html">English Guide</a>
+  <a class="toc-item toc-guide" href="transformer-step-by-step-ar.html">الشرح بالعربي</a>
+  <a class="toc-item toc-guide" href="transformer-qa.html">🧠 Q&amp;A (21 Questions)</a>
+  <h4>Your Progress</h4>
+  <div class="progress-track"><div id="progress-bar" class="progress-fill" style="width: 0%"></div></div>
+</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            mobileMenuButton.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
-            });
-
             // Code tabs
             const pythonBtn = document.getElementById('python-btn');
             const jsBtn = document.getElementById('js-btn');
@@ -1451,18 +1223,18 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                 pythonCode.classList.remove('hidden');
                 jsCode.classList.add('hidden');
                 pythonBtn.classList.add('active');
-                pythonBtn.classList.remove('bg-gray-200', 'text-gray-800');
+                pythonBtn.classList.remove('btn-outline');
                 jsBtn.classList.remove('active');
-                jsBtn.classList.add('bg-gray-200', 'text-gray-800');
+                jsBtn.classList.add('btn-outline');
             });
 
             jsBtn.addEventListener('click', function() {
                 pythonCode.classList.add('hidden');
                 jsCode.classList.remove('hidden');
                 jsBtn.classList.add('active');
-                jsBtn.classList.remove('bg-gray-200', 'text-gray-800');
+                jsBtn.classList.remove('btn-outline');
                 pythonBtn.classList.remove('active');
-                pythonBtn.classList.add('bg-gray-200', 'text-gray-800');
+                pythonBtn.classList.add('btn-outline');
             });
 
             // Model cards for applications section
@@ -1480,22 +1252,22 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                 card.addEventListener('click', function() {
                     // Remove highlight from all cards
                     modelCards.forEach(c => {
-                        c.classList.remove('border-l-4');
-                        c.classList.remove('border-yellow-400', 'border-green-400', 'border-blue-400', 'border-purple-400');
+                        c.classList.remove('sel');
+                        c.classList.remove('sel-yellow', 'sel-green', 'sel-blue', 'sel-purple');
                     });
 
                     // Add highlight to clicked card
                     const cardId = card.id;
 
                     if (cardId === 'bert-card') {
-                        card.classList.add('border-l-4', 'border-yellow-400');
+                        card.classList.add('sel', 'sel-yellow');
                         modelDetails.innerHTML = `
-                            <div class="bg-yellow-50 p-4 rounded-lg">
-                                <h4 class="text-lg font-semibold mb-3">BERT (Bidirectional Encoder Representations from Transformers)</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="panel tint-yellow">
+                                <h4>BERT (Bidirectional Encoder Representations from Transformers)</h4>
+                                <div class="grid-2">
                                     <div>
-                                        <h5 class="font-medium mb-2">Architecture:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Architecture:</h5>
+                                        <ul>
                                             <li>Uses only the encoder portion of Transformer</li>
                                             <li>Trained bidirectionally (both left and right context)</li>
                                             <li>Pre-trained on masked language modeling and next sentence prediction</li>
@@ -1503,8 +1275,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                     <div>
-                                        <h5 class="font-medium mb-2">Applications:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Applications:</h5>
+                                        <ul>
                                             <li>Text classification</li>
                                             <li>Named Entity Recognition</li>
                                             <li>Question Answering</li>
@@ -1513,24 +1285,24 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h5 class="font-medium mb-2">Key Innovation:</h5>
-                                    <p class="text-sm">BERT was the first model to deeply leverage bidirectional context for all layers, enabling significantly better language understanding. Its masked language modeling approach allows it to consider both left and right context simultaneously during pre-training.</p>
+                                <div class="mt-2">
+                                    <h5>Key Innovation:</h5>
+                                    <p class="small">BERT was the first model to deeply leverage bidirectional context for all layers, enabling significantly better language understanding. Its masked language modeling approach allows it to consider both left and right context simultaneously during pre-training.</p>
                                 </div>
-                                <div class="flex justify-center mt-4">
-                                    <svg id="bert-architecture" width="400" height="200" class="mx-auto"></svg>
+                                <div class="center-row mt-2">
+                                    <svg id="bert-architecture" width="400" height="200"></svg>
                                 </div>
                             </div>
                         `;
                     } else if (cardId === 'gpt-card') {
-                        card.classList.add('border-l-4', 'border-green-400');
+                        card.classList.add('sel', 'sel-green');
                         modelDetails.innerHTML = `
-                            <div class="bg-green-50 p-4 rounded-lg">
-                                <h4 class="text-lg font-semibold mb-3">GPT (Generative Pre-trained Transformer)</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="panel tint-green">
+                                <h4>GPT (Generative Pre-trained Transformer)</h4>
+                                <div class="grid-2">
                                     <div>
-                                        <h5 class="font-medium mb-2">Architecture:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Architecture:</h5>
+                                        <ul>
                                             <li>Uses only the decoder portion of Transformer</li>
                                             <li>Trained autoregressively (left-to-right)</li>
                                             <li>Each generation depends on previously generated tokens</li>
@@ -1538,8 +1310,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                     <div>
-                                        <h5 class="font-medium mb-2">Applications:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Applications:</h5>
+                                        <ul>
                                             <li>Text generation</li>
                                             <li>Conversational AI</li>
                                             <li>Creative writing</li>
@@ -1548,24 +1320,24 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h5 class="font-medium mb-2">Key Innovation:</h5>
-                                    <p class="text-sm">GPT demonstrated that scaling up model size and training data continuously improves performance, leading to emergent capabilities not explicitly trained for. GPT-3 and GPT-4 showed impressive few-shot and zero-shot learning abilities, reducing the need for task-specific fine-tuning.</p>
+                                <div class="mt-2">
+                                    <h5>Key Innovation:</h5>
+                                    <p class="small">GPT demonstrated that scaling up model size and training data continuously improves performance, leading to emergent capabilities not explicitly trained for. GPT-3 and GPT-4 showed impressive few-shot and zero-shot learning abilities, reducing the need for task-specific fine-tuning.</p>
                                 </div>
-                                <div class="flex justify-center mt-4">
-                                    <svg id="gpt-architecture" width="400" height="200" class="mx-auto"></svg>
+                                <div class="center-row mt-2">
+                                    <svg id="gpt-architecture" width="400" height="200"></svg>
                                 </div>
                             </div>
                         `;
                     } else if (cardId === 't5-card') {
-                        card.classList.add('border-l-4', 'border-blue-400');
+                        card.classList.add('sel', 'sel-blue');
                         modelDetails.innerHTML = `
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <h4 class="text-lg font-semibold mb-3">T5 (Text-to-Text Transfer Transformer)</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="panel tint-blue">
+                                <h4>T5 (Text-to-Text Transfer Transformer)</h4>
+                                <div class="grid-2">
                                     <div>
-                                        <h5 class="font-medium mb-2">Architecture:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Architecture:</h5>
+                                        <ul>
                                             <li>Uses complete encoder-decoder architecture</li>
                                             <li>Converts all NLP tasks to text-to-text format</li>
                                             <li>Trained on diverse set of tasks simultaneously</li>
@@ -1573,8 +1345,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                     <div>
-                                        <h5 class="font-medium mb-2">Applications:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Applications:</h5>
+                                        <ul>
                                             <li>Machine translation</li>
                                             <li>Text summarization</li>
                                             <li>Question answering</li>
@@ -1583,24 +1355,24 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h5 class="font-medium mb-2">Key Innovation:</h5>
-                                    <p class="text-sm">T5 unified all NLP tasks into a single text-to-text framework, allowing one model to handle multiple tasks with the same architecture. This approach enabled better transfer learning and simplified the application of transformers to various tasks.</p>
+                                <div class="mt-2">
+                                    <h5>Key Innovation:</h5>
+                                    <p class="small">T5 unified all NLP tasks into a single text-to-text framework, allowing one model to handle multiple tasks with the same architecture. This approach enabled better transfer learning and simplified the application of transformers to various tasks.</p>
                                 </div>
-                                <div class="flex justify-center mt-4">
-                                    <svg id="t5-architecture" width="400" height="200" class="mx-auto"></svg>
+                                <div class="center-row mt-2">
+                                    <svg id="t5-architecture" width="400" height="200"></svg>
                                 </div>
                             </div>
                         `;
                     } else if (cardId === 'vit-card') {
-                        card.classList.add('border-l-4', 'border-purple-400');
+                        card.classList.add('sel', 'sel-purple');
                         modelDetails.innerHTML = `
-                            <div class="bg-purple-50 p-4 rounded-lg">
-                                <h4 class="text-lg font-semibold mb-3">ViT (Vision Transformer)</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="panel tint-purple">
+                                <h4>ViT (Vision Transformer)</h4>
+                                <div class="grid-2">
                                     <div>
-                                        <h5 class="font-medium mb-2">Architecture:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Architecture:</h5>
+                                        <ul>
                                             <li>Applies transformers directly to images</li>
                                             <li>Splits images into fixed-size patches (like tokens)</li>
                                             <li>Uses position embeddings for patch positions</li>
@@ -1608,8 +1380,8 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                     <div>
-                                        <h5 class="font-medium mb-2">Applications:</h5>
-                                        <ul class="list-disc pl-5 text-sm space-y-1">
+                                        <h5>Applications:</h5>
+                                        <ul>
                                             <li>Image classification</li>
                                             <li>Object detection</li>
                                             <li>Image segmentation</li>
@@ -1618,12 +1390,12 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h5 class="font-medium mb-2">Key Innovation:</h5>
-                                    <p class="text-sm">ViT demonstrated that transformers can be applied directly to image data without the need for convolutional neural networks. When trained on sufficient data, ViT outperforms traditional convolutional architectures and transfers better to various computer vision tasks.</p>
+                                <div class="mt-2">
+                                    <h5>Key Innovation:</h5>
+                                    <p class="small">ViT demonstrated that transformers can be applied directly to image data without the need for convolutional neural networks. When trained on sufficient data, ViT outperforms traditional convolutional architectures and transfers better to various computer vision tasks.</p>
                                 </div>
-                                <div class="flex justify-center mt-4">
-                                    <svg id="vit-architecture" width="400" height="200" class="mx-auto"></svg>
+                                <div class="center-row mt-2">
+                                    <svg id="vit-architecture" width="400" height="200"></svg>
                                 </div>
                             </div>
                         `;
@@ -1655,15 +1427,15 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
             words.forEach((word, index) => {
                 const wordSpan = document.createElement('span');
                 wordSpan.textContent = word;
-                wordSpan.classList.add('token', 'cursor-pointer', 'transition');
+                wordSpan.classList.add('token', 'clickable');
                 wordSpan.dataset.index = index;
 
                 wordSpan.addEventListener('click', function() {
                     // Highlight this word and show its attention to other words
                     document.querySelectorAll('#self-attention-words .token').forEach(span => {
-                        span.classList.remove('bg-blue-300');
+                        span.classList.remove('tok-selected');
                     });
-                    wordSpan.classList.add('bg-blue-300');
+                    wordSpan.classList.add('tok-selected');
 
                     // Simulate attention weights - in a real implementation, these would come from the model
                     visualizeAttention(index);
@@ -1850,7 +1622,7 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                 // Reset all tokens
                 const tokens = document.querySelectorAll('#token-container .token');
                 tokens.forEach(token => {
-                    token.classList.remove('processing', 'bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-purple-200');
+                    token.classList.remove('processing', 'tok-blue', 'tok-green', 'tok-yellow', 'tok-purple');
                 });
 
                 const stepDescription = document.getElementById('step-description');
@@ -1861,34 +1633,34 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                         break;
                     case 2:
                         tokens.forEach(token => {
-                            token.classList.add('bg-blue-200');
+                            token.classList.add('tok-blue');
                         });
                         stepDescription.textContent = 'Step 2: Word embeddings and positional encodings added to tokens.';
                         break;
                     case 3:
                         tokens.forEach(token => {
-                            token.classList.remove('bg-blue-200');
-                            token.classList.add('bg-green-200');
+                            token.classList.remove('tok-blue');
+                            token.classList.add('tok-green');
                         });
                         stepDescription.textContent = 'Step 3: Self-attention mechanism processing tokens in parallel.';
                         break;
                     case 4:
                         tokens.forEach(token => {
-                            token.classList.remove('bg-green-200');
-                            token.classList.add('bg-yellow-200');
+                            token.classList.remove('tok-green');
+                            token.classList.add('tok-yellow');
                         });
                         stepDescription.textContent = 'Step 4: Feed-forward networks process each position independently.';
                         break;
                     case 5:
                         tokens.forEach(token => {
-                            token.classList.remove('bg-yellow-200');
-                            token.classList.add('bg-purple-200');
+                            token.classList.remove('tok-yellow');
+                            token.classList.add('tok-purple');
                         });
                         stepDescription.textContent = 'Step 5: Layer normalization and residual connections applied.';
                         break;
                     case 6:
                         tokens.forEach(token => {
-                            token.classList.remove('bg-purple-200');
+                            token.classList.remove('tok-purple');
                             token.classList.add('processing');
                         });
                         stepDescription.textContent = 'Step 6: Final representations created. Tokens now contain contextual information from the entire sequence.';
@@ -2020,7 +1792,7 @@ print(f"Pooled output shape: {pooled_output.shape}")     # [batch_size, hidden_s
                 document.getElementById('progress-bar').style.width = `${scrollPercentage}%`;
 
                 // Update active nav item based on current section
-                const sections = document.querySelectorAll('section');
+                const sections = document.querySelectorAll('.section');
                 let currentSectionId = '';
 
                 sections.forEach(section => {
@@ -3676,7 +3448,7 @@ function initializeTransformerDemonstration() {
     // Reset all token styles
     const tokenElements = document.querySelectorAll('#token-container .token');
     tokenElements.forEach(token => {
-      token.classList.remove('processing', 'bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-purple-200');
+      token.classList.remove('processing', 'tok-blue', 'tok-green', 'tok-yellow', 'tok-purple');
     });
 
     // Clear any token visualizations in the SVG
@@ -3706,7 +3478,7 @@ function initializeTransformerDemonstration() {
 
         // Style tokens
         tokenElements.forEach(token => {
-          token.classList.add('bg-blue-200');
+          token.classList.add('tok-blue');
         });
 
         // Add token embedding visualization
@@ -3719,7 +3491,7 @@ function initializeTransformerDemonstration() {
 
         // Style tokens
         tokenElements.forEach(token => {
-          token.classList.add('bg-green-200');
+          token.classList.add('tok-green');
         });
 
         // Add positional encoding visualization
@@ -3732,7 +3504,7 @@ function initializeTransformerDemonstration() {
 
         // Style tokens
         tokenElements.forEach(token => {
-          token.classList.add('bg-yellow-200');
+          token.classList.add('tok-yellow');
         });
 
         // Add self-attention visualization
@@ -3745,7 +3517,7 @@ function initializeTransformerDemonstration() {
 
         // Style tokens
         tokenElements.forEach(token => {
-          token.classList.add('bg-purple-200');
+          token.classList.add('tok-purple');
         });
 
         // Add FFN visualization
@@ -4086,17 +3858,17 @@ function initializeTransformerDemonstration() {
     switch (taskType) {
       case 'translation':
         content = `
-          <div class="p-4 bg-blue-50 rounded-lg">
-            <h4 class="font-medium mb-3">Machine Translation Attention Patterns</h4>
-            <div class="flex flex-col space-y-3">
+          <div class="panel tint-blue">
+            <h4>Machine Translation Attention Patterns</h4>
+            <div class="vstack">
               <div>
-                <p class="text-sm mb-1"><strong>Source:</strong> "The transformer architecture is powerful."</p>
-                <p class="text-sm mb-1"><strong>Target:</strong> "L'architecture du transformer est puissante."</p>
-                <div class="bg-white p-3 rounded mt-2">
-                  <div class="flex justify-center">
+                <p class="small"><strong>Source:</strong> "The transformer architecture is powerful."</p>
+                <p class="small"><strong>Target:</strong> "L'architecture du transformer est puissante."</p>
+                <div class="block mt-1">
+                  <div class="center-row">
                     <svg id="translation-viz" width="400" height="200"></svg>
                   </div>
-                  <p class="text-xs text-center text-gray-500 mt-2">
+                  <p class="tiny text-muted text-center mt-1">
                     Translation attention shows alignment between source and target words, with patterns between equivalent terms across languages.
                   </p>
                 </div>
@@ -4113,17 +3885,17 @@ function initializeTransformerDemonstration() {
 
       case 'summarization':
         content = `
-          <div class="p-4 bg-green-50 rounded-lg">
-            <h4 class="font-medium mb-3">Text Summarization Attention Patterns</h4>
-            <div class="flex flex-col space-y-3">
+          <div class="panel tint-green">
+            <h4>Text Summarization Attention Patterns</h4>
+            <div class="vstack">
               <div>
-                <p class="text-sm mb-1"><strong>Document:</strong> "The Transformer architecture, introduced in 2017, revolutionized NLP by using self-attention mechanisms. It processes all tokens simultaneously and handles long-range dependencies effectively."</p>
-                <p class="text-sm mb-1"><strong>Summary:</strong> "Transformer architecture uses self-attention to revolutionize NLP."</p>
-                <div class="bg-white p-3 rounded mt-2">
-                  <div class="flex justify-center">
+                <p class="small"><strong>Document:</strong> "The Transformer architecture, introduced in 2017, revolutionized NLP by using self-attention mechanisms. It processes all tokens simultaneously and handles long-range dependencies effectively."</p>
+                <p class="small"><strong>Summary:</strong> "Transformer architecture uses self-attention to revolutionize NLP."</p>
+                <div class="block mt-1">
+                  <div class="center-row">
                     <svg id="summarization-viz" width="400" height="200"></svg>
                   </div>
-                  <p class="text-xs text-center text-gray-500 mt-2">
+                  <p class="tiny text-muted text-center mt-1">
                     Summarization attention focuses heavily on key information-carrying words while ignoring less important details.
                   </p>
                 </div>
@@ -4140,18 +3912,18 @@ function initializeTransformerDemonstration() {
 
       case 'qa':
         content = `
-          <div class="p-4 bg-purple-50 rounded-lg">
-            <h4 class="font-medium mb-3">Question Answering Attention Patterns</h4>
-            <div class="flex flex-col space-y-3">
+          <div class="panel tint-purple">
+            <h4>Question Answering Attention Patterns</h4>
+            <div class="vstack">
               <div>
-                <p class="text-sm mb-1"><strong>Question:</strong> "When was the Transformer architecture introduced?"</p>
-                <p class="text-sm mb-1"><strong>Context:</strong> "The Transformer architecture was introduced in a 2017 paper titled 'Attention Is All You Need' by researchers at Google."</p>
-                <p class="text-sm mb-1"><strong>Answer:</strong> "2017"</p>
-                <div class="bg-white p-3 rounded mt-2">
-                  <div class="flex justify-center">
+                <p class="small"><strong>Question:</strong> "When was the Transformer architecture introduced?"</p>
+                <p class="small"><strong>Context:</strong> "The Transformer architecture was introduced in a 2017 paper titled 'Attention Is All You Need' by researchers at Google."</p>
+                <p class="small"><strong>Answer:</strong> "2017"</p>
+                <div class="block mt-1">
+                  <div class="center-row">
                     <svg id="qa-viz" width="400" height="200"></svg>
                   </div>
-                  <p class="text-xs text-center text-gray-500 mt-2">
+                  <p class="tiny text-muted text-center mt-1">
                     Question-answering attention shows distinct patterns between question words and relevant context words containing the answer.
                   </p>
                 </div>
@@ -4927,37 +4699,6 @@ function addFeedForwardToInit() {
   });
 }
 </script>
-<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
-<script>
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-    const btn=document.getElementById('themeToggleBtn');
-    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
-    const back=document.querySelector('a[href="/cs/index.html"]');
-    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
-        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
-    }
-})();
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn'))return;
-        pre.classList.add('has-copy');pre.style.position='relative';
-        var btn=document.createElement('button');btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
-        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
-        pre.appendChild(btn);
-    });
-});
-</script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

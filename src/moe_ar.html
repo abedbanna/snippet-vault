@@ -13,963 +13,479 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مزيج الخبراء في نماذج اللغة الكبيرة</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-
-    <style>
-        html {
-            scroll-behavior: smooth;
-            direction: rtl;
-        }
-       body {
-    font-family: 'Cairo', 'Amiri', 'Noto Naskh Arabic', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
-}
-
-        .hero-pattern {
-            background-color: #051e3e;
-            background-image: radial-gradient(#1a4a8e 0.5px, transparent 0.5px), radial-gradient(#1a4a8e 0.5px, #051e3e 0.5px);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-        }
-        .section-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .section-heading {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 2rem;
-        }
-        .section-heading::after {
-            content: '';
-            position: absolute;
-            width: 60%;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #059669);
-            bottom: -10px;
-            right: 0;
-            border-radius: 2px;
-        }
-        .card {
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-        }
-        .accordion-button {
-            cursor: pointer;
-            padding: 1rem;
-            width: 100%;
-            text-align: right;
-            border: none;
-            outline: none;
-            transition: 0.4s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 8px;
-        }
-        .accordion-button:hover {
-            background-color: #e5e7eb;
-        }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            background-color: white;
-            border-radius: 0 0 8px 8px;
-        }
-        .accordion-content.active {
-            max-height: 1000px;
-        }
-        .sticky-nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .highlight {
-            background: linear-gradient(120deg, rgba(59, 130, 246, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-        .image-caption {
-            font-size: 0.85rem;
-            font-style: italic;
-            text-align: center;
-            color: #6b7280;
-            margin-top: 0.5rem;
-        }
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .animate-on-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted #3b82f6;
-            cursor: help;
-        }
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            right: 50%;
-            margin-right: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-        @media print {
-            .sticky-nav {
-                position: relative;
-            }
-            .accordion-content {
-                max-height: none !important;
-            }
-        }
-    </style>
+    <meta name="description" content="مزيج الخبراء (MoE) في نماذج اللغة الكبيرة: الخبراء، الموجه، موازنة الحمل، Mixtral وSwitch Transformer، والمميزات والتحديات والاتجاهات المستقبلية.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#6366f1;--primary-hover:#818cf8;--glow:rgba(99,102,241,.14)}
+.section{scroll-margin-top:80px}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
+.highlight{background:linear-gradient(120deg,rgba(99,102,241,.28) 0%,rgba(16,185,129,.25) 100%);padding:2px 5px;border-radius:4px;color:var(--text)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.section .lead{font-size:1.1rem;color:var(--text)}
+.section blockquote{border-left:0;border-right:3px solid var(--primary);border-radius:8px 0 0 8px}
+.section blockquote.pull{font-style:italic}
+.section blockquote.pull span{display:block;text-align:left;margin-top:8px;font-weight:600;color:var(--text)}
+.section figure{margin:0}
+.section figure.spaced{margin:24px 0 0}
+.section ol.boxed{list-style:none;padding:0}
+.section ol.boxed li{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;margin:10px 0}
+.section ol.boxed li b{color:var(--primary)}
+.section .card .big-icon{font-size:2.2rem;margin-bottom:12px}
+.section .card h3{margin-top:0}
+.section .card p:last-of-type{margin-bottom:0}
+details.solution summary{display:flex;justify-content:space-between;align-items:center;list-style:none;padding:10px 16px;font-size:.9rem;text-align:right}
+details.solution summary::-webkit-details-marker{display:none}
+details.solution summary i{color:var(--primary);transition:transform .2s}
+details.solution[open] summary i{transform:rotate(180deg)}
+details.solution>div p:last-child,details.solution>div ul:last-child{margin-bottom:0}
+details.solution>div a{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-weight:600}
+.info-box.adv h3{font-size:1.1rem}
+.info-box.sec{border-right-color:var(--secondary)}
+.quote-grad{background:linear-gradient(135deg,#4f46e5,#0891b2);border-radius:12px;padding:22px;margin:16px 0}
+.section .quote-grad blockquote{border:0;background:none;padding:0;margin:0;color:#fff;font-style:italic;font-size:1.05rem}
+.section .quote-grad p{color:rgba(255,255,255,.85);text-align:right;margin:10px 0 0;font-weight:600}
+.section h3.centered{justify-content:center;text-align:center}
+.card.impl{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.impl-bar{height:6px;flex-shrink:0}
+.card.impl img{width:100%;height:190px;object-fit:cover;display:block;flex-shrink:0}
+.impl-body{padding:20px}
+.section ul.checks{list-style:none;padding:0;margin:0 0 14px}
+.section ul.checks li{display:flex;gap:8px;align-items:flex-start;margin:4px 0}
+.section ul.checks li span{color:var(--success);font-weight:700;flex-shrink:0}
+.card.grad-blue{background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(99,102,241,.28))}
+.card.grad-green{background:linear-gradient(135deg,rgba(16,185,129,.16),rgba(16,185,129,.28))}
+.card.grad-purple{background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(139,92,246,.28))}
+body.light-mode .card.grad-blue{background:linear-gradient(135deg,#e0e7ff,#c7d2fe)}
+body.light-mode .card.grad-green{background:linear-gradient(135deg,#dcfce7,#bbf7d0)}
+body.light-mode .card.grad-purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.section ul.arrows{list-style:none;padding:0;margin:14px 0 0}
+.section ul.arrows li{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
+.section ul.arrows li i{margin-top:7px;flex-shrink:0}
+.trend h4{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+.icon-circle{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.trend p{padding-right:42px;margin-bottom:0}
+.section p.note{font-style:italic;margin:16px 0 0}
+.section.cta{background:linear-gradient(135deg,#1e3a8a,#312e81);border-color:transparent;text-align:center}
+.section.cta h2{color:#fff;font-size:1.8rem;font-weight:700;margin-bottom:14px}
+.section.cta p{color:rgba(255,255,255,.85);max-width:720px;margin:0 auto 24px;font-size:1.1rem}
+.cta-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:820px;margin:0 auto}
+.cta-link{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px;border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font-weight:600;transition:background .2s}
+.cta-link:hover{background:rgba(255,255,255,.22);color:#fff}
+.cta-link i{font-size:1.8rem}
+.section ul.links{list-style:none;padding:0}
+.section ul.links li{margin:6px 0}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <header class="hero-pattern text-white py-20">
-        <div class="container mx-auto px-4 flex flex-col items-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-center mb-6">مزيج الخبراء في نماذج اللغة الكبيرة</h1>
-            <p class="text-xl text-center max-w-3xl mb-10">
-                استكشاف الهندسة المعمارية التي تُحدث ثورة في نماذج اللغة الكبيرة من خلال دمج شبكات فرعية متخصصة لتحسين الكفاءة والأداء.
-            </p>
-            <div class="flex space-x-4">
-                <a href="#overview" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition duration-300 flex items-center">
-                    <span>تعلم المزيد</span>
-                    <i class="fas fa-arrow-left mr-2"></i>
-                </a>
-                <a href="#implementations" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white font-bold py-2 px-6 rounded-full transition duration-300">
-                    أمثلة
-                </a>
-            </div>
-        </div>
-    </header>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="/cs/index.html"><i class="fas fa-layer-group"></i> مزيج الخبراء</a>
+  <div class="nav-links"><a href="/moe.html">English</a><a href="#overview">نظرة عامة</a><a href="#how-it-works">كيف يعمل</a><a href="#components">المكونات</a><a href="#advantages">المميزات</a><a href="#implementations">التطبيقات</a><a href="#challenges">التحديات</a><a href="#future">المستقبل</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="/moe.html">English</a>
+  <a href="/cs/index.html">العودة إلى الدورة</a>
+  <a href="#overview">نظرة عامة</a>
+  <a href="#how-it-works">كيف يعمل</a>
+  <a href="#components">المكونات</a>
+  <a href="#advantages">المميزات</a>
+  <a href="#implementations">التطبيقات</a>
+  <a href="#challenges">التحديات</a>
+  <a href="#future">المستقبل</a>
+</div>
 
-    <!-- Navigation -->
-    <nav class="sticky-nav bg-white shadow-md py-4">
-        <div class="container mx-auto px-4">
-            <ul class="flex flex-wrap justify-center space-x-1 md:space-x-6">
-                <li><a href="#overview" class="px-3 py-2 rounded hover:bg-gray-100 transition">نظرة عامة</a></li>
-                <li><a href="#how-it-works" class="px-3 py-2 rounded hover:bg-gray-100 transition">كيف يعمل</a></li>
-                <li><a href="#components" class="px-3 py-2 rounded hover:bg-gray-100 transition">المكونات</a></li>
-                <li><a href="#advantages" class="px-3 py-2 rounded hover:bg-gray-100 transition">المميزات</a></li>
-                <li><a href="#implementations" class="px-3 py-2 rounded hover:bg-gray-100 transition">التطبيقات</a></li>
-                <li><a href="#challenges" class="px-3 py-2 rounded hover:bg-gray-100 transition">التحديات</a></li>
-                <li><a href="#future" class="px-3 py-2 rounded hover:bg-gray-100 transition">المستقبل</a></li>
-            </ul>
-        </div>
-    </nav>
+<section class="hero"><div class="hero-content">
+  <h1>مزيج الخبراء في نماذج اللغة الكبيرة</h1>
+  <p class="hero-sub">استكشاف الهندسة المعمارية التي تُحدث ثورة في نماذج اللغة الكبيرة من خلال دمج شبكات فرعية متخصصة لتحسين الكفاءة والأداء.</p>
+  <span class="diff-badge">متوسط</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~25 دقيقة</span>
+  <div class="hero-actions">
+    <a href="#overview" class="btn btn-primary"><span>تعلم المزيد</span> <i class="fas fa-arrow-left"></i></a>
+    <a href="#implementations" class="btn btn-outline">أمثلة</a>
+    <a href="/moe.html" class="btn btn-outline">English</a>
+  </div>
+</div></section>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Overview Section -->
-        <section id="overview" class="py-16 bg-white">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">ما هو مزيج الخبراء (MoE)؟</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div class="animate-on-scroll">
-                        <p class="mb-4 text-lg">
-                            <span class="highlight">مزيج الخبراء (MoE)</span> هو هيكل شبكة عصبية حيث بدلاً من استخدام نموذج كثيف واحد، تتكون الشبكة من نماذج فرعية متعددة تُعرف باسم "الخبراء". يتخصص كل خبير في معالجة أجزاء مختلفة من المدخلات.
-                        </p>
-                        <p class="mb-4">
-                            في سياق نماذج اللغة الكبيرة (LLMs)، يستبدل MoE طبقات التغذية الأمامية الكثيفة التقليدية بمجموعة من شبكات الخبراء، مما يسمح للنموذج بامتلاك عدد أكبر بكثير من المعلمات مع الحفاظ على تكاليف الحوسبة قابلة للإدارة.
-                        </p>
-                        <p class="mb-4">
-                            الفكرة الرئيسية لـ MoE هي أنه لأي رمز إدخال معين (مثل كلمة أو جزء من كلمة)، يلزم تنشيط جزء صغير فقط من معلمات النموذج. تتم إدارة هذا التنشيط الانتقائي بواسطة "موجه" أو "شبكة بوابة" تقرر أي الخبراء يجب أن يعالج كل رمز إدخال.
-                        </p>
-                        <div class="bg-blue-50 border-r-4 border-blue-500 p-4 my-6">
-                            <p class="italic">
-                                "يتيح MoE للنماذج أن يتم تدريبها المسبق بقدر أقل بكثير من الحوسبة، مما يعني أنه يمكنك زيادة حجم النموذج أو مجموعة البيانات بشكل كبير دون زيادة متناسبة في تكاليف التدريب."
-                                <span class="block text-left mt-2">— مدونة Hugging Face</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex justify-center items-center animate-on-scroll">
-                        <div class="card bg-white">
-                            <img src="https://huggingface.co/blog/assets/moe/thumbnail.png" alt="رسم تخطيطي لمزيج الخبراء" class="w-full h-auto">
-                            <div class="image-caption p-4">
-                                تصور لهيكل مزيج الخبراء يظهر شبكات خبراء متعددة متخصصة وآلية التوجيه.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="container">
 
-        <!-- How It Works Section -->
-        <section id="how-it-works" class="py-16 bg-gray-50">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">كيف يعمل MoE في نماذج اللغة الكبيرة</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div class="animate-on-scroll order-2 md:order-1">
-                        <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F50a9eba8-8490-4959-8cda-f0855af65d67_1360x972.png" alt="عملية عمل MoE" class="w-full rounded-lg shadow-lg">
-                        <div class="image-caption mt-3">
-                            مخطط يوضح كيفية توجيه الرموز عبر شبكات الخبراء في طبقة MoE
-                        </div>
-                    </div>
-                    <div class="animate-on-scroll order-1 md:order-2">
-                        <h3 class="text-2xl font-semibold mb-4">العملية خطوة بخطوة</h3>
-                        <ol class="space-y-4">
-                            <li class="bg-white p-4 rounded shadow-sm">
-                                <span class="font-bold text-blue-600">١. معالجة المدخلات:</span> يدخل رمز الإدخال (أو تضمينه) إلى طبقة MoE داخل هيكل المحول.
-                            </li>
-                            <li class="bg-white p-4 rounded shadow-sm">
-                                <span class="font-bold text-blue-600">٢. تقييم الموجه:</span> يقوم الموجه (شبكة البوابة) بحساب توزيع احتمالي على جميع الخبراء المتاحين باستخدام دالة softmax لتحديد الخبراء الأنسب لهذا الإدخال المحدد.
-                            </li>
-                            <li class="bg-white p-4 rounded shadow-sm">
-                                <span class="font-bold text-blue-600">٣. اختيار الخبراء:</span> بناءً على هذه الاحتمالات، يتم اختيار أفضل k خبراء (عادة 1 أو 2 فقط) لمعالجة الرمز.
-                            </li>
-                            <li class="bg-white p-4 rounded shadow-sm">
-                                <span class="font-bold text-blue-600">٤. المعالجة المتوازية:</span> يقوم الخبراء المختارون بمعالجة الرمز بالتوازي وإنتاج مخرجاتهم الخاصة.
-                            </li>
-                            <li class="bg-white p-4 rounded shadow-sm">
-                                <span class="font-bold text-blue-600">٥. تجميع المخرجات:</span> يتم ترجيح المخرجات من الخبراء النشطين باستخدام احتمالات اختيار الموجه ودمجها لتشكيل المخرج النهائي لذلك الرمز.
-                            </li>
-                            <li class="bg-white p-4 rounded shadow-sm">
-                                <span class="font-bold text-blue-600">٦. الانتشار الأمامي:</span> يتم تمرير المخرج المدمج إلى الطبقات اللاحقة في هيكل النموذج.
-                            </li>
-                        </ol>
-                        <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                            <p>
-                                تسمح هذه الآلية للنموذج بامتلاك عدد هائل من المعلمات (معلمات متفرقة) ولكن استخدام جزء منها فقط (المعلمات النشطة) في وقت الاستدلال، مما يؤدي إلى استخدام أكثر كفاءة للموارد الحاسوبية مع زيادة قدرة النموذج.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!-- ===== OVERVIEW ===== -->
+<div class="section fade-up" id="overview">
+  <h2 class="section-title"><i class="fas fa-lightbulb"></i> ما هو مزيج الخبراء (MoE)؟</h2>
+  <div class="two-col">
+    <div>
+      <p class="lead"><span class="highlight">مزيج الخبراء (MoE)</span> هو هيكل شبكة عصبية حيث بدلاً من استخدام نموذج كثيف واحد، تتكون الشبكة من نماذج فرعية متعددة تُعرف باسم "الخبراء". يتخصص كل خبير في معالجة أجزاء مختلفة من المدخلات.</p>
+      <p>في سياق نماذج اللغة الكبيرة (LLMs)، يستبدل MoE طبقات التغذية الأمامية الكثيفة التقليدية بمجموعة من شبكات الخبراء، مما يسمح للنموذج بامتلاك عدد أكبر بكثير من المعلمات مع الحفاظ على تكاليف الحوسبة قابلة للإدارة.</p>
+      <p>الفكرة الرئيسية لـ MoE هي أنه لأي رمز إدخال معين (مثل كلمة أو جزء من كلمة)، يلزم تنشيط جزء صغير فقط من معلمات النموذج. تتم إدارة هذا التنشيط الانتقائي بواسطة "موجه" أو "شبكة بوابة" تقرر أي الخبراء يجب أن يعالج كل رمز إدخال.</p>
+      <blockquote class="pull">"يتيح MoE للنماذج أن يتم تدريبها المسبق بقدر أقل بكثير من الحوسبة، مما يعني أنه يمكنك زيادة حجم النموذج أو مجموعة البيانات بشكل كبير دون زيادة متناسبة في تكاليف التدريب."<span>— مدونة Hugging Face</span></blockquote>
+    </div>
+    <figure>
+      <img src="https://huggingface.co/blog/assets/moe/thumbnail.png" alt="رسم تخطيطي لمزيج الخبراء">
+      <figcaption>تصور لهيكل مزيج الخبراء يظهر شبكات خبراء متعددة متخصصة وآلية التوجيه.</figcaption>
+    </figure>
+  </div>
+</div>
 
-        <!-- Components Section -->
-        <section id="components" class="py-16 bg-white">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">المكونات الرئيسية لـ MoE</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="card bg-white p-6 animate-on-scroll">
-                        <div class="text-blue-600 text-4xl mb-4">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">الخبراء</h3>
-                        <p>
-                            نماذج فرعية فردية، عادة ما تُنفَّذ كشبكات عصبية ذات تغذية أمامية. يتخصص كل خبير في معالجة أنواع معينة من المدخلات أو الأنماط اللغوية، مما يمكّن من تمثيلات أكثر دقة.
-                        </p>
-                        <button class="accordion-button mt-4 bg-gray-100 hover:bg-gray-200 rounded">
-                            <span>معرفة المزيد</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="accordion-content">
-                            <div class="p-4">
-                                <p class="mb-3">
-                                    الخبراء في هيكل MoE مشابهون للمتخصصين في مجالات مختلفة. على سبيل المثال، قد يصبح بعض الخبراء ماهرين في معالجة المحتوى الرياضي، بينما قد يتخصص آخرون في الكتابة الإبداعية أو المصطلحات العلمية.
-                                </p>
-                                <p>
-                                    في معظم تطبيقات MoE، يمتلك الخبراء هياكل متطابقة ولكنهم يختلفون في المعلمات المتعلمة. أثناء التدريب، يطور الخبراء تخصصات بشكل طبيعي من خلال قرارات التوجيه التي تتخذها شبكة البوابة.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+<!-- ===== HOW IT WORKS ===== -->
+<div class="section fade-up" id="how-it-works">
+  <h2 class="section-title"><i class="fas fa-gears"></i> كيف يعمل MoE في نماذج اللغة الكبيرة</h2>
+  <div class="two-col">
+    <figure>
+      <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F50a9eba8-8490-4959-8cda-f0855af65d67_1360x972.png" alt="عملية عمل MoE">
+      <figcaption>مخطط يوضح كيفية توجيه الرموز عبر شبكات الخبراء في طبقة MoE</figcaption>
+    </figure>
+    <div>
+      <h3>العملية خطوة بخطوة</h3>
+      <ol class="boxed">
+        <li><b>١. معالجة المدخلات:</b> <span>يدخل رمز الإدخال (أو تضمينه) إلى طبقة MoE داخل هيكل المحول.</span></li>
+        <li><b>٢. تقييم الموجه:</b> <span>يقوم الموجه (شبكة البوابة) بحساب توزيع احتمالي على جميع الخبراء المتاحين باستخدام دالة softmax لتحديد الخبراء الأنسب لهذا الإدخال المحدد.</span></li>
+        <li><b>٣. اختيار الخبراء:</b> <span>بناءً على هذه الاحتمالات، يتم اختيار أفضل k خبراء (عادة 1 أو 2 فقط) لمعالجة الرمز.</span></li>
+        <li><b>٤. المعالجة المتوازية:</b> <span>يقوم الخبراء المختارون بمعالجة الرمز بالتوازي وإنتاج مخرجاتهم الخاصة.</span></li>
+        <li><b>٥. تجميع المخرجات:</b> <span>يتم ترجيح المخرجات من الخبراء النشطين باستخدام احتمالات اختيار الموجه ودمجها لتشكيل المخرج النهائي لذلك الرمز.</span></li>
+        <li><b>٦. الانتشار الأمامي:</b> <span>يتم تمرير المخرج المدمج إلى الطبقات اللاحقة في هيكل النموذج.</span></li>
+      </ol>
+      <div class="info-box success">
+        <p>تسمح هذه الآلية للنموذج بامتلاك عدد هائل من المعلمات (معلمات متفرقة) ولكن استخدام جزء منها فقط (المعلمات النشطة) في وقت الاستدلال، مما يؤدي إلى استخدام أكثر كفاءة للموارد الحاسوبية مع زيادة قدرة النموذج.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-                    <div class="card bg-white p-6 animate-on-scroll" style="transition-delay: 0.2s;">
-                        <div class="text-blue-600 text-4xl mb-4">
-                            <i class="fas fa-random"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">شبكة الموجه/البوابة</h3>
-                        <p>
-                            المكون المسؤول عن اختيار أي الخبراء يجب أن يعالج كل رمز إدخال. يقوم بحساب توزيع احتمالي على جميع الخبراء وتوجيه الرموز إلى المتخصصين الأكثر ملاءمة.
-                        </p>
-                        <button class="accordion-button mt-4 bg-gray-100 hover:bg-gray-200 rounded">
-                            <span>معرفة المزيد</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="accordion-content">
-                            <div class="p-4">
-                                <p class="mb-3">
-                                    يحدد الموجه احتمالات التوجيه عن طريق حساب التشابه بين تضمين رمز الإدخال ومصفوفة وزن متعلمة. ثم تُستخدم هذه الاحتمالات لاختيار أفضل k خبراء للمعالجة.
-                                </p>
-                                <p>
-                                    توجد استراتيجيات توجيه مختلفة، بما في ذلك توجيه "أعلى-1" (حيث يتم اختيار الخبير الأكثر ملاءمة فقط) وتوجيه "أعلى-k" (حيث يتم اختيار خبراء متعددين بأوزان مختلفة). يؤثر قرار التوجيه بشكل كبير على أداء النموذج وكفاءة الحوسبة.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+<!-- ===== COMPONENTS ===== -->
+<div class="section fade-up" id="components">
+  <h2 class="section-title"><i class="fas fa-cubes"></i> المكونات الرئيسية لـ MoE</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="big-icon" style="color:var(--primary)"><i class="fas fa-brain"></i></div>
+      <h3>الخبراء</h3>
+      <p>نماذج فرعية فردية، عادة ما تُنفَّذ كشبكات عصبية ذات تغذية أمامية. يتخصص كل خبير في معالجة أنواع معينة من المدخلات أو الأنماط اللغوية، مما يمكّن من تمثيلات أكثر دقة.</p>
+      <details class="solution"><summary><span>معرفة المزيد</span><i class="fas fa-chevron-down"></i></summary><div>
+        <p>الخبراء في هيكل MoE مشابهون للمتخصصين في مجالات مختلفة. على سبيل المثال، قد يصبح بعض الخبراء ماهرين في معالجة المحتوى الرياضي، بينما قد يتخصص آخرون في الكتابة الإبداعية أو المصطلحات العلمية.</p>
+        <p>في معظم تطبيقات MoE، يمتلك الخبراء هياكل متطابقة ولكنهم يختلفون في المعلمات المتعلمة. أثناء التدريب، يطور الخبراء تخصصات بشكل طبيعي من خلال قرارات التوجيه التي تتخذها شبكة البوابة.</p>
+      </div></details>
+    </div>
+    <div class="card">
+      <div class="big-icon" style="color:var(--secondary)"><i class="fas fa-random"></i></div>
+      <h3>شبكة الموجه/البوابة</h3>
+      <p>المكون المسؤول عن اختيار أي الخبراء يجب أن يعالج كل رمز إدخال. يقوم بحساب توزيع احتمالي على جميع الخبراء وتوجيه الرموز إلى المتخصصين الأكثر ملاءمة.</p>
+      <details class="solution"><summary><span>معرفة المزيد</span><i class="fas fa-chevron-down"></i></summary><div>
+        <p>يحدد الموجه احتمالات التوجيه عن طريق حساب التشابه بين تضمين رمز الإدخال ومصفوفة وزن متعلمة. ثم تُستخدم هذه الاحتمالات لاختيار أفضل k خبراء للمعالجة.</p>
+        <p>توجد استراتيجيات توجيه مختلفة، بما في ذلك توجيه "أعلى-1" (حيث يتم اختيار الخبير الأكثر ملاءمة فقط) وتوجيه "أعلى-k" (حيث يتم اختيار خبراء متعددين بأوزان مختلفة). يؤثر قرار التوجيه بشكل كبير على أداء النموذج وكفاءة الحوسبة.</p>
+      </div></details>
+    </div>
+    <div class="card">
+      <div class="big-icon" style="color:var(--success)"><i class="fas fa-balance-scale"></i></div>
+      <h3>آليات موازنة الحمل</h3>
+      <p>تقنيات تضمن توزيع الرموز بالتساوي بين الخبراء، مما يمنع استخدام بعض الخبراء بشكل مفرط بينما يبقى البعض الآخر غير مدرب بشكل كاف. هذه التقنيات ضرورية لاستقرار تدريب MoE.</p>
+      <details class="solution"><summary><span>معرفة المزيد</span><i class="fas fa-chevron-down"></i></summary><div>
+        <p>تشمل تقنيات موازنة الحمل الشائعة:</p>
+        <ul>
+          <li>خسارة مساعدة: هدف تدريب إضافي يعاقب توزيعات التوجيه غير المتساوية</li>
+          <li>سعة الخبير: تحديد عدد الرموز التي يمكن لكل خبير معالجتها في الدفعة الواحدة</li>
+          <li>طريقة KeepTopK: فرض توزيع أكثر توازناً للرموز بين الخبراء</li>
+        </ul>
+        <p>بدون موازنة الحمل المناسبة، يمكن أن تعاني نماذج MoE من "انهيار الخبير"، حيث يرسل الموجه معظم الرموز إلى عدد قليل من الخبراء فقط، مما يقلل النموذج فعلياً إلى نموذج أصغر بكثير.</p>
+      </div></details>
+    </div>
+  </div>
+  <figure class="spaced">
+    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe51561eb-f3d6-45ca-a2f8-c71abfa7c2a9_880x748.png" alt="تفاصيل هيكل MoE" style="max-width:768px">
+    <figcaption>تصور تفصيلي لطبقة مزيج الخبراء يوضح كيفية اختيار الموجه للخبراء بناءً على رموز الإدخال</figcaption>
+  </figure>
+</div>
 
-                    <div class="card bg-white p-6 animate-on-scroll" style="transition-delay: 0.4s;">
-                        <div class="text-blue-600 text-4xl mb-4">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">آليات موازنة الحمل</h3>
-                        <p>
-                            تقنيات تضمن توزيع الرموز بالتساوي بين الخبراء، مما يمنع استخدام بعض الخبراء بشكل مفرط بينما يبقى البعض الآخر غير مدرب بشكل كاف. هذه التقنيات ضرورية لاستقرار تدريب MoE.
-                        </p>
-                        <button class="accordion-button mt-4 bg-gray-100 hover:bg-gray-200 rounded">
-                            <span>معرفة المزيد</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="accordion-content">
-                            <div class="p-4">
-                                <p class="mb-3">
-                                    تشمل تقنيات موازنة الحمل الشائعة:
-                                </p>
-                                <ul class="list-disc pr-5 mb-3">
-                                    <li>خسارة مساعدة: هدف تدريب إضافي يعاقب توزيعات التوجيه غير المتساوية</li>
-                                    <li>سعة الخبير: تحديد عدد الرموز التي يمكن لكل خبير معالجتها في الدفعة الواحدة</li>
-                                    <li>طريقة KeepTopK: فرض توزيع أكثر توازناً للرموز بين الخبراء</li>
-                                </ul>
-                                <p>
-                                    بدون موازنة الحمل المناسبة، يمكن أن تعاني نماذج MoE من "انهيار الخبير"، حيث يرسل الموجه معظم الرموز إلى عدد قليل من الخبراء فقط، مما يقلل النموذج فعلياً إلى نموذج أصغر بكثير.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- ===== ADVANTAGES ===== -->
+<div class="section fade-up" id="advantages">
+  <h2 class="section-title"><i class="fas fa-bolt"></i> مميزات MoE</h2>
+  <div class="two-col">
+    <div>
+      <div class="info-box adv">
+        <h3>قابلية التوسع المحسنة</h3>
+        <p>يسمح MoE للنماذج بدمج مليارات المعلمات مع تنشيط جزء صغير فقط أثناء الاستدلال. هذا يتيح التوسع إلى أحجام نموذج أكبر بكثير دون زيادات متناسبة في الحوسبة.</p>
+      </div>
+      <div class="info-box adv success">
+        <h3>كفاءة الحوسبة</h3>
+        <p>من خلال توجيه الرموز بشكل انتقائي إلى الخبراء الأكثر صلة، يقلل MoE من العمليات الحسابية الزائدة التي تحدث في النماذج الكثيفة التقليدية، مما يؤدي إلى استدلال أسرع واستهلاك طاقة أقل رغم حجم النموذج الإجمالي الأكبر.</p>
+      </div>
+      <div class="info-box adv sec">
+        <h3>معرفة متخصصة</h3>
+        <p>يمكن لكل خبير تطوير معرفة متخصصة لمجالات معينة أو أنماط لغوية، مما يسمح للنموذج بالحفاظ على كل من اتساع وعمق الفهم عبر مواضيع متنوعة.</p>
+      </div>
+    </div>
+    <div>
+      <div class="info-box adv warning">
+        <h3>كفاءة التدريب</h3>
+        <p>يمكن لنماذج MoE تحقيق نفس جودة النماذج الكثيفة مع قدر أقل بكثير من الحوسبة أثناء التدريب المسبق، مما يتيح استخداماً أكثر كفاءة للموارد عند تطوير نماذج جديدة.</p>
+      </div>
+      <div class="info-box adv danger">
+        <h3>تخصيص موارد مرن</h3>
+        <p>يسمح هيكل MoE بتخصيص ديناميكي للموارد الحاسوبية لأجزاء مختلفة من المدخلات، مع تركيز قوة الحوسبة حيث تكون أكثر حاجة لكل رمز محدد.</p>
+      </div>
+      <div class="quote-grad">
+        <blockquote>"يمكن مزيج الخبراء النماذج من التدريب المسبق بقدر أقل بكثير من الحوسبة، مما يعني أنه يمكنك زيادة حجم النموذج أو مجموعة البيانات بشكل كبير دون زيادة متناسبة في تكاليف التدريب."</blockquote>
+        <p>— مدونة Hugging Face</p>
+      </div>
+    </div>
+  </div>
 
-                <div class="mt-12 animate-on-scroll">
-                    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe51561eb-f3d6-45ca-a2f8-c71abfa7c2a9_880x748.png" alt="تفاصيل هيكل MoE" class="w-full max-w-3xl mx-auto rounded-lg shadow-lg">
-                    <div class="image-caption mt-3 text-center">
-                        تصور تفصيلي لطبقة مزيج الخبراء يوضح كيفية اختيار الموجه للخبراء بناءً على رموز الإدخال
-                    </div>
-                </div>
-            </div>
-        </section>
+  <div class="subsection">
+    <h3 class="centered">مقارنة: النموذج الكثيف مقابل نموذج MoE</h3>
+    <div class="table-wrap"><table class="dark-table">
+      <thead><tr><th>المقياس</th><th>النموذج الكثيف التقليدي</th><th>نموذج MoE</th></tr></thead>
+      <tbody>
+        <tr><td>المعلمات</td><td>تُستخدم جميع المعلمات لكل رمز</td><td>تُستخدم فقط معلمات الخبير المختارة لكل رمز</td></tr>
+        <tr><td>استخدام الذاكرة</td><td>متناسب مع حجم النموذج</td><td>مرتفع (يتم تحميل جميع الخبراء في الذاكرة)</td></tr>
+        <tr><td>سرعة الاستدلال</td><td>أبطأ للنماذج الأكبر</td><td>أسرع لنفس عدد المعلمات</td></tr>
+        <tr><td>حوسبة التدريب</td><td>أعلى لنفس الجودة</td><td>أقل لنفس الجودة</td></tr>
+        <tr><td>التخصص</td><td>معرفة عامة موزعة عبر النموذج</td><td>معرفة متخصصة في خبراء مختلفين</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
 
-        <!-- Advantages Section -->
-        <section id="advantages" class="py-16 bg-gray-50">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">مميزات MoE</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div class="space-y-6 animate-on-scroll">
-                        <div class="bg-white p-6 rounded-lg shadow-sm border-r-4 border-blue-500">
-                            <h3 class="text-xl font-semibold mb-2">قابلية التوسع المحسنة</h3>
-                            <p>
-                                يسمح MoE للنماذج بدمج مليارات المعلمات مع تنشيط جزء صغير فقط أثناء الاستدلال. هذا يتيح التوسع إلى أحجام نموذج أكبر بكثير دون زيادات متناسبة في الحوسبة.
-                            </p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm border-r-4 border-green-500">
-                            <h3 class="text-xl font-semibold mb-2">كفاءة الحوسبة</h3>
-                            <p>
-                                من خلال توجيه الرموز بشكل انتقائي إلى الخبراء الأكثر صلة، يقلل MoE من العمليات الحسابية الزائدة التي تحدث في النماذج الكثيفة التقليدية، مما يؤدي إلى استدلال أسرع واستهلاك طاقة أقل رغم حجم النموذج الإجمالي الأكبر.
-                            </p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm border-r-4 border-purple-500">
-                            <h3 class="text-xl font-semibold mb-2">معرفة متخصصة</h3>
-                            <p>
-                                يمكن لكل خبير تطوير معرفة متخصصة لمجالات معينة أو أنماط لغوية، مما يسمح للنموذج بالحفاظ على كل من اتساع وعمق الفهم عبر مواضيع متنوعة.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="space-y-6 animate-on-scroll" style="transition-delay: 0.3s;">
-                        <div class="bg-white p-6 rounded-lg shadow-sm border-r-4 border-yellow-500">
-                            <h3 class="text-xl font-semibold mb-2">كفاءة التدريب</h3>
-                            <p>
-                                يمكن لنماذج MoE تحقيق نفس جودة النماذج الكثيفة مع قدر أقل بكثير من الحوسبة أثناء التدريب المسبق، مما يتيح استخداماً أكثر كفاءة للموارد عند تطوير نماذج جديدة.
-                            </p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm border-r-4 border-red-500">
-                            <h3 class="text-xl font-semibold mb-2">تخصيص موارد مرن</h3>
-                            <p>
-                                يسمح هيكل MoE بتخصيص ديناميكي للموارد الحاسوبية لأجزاء مختلفة من المدخلات، مع تركيز قوة الحوسبة حيث تكون أكثر حاجة لكل رمز محدد.
-                            </p>
-                        </div>
-                        <div class="p-6 bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-lg shadow">
-                            <blockquote class="text-lg italic">
-                                "يمكن مزيج الخبراء النماذج من التدريب المسبق بقدر أقل بكثير من الحوسبة، مما يعني أنه يمكنك زيادة حجم النموذج أو مجموعة البيانات بشكل كبير دون زيادة متناسبة في تكاليف التدريب."
-                            </blockquote>
-<p class="text-right mt-2">— مدونة Hugging Face</p>
-                            </blockquote>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-10 flex justify-center animate-on-scroll">
-                    <div class="bg-white p-6 rounded-lg shadow-md max-w-3xl">
-                        <h3 class="text-xl font-semibold mb-4 text-center">مقارنة: النموذج الكثيف مقابل نموذج MoE</h3>
-                        <table class="min-w-full bg-white">
-                            <thead>
-                                <tr>
-                                    <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-right">المقياس</th>
-                                    <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-right">النموذج الكثيف التقليدي</th>
-                                    <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-right">نموذج MoE</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="py-2 px-4 border-b border-gray-200">المعلمات</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">تُستخدم جميع المعلمات لكل رمز</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">تُستخدم فقط معلمات الخبير المختارة لكل رمز</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 border-b border-gray-200">استخدام الذاكرة</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">متناسب مع حجم النموذج</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">مرتفع (يتم تحميل جميع الخبراء في الذاكرة)</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 border-b border-gray-200">سرعة الاستدلال</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">أبطأ للنماذج الأكبر</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">أسرع لنفس عدد المعلمات</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 border-b border-gray-200">حوسبة التدريب</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">أعلى لنفس الجودة</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">أقل لنفس الجودة</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 px-4 border-b border-gray-200">التخصص</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">معرفة عامة موزعة عبر النموذج</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">معرفة متخصصة في خبراء مختلفين</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!-- ===== IMPLEMENTATIONS ===== -->
+<div class="section fade-up" id="implementations">
+  <h2 class="section-title"><i class="fas fa-rocket"></i> التطبيقات في العالم الحقيقي</h2>
+  <p class="section-desc">تم تطبيق هيكل MoE بنجاح في العديد من نماذج اللغة الكبيرة البارزة، كل منها بنهج وتحسينات فريدة:</p>
+  <div class="grid">
 
-        <!-- Implementations Section -->
-        <section id="implementations" class="py-16 bg-white">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">التطبيقات في العالم الحقيقي</h2>
-                <p class="text-lg mb-8 animate-on-scroll">
-                    تم تطبيق هيكل MoE بنجاح في العديد من نماذج اللغة الكبيرة البارزة، كل منها بنهج وتحسينات فريدة:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="card bg-white shadow-lg overflow-hidden animate-on-scroll">
-                        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 h-3"></div>
-                        <img src="https://miro.medium.com/v2/resize:fit:1400/1*mxMOyyzlzxF1VDauG3NDOg.png" alt="هيكل Mixtral 8x7B" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2">Mixtral 8x7B</h3>
-                            <p class="text-gray-700 mb-4">
-                                طورته شركة Mistral AI، يستخدم Mixtral 8 نماذج خبيرة بهيكل MoE متفرق. لكل رمز، يختار النموذج أفضل خبيرين ملائمين من بين 8 خبراء متاحين.
-                            </p>
-                            <ul class="text-gray-600 mb-4">
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    إجمالي 46.7 مليار معلمة ولكن يستخدم فقط ~12.9 مليار لكل رمز
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    يتفوق على النماذج الكثيفة الأكبر بكثير في المقاييس المعيارية
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    استدلال فعال مع توجيه أفضل خبيرين
-                                </li>
-                            </ul>
-                            <button class="accordion-button bg-gray-100 hover:bg-gray-200 rounded">
-                                <span>تفاصيل تقنية</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                            <div class="accordion-content">
-                                <div class="p-4">
-                                    <p class="mb-3">
-                                        يعتمد Mixtral على هيكل Mistral 7B ولكنه يدمج طبقات MoE التي توجه الرموز إلى 2 من أصل 8 خبراء. هذا يسمح له بتحقيق أداء مماثل للنماذج الأكبر بكثير مع الحفاظ على تكاليف استدلال معقولة.
-                                    </p>
-                                    <p>
-                                        يوضح النموذج كفاءة MoE من خلال تحقيق نتائج على مستوى عالمي في مختلف المقاييس المعيارية مع الحفاظ على عدد قليل من المعلمات النشطة. يستخدم قرارات توجيه رمز برمز، مما يسمح باختيار خبير يعتمد على السياق.
-                                    </p>
-                                    <a href="https://mistral.ai/news/mixtral-of-experts/" class="text-blue-600 hover:underline flex items-center">
-                                        <span>اقرأ المزيد</span>
-                                        <i class="fas fa-external-link-alt mr-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="card impl">
+      <div class="impl-bar" style="background:linear-gradient(90deg,#2563eb,#4338ca)"></div>
+      <img src="https://miro.medium.com/v2/resize:fit:1400/1*mxMOyyzlzxF1VDauG3NDOg.png" alt="هيكل Mixtral 8x7B">
+      <div class="impl-body">
+        <h3>Mixtral 8x7B</h3>
+        <p>طورته شركة Mistral AI، يستخدم Mixtral 8 نماذج خبيرة بهيكل MoE متفرق. لكل رمز، يختار النموذج أفضل خبيرين ملائمين من بين 8 خبراء متاحين.</p>
+        <ul class="checks">
+          <li><span>✓</span> إجمالي 46.7 مليار معلمة ولكن يستخدم فقط ~12.9 مليار لكل رمز</li>
+          <li><span>✓</span> يتفوق على النماذج الكثيفة الأكبر بكثير في المقاييس المعيارية</li>
+          <li><span>✓</span> استدلال فعال مع توجيه أفضل خبيرين</li>
+        </ul>
+        <details class="solution"><summary><span>تفاصيل تقنية</span><i class="fas fa-chevron-down"></i></summary><div>
+          <p>يعتمد Mixtral على هيكل Mistral 7B ولكنه يدمج طبقات MoE التي توجه الرموز إلى 2 من أصل 8 خبراء. هذا يسمح له بتحقيق أداء مماثل للنماذج الأكبر بكثير مع الحفاظ على تكاليف استدلال معقولة.</p>
+          <p>يوضح النموذج كفاءة MoE من خلال تحقيق نتائج على مستوى عالمي في مختلف المقاييس المعيارية مع الحفاظ على عدد قليل من المعلمات النشطة. يستخدم قرارات توجيه رمز برمز، مما يسمح باختيار خبير يعتمد على السياق.</p>
+          <a href="https://mistral.ai/news/mixtral-of-experts/"><span>اقرأ المزيد</span><i class="fas fa-external-link-alt"></i></a>
+        </div></details>
+      </div>
+    </div>
 
-                    <div class="card bg-white shadow-lg overflow-hidden animate-on-scroll" style="transition-delay: 0.2s;">
-                        <div class="bg-gradient-to-r from-green-600 to-teal-700 h-3"></div>
-                        <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F24a62bde-009a-45b4-857f-d5f4461b9ea1_2412x1354.png" alt="هيكل GPT-4" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2">GPT-4</h3>
-                            <p class="text-gray-700 mb-4">
-                                وفقاً للتقارير، ينفذ GPT-4 شكلاً من أشكال MoE باستخدام 8 نماذج خبيرة أصغر بدلاً من شبكة واحدة ضخمة، مما يتيح تحسين الأداء والمعرفة المتخصصة.
-                            </p>
-                            <ul class="text-gray-600 mb-4">
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    نماذج خبيرة متعددة تتخصص كل منها في مجالات مختلفة
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    يُقال أنه يحتوي على 8 نماذج خبيرة بحوالي ~220 مليار معلمة لكل منها
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    نظام منسق يدير التوجيه بين الخبراء
-                                </li>
-                            </ul>
-                            <button class="accordion-button bg-gray-100 hover:bg-gray-200 rounded">
-                                <span>تفاصيل تقنية</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                            <div class="accordion-content">
-                                <div class="p-4">
-                                    <p class="mb-3">
-                                        بينما لم تؤكد OpenAI رسمياً الهيكل الدقيق، تشير التقارير إلى أن GPT-4 يستخدم نهج مزيج الخبراء لتحسين الأداء وكفاءة الاستدلال.
-                                    </p>
-                                    <p>
-                                        يتضمن الهيكل المُبلغ عنه نماذج متخصصة متعددة تنسقها نظام توجيه مركزي، مما يسمح بخبرة متخصصة في المجال مع الحفاظ على القدرات العامة. يُعتقد أن هذا الهيكل يساهم في أداء GPT-4 القوي عبر المهام المتنوعة.
-                                    </p>
-                                    <a href="https://cameronrwolfe.substack.com/p/google-gemini-fact-or-fiction" class="text-blue-600 hover:underline flex items-center">
-                                        <span>اقرأ المزيد</span>
-                                        <i class="fas fa-external-link-alt mr-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="card impl">
+      <div class="impl-bar" style="background:linear-gradient(90deg,#059669,#0f766e)"></div>
+      <img src="https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F24a62bde-009a-45b4-857f-d5f4461b9ea1_2412x1354.png" alt="هيكل GPT-4">
+      <div class="impl-body">
+        <h3>GPT-4</h3>
+        <p>وفقاً للتقارير، ينفذ GPT-4 شكلاً من أشكال MoE باستخدام 8 نماذج خبيرة أصغر بدلاً من شبكة واحدة ضخمة، مما يتيح تحسين الأداء والمعرفة المتخصصة.</p>
+        <ul class="checks">
+          <li><span>✓</span> نماذج خبيرة متعددة تتخصص كل منها في مجالات مختلفة</li>
+          <li><span>✓</span> يُقال أنه يحتوي على 8 نماذج خبيرة بحوالي ~220 مليار معلمة لكل منها</li>
+          <li><span>✓</span> نظام منسق يدير التوجيه بين الخبراء</li>
+        </ul>
+        <details class="solution"><summary><span>تفاصيل تقنية</span><i class="fas fa-chevron-down"></i></summary><div>
+          <p>بينما لم تؤكد OpenAI رسمياً الهيكل الدقيق، تشير التقارير إلى أن GPT-4 يستخدم نهج مزيج الخبراء لتحسين الأداء وكفاءة الاستدلال.</p>
+          <p>يتضمن الهيكل المُبلغ عنه نماذج متخصصة متعددة تنسقها نظام توجيه مركزي، مما يسمح بخبرة متخصصة في المجال مع الحفاظ على القدرات العامة. يُعتقد أن هذا الهيكل يساهم في أداء GPT-4 القوي عبر المهام المتنوعة.</p>
+          <a href="https://cameronrwolfe.substack.com/p/google-gemini-fact-or-fiction"><span>اقرأ المزيد</span><i class="fas fa-external-link-alt"></i></a>
+        </div></details>
+      </div>
+    </div>
 
-                    <div class="card bg-white shadow-lg overflow-hidden animate-on-scroll" style="transition-delay: 0.4s;">
-                        <div class="bg-gradient-to-r from-red-600 to-pink-700 h-3"></div>
-                        <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe/03_switch_layer.png" alt="هيكل Switch Transformer" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2">Switch Transformer</h3>
-                            <p class="text-gray-700 mb-4">
-                                طورته Google Research، كان Switch Transformer رائداً في نهج MoE المبسط مع توجيه أعلى-1، حيث تتم معالجة كل رمز بواسطة خبير واحد فقط.
-                            </p>
-                            <ul class="text-gray-600 mb-4">
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    توجيه مبسط مع خبير واحد لكل رمز
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    يتوسع إلى نماذج ذات ترليون معلمة
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="text-green-500 ml-2">✓</span>
-                                    تقليل النفقات العامة للاتصالات مقارنة بنُهج MoE الأخرى
-                                </li>
-                            </ul>
-                            <button class="accordion-button bg-gray-100 hover:bg-gray-200 rounded">
-                                <span>تفاصيل تقنية</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                            <div class="accordion-content">
-                                <div class="p-4">
-                                    <p class="mb-3">
-                                        قدم Switch Transformer عدة تحسينات رئيسية لنهج MoE، بما في ذلك آلية توجيه مبسطة تختار خبيراً واحداً فقط لكل رمز، مما يقلل من تكاليف الاتصال وتعقيد الحوسبة.
-                                    </p>
-                                    <p>
-                                        يستخدم النموذج أيضاً تقنيات مثل الدقة الانتقائية (استخدام دقة أقل لحساب الخبير) وعوامل سعة الخبير لتحسين استقرار التدريب وكفاءته. سمحت هذه الابتكارات لـ Switch Transformer بالتوسع إلى أكثر من ترليون معلمة مع الحفاظ على تكاليف تدريب معقولة.
-                                    </p>
-                                    <a href="https://arxiv.org/abs/2101.03961" class="text-blue-600 hover:underline flex items-center">
-                                        <span>اقرأ المزيد</span>
-                                        <i class="fas fa-external-link-alt mr-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="card impl">
+      <div class="impl-bar" style="background:linear-gradient(90deg,#dc2626,#be185d)"></div>
+      <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe/03_switch_layer.png" alt="هيكل Switch Transformer">
+      <div class="impl-body">
+        <h3>Switch Transformer</h3>
+        <p>طورته Google Research، كان Switch Transformer رائداً في نهج MoE المبسط مع توجيه أعلى-1، حيث تتم معالجة كل رمز بواسطة خبير واحد فقط.</p>
+        <ul class="checks">
+          <li><span>✓</span> توجيه مبسط مع خبير واحد لكل رمز</li>
+          <li><span>✓</span> يتوسع إلى نماذج ذات ترليون معلمة</li>
+          <li><span>✓</span> تقليل النفقات العامة للاتصالات مقارنة بنُهج MoE الأخرى</li>
+        </ul>
+        <details class="solution"><summary><span>تفاصيل تقنية</span><i class="fas fa-chevron-down"></i></summary><div>
+          <p>قدم Switch Transformer عدة تحسينات رئيسية لنهج MoE، بما في ذلك آلية توجيه مبسطة تختار خبيراً واحداً فقط لكل رمز، مما يقلل من تكاليف الاتصال وتعقيد الحوسبة.</p>
+          <p>يستخدم النموذج أيضاً تقنيات مثل الدقة الانتقائية (استخدام دقة أقل لحساب الخبير) وعوامل سعة الخبير لتحسين استقرار التدريب وكفاءته. سمحت هذه الابتكارات لـ Switch Transformer بالتوسع إلى أكثر من ترليون معلمة مع الحفاظ على تكاليف تدريب معقولة.</p>
+          <a href="https://arxiv.org/abs/2101.03961"><span>اقرأ المزيد</span><i class="fas fa-external-link-alt"></i></a>
+        </div></details>
+      </div>
+    </div>
+  </div>
 
-                <div class="mt-12 animate-on-scroll">
-                    <h3 class="text-2xl font-semibold mb-6">تطبيقات MoE البارزة الأخرى</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="py-3 px-4 border-b text-right">النموذج</th>
-                                    <th class="py-3 px-4 border-b text-right">المنظمة</th>
-                                    <th class="py-3 px-4 border-b text-right">الميزات الرئيسية</th>
-                                    <th class="py-3 px-4 border-b text-right">السنة</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b">GShard</td>
-                                    <td class="py-3 px-4 border-b">Google Research</td>
-                                    <td class="py-3 px-4 border-b">توجيه أعلى-2، طبقات MoE متناوبة، عامل سعة الخبير</td>
-                                    <td class="py-3 px-4 border-b">2020</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b">GLaM</td>
-                                    <td class="py-3 px-4 border-b">Google Research</td>
-                                    <td class="py-3 px-4 border-b">MoE بـ 1.2 ترليون معلمة مع 64 خبيراً لكل طبقة، تقليل 95% في حوسبة التدريب</td>
-                                    <td class="py-3 px-4 border-b">2021</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b">NLLB-MoE</td>
-                                    <td class="py-3 px-4 border-b">Meta AI</td>
-                                    <td class="py-3 px-4 border-b">نموذج ترجمة متعدد اللغات مع 1.5 مليار معلمة، دعم 128 لغة</td>
-                                    <td class="py-3 px-4 border-b">2022</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b">DeepSeek-MoE</td>
-                                    <td class="py-3 px-4 border-b">DeepSeek</td>
-                                    <td class="py-3 px-4 border-b">نموذج MoE مفتوح المصدر بـ 16 مليار معلمة مع استدلال رياضي قوي</td>
-                                    <td class="py-3 px-4 border-b">2023</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <div class="subsection">
+    <h3>تطبيقات MoE البارزة الأخرى</h3>
+    <div class="table-wrap"><table class="dark-table">
+      <thead><tr><th>النموذج</th><th>المنظمة</th><th>الميزات الرئيسية</th><th>السنة</th></tr></thead>
+      <tbody>
+        <tr><td>GShard</td><td>Google Research</td><td>توجيه أعلى-2، طبقات MoE متناوبة، عامل سعة الخبير</td><td>2020</td></tr>
+        <tr><td>GLaM</td><td>Google Research</td><td>MoE بـ 1.2 ترليون معلمة مع 64 خبيراً لكل طبقة، تقليل 95% في حوسبة التدريب</td><td>2021</td></tr>
+        <tr><td>NLLB-MoE</td><td>Meta AI</td><td>نموذج ترجمة متعدد اللغات مع 1.5 مليار معلمة، دعم 128 لغة</td><td>2022</td></tr>
+        <tr><td>DeepSeek-MoE</td><td>DeepSeek</td><td>نموذج MoE مفتوح المصدر بـ 16 مليار معلمة مع استدلال رياضي قوي</td><td>2023</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
 
-        <!-- Challenges Section -->
-        <section id="challenges" class="py-16 bg-gray-50">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">التحديات التقنية</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div class="animate-on-scroll">
-                        <h3 class="text-2xl font-semibold mb-4">تحديات التدريب والاستدلال</h3>
-                        <div class="space-y-4">
-                            <div class="bg-white p-5 rounded-lg shadow-sm border-r-4 border-red-500">
-                                <h4 class="font-semibold text-lg mb-2">متطلبات ذاكرة عالية</h4>
-                                <p>
-                                    على الرغم من أن نماذج MoE تنشط فقط مجموعة فرعية من المعلمات أثناء الاستدلال، يجب تحميل جميع الخبراء في الذاكرة. هذا يخلق متطلبات عالية لذاكرة الفيديو (VRAM) يمكن أن تحد من خيارات النشر.
-                                </p>
-                            </div>
-                            <div class="bg-white p-5 rounded-lg shadow-sm border-r-4 border-orange-500">
-                                <h4 class="font-semibold text-lg mb-2">عدم استقرار التدريب</h4>
-                                <p>
-                                    يمكن أن تؤدي آليات التوجيه في هياكل MoE إلى عدم استقرار التدريب. غالباً ما تكون الخسائر الإضافية (مثل خسارة موازنة الحمل المساعدة وخسارة z للموجه) مطلوبة لاستقرار التدريب.
-                                </p>
-                            </div>
-                            <div class="bg-white p-5 rounded-lg shadow-sm border-r-4 border-yellow-500">
-                                <h4 class="font-semibold text-lg mb-2">تحديات الضبط الدقيق</h4>
-                                <p>
-                                    تميل نماذج MoE إلى المبالغة في الملاءمة أثناء الضبط الدقيق بشكل أسرع من النماذج الكثيفة. تتطلب معلمات تجريبية مختلفة وأحياناً تحديث معلمات انتقائي لمنع المبالغة في الملاءمة.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="animate-on-scroll" style="transition-delay: 0.3s;">
-                        <h3 class="text-2xl font-semibold mb-4">تحديات معمارية</h3>
-                        <div class="space-y-4">
-                            <div class="bg-white p-5 rounded-lg shadow-sm border-r-4 border-teal-500">
-                                <h4 class="font-semibold text-lg mb-2">موازنة الحمل</h4>
-                                <p>
-                                    ضمان توزيع الرموز بالتساوي بين الخبراء ليس بالأمر السهل. يمكن أن يؤدي التوجيه غير المتساوي إلى نقص استخدام بعض الخبراء مع زيادة تحميل آخرين.
-                                </p>
-                            </div>
-                            <div class="bg-white p-5 rounded-lg shadow-sm border-r-4 border-blue-500">
-                                <h4 class="font-semibold text-lg mb-2">نفقات الاتصال العامة</h4>
-                                <p>
-                                    في إعدادات التدريب الموزع، تتطلب هياكل MoE اتصالاً كبيراً بين الأجهزة حيث يتم توجيه الرموز إلى خبراء قد يكونون على أجهزة مختلفة. هذا يمكن أن يصبح عنق زجاجة.
-                                </p>
-                            </div>
-                            <div class="bg-white p-5 rounded-lg shadow-sm border-r-4 border-purple-500">
-                                <h4 class="font-semibold text-lg mb-2">تخطيط سعة الخبير</h4>
-                                <p>
-                                    تحديد العدد المناسب من الخبراء وسعتهم أمر بالغ الأهمية. قلة عدد الخبراء يمكن أن تحد من قدرات النموذج، بينما كثرتهم يمكن أن تؤدي إلى استخدام غير فعال للموارد.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-12 animate-on-scroll">
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold mb-4">الحلول والتخفيفات</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="font-semibold text-lg mb-2">لاستقرار التدريب</h4>
-                                <ul class="list-disc pr-5 space-y-2">
-                                    <li>خسارة موازنة الحمل المساعدة لتشجيع توزيع متساوٍ للرموز</li>
-                                    <li>خسارة z للموجه لمنع مدخلات توجيه كبيرة وعدم الاستقرار</li>
-                                    <li>تقنيات الدقة الانتقائية (استخدام دقة أقل لحساب الخبير)</li>
-                                    <li>استراتيجيات إسقاط وتنظيم مصممة خصيصاً لـ MoE</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-lg mb-2">لكفاءة النشر</h4>
-                                <ul class="list-disc pr-5 space-y-2">
-                                    <li>توازي الخبراء عبر أجهزة متعددة</li>
-                                    <li>تقنيات التكميم لتقليل استخدام الذاكرة</li>
-                                    <li>تقليم الخبراء لإزالة الخبراء الزائدين أو قليلي الاستخدام</li>
-                                    <li>تحميل الخبراء المشروط بناءً على متطلبات المهمة المتوقعة</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <p class="italic text-gray-600">
-                                يستمر البحث في تطوير حلول محسنة لهذه التحديات، مما يجعل هياكل MoE أكثر عملية للنشر في العالم الحقيقي.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!-- ===== CHALLENGES ===== -->
+<div class="section fade-up" id="challenges">
+  <h2 class="section-title"><i class="fas fa-triangle-exclamation"></i> التحديات التقنية</h2>
+  <div class="two-col">
+    <div>
+      <h3>تحديات التدريب والاستدلال</h3>
+      <div class="info-box danger">
+        <h4>متطلبات ذاكرة عالية</h4>
+        <p>على الرغم من أن نماذج MoE تنشط فقط مجموعة فرعية من المعلمات أثناء الاستدلال، يجب تحميل جميع الخبراء في الذاكرة. هذا يخلق متطلبات عالية لذاكرة الفيديو (VRAM) يمكن أن تحد من خيارات النشر.</p>
+      </div>
+      <div class="info-box warning">
+        <h4>عدم استقرار التدريب</h4>
+        <p>يمكن أن تؤدي آليات التوجيه في هياكل MoE إلى عدم استقرار التدريب. غالباً ما تكون الخسائر الإضافية (مثل خسارة موازنة الحمل المساعدة وخسارة z للموجه) مطلوبة لاستقرار التدريب.</p>
+      </div>
+      <div class="info-box warning">
+        <h4>تحديات الضبط الدقيق</h4>
+        <p>تميل نماذج MoE إلى المبالغة في الملاءمة أثناء الضبط الدقيق بشكل أسرع من النماذج الكثيفة. تتطلب معلمات تجريبية مختلفة وأحياناً تحديث معلمات انتقائي لمنع المبالغة في الملاءمة.</p>
+      </div>
+    </div>
+    <div>
+      <h3>تحديات معمارية</h3>
+      <div class="info-box success">
+        <h4>موازنة الحمل</h4>
+        <p>ضمان توزيع الرموز بالتساوي بين الخبراء ليس بالأمر السهل. يمكن أن يؤدي التوجيه غير المتساوي إلى نقص استخدام بعض الخبراء مع زيادة تحميل آخرين.</p>
+      </div>
+      <div class="info-box">
+        <h4>نفقات الاتصال العامة</h4>
+        <p>في إعدادات التدريب الموزع، تتطلب هياكل MoE اتصالاً كبيراً بين الأجهزة حيث يتم توجيه الرموز إلى خبراء قد يكونون على أجهزة مختلفة. هذا يمكن أن يصبح عنق زجاجة.</p>
+      </div>
+      <div class="info-box sec">
+        <h4>تخطيط سعة الخبير</h4>
+        <p>تحديد العدد المناسب من الخبراء وسعتهم أمر بالغ الأهمية. قلة عدد الخبراء يمكن أن تحد من قدرات النموذج، بينما كثرتهم يمكن أن تؤدي إلى استخدام غير فعال للموارد.</p>
+      </div>
+    </div>
+  </div>
 
-        <!-- Future Directions Section -->
-        <section id="future" class="py-16 bg-white">
-            <div class="section-container">
-                <h2 class="section-heading text-3xl font-bold">الاتجاهات المستقبلية</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="animate-on-scroll">
-                        <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-6 rounded-lg shadow-sm h-full">
-                            <div class="text-blue-600 text-4xl mb-4">
-                                <i class="fas fa-microchip"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3">تحسينات العتاد</h3>
-                            <p>
-                                من المحتمل أن تركز تطبيقات MoE المستقبلية على تحسينات خاصة بالعتاد تقلل من عنق زجاجة الذاكرة والاتصالات التي تحد حالياً من النشر.
-                            </p>
-                            <ul class="mt-4 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-blue-600 mt-1 ml-2"></i>
-                                    <span>مسرعات متخصصة لعمليات المصفوفات المتفرقة</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-blue-600 mt-1 ml-2"></i>
-                                    <span>أنظمة تحميل الخبراء عند الطلب</span>
-                                </li>
-                                <li class="flex items-start">
-<i class="fas fa-angle-left text-blue-600 mt-1 ml-2"></i>
-                                    <span>أطر إدارة الخبراء الموزعة</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="animate-on-scroll" style="transition-delay: 0.2s;">
-                        <div class="bg-gradient-to-br from-green-100 to-green-200 p-6 rounded-lg shadow-sm h-full">
-                            <div class="text-green-600 text-4xl mb-4">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3">آليات توجيه متقدمة</h3>
-                            <p>
-                                يستكشف البحث استراتيجيات توجيه أكثر تطوراً تفهم بشكل أفضل المحتوى الدلالي للرموز وتتخذ قرارات اختيار خبير أكثر استنارة.
-                            </p>
-                            <ul class="mt-4 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-green-600 mt-1 ml-2"></i>
-                                    <span>توجيه مدرك للسياق يأخذ في الاعتبار علاقات الرموز</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-green-600 mt-1 ml-2"></i>
-                                    <span>تخصيص خبير ذاتي التعديل أثناء الاستدلال</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-green-600 mt-1 ml-2"></i>
-                                    <span>هياكل خبراء هرمية للتخصص متعدد المستويات</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="animate-on-scroll" style="transition-delay: 0.4s;">
-                        <div class="bg-gradient-to-br from-purple-100 to-purple-200 p-6 rounded-lg shadow-sm h-full">
-                            <div class="text-purple-600 text-4xl mb-4">
-                                <i class="fas fa-project-diagram"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3">الهياكل الهجينة</h3>
-                            <p>
-                                قد تمزج النماذج المستقبلية بين MoE وتقنيات الكفاءة الأخرى لإنشاء هياكل هجينة تتغلب على القيود الحالية مع الحفاظ على فوائد تخصص الخبراء.
-                            </p>
-                            <ul class="mt-4 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-purple-600 mt-1 ml-2"></i>
-                                    <span>الجمع بين MoE والتوليد المعزز بالاسترجاع</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-purple-600 mt-1 ml-2"></i>
-                                    <span>دمج MoE مع مكونات استدلال معيارية</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-angle-left text-purple-600 mt-1 ml-2"></i>
-                                    <span>تعديل الهيكل الديناميكي بناءً على تعقيد المدخلات</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+  <div class="subsection">
+    <h3>الحلول والتخفيفات</h3>
+    <div class="two-col">
+      <div>
+        <h4>لاستقرار التدريب</h4>
+        <ul>
+          <li>خسارة موازنة الحمل المساعدة لتشجيع توزيع متساوٍ للرموز</li>
+          <li>خسارة z للموجه لمنع مدخلات توجيه كبيرة وعدم الاستقرار</li>
+          <li>تقنيات الدقة الانتقائية (استخدام دقة أقل لحساب الخبير)</li>
+          <li>استراتيجيات إسقاط وتنظيم مصممة خصيصاً لـ MoE</li>
+        </ul>
+      </div>
+      <div>
+        <h4>لكفاءة النشر</h4>
+        <ul>
+          <li>توازي الخبراء عبر أجهزة متعددة</li>
+          <li>تقنيات التكميم لتقليل استخدام الذاكرة</li>
+          <li>تقليم الخبراء لإزالة الخبراء الزائدين أو قليلي الاستخدام</li>
+          <li>تحميل الخبراء المشروط بناءً على متطلبات المهمة المتوقعة</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">يستمر البحث في تطوير حلول محسنة لهذه التحديات، مما يجعل هياكل MoE أكثر عملية للنشر في العالم الحقيقي.</p>
+  </div>
+</div>
 
-                <div class="mt-16 animate-on-scroll">
-                    <div class="bg-white p-8 rounded-lg shadow-md border border-gray-200">
-                        <h3 class="text-2xl font-semibold mb-6 text-center">اتجاهات البحث الناشئة</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <h4 class="text-lg font-semibold mb-3 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center ml-2">
-                                        <i class="fas fa-star"></i>
-                                    </span>
-                                    تكوين الخبراء المستمر
-                                </h4>
-                                <p class="mr-10">
-                                    البحث في النماذج التي يمكن أن تنشئ أو تدمج أو تقلم الخبراء بشكل ديناميكي أثناء التدريب بناءً على أنماط البيانات المرصودة، مما يسمح بتخصص أكثر مرونة.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-semibold mb-3 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center ml-2">
-                                        <i class="fas fa-rocket"></i>
-                                    </span>
-                                    خبراء متعددي الوسائط
-                                </h4>
-                                <p class="mr-10">
-                                    استكشاف هياكل MoE التي تتعامل مع وسائط مختلفة (نص، صور، صوت) مع خبراء متخصصين لكل نوع من البيانات وتكامل عبر الوسائط.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-semibold mb-3 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center ml-2">
-                                        <i class="fas fa-shield-alt"></i>
-                                    </span>
-                                    استقرار الضبط الدقيق
-                                </h4>
-                                <p class="mr-10">
-                                    تطوير تقنيات لتحسين استقرار وأداء نماذج MoE أثناء الضبط الدقيق، ومعالجة تحديات المبالغة في الملاءمة التي تُلاحظ حالياً.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-semibold mb-3 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center ml-2">
-                                        <i class="fas fa-cloud"></i>
-                                    </span>
-                                    نشر MoE متوافق مع السحابة
-                                </h4>
-                                <p class="mr-10">
-                                    أنظمة لتوسيع نماذج MoE بشكل ديناميكي في بيئات السحابة، مع تحميل الخبراء المطلوبين فقط بناءً على أنماط الاستخدام وتحسين تخصيص الموارد.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="mt-8 text-center">
-                            <p class="text-gray-600 italic">
-                                مع استمرار البحث في هياكل MoE في التقدم، يمكننا توقع نماذج لغوية أكثر كفاءة وقابلية للتوسع وقدرة تستفيد من قوة الخبرة المتخصصة.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!-- ===== FUTURE ===== -->
+<div class="section fade-up" id="future">
+  <h2 class="section-title"><i class="fas fa-forward"></i> الاتجاهات المستقبلية</h2>
+  <div class="grid">
+    <div class="card grad-blue">
+      <div class="big-icon" style="color:var(--primary)"><i class="fas fa-microchip"></i></div>
+      <h3>تحسينات العتاد</h3>
+      <p>من المحتمل أن تركز تطبيقات MoE المستقبلية على تحسينات خاصة بالعتاد تقلل من عنق زجاجة الذاكرة والاتصالات التي تحد حالياً من النشر.</p>
+      <ul class="arrows">
+        <li><i class="fas fa-angle-left" style="color:var(--primary)"></i><span>مسرعات متخصصة لعمليات المصفوفات المتفرقة</span></li>
+        <li><i class="fas fa-angle-left" style="color:var(--primary)"></i><span>أنظمة تحميل الخبراء عند الطلب</span></li>
+        <li><i class="fas fa-angle-left" style="color:var(--primary)"></i><span>أطر إدارة الخبراء الموزعة</span></li>
+      </ul>
+    </div>
+    <div class="card grad-green">
+      <div class="big-icon" style="color:var(--success)"><i class="fas fa-brain"></i></div>
+      <h3>آليات توجيه متقدمة</h3>
+      <p>يستكشف البحث استراتيجيات توجيه أكثر تطوراً تفهم بشكل أفضل المحتوى الدلالي للرموز وتتخذ قرارات اختيار خبير أكثر استنارة.</p>
+      <ul class="arrows">
+        <li><i class="fas fa-angle-left" style="color:var(--success)"></i><span>توجيه مدرك للسياق يأخذ في الاعتبار علاقات الرموز</span></li>
+        <li><i class="fas fa-angle-left" style="color:var(--success)"></i><span>تخصيص خبير ذاتي التعديل أثناء الاستدلال</span></li>
+        <li><i class="fas fa-angle-left" style="color:var(--success)"></i><span>هياكل خبراء هرمية للتخصص متعدد المستويات</span></li>
+      </ul>
+    </div>
+    <div class="card grad-purple">
+      <div class="big-icon" style="color:#a78bfa"><i class="fas fa-project-diagram"></i></div>
+      <h3>الهياكل الهجينة</h3>
+      <p>قد تمزج النماذج المستقبلية بين MoE وتقنيات الكفاءة الأخرى لإنشاء هياكل هجينة تتغلب على القيود الحالية مع الحفاظ على فوائد تخصص الخبراء.</p>
+      <ul class="arrows">
+        <li><i class="fas fa-angle-left" style="color:#a78bfa"></i><span>الجمع بين MoE والتوليد المعزز بالاسترجاع</span></li>
+        <li><i class="fas fa-angle-left" style="color:#a78bfa"></i><span>دمج MoE مع مكونات استدلال معيارية</span></li>
+        <li><i class="fas fa-angle-left" style="color:#a78bfa"></i><span>تعديل الهيكل الديناميكي بناءً على تعقيد المدخلات</span></li>
+      </ul>
+    </div>
+  </div>
 
-        <!-- Call to Action Section -->
-        <section class="py-16 bg-gradient-to-r from-blue-600 to-indigo-800 text-white">
-            <div class="section-container text-center">
-                <h2 class="text-3xl font-bold mb-6">استكشف MoE في مشاريعك</h2>
-                <p class="text-xl mb-8 max-w-3xl mx-auto">
-                    تمثل هياكل مزيج الخبراء أحد الاتجاهات الأكثر وعداً لتوسيع نماذج اللغة بكفاءة. ابق على اطلاع بأحدث الأبحاث والتطبيقات.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                    <a href="https://huggingface.co/blog/moe" class="bg-white bg-opacity-20 hover:bg-opacity-30 py-4 px-6 rounded-lg transition duration-300 flex flex-col items-center">
-                        <i class="fas fa-book text-3xl mb-3"></i>
-                        <span class="font-semibold">اقرأ دليل Hugging Face</span>
-                    </a>
-                    <a href="https://mistral.ai/news/mixtral-of-experts/" class="bg-white bg-opacity-20 hover:bg-opacity-30 py-4 px-6 rounded-lg transition duration-300 flex flex-col items-center">
-                        <i class="fas fa-code text-3xl mb-3"></i>
-                        <span class="font-semibold">استكشف Mixtral</span>
-                    </a>
-                    <a href="https://arxiv.org/abs/2101.03961" class="bg-white bg-opacity-20 hover:bg-opacity-30 py-4 px-6 rounded-lg transition duration-300 flex flex-col items-center">
-                        <i class="fas fa-flask text-3xl mb-3"></i>
-                        <span class="font-semibold">اقرأ الأوراق البحثية</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
+  <div class="subsection">
+    <h3 class="centered">اتجاهات البحث الناشئة</h3>
+    <div class="two-col">
+      <div class="trend">
+        <h4><span class="icon-circle" style="background:rgba(99,102,241,.2);color:var(--primary)"><i class="fas fa-star"></i></span> تكوين الخبراء المستمر</h4>
+        <p>البحث في النماذج التي يمكن أن تنشئ أو تدمج أو تقلم الخبراء بشكل ديناميكي أثناء التدريب بناءً على أنماط البيانات المرصودة، مما يسمح بتخصص أكثر مرونة.</p>
+      </div>
+      <div class="trend">
+        <h4><span class="icon-circle" style="background:rgba(16,185,129,.2);color:var(--success)"><i class="fas fa-rocket"></i></span> خبراء متعددي الوسائط</h4>
+        <p>استكشاف هياكل MoE التي تتعامل مع وسائط مختلفة (نص، صور، صوت) مع خبراء متخصصين لكل نوع من البيانات وتكامل عبر الوسائط.</p>
+      </div>
+      <div class="trend">
+        <h4><span class="icon-circle" style="background:rgba(245,158,11,.2);color:var(--warning)"><i class="fas fa-shield-alt"></i></span> استقرار الضبط الدقيق</h4>
+        <p>تطوير تقنيات لتحسين استقرار وأداء نماذج MoE أثناء الضبط الدقيق، ومعالجة تحديات المبالغة في الملاءمة التي تُلاحظ حالياً.</p>
+      </div>
+      <div class="trend">
+        <h4><span class="icon-circle" style="background:rgba(239,68,68,.2);color:#ef4444"><i class="fas fa-cloud"></i></span> نشر MoE متوافق مع السحابة</h4>
+        <p>أنظمة لتوسيع نماذج MoE بشكل ديناميكي في بيئات السحابة، مع تحميل الخبراء المطلوبين فقط بناءً على أنماط الاستخدام وتحسين تخصيص الموارد.</p>
+      </div>
+    </div>
+    <p class="note text-center">مع استمرار البحث في هياكل MoE في التقدم، يمكننا توقع نماذج لغوية أكثر كفاءة وقابلية للتوسع وقدرة تستفيد من قوة الخبرة المتخصصة.</p>
+  </div>
+</div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-6 md:mb-0">
-                    <h2 class="text-2xl font-bold mb-2">مزيج الخبراء في نماذج اللغة الكبيرة</h2>
-                    <p class="text-gray-400">دليل تفاعلي لفهم هيكل MoE</p>
-                </div>
-                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2">الموارد</h3>
-                        <ul class="space-y-2">
-                            <li><a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts" class="text-gray-400 hover:text-white transition">دليل مرئي لـ MoE</a></li>
-                            <li><a href="https://huggingface.co/blog/moe" class="text-gray-400 hover:text-white transition">مدونة Hugging Face حول MoE</a></li>
-                            <li><a href="https://arxiv.org/abs/2101.03961" class="text-gray-400 hover:text-white transition">ورقة بحثية عن Switch Transformers</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2">النماذج</h3>
-                        <ul class="space-y-2">
-                            <li><a href="https://mistral.ai/news/mixtral-of-experts/" class="text-gray-400 hover:text-white transition">Mixtral 8x7B</a></li>
-                            <li><a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" class="text-gray-400 hover:text-white transition">لوحات صدارة نماذج اللغة الكبيرة</a></li>
-                            <li><a href="https://cameronrwolfe.substack.com/p/google-gemini-fact-or-fiction" class="text-gray-400 hover:text-white transition">تحليل Gemini و GPT-4</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-500">
-                <p>الصور مستمدة من مصادر عامة بما في ذلك Hugging Face وMistral AI والمنشورات البحثية.</p>
-                <p class="mt-2">© 2024 - دليل تفاعلي لمزيج الخبراء في نماذج اللغة الكبيرة</p>
-            </div>
-        </div>
-    </footer>
+<!-- ===== CTA ===== -->
+<div class="section fade-up cta" id="explore">
+  <h2>استكشف MoE في مشاريعك</h2>
+  <p>تمثل هياكل مزيج الخبراء أحد الاتجاهات الأكثر وعداً لتوسيع نماذج اللغة بكفاءة. ابق على اطلاع بأحدث الأبحاث والتطبيقات.</p>
+  <div class="cta-links">
+    <a href="https://huggingface.co/blog/moe" class="cta-link"><i class="fas fa-book"></i><span>اقرأ دليل Hugging Face</span></a>
+    <a href="https://mistral.ai/news/mixtral-of-experts/" class="cta-link"><i class="fas fa-code"></i><span>استكشف Mixtral</span></a>
+    <a href="https://arxiv.org/abs/2101.03961" class="cta-link"><i class="fas fa-flask"></i><span>اقرأ الأوراق البحثية</span></a>
+  </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // وظيفة الأكورديون
-            const accordionButtons = document.querySelectorAll('.accordion-button');
-            accordionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const content = this.nextElementSibling;
+<!-- ===== RESOURCES ===== -->
+<div class="section fade-up" id="resources">
+  <h2 class="section-title"><i class="fas fa-book-open"></i> مزيج الخبراء في نماذج اللغة الكبيرة</h2>
+  <p class="section-desc">دليل تفاعلي لفهم هيكل MoE</p>
+  <div class="two-col">
+    <div>
+      <h3>الموارد</h3>
+      <ul class="links">
+        <li><a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts">دليل مرئي لـ MoE</a></li>
+        <li><a href="https://huggingface.co/blog/moe">مدونة Hugging Face حول MoE</a></li>
+        <li><a href="https://arxiv.org/abs/2101.03961">ورقة بحثية عن Switch Transformers</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>النماذج</h3>
+      <ul class="links">
+        <li><a href="https://mistral.ai/news/mixtral-of-experts/">Mixtral 8x7B</a></li>
+        <li><a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard">لوحات صدارة نماذج اللغة الكبيرة</a></li>
+        <li><a href="https://cameronrwolfe.substack.com/p/google-gemini-fact-or-fiction">تحليل Gemini و GPT-4</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="text-muted" style="font-size:.85rem;margin-top:12px">الصور مستمدة من مصادر عامة بما في ذلك Hugging Face وMistral AI والمنشورات البحثية.</p>
+  <p class="text-muted" style="font-size:.85rem;margin:4px 0 0">© 2024 - دليل تفاعلي لمزيج الخبراء في نماذج اللغة الكبيرة</p>
+</div>
 
-                    if (content.classList.contains('active')) {
-                        content.classList.remove('active');
-                        content.style.maxHeight = null;
-                        this.querySelector('i').classList.remove('fa-chevron-up');
-                        this.querySelector('i').classList.add('fa-chevron-down');
-                    } else {
-                        content.classList.add('active');
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                        this.querySelector('i').classList.remove('fa-chevron-down');
-                        this.querySelector('i').classList.add('fa-chevron-up');
-                    }
-                });
-            });
+<div class="page-nav"><a class="nav-btn prev" href="/">← الرئيسية</a><a class="nav-btn next" href="/courses.html">جميع الدورات →</a></div>
+</div>
 
-            // التمرير السلس لروابط الإرساء
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        window.scrollTo({
-                            top: target.offsetTop - 70,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-
-            // الرسوم المتحركة عند التمرير
-            function checkVisible() {
-                const elements = document.querySelectorAll('.animate-on-scroll');
-                elements.forEach(element => {
-                    const position = element.getBoundingClientRect();
-                    if (position.top < window.innerHeight * 0.75) {
-                        element.classList.add('visible');
-                    }
-                });
-            }
-
-            // التحقق من العناصر عند التحميل
-            checkVisible();
-
-            // التحقق من العناصر عند التمرير
-            window.addEventListener('scroll', checkVisible);
-        });
-    </script>
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

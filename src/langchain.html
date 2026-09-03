@@ -13,465 +13,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangChain Python Tutorial</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <meta name="description" content="Overview of the LangChain Python framework: development with LCEL and LangGraph, productionization with LangSmith, deployment, libraries and tutorials.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .tutorial-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .tutorial-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-link {
-            position: relative;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .section-heading {
-            position: relative;
-            padding-bottom: 0.5rem;
-        }
-
-        .section-heading::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background-color: #3b82f6;
-        }
-
-        @media print {
-            .container {
-                width: 100%;
-                max-width: none;
-            }
-
-            section {
-                page-break-inside: avoid;
-            }
-        }
+        :root{--primary:#6366f1;--primary-hover:#818cf8;--glow:rgba(99,102,241,.14)}
+        .hero-cta{margin-top:24px}
+        .section .card h3{margin:0 0 8px;font-size:1.1rem}
+        .section .card p{margin-bottom:10px}
+        .card .more{display:inline-block;margin-top:4px;font-weight:600}
+        .section .card ul{margin:0;padding-left:18px}
+        .framework-fig img{background:#fff;padding:12px}
+        .tut-card{padding:0;overflow:hidden}
+        .tut-head{padding:16px 20px;background:#2563eb}
+        .section .tut-head h3{color:#fff;margin:0;font-size:1.05rem}
+        .tut-head.c2{background:#4f46e5}.tut-head.c3{background:#9333ea}.tut-head.c4{background:#16a34a}
+        .tut-body{padding:20px}
+        .center-cta{text-align:center;margin-top:28px}
     </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style id="dark-theme-override">
-:root {
-    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-    --text:#f1f5f9;--text2:#94a3b8;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-    --code:#0d1117;
-}
-body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
-.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
-.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
-.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
-h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
-.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
-pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
-table, th, td { border-color:var(--border2)!important; }
-th { background:var(--surface2)!important; color:var(--text)!important; }
-td { background:var(--surface)!important; color:var(--text2)!important; }
-tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
-a { color:var(--primary)!important; }
-a:hover { color:#60a5fa!important; }
-.badge { opacity:0.9; }
-nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
-nav a, .navbar a, .nav-link { color:var(--text2)!important; }
-nav a:hover, .navbar a:hover { color:var(--text)!important; }
-.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
-.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
-.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
-.sidebar a, aside a { color:var(--text2)!important; }
-.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
-.sidebar a.active, aside a.active { color:var(--primary)!important; }
-footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
-img { border-radius:8px; }
-.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
-/* Light mode */
-body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
-body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
-body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
-body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
-body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
-body.light-mode footer { background:#e2e8f0!important; }
-body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
-</style>
 </head>
-<body class="bg-gray-50">
-<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3">
-            <nav class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <span class="text-2xl font-bold text-blue-600">🦜️🔗 LangChain</span>
-                </div>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fas fa-link"></i> LangChain</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#development">Development</a>
+    <a href="#productionization">Productionization</a>
+    <a href="#deployment">Deployment</a>
+    <a href="#libraries">Libraries</a>
+    <a href="#tutorials">Tutorials</a>
+    <a href="#resources">Resources</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="#development">Development</a>
+  <a href="#productionization">Productionization</a>
+  <a href="#deployment">Deployment</a>
+  <a href="#libraries">Libraries</a>
+  <a href="#tutorials">Tutorials</a>
+  <a href="#resources">Resources</a>
+</div>
 
-                <!-- Mobile menu button -->
-                <div class="md:hidden" x-data="{ open: false }">
-                    <button @click="open = !open" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+<section class="hero"><div class="hero-content">
+  <h1>Welcome to LangChain Python</h1>
+  <p class="hero-sub">A framework for developing applications powered by large language models (LLMs)</p>
+  <span class="diff-badge">Beginner</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~10 min</span>
+  <div class="hero-cta"><a href="https://python.langchain.com/" target="_blank" class="btn btn-primary">Get Started</a></div>
+</div></section>
 
-                    <!-- Mobile menu -->
-                    <div x-show="open" class="absolute top-16 right-0 left-0 bg-white shadow-md p-4 mt-2">
-                        <a href="index.html" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Home</a>
-                        <a href="#development" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Development</a>
-                        <a href="#productionization" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Productionization</a>
-                        <a href="#deployment" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Deployment</a>
-                        <a href="#libraries" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Libraries</a>
-                        <a href="#tutorials" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Tutorials</a>
-                        <a href="#resources" class="block py-2 px-4 text-gray-700 hover:bg-gray-100 nav-link">Resources</a>
-                    </div>
-                </div>
+<div class="container">
 
-                <!-- Desktop menu -->
-                <div class="hidden md:flex space-x-6">
-                    <a href="index.html" class="text-gray-700 hover:text-blue-600 nav-link">Home</a>
-                    <a href="#development" class="text-gray-700 hover:text-blue-600 nav-link">Development</a>
-                    <a href="#productionization" class="text-gray-700 hover:text-blue-600 nav-link">Productionization</a>
-                    <a href="#deployment" class="text-gray-700 hover:text-blue-600 nav-link">Deployment</a>
-                    <a href="#libraries" class="text-gray-700 hover:text-blue-600 nav-link">Libraries</a>
-                    <a href="#tutorials" class="text-gray-700 hover:text-blue-600 nav-link">Tutorials</a>
-                    <a href="#resources" class="text-gray-700 hover:text-blue-600 nav-link">Resources</a>
-                </div>
-            </nav>
+  <div class="section fade-up" id="framework">
+    <h2 class="section-title"><i class="fas fa-layer-group"></i> The LangChain Framework</h2>
+    <figure class="framework-fig">
+      <img src="https://python.langchain.com/svg/langchain_stack_062024.svg" alt="LangChain Framework Diagram">
+    </figure>
+    <p class="section-desc text-center">
+      LangChain simplifies every stage of the LLM application lifecycle, from development to productionization to deployment.
+    </p>
+  </div>
+
+  <div class="section fade-up" id="development">
+    <h2 class="section-title"><i class="fas fa-code"></i> Development</h2>
+    <p class="section-desc">Build your applications using LangChain's open-source building blocks, components, and third-party integrations. Use LangGraph to build stateful agents with first-class streaming and human-in-the-loop support.</p>
+    <div class="grid mt-2">
+      <div class="card">
+        <h3>Building Blocks (LCEL)</h3>
+        <p>Create composable chains with LangChain Expression Language, providing flexibility and reusability.</p>
+        <a href="https://python.langchain.com/docs/concepts/#langchain-expression-language-lcel" class="more">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>LangGraph</h3>
+        <p>Build stateful agents with first-class streaming and human-in-the-loop support for complex applications.</p>
+        <a href="https://python.langchain.com/docs/concepts/#langgraph" class="more">Learn more →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-up" id="productionization">
+    <h2 class="section-title"><i class="fas fa-chart-line"></i> Productionization</h2>
+    <p class="section-desc">Use LangSmith to inspect, monitor and evaluate your chains, so that you can continuously optimize and deploy with confidence.</p>
+    <div class="card mt-2">
+      <h3>LangSmith</h3>
+      <p>A developer platform that lets you debug, test, evaluate, and monitor LLM applications. Track improvements, identify issues, and gain insights to optimize your applications.</p>
+      <a href="https://docs.smith.langchain.com/" class="more">Learn more →</a>
+    </div>
+  </div>
+
+  <div class="section fade-up" id="deployment">
+    <h2 class="section-title"><i class="fas fa-cloud-arrow-up"></i> Deployment</h2>
+    <p class="section-desc">Turn your LangGraph applications into production-ready APIs and Assistants with LangGraph Cloud.</p>
+    <div class="card mt-2">
+      <h3>LangGraph Cloud</h3>
+      <p>Deploy your LangGraph applications as production-ready APIs and Assistants, making them accessible to users and other services.</p>
+      <a href="https://langchain-ai.github.io/langgraph/cloud/" class="more">Learn more →</a>
+    </div>
+  </div>
+
+  <div class="section fade-up" id="libraries">
+    <h2 class="section-title"><i class="fas fa-cubes"></i> LangChain Libraries</h2>
+    <p class="section-desc">The framework consists of the following open-source libraries:</p>
+    <div class="grid mt-2">
+      <div class="card">
+        <h3>langchain-core</h3>
+        <p>Base abstractions and LangChain Expression Language that form the foundation of LangChain.</p>
+      </div>
+      <div class="card">
+        <h3>langchain-community</h3>
+        <p>Third party integrations enabling connections to external services and tools.</p>
+      </div>
+      <div class="card">
+        <h3>langchain</h3>
+        <p>Chains, agents, and retrieval strategies that make up an application's cognitive architecture.</p>
+      </div>
+      <div class="card">
+        <h3>LangGraph</h3>
+        <p>Build robust and stateful multi-actor applications with LLMs by modeling steps as edges and nodes in a graph.</p>
+      </div>
+      <div class="card">
+        <h3>LangServe</h3>
+        <p>Deploy LangChain chains as REST APIs for easy integration with other services.</p>
+      </div>
+      <div class="card">
+        <h3>LangSmith</h3>
+        <p>A developer platform that lets you debug, test, evaluate, and monitor LLM applications.</p>
+      </div>
+    </div>
+    <div class="info-box warning mt-3">
+      <p>Note: These docs focus on the Python LangChain library. <a href="https://js.langchain.com/">Head here</a> for docs on the JavaScript LangChain library.</p>
+    </div>
+  </div>
+
+  <div class="section fade-up" id="tutorials">
+    <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Tutorials</h2>
+    <p class="section-desc">If you're looking to build something specific or are more of a hands-on learner, check out our tutorials section. This is the best place to get started.</p>
+    <div class="grid mt-2">
+      <!-- Tutorial Cards -->
+      <div class="card tut-card">
+        <div class="tut-head"><h3>Build a Simple LLM Application</h3></div>
+        <div class="tut-body">
+          <p>Learn how to create a basic application powered by large language models.</p>
+          <a href="https://python.langchain.com/docs/tutorials/llm_chain/" class="more">Start Learning →</a>
         </div>
-    </header>
-
-    <section class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-16">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center">
-                <h1 class="text-4xl md:text-5xl font-bold mb-6">Welcome to LangChain Python</h1>
-                <p class="text-xl mb-8">A framework for developing applications powered by large language models (LLMs)</p>
-                <a href="https://python.langchain.com/" target="_blank" class="bg-white text-blue-600 font-bold px-6 py-3 rounded-lg hover:bg-blue-50 transition duration-300">Get Started</a>
-            </div>
+      </div>
+      <div class="card tut-card">
+        <div class="tut-head c2"><h3>Build a Chatbot</h3></div>
+        <div class="tut-body">
+          <p>Create your own conversational AI assistant using LangChain's components.</p>
+          <a href="https://python.langchain.com/docs/tutorials/chatbot/" class="more">Start Learning →</a>
         </div>
-    </section>
-
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">The LangChain Framework</h2>
-            <div class="flex justify-center">
-                <img src="https://python.langchain.com/svg/langchain_stack_062024.svg" alt="LangChain Framework Diagram" class="max-w-full h-auto shadow-lg rounded-lg">
-            </div>
-            <p class="text-center mt-8 text-gray-600 max-w-3xl mx-auto">
-                LangChain simplifies every stage of the LLM application lifecycle, from development to productionization to deployment.
-            </p>
+      </div>
+      <div class="card tut-card">
+        <div class="tut-head c3"><h3>Build an Agent</h3></div>
+        <div class="tut-body">
+          <p>Develop intelligent agents that can perform tasks and make decisions autonomously.</p>
+          <a href="https://python.langchain.com/docs/tutorials/agents/" class="more">Start Learning →</a>
         </div>
-    </section>
-
-    <section id="development" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 section-heading">Development</h2>
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <p class="text-lg mb-6">Build your applications using LangChain's open-source building blocks, components, and third-party integrations. Use LangGraph to build stateful agents with first-class streaming and human-in-the-loop support.</p>
-
-                <div class="mt-8 grid md:grid-cols-2 gap-6">
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">Building Blocks (LCEL)</h3>
-                        <p>Create composable chains with LangChain Expression Language, providing flexibility and reusability.</p>
-                        <a href="https://python.langchain.com/docs/concepts/#langchain-expression-language-lcel" class="text-blue-600 hover:underline mt-3 inline-block">Learn more →</a>
-                    </div>
-
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">LangGraph</h3>
-                        <p>Build stateful agents with first-class streaming and human-in-the-loop support for complex applications.</p>
-                        <a href="https://python.langchain.com/docs/concepts/#langgraph" class="text-blue-600 hover:underline mt-3 inline-block">Learn more →</a>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="card tut-card">
+        <div class="tut-head c4"><h3>Introduction to LangGraph</h3></div>
+        <div class="tut-body">
+          <p>Learn how to use LangGraph to build stateful, multi-actor applications with LLMs.</p>
+          <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/" class="more">Start Learning →</a>
         </div>
-    </section>
+      </div>
+    </div>
+    <div class="center-cta">
+      <a href="https://python.langchain.com/docs/tutorials/" class="btn btn-primary">Explore All Tutorials</a>
+    </div>
+  </div>
 
-    <section id="productionization" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 section-heading">Productionization</h2>
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <p class="text-lg mb-6">Use LangSmith to inspect, monitor and evaluate your chains, so that you can continuously optimize and deploy with confidence.</p>
+  <div class="section fade-up" id="guides">
+    <h2 class="section-title"><i class="fas fa-book-open"></i> Guides &amp; Reference</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>How-to guides</h3>
+        <p>Short answers to "How do I….?" types of questions. These guides help you quickly accomplish common tasks.</p>
+        <a href="https://python.langchain.com/docs/how_to/" class="more">View How-to guides →</a>
+        <p class="mt-1">Check out <a href="https://langchain-ai.github.io/langgraph/how-tos/">LangGraph-specific how-tos here</a>.</p>
+      </div>
+      <div class="card">
+        <h3>Conceptual guide</h3>
+        <p>Introductions to all the key parts of LangChain you'll need to know! High level explanations of all LangChain concepts.</p>
+        <a href="https://python.langchain.com/docs/concepts/" class="more">View Conceptual guide →</a>
+        <p class="mt-1">For a deeper dive into LangGraph concepts, check out <a href="https://langchain-ai.github.io/langgraph/concepts/">this page</a>.</p>
+      </div>
+      <div class="card">
+        <h3>API reference</h3>
+        <p>Full documentation of all classes and methods in the LangChain Python packages.</p>
+        <a href="https://python.langchain.com/api_reference/" class="more">View API reference →</a>
+      </div>
+    </div>
+  </div>
 
-                <div class="bg-blue-50 p-6 rounded-lg">
-                    <h3 class="text-xl font-bold mb-3">LangSmith</h3>
-                    <p>A developer platform that lets you debug, test, evaluate, and monitor LLM applications. Track improvements, identify issues, and gain insights to optimize your applications.</p>
-                    <a href="https://docs.smith.langchain.com/" class="text-blue-600 hover:underline mt-3 inline-block">Learn more →</a>
-                </div>
-            </div>
-        </div>
-    </section>
+  <div class="section fade-up" id="resources">
+    <h2 class="section-title"><i class="fas fa-toolbox"></i> Additional Resources</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>🦜🛠️ LangSmith</h3>
+        <p>Trace and evaluate your language model applications and intelligent agents to help you move from prototype to production.</p>
+        <a href="https://docs.smith.langchain.com/" class="more">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>🦜🕸️ LangGraph</h3>
+        <p>Build stateful, multi-actor applications with LLMs. Integrates smoothly with LangChain, but can be used without it.</p>
+        <a href="https://langchain-ai.github.io/langgraph" class="more">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>Versions</h3>
+        <p>See what changed in v0.3, learn how to migrate legacy code, read up on versioning policies, and more.</p>
+        <a href="https://python.langchain.com/docs/versions/v0_3/" class="more">View Versions →</a>
+      </div>
+      <div class="card">
+        <h3>Security</h3>
+        <p>Read up on security best practices to make sure you're developing safely with LangChain.</p>
+        <a href="https://python.langchain.com/docs/security/" class="more">View Security Guidelines →</a>
+      </div>
+      <div class="card">
+        <h3>Integrations</h3>
+        <p>LangChain is part of a rich ecosystem of tools that integrate with our framework and build on top of it.</p>
+        <a href="https://python.langchain.com/docs/integrations/providers/" class="more">View Integrations →</a>
+      </div>
+      <div class="card">
+        <h3>Contributing</h3>
+        <p>Check out the developer's guide for guidelines on contributing and help getting your dev environment set up.</p>
+        <a href="https://python.langchain.com/docs/contributing/" class="more">Learn How to Contribute →</a>
+      </div>
+    </div>
+  </div>
 
-    <section id="deployment" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 section-heading">Deployment</h2>
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <p class="text-lg mb-6">Turn your LangGraph applications into production-ready APIs and Assistants with LangGraph Cloud.</p>
+  <div class="section fade-up" id="links">
+    <h2 class="section-title"><i class="fas fa-up-right-from-square"></i> Quick Links</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>🦜️🔗 LangChain</h3>
+        <p>A framework for developing applications powered by large language models (LLMs).</p>
+        <a href="https://python.langchain.com/" class="more">Official Documentation</a>
+      </div>
+      <div class="card">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="https://python.langchain.com/docs/tutorials/">Tutorials</a></li>
+          <li><a href="https://python.langchain.com/docs/how_to/">How-to Guides</a></li>
+          <li><a href="https://python.langchain.com/docs/concepts/">Concepts</a></li>
+          <li><a href="https://python.langchain.com/api_reference/">API Reference</a></li>
+          <li><a href="https://github.com/langchain-ai/langchain">GitHub Repository</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="text-center mt-3">This website is based on the <a href="https://python.langchain.com/">LangChain Python Tutorial</a>.</p>
+  </div>
 
-                <div class="bg-blue-50 p-6 rounded-lg">
-                    <h3 class="text-xl font-bold mb-3">LangGraph Cloud</h3>
-                    <p>Deploy your LangGraph applications as production-ready APIs and Assistants, making them accessible to users and other services.</p>
-                    <a href="https://langchain-ai.github.io/langgraph/cloud/" class="text-blue-600 hover:underline mt-3 inline-block">Learn more →</a>
-                </div>
-            </div>
-        </div>
-    </section>
+  <div class="page-nav"><a class="nav-btn prev" href="/cs/index.html">← Back to Course</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
+</div>
 
-    <section id="libraries" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 section-heading">LangChain Libraries</h2>
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <p class="text-lg mb-6">The framework consists of the following open-source libraries:</p>
-
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">langchain-core</h3>
-                        <p>Base abstractions and LangChain Expression Language that form the foundation of LangChain.</p>
-                    </div>
-
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">langchain-community</h3>
-                        <p>Third party integrations enabling connections to external services and tools.</p>
-                    </div>
-
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">langchain</h3>
-                        <p>Chains, agents, and retrieval strategies that make up an application's cognitive architecture.</p>
-                    </div>
-
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">LangGraph</h3>
-                        <p>Build robust and stateful multi-actor applications with LLMs by modeling steps as edges and nodes in a graph.</p>
-                    </div>
-
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">LangServe</h3>
-                        <p>Deploy LangChain chains as REST APIs for easy integration with other services.</p>
-                    </div>
-
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-3">LangSmith</h3>
-                        <p>A developer platform that lets you debug, test, evaluate, and monitor LLM applications.</p>
-                    </div>
-                </div>
-
-                <div class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-                    <p class="font-medium">Note: These docs focus on the Python LangChain library. <a href="https://js.langchain.com/" class="text-blue-600 hover:underline">Head here</a> for docs on the JavaScript LangChain library.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="tutorials" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 section-heading">Tutorials</h2>
-            <p class="text-lg mb-8">If you're looking to build something specific or are more of a hands-on learner, check out our tutorials section. This is the best place to get started.</p>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Tutorial Cards -->
-                <div class="tutorial-card bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-blue-600 text-white p-4">
-                        <h3 class="text-xl font-bold">Build a Simple LLM Application</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="mb-4">Learn how to create a basic application powered by large language models.</p>
-                        <a href="https://python.langchain.com/docs/tutorials/llm_chain/" class="text-blue-600 hover:underline">Start Learning →</a>
-                    </div>
-                </div>
-
-                <div class="tutorial-card bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-indigo-600 text-white p-4">
-                        <h3 class="text-xl font-bold">Build a Chatbot</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="mb-4">Create your own conversational AI assistant using LangChain's components.</p>
-                        <a href="https://python.langchain.com/docs/tutorials/chatbot/" class="text-blue-600 hover:underline">Start Learning →</a>
-                    </div>
-                </div>
-
-                <div class="tutorial-card bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-purple-600 text-white p-4">
-                        <h3 class="text-xl font-bold">Build an Agent</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="mb-4">Develop intelligent agents that can perform tasks and make decisions autonomously.</p>
-                        <a href="https://python.langchain.com/docs/tutorials/agents/" class="text-blue-600 hover:underline">Start Learning →</a>
-                    </div>
-                </div>
-
-                <div class="tutorial-card bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-green-600 text-white p-4">
-                        <h3 class="text-xl font-bold">Introduction to LangGraph</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="mb-4">Learn how to use LangGraph to build stateful, multi-actor applications with LLMs.</p>
-                        <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/" class="text-blue-600 hover:underline">Start Learning →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8 text-center">
-                <a href="https://python.langchain.com/docs/tutorials/" class="inline-block bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">Explore All Tutorials</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-bold mb-4">How-to guides</h2>
-                    <p class="mb-4">Short answers to "How do I….?" types of questions. These guides help you quickly accomplish common tasks.</p>
-                    <a href="https://python.langchain.com/docs/how_to/" class="text-blue-600 hover:underline">View How-to guides →</a>
-                    <p class="mt-3">Check out <a href="https://langchain-ai.github.io/langgraph/how-tos/" class="text-blue-600 hover:underline">LangGraph-specific how-tos here</a>.</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-bold mb-4">Conceptual guide</h2>
-                    <p class="mb-4">Introductions to all the key parts of LangChain you'll need to know! High level explanations of all LangChain concepts.</p>
-                    <a href="https://python.langchain.com/docs/concepts/" class="text-blue-600 hover:underline">View Conceptual guide →</a>
-                    <p class="mt-3">For a deeper dive into LangGraph concepts, check out <a href="https://langchain-ai.github.io/langgraph/concepts/" class="text-blue-600 hover:underline">this page</a>.</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-bold mb-4">API reference</h2>
-                    <p class="mb-4">Full documentation of all classes and methods in the LangChain Python packages.</p>
-                    <a href="https://python.langchain.com/api_reference/" class="text-blue-600 hover:underline">View API reference →</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="resources" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 section-heading">Additional Resources</h2>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-3">🦜🛠️ LangSmith</h3>
-                    <p class="mb-4">Trace and evaluate your language model applications and intelligent agents to help you move from prototype to production.</p>
-                    <a href="https://docs.smith.langchain.com/" class="text-blue-600 hover:underline">Learn more →</a>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-3">🦜🕸️ LangGraph</h3>
-                    <p class="mb-4">Build stateful, multi-actor applications with LLMs. Integrates smoothly with LangChain, but can be used without it.</p>
-                    <a href="https://langchain-ai.github.io/langgraph" class="text-blue-600 hover:underline">Learn more →</a>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-3">Versions</h3>
-                    <p class="mb-4">See what changed in v0.3, learn how to migrate legacy code, read up on versioning policies, and more.</p>
-                    <a href="https://python.langchain.com/docs/versions/v0_3/" class="text-blue-600 hover:underline">View Versions →</a>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-3">Security</h3>
-                    <p class="mb-4">Read up on security best practices to make sure you're developing safely with LangChain.</p>
-                    <a href="https://python.langchain.com/docs/security/" class="text-blue-600 hover:underline">View Security Guidelines →</a>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-3">Integrations</h3>
-                    <p class="mb-4">LangChain is part of a rich ecosystem of tools that integrate with our framework and build on top of it.</p>
-                    <a href="https://python.langchain.com/docs/integrations/providers/" class="text-blue-600 hover:underline">View Integrations →</a>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-3">Contributing</h3>
-                    <p class="mb-4">Check out the developer's guide for guidelines on contributing and help getting your dev environment set up.</p>
-                    <a href="https://python.langchain.com/docs/contributing/" class="text-blue-600 hover:underline">Learn How to Contribute →</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-gray-800 text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-2xl font-bold mb-4">🦜️🔗 LangChain</h3>
-                    <p class="mb-4">A framework for developing applications powered by large language models (LLMs).</p>
-                    <a href="https://python.langchain.com/" class="text-blue-400 hover:text-blue-300">Official Documentation</a>
-                </div>
-
-                <div>
-                    <h4 class="text-xl font-bold mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="https://python.langchain.com/docs/tutorials/" class="text-gray-300 hover:text-white">Tutorials</a></li>
-                        <li><a href="https://python.langchain.com/docs/how_to/" class="text-gray-300 hover:text-white">How-to Guides</a></li>
-                        <li><a href="https://python.langchain.com/docs/concepts/" class="text-gray-300 hover:text-white">Concepts</a></li>
-                        <li><a href="https://python.langchain.com/api_reference/" class="text-gray-300 hover:text-white">API Reference</a></li>
-                        <li><a href="https://github.com/langchain-ai/langchain" class="text-gray-300 hover:text-white">GitHub Repository</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
-                <p>This website is based on the <a href="https://python.langchain.com/" class="text-blue-400 hover:text-blue-300">LangChain Python Tutorial</a>.</p>
-            </div>
-        </div>
-    </footer>
-<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
-<script>
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-    const btn=document.getElementById('themeToggleBtn');
-    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
-    const back=document.querySelector('a[href="/cs/index.html"]');
-    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
-        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
-    }
-})();
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn'))return;
-        pre.classList.add('has-copy');pre.style.position='relative';
-        var btn=document.createElement('button');btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
-        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
-        pre.appendChild(btn);
-    });
-});
-</script>
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

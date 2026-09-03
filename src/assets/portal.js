@@ -22,13 +22,15 @@
   };
   // Pages with their own position:fixed top navbar: push it below the portal chrome while the chrome is in view.
   (function(){ var bar=document.querySelector('.ab-bar'); if(!bar) return; var crumbs=document.querySelector('.ab-crumbs');
-    var fixed=[]; var all=document.body.children;
-    function scan(root,depth){ for(var i=0;i<root.children.length;i++){ var el=root.children[i]; if(el===bar||el===crumbs||el.classList.contains('ab-footer')) continue;
-      var cs=getComputedStyle(el); if(cs.position==='fixed'&&parseInt(cs.top||'0',10)===0&&el.offsetHeight>0&&el.offsetHeight<220&&el.offsetWidth>=window.innerWidth*0.8) fixed.push(el);
-      else if(depth<2&&el.children.length&&cs.position!=='fixed') scan(el,depth+1); } }
-    scan(document.body,0); if(!fixed.length) return;
-    function chromeH(){ return bar.offsetHeight+(crumbs?crumbs.offsetHeight:0); }
-    function place(){ var t=Math.max(0,chromeH()-window.pageYOffset); for(var i=0;i<fixed.length;i++) fixed[i].style.top=t+'px'; }
+    var fixed=[]; var cand=document.querySelectorAll('body *'); var n=Math.min(cand.length,600);
+    for(var i=0;i<n;i++){ var el=cand[i]; if(bar.contains(el)||(crumbs&&crumbs.contains(el))||el.closest('.ab-footer')) continue;
+      var cs=getComputedStyle(el); if((cs.position==='fixed'||cs.position==='sticky')&&parseInt(cs.top||'0',10)===0&&el.offsetHeight>0&&el.offsetHeight<220&&el.offsetWidth>=window.innerWidth*0.6){ if(cs.position==='fixed') fixed.push(el); } }
+    if(!fixed.length) return;
+    // Legacy pages reserve room for their fixed navbar with body{padding-top}; that padding also pushes
+    // the portal chrome down. Pull the chrome back to the top and place the navbar under its real bottom.
+    var pad=parseInt(getComputedStyle(document.body).paddingTop,10)||0;
+    if(pad>0) bar.style.marginTop=(-pad)+'px';
+    function place(){ var ref=crumbs||bar; var t=Math.max(0,ref.getBoundingClientRect().bottom); for(var i=0;i<fixed.length;i++) fixed[i].style.top=t+'px'; }
     place(); window.addEventListener('scroll',place,{passive:true}); window.addEventListener('resize',place);
     // keep in-page anchor targets from hiding under the shifted navbar
     var h=0; for(var i=0;i<fixed.length;i++) h=Math.max(h,fixed[i].offsetHeight); if(h) document.documentElement.style.scrollPaddingTop=(h+8)+'px';

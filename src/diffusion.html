@@ -13,584 +13,307 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Understanding Diffusion Models</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="A guide to diffusion models: forward and reverse diffusion, U-Net architecture, training objectives, sampling, applications and advanced topics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .section {
-            margin-bottom: 2rem;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            background-color: white;
-        }
-
-        .animation-container {
-            overflow: hidden;
-            position: relative;
-        }
-
-        .math-formula {
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        .step-box {
-            border-left: 4px solid #4f46e5;
-            padding-left: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .interactive-slider {
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* Custom tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted #4f46e5;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 300px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -150px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Timeline styles */
-        .timeline {
-            position: relative;
-            margin: 3rem 0;
-        }
-
-        .timeline-line {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 18px;
-            width: 4px;
-            background: #4f46e5;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-left: 50px;
-            margin-bottom: 2rem;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: 0;
-            top: 10px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #4f46e5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* Interactive elements */
-        .interactive-element {
-            border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .interactive-element:hover {
-            border-color: #4f46e5;
-            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
-        }
-
-        /* Code block styling */
-        .code-block {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            margin: 1.5rem 0;
-        }
-
-        .keyword { color: #569cd6; }
-        .string { color: #ce9178; }
-        .comment { color: #6a9955; }
-        .function { color: #dcdcaa; }
-        .number { color: #b5cea8; }
-
-        /* Accordion styles */
-        .accordion {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .accordion-header {
-            padding: 1rem;
-            cursor: pointer;
-            user-select: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .accordion-content {
-            padding: 0 1rem 1rem 1rem;
-            display: none;
-        }
-
-        .accordion.active .accordion-content {
-            display: block;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 1rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .tab.active {
-            border-bottom: 2px solid #4f46e5;
-            color: #4f46e5;
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 1rem 0;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Responsive design adjustments */
-        @media (max-width: 768px) {
-            .section {
-                padding: 1rem;
-            }
-
-            .timeline-item {
-                padding-left: 40px;
-            }
-
-            .timeline-marker {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-        }
-
-        /* Fade in animation */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .fade-in.appear {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Special container for complex visualizations */
-        .visualization-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            margin: 2rem 0;
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-        }
-
-        /* Progress bar for visualizing the diffusion process */
-        .process-progress {
-            width: 100%;
-            height: 8px;
-            background-color: #e5e7eb;
-            border-radius: 4px;
-            margin: 1rem 0;
-            overflow: hidden;
-        }
-
-        .process-bar {
-            height: 100%;
-            width: 0;
-            background-color: #4f46e5;
-            transition: width 0.5s ease;
-        }
-
-        /* Card grid for applications section */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        /* For the comparison table */
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 0.75rem 1rem;
-            border: 1px solid #e5e7eb;
-            text-align: left;
-        }
-
-        .comparison-table th {
-            background-color: #f8fafc;
-            font-weight: 600;
-        }
-
-        /* For sections that need to be highlighted */
-        .highlight-box {
-            background-color: #f0f9ff;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-
-        /* For step-by-step processes */
-        .step-process {
-            counter-reset: step;
-            margin: 2rem 0;
-        }
-
-        .step-item {
-            position: relative;
-            padding-left: 3rem;
-            margin-bottom: 1.5rem;
-            counter-increment: step;
-        }
-
-        .step-item::before {
-            content: counter(step);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 2rem;
-            height: 2rem;
-            background-color: #4f46e5;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+        :root{--primary:#f59e0b;--primary-hover:#fbbf24;--glow:rgba(245,158,11,.14)}
+        /* hero extras */
+        .hero-img{width:88px;height:88px;margin:0 auto 18px;display:block;background:#fff;border-radius:18px;padding:12px;border:1px solid var(--border2)}
+        .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+        /* two-column blocks & panels */
+        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+        .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
+        .panel{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:22px}
+        .viz{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:24px;margin:24px 0}
+        .viz .card,.viz .panel{background:var(--surface)}
+        .panel>h3:first-child,.viz>h3:first-child,.card>h3:first-child,.panel>h4:first-child,.card>h4:first-child{margin-top:0}
+        .card h3{font-size:1.1rem;margin:0 0 8px}
+        .card h4,.panel h4.accent{color:var(--primary)}
+        .card p:last-child,.panel p:last-child,.panel ul:last-child{margin-bottom:0}
+        .small{font-size:.85rem}
+        .center{text-align:center}
+        .big-icon{font-size:2.2rem;color:var(--primary);margin-top:12px}
+        .between{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text2);gap:8px}
+        /* formulas */
+        .math-formula{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:14px 18px;margin:12px 0;overflow-x:auto;font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:.95rem;color:var(--text);text-align:center;line-height:1.8;white-space:nowrap}
+        .math-formula sub,.math-formula sup{font-size:.7em}
+        /* timeline */
+        .timeline{position:relative;margin:16px 0 0}
+        .timeline-line{position:absolute;top:0;bottom:0;left:18px;width:3px;background:var(--primary);opacity:.35;border-radius:2px}
+        .timeline-item{position:relative;padding-left:56px;margin-bottom:22px}
+        .timeline-item:last-child{margin-bottom:0}
+        .timeline-marker{position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+        .timeline-content{color:var(--text2);font-size:.92rem;line-height:1.7;padding-top:8px}
+        .timeline-content h4{margin:0 0 4px}
+        .timeline-content p{margin-bottom:0}
+        /* accordion */
+        .accordion{border:1px solid var(--border2);border-radius:8px;margin:12px 0;background:var(--surface2);overflow:hidden}
+        .accordion-header{padding:14px 20px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--text);transition:color .2s}
+        .accordion-header:hover{color:var(--primary)}
+        .accordion-header i{color:var(--primary);font-size:.85rem;flex-shrink:0;margin-left:12px}
+        .accordion-content{display:none;padding:14px 20px 18px;border-top:1px solid var(--border2)}
+        .accordion.active .accordion-content{display:block}
+        .accordion-content>p:first-child{margin-top:0}
+        .accordion-content .panel{background:var(--surface)}
+        /* tabs */
+        .interactive-element{border:1px solid var(--border2);border-radius:10px;padding:20px;margin-top:16px;background:var(--surface2);transition:border-color .2s}
+        .interactive-element:hover{border-color:var(--primary)}
+        .interactive-element>h4:first-child{margin-top:0}
+        .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border2);margin-bottom:14px;flex-wrap:wrap}
+        .tab{padding:10px 18px;cursor:pointer;user-select:none;color:var(--text2);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+        .tab:hover{color:var(--text)}
+        .tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+        .tab-content{display:none}
+        .tab-content.active{display:block}
+        /* process bar */
+        #process-bar{width:0;transition:width .5s ease}
+        /* demo form */
+        .form-label{display:block;font-size:.85rem;font-weight:500;color:var(--text2);margin-bottom:6px}
+        .form-group{margin-bottom:16px}
+        .input-wrap{position:relative}
+        .input-wrap .icon-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--primary);cursor:pointer;font-size:1rem}
+        .form-input:disabled{opacity:.7;cursor:not-allowed}
+        input[type=range].interactive-slider{width:100%;accent-color:var(--primary);cursor:pointer;margin:6px 0}
+        input[type=range].interactive-slider:disabled{cursor:not-allowed}
+        .img-placeholder{width:192px;height:192px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);font-size:2.5rem;margin-top:8px}
+        .btn:disabled{opacity:.5;cursor:not-allowed}
+        @media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.timeline-item{padding-left:46px}.timeline-marker{width:32px;height:32px;font-size:.72rem}.timeline-line{left:14px}.math-formula{white-space:normal;font-size:.85rem}}
     </style>
-<style id="dark-theme-override">
-:root {
-    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-    --text:#f1f5f9;--text2:#94a3b8;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-    --code:#0d1117;
-}
-body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
-.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
-.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
-.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
-h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
-.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
-pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
-table, th, td { border-color:var(--border2)!important; }
-th { background:var(--surface2)!important; color:var(--text)!important; }
-td { background:var(--surface)!important; color:var(--text2)!important; }
-tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
-a { color:var(--primary)!important; }
-a:hover { color:#60a5fa!important; }
-.badge { opacity:0.9; }
-nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
-nav a, .navbar a, .nav-link { color:var(--text2)!important; }
-nav a:hover, .navbar a:hover { color:var(--text)!important; }
-.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
-.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
-.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
-.sidebar a, aside a { color:var(--text2)!important; }
-.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
-.sidebar a.active, aside a.active { color:var(--primary)!important; }
-footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
-img { border-radius:8px; }
-.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
-/* Light mode */
-body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
-body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
-body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
-body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
-body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
-body.light-mode footer { background:#e2e8f0!important; }
-body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
-</style>
 </head>
-<body class="bg-gray-50">
-<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Header Section -->
-        <header class="section bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-            <div class="flex flex-col md:flex-row items-center justify-between">
-                <div class="md:w-3/5">
-                    <h1 class="text-4xl font-bold mb-4">Understanding Diffusion Models</h1>
-                    <p class="text-xl mb-6">A comprehensive guide to the cutting-edge AI architecture behind modern image generation</p>
-                    <div class="flex space-x-4">
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fas fa-wand-magic-sparkles"></i> Diffusion Models</a>
+  <div class="nav-links">
+    <a href="/cs/index.html"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
+    <a href="#fundamentals">Fundamentals</a>
+    <a href="#forward-process">Forward</a>
+    <a href="#reverse-process">Reverse</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#training">Training</a>
+    <a href="#applications">Applications</a>
+    <a href="#advanced">Advanced</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="/cs/index.html"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
+  <a href="#introduction">Introduction</a>
+  <a href="#fundamentals">Fundamentals</a>
+  <a href="#forward-process">Forward Process</a>
+  <a href="#reverse-process">Reverse Process</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#training">Training</a>
+  <a href="#applications">Applications</a>
+  <a href="#advanced">Advanced Topics</a>
+  <a href="#resources">Resources</a>
+  <a href="#conclusion">Conclusion</a>
+</div>
 
-                        <a href="#fundamentals" class="bg-white text-indigo-600 hover:bg-gray-100 px-6 py-2 rounded-full font-semibold transition duration-200">Start Learning</a>
-                        <a href="#applications" class="bg-transparent border border-white text-white hover:bg-white hover:text-indigo-600 px-6 py-2 rounded-full font-semibold transition duration-200">See Applications</a>
-                        <a href="index.html" class="bg-transparent border border-white text-white hover:bg-white hover:text-indigo-600 px-6 py-2 rounded-full font-semibold transition duration-200">Home</a>
+<section class="hero"><div class="hero-content">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="Diffusion Model Concept" class="hero-img">
+  <h1>Understanding Diffusion Models</h1>
+  <p class="hero-sub">A comprehensive guide to the cutting-edge AI architecture behind modern image generation</p>
+  <span class="diff-badge">Intermediate</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~40 min</span> <span class="cat-badge"><i class="fas fa-brain"></i> Deep Learning</span>
+  <div class="hero-actions">
+    <a href="#fundamentals" class="btn btn-primary">Start Learning</a>
+    <a href="#applications" class="btn btn-outline">See Applications</a>
+    <a href="index.html" class="btn btn-outline">Home</a>
+  </div>
+</div></section>
+
+<div class="container">
+
+    <!-- Introduction Section -->
+    <div class="section fade-up" id="introduction">
+        <h2 class="section-title"><i class="fas fa-book-open"></i> Introduction to Diffusion Models</h2>
+        <p>Diffusion models represent a revolutionary class of generative models that have transformed the landscape of AI-powered content creation. These models have gained significant popularity since 2020, demonstrating remarkable capabilities in generating high-quality images and other types of data.</p>
+
+        <div class="info-box">
+            <h3><i class="fas fa-lightbulb"></i> Key Insight:</h3>
+            <p>Diffusion models work by <strong>gradually adding noise</strong> to data and then learning to <strong>reverse this process</strong> to generate new samples. This approach allows them to produce highly realistic and diverse outputs.</p>
+        </div>
+
+        <div class="two-col">
+            <div class="panel">
+                <h3>Why Diffusion Models Matter</h3>
+                <ul>
+                    <li>Produce state-of-the-art quality images</li>
+                    <li>Do not require adversarial training (unlike GANs)</li>
+                    <li>Offer stable training dynamics</li>
+                    <li>Provide highly controllable generation processes</li>
+                    <li>Power many popular AI image generators (DALL-E 2, Stable Diffusion)</li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h3>Historical Context</h3>
+                <p>Diffusion models were inspired by non-equilibrium thermodynamics, with key developments including:</p>
+                <div class="timeline">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2015</div>
+                        <div class="timeline-content">
+                            <strong>First Diffusion Model</strong>: "Deep Unsupervised Learning using Nonequilibrium Thermodynamics" by Sohl-Dickstein et al.
+                        </div>
                     </div>
-                </div>
-                <div class="md:w-2/5 mt-6 md:mt-0">
-                    <div class="relative">
-                        <div class="absolute inset-0 bg-white opacity-10 rounded-lg transform rotate-3"></div>
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="Diffusion Model Concept" class="relative z-10 w-full max-w-md mx-auto rounded-lg">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2020</div>
+                        <div class="timeline-content">
+                            <strong>DDPM</strong>: "Denoising Diffusion Probabilistic Models" by Ho et al., establishing the foundation for modern implementations.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2021</div>
+                        <div class="timeline-content">
+                            <strong>Improved Efficiency</strong>: "Improved Denoising Diffusion Probabilistic Models" introducing better sampling techniques.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2022</div>
+                        <div class="timeline-content">
+                            <strong>Stable Diffusion</strong>: Release of Stable Diffusion by Stability AI, bringing diffusion models to the mainstream.
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </div>
 
-        <!-- Introduction Section -->
-        <section class="section" id="introduction">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Introduction to Diffusion Models</h2>
-            <p class="mb-4">Diffusion models represent a revolutionary class of generative models that have transformed the landscape of AI-powered content creation. These models have gained significant popularity since 2020, demonstrating remarkable capabilities in generating high-quality images and other types of data.</p>
+    <!-- Fundamentals Section -->
+    <div class="section fade-up" id="fundamentals">
+        <h2 class="section-title"><i class="fas fa-layer-group"></i> Fundamentals of Diffusion Models</h2>
 
-            <div class="highlight-box">
-                <p class="font-semibold text-lg">Key Insight:</p>
-                <p>Diffusion models work by <span class="font-semibold">gradually adding noise</span> to data and then learning to <span class="font-semibold">reverse this process</span> to generate new samples. This approach allows them to produce highly realistic and diverse outputs.</p>
+        <p>Diffusion models operate on a simple yet powerful principle: systematically destroy structure in data through a forward process, then learn to restore that structure through a reverse process. Let's break down how this works:</p>
+
+        <div class="viz">
+            <h3>The Two Core Processes</h3>
+
+            <div class="two-col">
+                <div class="card">
+                    <h4>1. Forward Diffusion Process</h4>
+                    <p>Gradually adds random noise to the data over multiple steps, slowly destroying the original structure until it becomes pure noise (Gaussian distribution).</p>
+                    <div class="center">
+                        <i class="fas fa-arrow-right big-icon"></i>
+                        <p class="small text-muted" style="margin-top:8px">Original Image → Increasingly Noisy Images → Pure Noise</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>2. Reverse Diffusion Process</h4>
+                    <p>Learns to gradually remove noise, step by step, starting from random noise and eventually reconstructing a clean sample similar to the training data.</p>
+                    <div class="center">
+                        <i class="fas fa-arrow-left big-icon"></i>
+                        <p class="small text-muted" style="margin-top:8px">Pure Noise → Increasingly Structured Images → Clean Image</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-6 mt-8">
-                <div class="md:w-1/2 bg-indigo-50 p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-3 text-indigo-600">Why Diffusion Models Matter</h3>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>Produce state-of-the-art quality images</li>
-                        <li>Do not require adversarial training (unlike GANs)</li>
-                        <li>Offer stable training dynamics</li>
-                        <li>Provide highly controllable generation processes</li>
-                        <li>Power many popular AI image generators (DALL-E 2, Stable Diffusion)</li>
+            <div style="margin-top:28px">
+                <div class="progress-track process-progress">
+                    <div class="progress-fill process-bar" id="process-bar"></div>
+                </div>
+                <div class="between" style="margin-top:8px">
+                    <span>Original Data</span>
+                    <span>Partially Noised</span>
+                    <span>Pure Noise</span>
+                </div>
+                <div class="center" style="margin-top:16px">
+                    <button id="play-process" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Visualize Process
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3>Key Concepts</h3>
+
+            <div class="accordion" id="accordion-markov">
+                <div class="accordion-header">
+                    <span>Markov Chain</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Diffusion models are parameterized as a Markov chain, meaning each step in the diffusion process only depends on the previous step. This simplifies the mathematics and allows for tractable computation.</p>
+                    <div class="math-formula">
+                        q(x<sub>1:T</sub>|x<sub>0</sub>) := ∏<sub>t=1</sub><sup>T</sup> q(x<sub>t</sub>|x<sub>t-1</sub>)
+                    </div>
+                    <p class="small text-muted">Where q is the forward process and T is the total number of steps.</p>
+                </div>
+            </div>
+
+            <div class="accordion" id="accordion-gaussian">
+                <div class="accordion-header">
+                    <span>Gaussian Transitions</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>The transitions between steps in both forward and reverse processes are modeled as Gaussian distributions. In the forward process, we add noise according to a schedule:</p>
+                    <div class="math-formula">
+                        q(x<sub>t</sub>|x<sub>t-1</sub>) = 𝒩(x<sub>t</sub>; √(1-β<sub>t</sub>)x<sub>t-1</sub>, β<sub>t</sub>I)
+                    </div>
+                    <p class="small text-muted">Where β<sub>t</sub> is the variance schedule that determines how much noise is added at each step.</p>
+                </div>
+            </div>
+
+            <div class="accordion" id="accordion-neural">
+                <div class="accordion-header">
+                    <span>Neural Network Architecture</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Diffusion models can use any neural network architecture where input and output dimensions match. Most implementations use U-Net architectures, which are particularly effective for image data.</p>
+                    <p>The neural network is trained to predict either:</p>
+                    <ul>
+                        <li>The noise that was added to the data (most common approach)</li>
+                        <li>The original data directly</li>
+                        <li>The mean and variance of the posterior distribution</li>
                     </ul>
                 </div>
-                <div class="md:w-1/2 bg-purple-50 p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-3 text-purple-600">Historical Context</h3>
-                    <p class="mb-3">Diffusion models were inspired by non-equilibrium thermodynamics, with key developments including:</p>
-                    <div class="timeline">
-                        <div class="timeline-line"></div>
-                        <div class="timeline-item">
-                            <div class="timeline-marker">2015</div>
-                            <div class="timeline-content">
-                                <strong>First Diffusion Model</strong>: "Deep Unsupervised Learning using Nonequilibrium Thermodynamics" by Sohl-Dickstein et al.
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-marker">2020</div>
-                            <div class="timeline-content">
-                                <strong>DDPM</strong>: "Denoising Diffusion Probabilistic Models" by Ho et al., establishing the foundation for modern implementations.
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-marker">2021</div>
-                            <div class="timeline-content">
-                                <strong>Improved Efficiency</strong>: "Improved Denoising Diffusion Probabilistic Models" introducing better sampling techniques.
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-marker">2022</div>
-                            <div class="timeline-content">
-                                <strong>Stable Diffusion</strong>: Release of Stable Diffusion by Stability AI, bringing diffusion models to the mainstream.
-                            </div>
-                        </div>
-                    </div>
+            </div>
+
+            <div class="accordion" id="accordion-timesteps">
+                <div class="accordion-header">
+                    <span>Timesteps and Scheduling</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>The number of steps in the diffusion process (often denoted as T) is a critical hyperparameter. More steps generally lead to better quality but slower generation.</p>
+                    <p>Different schedules for adding noise include:</p>
+                    <ul>
+                        <li><strong>Linear schedule:</strong> β values increase linearly from β<sub>1</sub> to β<sub>T</sub></li>
+                        <li><strong>Cosine schedule:</strong> β values follow a cosine function, which preserves more information in early stages</li>
+                        <li><strong>Quadratic schedule:</strong> β values increase quadratically</li>
+                    </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Fundamentals Section -->
-        <section class="section" id="fundamentals">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Fundamentals of Diffusion Models</h2>
+    <!-- Forward Diffusion Process -->
+    <div class="section fade-up" id="forward-process">
+        <h2 class="section-title"><i class="fas fa-arrow-right-long"></i> Forward Diffusion Process</h2>
 
-            <p class="mb-6">Diffusion models operate on a simple yet powerful principle: systematically destroy structure in data through a forward process, then learn to restore that structure through a reverse process. Let's break down how this works:</p>
+        <p>The forward diffusion process systematically destroys structure in the original data by gradually adding Gaussian noise over a series of steps, until the data is transformed into pure noise.</p>
 
-            <div class="visualization-container">
-                <h3 class="text-xl font-semibold mb-4">The Two Core Processes</h3>
-
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="md:w-1/2 p-4 bg-white rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-lg text-indigo-600 mb-2">1. Forward Diffusion Process</h4>
-                        <p>Gradually adds random noise to the data over multiple steps, slowly destroying the original structure until it becomes pure noise (Gaussian distribution).</p>
-                        <div class="mt-4 text-center">
-                            <i class="fas fa-arrow-right text-4xl text-indigo-400"></i>
-                            <p class="mt-2 text-sm text-gray-600">Original Image → Increasingly Noisy Images → Pure Noise</p>
-                        </div>
-                    </div>
-
-                    <div class="md:w-1/2 p-4 bg-white rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-lg text-purple-600 mb-2">2. Reverse Diffusion Process</h4>
-                        <p>Learns to gradually remove noise, step by step, starting from random noise and eventually reconstructing a clean sample similar to the training data.</p>
-                        <div class="mt-4 text-center">
-                            <i class="fas fa-arrow-left text-4xl text-purple-400"></i>
-                            <p class="mt-2 text-sm text-gray-600">Pure Noise → Increasingly Structured Images → Clean Image</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-8">
-                    <div class="process-progress">
-                        <div class="process-bar" id="process-bar"></div>
-                    </div>
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Original Data</span>
-                        <span>Partially Noised</span>
-                        <span>Pure Noise</span>
-                    </div>
-                    <div class="mt-4 text-center">
-                        <button id="play-process" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
-                            <i class="fas fa-play mr-2"></i> Visualize Process
-                        </button>
-                    </div>
+        <div class="step-process">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Start with Original Data</h3>
+                    <p>We begin with a sample from our real data distribution x<sub>0</sub> ~ q(x).</p>
                 </div>
             </div>
 
-            <div class="mt-12">
-                <h3 class="text-2xl font-semibold mb-4">Key Concepts</h3>
-
-                <div class="accordion" id="accordion-markov">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Markov Chain</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Diffusion models are parameterized as a Markov chain, meaning each step in the diffusion process only depends on the previous step. This simplifies the mathematics and allows for tractable computation.</p>
-                        <div class="math-formula mt-4">
-                            q(x<sub>1:T</sub>|x<sub>0</sub>) := ∏<sub>t=1</sub><sup>T</sup> q(x<sub>t</sub>|x<sub>t-1</sub>)
-                        </div>
-                        <p class="mt-2 text-sm text-gray-600">Where q is the forward process and T is the total number of steps.</p>
-                    </div>
-                </div>
-
-                <div class="accordion mt-4" id="accordion-gaussian">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Gaussian Transitions</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>The transitions between steps in both forward and reverse processes are modeled as Gaussian distributions. In the forward process, we add noise according to a schedule:</p>
-                        <div class="math-formula mt-4">
-                            q(x<sub>t</sub>|x<sub>t-1</sub>) = 𝒩(x<sub>t</sub>; √(1-β<sub>t</sub>)x<sub>t-1</sub>, β<sub>t</sub>I)
-                        </div>
-                        <p class="mt-2 text-sm text-gray-600">Where β<sub>t</sub> is the variance schedule that determines how much noise is added at each step.</p>
-                    </div>
-                </div>
-
-                <div class="accordion mt-4" id="accordion-neural">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Neural Network Architecture</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Diffusion models can use any neural network architecture where input and output dimensions match. Most implementations use U-Net architectures, which are particularly effective for image data.</p>
-                        <p class="mt-2">The neural network is trained to predict either:</p>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>The noise that was added to the data (most common approach)</li>
-                            <li>The original data directly</li>
-                            <li>The mean and variance of the posterior distribution</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion mt-4" id="accordion-timesteps">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Timesteps and Scheduling</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>The number of steps in the diffusion process (often denoted as T) is a critical hyperparameter. More steps generally lead to better quality but slower generation.</p>
-                        <p class="mt-2">Different schedules for adding noise include:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li><strong>Linear schedule:</strong> β values increase linearly from β<sub>1</sub> to β<sub>T</sub></li>
-                            <li><strong>Cosine schedule:</strong> β values follow a cosine function, which preserves more information in early stages</li>
-                            <li><strong>Quadratic schedule:</strong> β values increase quadratically</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Forward Diffusion Process -->
-        <section class="section" id="forward-process">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Forward Diffusion Process</h2>
-
-            <p class="mb-6">The forward diffusion process systematically destroys structure in the original data by gradually adding Gaussian noise over a series of steps, until the data is transformed into pure noise.</p>
-
-            <div class="step-process">
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Start with Original Data</h3>
-                    <p class="mt-2">We begin with a sample from our real data distribution x<sub>0</sub> ~ q(x).</p>
-                </div>
-
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Define Noise Schedule</h3>
-                    <p class="mt-2">We establish a variance schedule β<sub>1</sub>, β<sub>2</sub>, ..., β<sub>T</sub> where each β<sub>t</sub> determines how much noise is added at step t.</p>
-                    <div class="interactive-element mt-4">
-                        <h4 class="font-semibold mb-2">Noise Schedule Types:</h4>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Define Noise Schedule</h3>
+                    <p>We establish a variance schedule β<sub>1</sub>, β<sub>2</sub>, ..., β<sub>T</sub> where each β<sub>t</sub> determines how much noise is added at step t.</p>
+                    <div class="interactive-element">
+                        <h4>Noise Schedule Types:</h4>
                         <div class="tabs">
                             <div class="tab active" data-tab="linear">Linear</div>
                             <div class="tab" data-tab="cosine">Cosine</div>
@@ -598,150 +321,171 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                         </div>
                         <div class="tab-content active" id="linear">
                             <p>β<sub>t</sub> values increase linearly from β<sub>1</sub> (often 0.0001) to β<sub>T</sub> (often 0.02).</p>
-                            <div class="math-formula mt-2">
+                            <div class="math-formula">
                                 β<sub>t</sub> = β<sub>1</sub> + (β<sub>T</sub> - β<sub>1</sub>) · (t-1)/(T-1)
                             </div>
-                            <p class="mt-2 text-sm text-gray-600">Linear schedules were used in the original DDPM paper but can cause most information to be lost around the halfway point.</p>
+                            <p class="small text-muted">Linear schedules were used in the original DDPM paper but can cause most information to be lost around the halfway point.</p>
                         </div>
                         <div class="tab-content" id="cosine">
                             <p>β<sub>t</sub> values follow a cosine function, preserving more information early in the process.</p>
-                            <div class="math-formula mt-2">
+                            <div class="math-formula">
                                 β<sub>t</sub> = 1 - (cos((t/T + s) / (1 + s) · π/2))² / (cos((s) / (1 + s) · π/2))²
                             </div>
-                            <p class="mt-2 text-sm text-gray-600">Cosine schedules, introduced by OpenAI, allow for fewer diffusion steps (as low as 50) while maintaining quality.</p>
+                            <p class="small text-muted">Cosine schedules, introduced by OpenAI, allow for fewer diffusion steps (as low as 50) while maintaining quality.</p>
                         </div>
                         <div class="tab-content" id="quadratic">
                             <p>β<sub>t</sub> values increase quadratically, accelerating the addition of noise later in the process.</p>
-                            <div class="math-formula mt-2">
+                            <div class="math-formula">
                                 β<sub>t</sub> = β<sub>1</sub> + (β<sub>T</sub> - β<sub>1</sub>) · ((t-1)/(T-1))²
                             </div>
-                            <p class="mt-2 text-sm text-gray-600">Quadratic schedules can be useful for preserving important structural information early in the process.</p>
+                            <p class="small text-muted">Quadratic schedules can be useful for preserving important structural information early in the process.</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Apply Noise Iteratively</h3>
-                    <p class="mt-2">For each timestep t from 1 to T, we add noise according to:</p>
-                    <div class="math-formula mt-4">
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Apply Noise Iteratively</h3>
+                    <p>For each timestep t from 1 to T, we add noise according to:</p>
+                    <div class="math-formula">
                         q(x<sub>t</sub>|x<sub>t-1</sub>) = 𝒩(x<sub>t</sub>; √(1-β<sub>t</sub>)x<sub>t-1</sub>, β<sub>t</sub>I)
                     </div>
-                    <p class="mt-2 text-sm">This can be understood as:</p>
-                    <div class="math-formula mt-2">
+                    <p class="small">This can be understood as:</p>
+                    <div class="math-formula">
                         x<sub>t</sub> = √(1-β<sub>t</sub>)x<sub>t-1</sub> + √β<sub>t</sub> · ε<sub>t</sub>
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">where ε<sub>t</sub> ~ 𝒩(0, I) is random Gaussian noise.</p>
+                    <p class="small text-muted">where ε<sub>t</sub> ~ 𝒩(0, I) is random Gaussian noise.</p>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Efficient Implementation</h3>
-                    <p class="mt-2">Rather than iterating through all steps, we can directly sample x<sub>t</sub> at any arbitrary timestep using:</p>
-                    <div class="math-formula mt-4">
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Efficient Implementation</h3>
+                    <p>Rather than iterating through all steps, we can directly sample x<sub>t</sub> at any arbitrary timestep using:</p>
+                    <div class="math-formula">
                         q(x<sub>t</sub>|x<sub>0</sub>) = 𝒩(x<sub>t</sub>; √ᾱ<sub>t</sub>x<sub>0</sub>, (1-ᾱ<sub>t</sub>)I)
                     </div>
-                    <p class="mt-2 text-sm">In practice:</p>
-                    <div class="math-formula mt-2">
+                    <p class="small">In practice:</p>
+                    <div class="math-formula">
                         x<sub>t</sub> = √ᾱ<sub>t</sub>x<sub>0</sub> + √(1-ᾱ<sub>t</sub>) · ε
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">where ᾱ<sub>t</sub> = ∏<sub>s=1</sub><sup>t</sup> (1-β<sub>s</sub>) and ε ~ 𝒩(0, I).</p>
-                    <p class="mt-2 text-sm text-gray-600">This direct sampling method is crucial for efficient training and is derived from the properties of Gaussian distributions.</p>
-                </div>
-
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">End Result: Pure Noise</h3>
-                    <p class="mt-2">After T steps, x<sub>T</sub> is approximately pure Gaussian noise 𝒩(0, I), meaning all structure from the original data has been destroyed.</p>
+                    <p class="small text-muted">where ᾱ<sub>t</sub> = ∏<sub>s=1</sub><sup>t</sup> (1-β<sub>s</sub>) and ε ~ 𝒩(0, I).</p>
+                    <p class="small text-muted">This direct sampling method is crucial for efficient training and is derived from the properties of Gaussian distributions.</p>
                 </div>
             </div>
 
-            <div class="highlight-box mt-8">
-                <p class="font-semibold">Important Insight:</p>
-                <p>The forward process is not directly used for generation. It's only used to establish the mathematical framework that allows us to learn the reverse process, which is what actually generates new data.</p>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>End Result: Pure Noise</h3>
+                    <p>After T steps, x<sub>T</sub> is approximately pure Gaussian noise 𝒩(0, I), meaning all structure from the original data has been destroyed.</p>
+                </div>
             </div>
+        </div>
 
-            <div class="code-block mt-8">
-                <p class="comment"># Example PyTorch code for forward diffusion process</p>
-                <p class="keyword">def</p> <span class="function">forward_diffusion_sample</span>(x_0, t, device):
-                    <p class="string">"""
-                    Takes an image and a timestep as input and
-                    returns the noisy version of it at timestep t
-                    """</p>
-                    noise = torch.randn_like(x_0)
-                    sqrt_alphas_cumprod_t = sqrt_alphas_cumprod[t]
-                    sqrt_one_minus_alphas_cumprod_t = sqrt_one_minus_alphas_cumprod[t]
+        <div class="info-box warning">
+            <h3><i class="fas fa-circle-exclamation"></i> Important Insight:</h3>
+            <p>The forward process is not directly used for generation. It's only used to establish the mathematical framework that allows us to learn the reverse process, which is what actually generates new data.</p>
+        </div>
 
-                    <p class="comment"># Forward diffusion formula: mean + variance</p>
-                    return sqrt_alphas_cumprod_t * x_0 + sqrt_one_minus_alphas_cumprod_t * noise, noise
-                </p>
-            </div>
-        </section>
+        <div class="code-block"><button class="copy-btn">Copy</button><span class="cm"># Example PyTorch code for forward diffusion process</span>
+<span class="kw">def</span> <span class="fn">forward_diffusion_sample</span>(x_0, t, device):
+    <span class="str">"""
+    Takes an image and a timestep as input and
+    returns the noisy version of it at timestep t
+    """</span>
+    noise = torch.randn_like(x_0)
+    sqrt_alphas_cumprod_t = sqrt_alphas_cumprod[t]
+    sqrt_one_minus_alphas_cumprod_t = sqrt_one_minus_alphas_cumprod[t]
 
-        <!-- Reverse Diffusion Process -->
-        <section class="section" id="reverse-process">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Reverse Diffusion Process</h2>
+    <span class="cm"># Forward diffusion formula: mean + variance</span>
+    return sqrt_alphas_cumprod_t * x_0 + sqrt_one_minus_alphas_cumprod_t * noise, noise</div>
+    </div>
 
-            <p class="mb-6">The reverse diffusion process is where the magic happens. This is the process we learn during training and use during generation. It gradually transforms random noise into structured data by learning to reverse the forward diffusion process.</p>
+    <!-- Reverse Diffusion Process -->
+    <div class="section fade-up" id="reverse-process">
+        <h2 class="section-title"><i class="fas fa-arrow-left-long"></i> Reverse Diffusion Process</h2>
 
-            <div class="visualization-container">
-                <div class="flex flex-col md:flex-row gap-6 items-center">
-                    <div class="md:w-1/2">
-                        <h3 class="text-xl font-semibold mb-4">The Denoising Challenge</h3>
-                        <p class="mb-4">The key challenge is learning to predict and remove the noise added during the forward process, step by step, starting from pure noise.</p>
-                        <p>Unlike the forward process, which we designed to be simple, the reverse process is complex and must be learned from data.</p>
+        <p>The reverse diffusion process is where the magic happens. This is the process we learn during training and use during generation. It gradually transforms random noise into structured data by learning to reverse the forward diffusion process.</p>
+
+        <div class="viz">
+            <div class="two-col" style="margin-top:0;align-items:center">
+                <div>
+                    <h3 style="margin-top:0">The Denoising Challenge</h3>
+                    <p>The key challenge is learning to predict and remove the noise added during the forward process, step by step, starting from pure noise.</p>
+                    <p>Unlike the forward process, which we designed to be simple, the reverse process is complex and must be learned from data.</p>
+                </div>
+                <div class="center">
+                    <div class="card">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg" alt="Reverse Diffusion Process" style="display:block;margin:0 auto;max-width:180px">
+                        <p class="small text-muted" style="margin-top:16px">The reverse process iteratively removes noise using a learned neural network</p>
                     </div>
-                    <div class="md:w-1/2 text-center">
-                        <div class="bg-white p-4 rounded-lg shadow-sm">
-                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg" alt="Reverse Diffusion Process" class="mx-auto">
-                            <p class="mt-4 text-sm text-gray-600">The reverse process iteratively removes noise using a learned neural network</p>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="step-process mt-8">
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Mathematical Formulation</h3>
-                    <p class="mt-2">The reverse process is modeled as a Markov chain starting from x<sub>T</sub> ~ 𝒩(0, I) and working backward:</p>
-                    <div class="math-formula mt-4">
+        <div class="step-process">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Mathematical Formulation</h3>
+                    <p>The reverse process is modeled as a Markov chain starting from x<sub>T</sub> ~ 𝒩(0, I) and working backward:</p>
+                    <div class="math-formula">
                         p<sub>θ</sub>(x<sub>0:T</sub>) := p(x<sub>T</sub>) · ∏<sub>t=1</sub><sup>T</sup> p<sub>θ</sub>(x<sub>t-1</sub>|x<sub>t</sub>)
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">Where p<sub>θ</sub> is the learned reverse process with parameters θ.</p>
+                    <p class="small text-muted">Where p<sub>θ</sub> is the learned reverse process with parameters θ.</p>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Gaussian Parameterization</h3>
-                    <p class="mt-2">Each step in the reverse process is also modeled as a Gaussian:</p>
-                    <div class="math-formula mt-4">
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Gaussian Parameterization</h3>
+                    <p>Each step in the reverse process is also modeled as a Gaussian:</p>
+                    <div class="math-formula">
                         p<sub>θ</sub>(x<sub>t-1</sub>|x<sub>t</sub>) = 𝒩(x<sub>t-1</sub>; μ<sub>θ</sub>(x<sub>t</sub>, t), Σ<sub>θ</sub>(x<sub>t</sub>, t))
                     </div>
-                    <p class="mt-2">For simplicity, Σ<sub>θ</sub> is often fixed to match the forward process variance schedule, and the neural network only predicts μ<sub>θ</sub>.</p>
+                    <p>For simplicity, Σ<sub>θ</sub> is often fixed to match the forward process variance schedule, and the neural network only predicts μ<sub>θ</sub>.</p>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Predicting the Noise</h3>
-                    <p class="mt-2">Instead of directly predicting the mean μ<sub>θ</sub>, it's more effective to predict the noise component:</p>
-                    <div class="math-formula mt-4">
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Predicting the Noise</h3>
+                    <p>Instead of directly predicting the mean μ<sub>θ</sub>, it's more effective to predict the noise component:</p>
+                    <div class="math-formula">
                         ε<sub>θ</sub>(x<sub>t</sub>, t) ≈ ε
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">Where ε is the noise that was added during the forward process, and ε<sub>θ</sub> is the neural network's prediction of that noise.</p>
-                    <p class="mt-2">This approach leads to more stable training and better results.</p>
+                    <p class="small text-muted">Where ε is the noise that was added during the forward process, and ε<sub>θ</sub> is the neural network's prediction of that noise.</p>
+                    <p>This approach leads to more stable training and better results.</p>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Denoising Formula</h3>
-                    <p class="mt-2">Using the noise prediction approach, the denoising step becomes:</p>
-                    <div class="math-formula mt-4">
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h3>Denoising Formula</h3>
+                    <p>Using the noise prediction approach, the denoising step becomes:</p>
+                    <div class="math-formula">
                         x<sub>t-1</sub> = 1/√α<sub>t</sub> · (x<sub>t</sub> - (1-α<sub>t</sub>)/√(1-ᾱ<sub>t</sub>) · ε<sub>θ</sub>(x<sub>t</sub>, t)) + σ<sub>t</sub> · z
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">Where z ~ 𝒩(0, I) is random noise added during sampling (except for the final step) and σ<sub>t</sub> is a time-dependent standard deviation.</p>
+                    <p class="small text-muted">Where z ~ 𝒩(0, I) is random noise added during sampling (except for the final step) and σ<sub>t</sub> is a time-dependent standard deviation.</p>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Sampling Process</h3>
-                    <p class="mt-2">To generate new data using the model:</p>
-                    <ol class="list-decimal pl-5 mt-2">
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h3>Sampling Process</h3>
+                    <p>To generate new data using the model:</p>
+                    <ol>
                         <li>Start with x<sub>T</sub> ~ 𝒩(0, I) (random noise)</li>
                         <li>For each step t = T, T-1, ..., 1:
-                            <ol class="list-decimal pl-5 mt-1">
+                            <ol>
                                 <li>Predict noise ε<sub>θ</sub>(x<sub>t</sub>, t) using the neural network</li>
                                 <li>Compute x<sub>t-1</sub> using the denoising formula</li>
                             </ol>
@@ -750,258 +494,255 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                     </ol>
                 </div>
             </div>
+        </div>
 
-            <div class="code-block mt-8">
-                <p class="comment"># Example PyTorch code for the reverse diffusion process</p>
-                <p class="keyword">def</p> <span class="function">sample</span>(model, n_samples, device, image_size):
-                    <p class="string">"""
-                    Samples n_samples new images from the model
-                    """</p>
-                    model.eval()
-                    <p class="keyword">with</p> torch.no_grad():
-                        <p class="comment"># Start from pure noise</p>
-                        x = torch.randn(n_samples, 3, image_size, image_size).to(device)
+        <div class="code-block"><button class="copy-btn">Copy</button><span class="cm"># Example PyTorch code for the reverse diffusion process</span>
+<span class="kw">def</span> <span class="fn">sample</span>(model, n_samples, device, image_size):
+    <span class="str">"""
+    Samples n_samples new images from the model
+    """</span>
+    model.eval()
+    <span class="kw">with</span> torch.no_grad():
+        <span class="cm"># Start from pure noise</span>
+        x = torch.randn(n_samples, 3, image_size, image_size).to(device)
 
-                        <p class="keyword">for</p> i <p class="keyword">in</p> reversed(range(1, timesteps)):
-                            t = torch.full((n_samples,), i, device=device, dtype=torch.long)
+        <span class="kw">for</span> i <span class="kw">in</span> reversed(range(1, timesteps)):
+            t = torch.full((n_samples,), i, device=device, dtype=torch.long)
 
-                            <p class="comment"># Predict noise</p>
-                            predicted_noise = model(x, t)
+            <span class="cm"># Predict noise</span>
+            predicted_noise = model(x, t)
 
-                            <p class="comment"># Get alpha values for this timestep</p>
-                            alpha = alphas[t][:, None, None, None]
-                            alpha_hat = alphas_cumprod[t][:, None, None, None]
-                            beta = betas[t][:, None, None, None]
+            <span class="cm"># Get alpha values for this timestep</span>
+            alpha = alphas[t][:, None, None, None]
+            alpha_hat = alphas_cumprod[t][:, None, None, None]
+            beta = betas[t][:, None, None, None]
 
-                            <p class="comment"># Only add noise if we're not at the last step</p>
-                            <p class="keyword">if</p> i > 1:
-                                noise = torch.randn_like(x)
-                            <p class="keyword">else</p>:
-                                noise = torch.zeros_like(x)
+            <span class="cm"># Only add noise if we're not at the last step</span>
+            <span class="kw">if</span> i &gt; 1:
+                noise = torch.randn_like(x)
+            <span class="kw">else</span>:
+                noise = torch.zeros_like(x)
 
-                            <p class="comment"># Compute the denoised x_0 at this step</p>
-                            x = 1 / torch.sqrt(alpha) * (x - ((1 - alpha) / torch.sqrt(1 - alpha_hat)) * predicted_noise) + torch.sqrt(beta) * noise
+            <span class="cm"># Compute the denoised x_0 at this step</span>
+            x = 1 / torch.sqrt(alpha) * (x - ((1 - alpha) / torch.sqrt(1 - alpha_hat)) * predicted_noise) + torch.sqrt(beta) * noise
 
-                    <p class="comment"># Rescale to [0, 1] for images</p>
-                    return x.clamp(-1, 1).add(1).div(2)
-                </p>
+    <span class="cm"># Rescale to [0, 1] for images</span>
+    return x.clamp(-1, 1).add(1).div(2)</div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-forward-fast"></i> Advanced Sampling Techniques:</h3>
+            <p>Various techniques have been developed to improve the sampling process:</p>
+            <ul>
+                <li><strong>DDIM Sampling:</strong> Accelerates sampling by skipping steps while maintaining quality</li>
+                <li><strong>Classifier Guidance:</strong> Uses a classifier to guide the diffusion process toward desired attributes</li>
+                <li><strong>Classifier-Free Guidance:</strong> Enhances sample quality by balancing between conditional and unconditional generation</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Neural Network Architecture -->
+    <div class="section fade-up" id="architecture">
+        <h2 class="section-title"><i class="fas fa-network-wired"></i> Neural Network Architecture</h2>
+
+        <p>The neural network in a diffusion model is responsible for predicting the noise at each timestep. While any architecture with matching input and output dimensions can work, specific architectures have proven particularly effective.</p>
+
+        <div class="viz">
+            <h3>U-Net Architecture</h3>
+            <p>The most common architecture used in diffusion models is a modified U-Net, which is particularly effective for image data.</p>
+
+            <div class="card center">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="U-Net Architecture" style="display:block;margin:0 auto;max-width:220px">
+                <p class="small text-muted" style="margin-top:16px">U-Net architecture with skip connections, downsampling and upsampling paths</p>
             </div>
 
-            <div class="highlight-box mt-8">
-                <p class="font-semibold">Advanced Sampling Techniques:</p>
-                <p>Various techniques have been developed to improve the sampling process:</p>
-                <ul class="list-disc pl-5 mt-2">
-                    <li><strong>DDIM Sampling:</strong> Accelerates sampling by skipping steps while maintaining quality</li>
-                    <li><strong>Classifier Guidance:</strong> Uses a classifier to guide the diffusion process toward desired attributes</li>
-                    <li><strong>Classifier-Free Guidance:</strong> Enhances sample quality by balancing between conditional and unconditional generation</li>
+            <div style="margin-top:20px">
+                <p>Key components of the U-Net used in diffusion models:</p>
+                <ul>
+                    <li><strong>Downsampling path:</strong> Captures context through convolutional layers</li>
+                    <li><strong>Upsampling path:</strong> Reconstructs spatial information</li>
+                    <li><strong>Skip connections:</strong> Allow information to flow directly from encoder to decoder</li>
+                    <li><strong>Attention layers:</strong> Many implementations add self-attention layers at certain resolutions</li>
                 </ul>
             </div>
-        </section>
+        </div>
 
-        <!-- Neural Network Architecture -->
-        <section class="section" id="architecture">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Neural Network Architecture</h2>
+        <div class="subsection">
+            <h3>Key Architectural Elements</h3>
 
-            <p class="mb-6">The neural network in a diffusion model is responsible for predicting the noise at each timestep. While any architecture with matching input and output dimensions can work, specific architectures have proven particularly effective.</p>
-
-            <div class="visualization-container">
-                <h3 class="text-xl font-semibold mb-4">U-Net Architecture</h3>
-                <p class="mb-4">The most common architecture used in diffusion models is a modified U-Net, which is particularly effective for image data.</p>
-
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="U-Net Architecture" class="mx-auto w-full max-w-2xl">
-                    <p class="mt-4 text-center text-sm text-gray-600">U-Net architecture with skip connections, downsampling and upsampling paths</p>
+            <div class="accordion" id="accordion-resnet">
+                <div class="accordion-header">
+                    <span>ResNet Blocks</span>
+                    <i class="fas fa-chevron-down"></i>
                 </div>
+                <div class="accordion-content">
+                    <p>ResNet blocks form the backbone of the U-Net architecture in diffusion models. They include:</p>
+                    <ul>
+                        <li>Group normalization followed by SiLU/Swish activation</li>
+                        <li>Convolutional layers with kernel size 3</li>
+                        <li>Skip connections that add the input to the output</li>
+                    </ul>
+                    <div class="code-block"><button class="copy-btn">Copy</button><span class="cm"># Example PyTorch code for a ResNet block in diffusion models</span>
+<span class="kw">class</span> <span class="fn">ResidualBlock</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_channels, out_channels, time_emb_dim):
+        super().__init__()
+        self.time_mlp = nn.Linear(time_emb_dim, out_channels)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, 3, padding=1)
+        self.norm1 = nn.GroupNorm(8, out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, 3, padding=1)
+        self.norm2 = nn.GroupNorm(8, out_channels)
+        self.act = nn.SiLU()
 
-                <div class="mt-6">
-                    <p>Key components of the U-Net used in diffusion models:</p>
-                    <ul class="list-disc pl-5 mt-2 space-y-2">
-                        <li><strong>Downsampling path:</strong> Captures context through convolutional layers</li>
-                        <li><strong>Upsampling path:</strong> Reconstructs spatial information</li>
-                        <li><strong>Skip connections:</strong> Allow information to flow directly from encoder to decoder</li>
-                        <li><strong>Attention layers:</strong> Many implementations add self-attention layers at certain resolutions</li>
+        <span class="kw">if</span> in_channels != out_channels:
+            self.shortcut = nn.Conv2d(in_channels, out_channels, 1)
+        <span class="kw">else</span>:
+            self.shortcut = nn.Identity()
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x, t):
+        h = self.act(self.norm1(self.conv1(x)))
+        time_emb = self.act(self.time_mlp(t))
+        h = h + time_emb[:, :, None, None]
+        h = self.act(self.norm2(self.conv2(h)))
+        return h + self.shortcut(x)</div>
+                </div>
+            </div>
+
+            <div class="accordion" id="accordion-attention">
+                <div class="accordion-header">
+                    <span>Self-Attention Blocks</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Self-attention mechanisms allow the model to capture long-range dependencies in the data. Key components include:</p>
+                    <ul>
+                        <li>Multi-head self-attention similar to transformers</li>
+                        <li>Query, key, and value projections</li>
+                        <li>Typically applied at medium resolutions in the network</li>
+                    </ul>
+                    <p>Many modern diffusion models replace some of the ResNet blocks with self-attention blocks, particularly in the middle of the U-Net where feature maps have medium resolution.</p>
+                </div>
+            </div>
+
+            <div class="accordion" id="accordion-timestep">
+                <div class="accordion-header">
+                    <span>Timestep Embeddings</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>A critical component of diffusion models is how they incorporate the timestep information. This is typically done using sinusoidal position embeddings:</p>
+                    <ol>
+                        <li>Convert timestep t to a high-dimensional embedding using sinusoidal functions</li>
+                        <li>Process this embedding through an MLP</li>
+                        <li>Inject the processed embedding into each residual block</li>
+                    </ol>
+                    <div class="code-block"><button class="copy-btn">Copy</button><span class="cm"># Example PyTorch code for timestep embedding</span>
+<span class="kw">def</span> <span class="fn">timestep_embedding</span>(timesteps, dim, max_period=10000):
+    <span class="str">"""
+    Create sinusoidal timestep embeddings.
+    """</span>
+    half = dim // 2
+    freqs = torch.exp(
+        -math.log(max_period) * torch.arange(start=0, end=half, dtype=torch.float32) / half
+    ).to(device=timesteps.device)
+    args = timesteps[:, None].float() * freqs[None]
+    embedding = torch.cat([torch.cos(args), torch.sin(args)], dim=-1)
+    <span class="kw">if</span> dim % 2:
+        embedding = torch.cat([embedding, torch.zeros_like(embedding[:, :1])], dim=-1)
+    <span class="kw">return</span> embedding</div>
+                </div>
+            </div>
+
+            <div class="accordion" id="accordion-conditional">
+                <div class="accordion-header">
+                    <span>Conditional Generation</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Diffusion models can be conditioned on various inputs to control the generation process:</p>
+                    <ul>
+                        <li>
+                            <strong>Class labels:</strong> For class-conditional generation
+                            <ul>
+                                <li>Convert class labels to embeddings</li>
+                                <li>Add or concatenate with timestep embeddings</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Text prompts:</strong> For text-to-image generation
+                            <ul>
+                                <li>Use a pre-trained text encoder (e.g., CLIP)</li>
+                                <li>Process text embeddings and inject them into the model</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Other images:</strong> For image-to-image translation
+                            <ul>
+                                <li>Encode reference images and use them as additional conditioning</li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="mt-8">
-                <h3 class="text-2xl font-semibold mb-4">Key Architectural Elements</h3>
+        <div class="subsection">
+            <h3>Advanced Architectures</h3>
 
-                <div class="accordion" id="accordion-resnet">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">ResNet Blocks</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>ResNet blocks form the backbone of the U-Net architecture in diffusion models. They include:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Group normalization followed by SiLU/Swish activation</li>
-                            <li>Convolutional layers with kernel size 3</li>
-                            <li>Skip connections that add the input to the output</li>
-                        </ul>
-                        <div class="code-block mt-4">
-                            <p class="comment"># Example PyTorch code for a ResNet block in diffusion models</p>
-                            <p class="keyword">class</p> <span class="function">ResidualBlock</span>(nn.Module):
-                                <p class="keyword">def</p> <span class="function">__init__</span>(self, in_channels, out_channels, time_emb_dim):
-                                    super().__init__()
-                                    self.time_mlp = nn.Linear(time_emb_dim, out_channels)
-                                    self.conv1 = nn.Conv2d(in_channels, out_channels, 3, padding=1)
-                                    self.norm1 = nn.GroupNorm(8, out_channels)
-                                    self.conv2 = nn.Conv2d(out_channels, out_channels, 3, padding=1)
-                                    self.norm2 = nn.GroupNorm(8, out_channels)
-                                    self.act = nn.SiLU()
-
-                                    <p class="keyword">if</p> in_channels != out_channels:
-                                        self.shortcut = nn.Conv2d(in_channels, out_channels, 1)
-                                    <p class="keyword">else</p>:
-                                        self.shortcut = nn.Identity()
-
-                                <p class="keyword">def</p> <span class="function">forward</span>(self, x, t):
-                                    h = self.act(self.norm1(self.conv1(x)))
-                                    time_emb = self.act(self.time_mlp(t))
-                                    h = h + time_emb[:, :, None, None]
-                                    h = self.act(self.norm2(self.conv2(h)))
-                                    return h + self.shortcut(x)
-                            </p>
-                        </div>
-                    </div>
+            <div class="grid">
+                <div class="card">
+                    <h4>Latent Diffusion Models</h4>
+                    <p>Run the diffusion process in a lower-dimensional latent space rather than pixel space, significantly reducing computational requirements.</p>
+                    <p class="small text-muted">Example: Stable Diffusion operates on 4×64×64 latent vectors instead of 3×512×512 RGB images.</p>
                 </div>
 
-                <div class="accordion mt-4" id="accordion-attention">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Self-Attention Blocks</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Self-attention mechanisms allow the model to capture long-range dependencies in the data. Key components include:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Multi-head self-attention similar to transformers</li>
-                            <li>Query, key, and value projections</li>
-                            <li>Typically applied at medium resolutions in the network</li>
-                        </ul>
-                        <p class="mt-2">Many modern diffusion models replace some of the ResNet blocks with self-attention blocks, particularly in the middle of the U-Net where feature maps have medium resolution.</p>
-                    </div>
+                <div class="card">
+                    <h4>Cascaded Diffusion</h4>
+                    <p>Uses a series of diffusion models at progressively higher resolutions, enabling generation of very high-resolution images.</p>
+                    <p class="small text-muted">Example: DALL-E 2 uses a cascade of diffusion models to generate 1024×1024 images.</p>
                 </div>
 
-                <div class="accordion mt-4" id="accordion-timestep">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Timestep Embeddings</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>A critical component of diffusion models is how they incorporate the timestep information. This is typically done using sinusoidal position embeddings:</p>
-                        <ol class="list-decimal pl-5 mt-2">
-                            <li>Convert timestep t to a high-dimensional embedding using sinusoidal functions</li>
-                            <li>Process this embedding through an MLP</li>
-                            <li>Inject the processed embedding into each residual block</li>
-                        </ol>
-                        <div class="code-block mt-4">
-                            <p class="comment"># Example PyTorch code for timestep embedding</p>
-                            <p class="keyword">def</p> <span class="function">timestep_embedding</span>(timesteps, dim, max_period=10000):
-                                <p class="string">"""
-                                Create sinusoidal timestep embeddings.
-                                """</p>
-                                half = dim // 2
-                                freqs = torch.exp(
-                                    -math.log(max_period) * torch.arange(start=0, end=half, dtype=torch.float32) / half
-                                ).to(device=timesteps.device)
-                                args = timesteps[:, None].float() * freqs[None]
-                                embedding = torch.cat([torch.cos(args), torch.sin(args)], dim=-1)
-                                <p class="keyword">if</p> dim % 2:
-                                    embedding = torch.cat([embedding, torch.zeros_like(embedding[:, :1])], dim=-1)
-                                <p class="keyword">return</p> embedding
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion mt-4" id="accordion-conditional">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Conditional Generation</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Diffusion models can be conditioned on various inputs to control the generation process:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>
-                                <strong>Class labels:</strong> For class-conditional generation
-                                <ul class="list-disc pl-5 mt-1">
-                                    <li>Convert class labels to embeddings</li>
-                                    <li>Add or concatenate with timestep embeddings</li>
-                                </ul>
-                            </li>
-                            <li>
-                                <strong>Text prompts:</strong> For text-to-image generation
-                                <ul class="list-disc pl-5 mt-1">
-                                    <li>Use a pre-trained text encoder (e.g., CLIP)</li>
-                                    <li>Process text embeddings and inject them into the model</li>
-                                </ul>
-                            </li>
-                            <li>
-                                <strong>Other images:</strong> For image-to-image translation
-                                <ul class="list-disc pl-5 mt-1">
-                                    <li>Encode reference images and use them as additional conditioning</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <h4>Score-based Models</h4>
+                    <p>A closely related approach that models the score function (gradient of log-density) rather than directly predicting noise.</p>
+                    <p class="small text-muted">These models are mathematically equivalent to diffusion models under certain conditions.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="mt-8">
-                <h3 class="text-2xl font-semibold mb-4">Advanced Architectures</h3>
+        <div class="info-box">
+            <h3><i class="fas fa-shapes"></i> Architectural Flexibility:</h3>
+            <p>One of the key strengths of diffusion models is their flexibility in terms of architecture. The only hard requirement is that the input and output dimensions match. This allows for continuous innovation and adaptation of the architecture for specific tasks.</p>
+        </div>
+    </div>
 
-                <div class="card-grid">
-                    <div class="card">
-                        <h4 class="text-lg font-semibold mb-2 text-indigo-600">Latent Diffusion Models</h4>
-                        <p>Run the diffusion process in a lower-dimensional latent space rather than pixel space, significantly reducing computational requirements.</p>
-                        <p class="mt-2 text-sm text-gray-600">Example: Stable Diffusion operates on 4×64×64 latent vectors instead of 3×512×512 RGB images.</p>
-                    </div>
+    <!-- Training Process -->
+    <div class="section fade-up" id="training">
+        <h2 class="section-title"><i class="fas fa-dumbbell"></i> Training Diffusion Models</h2>
 
-                    <div class="card">
-                        <h4 class="text-lg font-semibold mb-2 text-indigo-600">Cascaded Diffusion</h4>
-                        <p>Uses a series of diffusion models at progressively higher resolutions, enabling generation of very high-resolution images.</p>
-                        <p class="mt-2 text-sm text-gray-600">Example: DALL-E 2 uses a cascade of diffusion models to generate 1024×1024 images.</p>
-                    </div>
+        <p>Training a diffusion model involves teaching the neural network to predict the noise that was added during the forward process. This is done by minimizing a carefully designed loss function.</p>
 
-                    <div class="card">
-                        <h4 class="text-lg font-semibold mb-2 text-indigo-600">Score-based Models</h4>
-                        <p>A closely related approach that models the score function (gradient of log-density) rather than directly predicting noise.</p>
-                        <p class="mt-2 text-sm text-gray-600">These models are mathematically equivalent to diffusion models under certain conditions.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="highlight-box mt-8">
-                <p class="font-semibold">Architectural Flexibility:</p>
-                <p>One of the key strengths of diffusion models is their flexibility in terms of architecture. The only hard requirement is that the input and output dimensions match. This allows for continuous innovation and adaptation of the architecture for specific tasks.</p>
-            </div>
-        </section>
-
-        <!-- Training Process -->
-        <section class="section" id="training">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Training Diffusion Models</h2>
-
-            <p class="mb-6">Training a diffusion model involves teaching the neural network to predict the noise that was added during the forward process. This is done by minimizing a carefully designed loss function.</p>
-
-            <div class="step-process">
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Objective Function</h3>
-                    <p class="mt-2">The training objective is to maximize the likelihood of the training data, which translates to minimizing the variational upper bound on the negative log-likelihood:</p>
-                    <div class="math-formula mt-4">
+        <div class="step-process">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h3>Objective Function</h3>
+                    <p>The training objective is to maximize the likelihood of the training data, which translates to minimizing the variational upper bound on the negative log-likelihood:</p>
+                    <div class="math-formula">
                         L<sub>vlb</sub> = L<sub>0</sub> + L<sub>1</sub> + ... + L<sub>T-1</sub> + L<sub>T</sub>
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">Each L<sub>t</sub> term represents a KL divergence between the forward and reverse processes at step t.</p>
+                    <p class="small text-muted">Each L<sub>t</sub> term represents a KL divergence between the forward and reverse processes at step t.</p>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Simplified Training Objective</h3>
-                    <p class="mt-2">In practice, the objective is simplified to a more tractable form:</p>
-                    <div class="math-formula mt-4">
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h3>Simplified Training Objective</h3>
+                    <p>In practice, the objective is simplified to a more tractable form:</p>
+                    <div class="math-formula">
                         L<sub>simple</sub> = E<sub>t,x<sub>0</sub>,ε</sub>[||ε - ε<sub>θ</sub>(x<sub>t</sub>, t)||<sup>2</sup>]
                     </div>
-                    <p class="mt-2 text-sm">Where:</p>
-                    <ul class="list-disc pl-5 mt-2">
+                    <p class="small">Where:</p>
+                    <ul>
                         <li>t is sampled uniformly from {1, 2, ..., T}</li>
                         <li>x<sub>0</sub> is a sample from the training data</li>
                         <li>ε is random Gaussian noise</li>
@@ -1009,11 +750,14 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                         <li>ε<sub>θ</sub>(x<sub>t</sub>, t) is the model's prediction of the noise</li>
                     </ul>
                 </div>
+            </div>
 
-                <div class="step-item">
-                    <h3 class="text-xl font-semibold">Training Algorithm</h3>
-                    <p class="mt-2">The training process can be summarized as:</p>
-                    <ol class="list-decimal pl-5 mt-2">
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h3>Training Algorithm</h3>
+                    <p>The training process can be summarized as:</p>
+                    <ol>
                         <li>Sample a batch of data x<sub>0</sub> from the training dataset</li>
                         <li>Sample random timesteps t for each sample in the batch</li>
                         <li>Sample random noise ε from a standard Gaussian distribution</li>
@@ -1023,778 +767,702 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
                         <li>Update the model parameters using gradient descent</li>
                     </ol>
                 </div>
-
-                <div class="code-block mt-4">
-                    <p class="comment"># Example PyTorch training loop for diffusion models</p>
-                    <p class="keyword">def</p> <span class="function">train_step</span>(model, x_0, optimizer):
-                        batch_size = x_0.shape[0]
-
-                        <p class="comment"># Sample random timesteps</p>
-                        t = torch.randint(1, timesteps, (batch_size,), device=x_0.device).long()
-
-                        <p class="comment"># Sample random noise</p>
-                        noise = torch.randn_like(x_0)
-
-                        <p class="comment"># Get noisy samples</p>
-                        x_t = get_noisy_samples(x_0, t, noise)
-
-                        <p class="comment"># Predict noise</p>
-                        predicted_noise = model(x_t, t)
-
-                        <p class="comment"># Calculate loss</p>
-                        loss = F.mse_loss(predicted_noise, noise)
-
-                        <p class="comment"># Update model</p>
-                        optimizer.zero_grad()
-                        loss.backward()
-                        optimizer.step()
-
-                        <p class="keyword">return</p> loss.item()
-                    </p>
-                </div>
             </div>
 
-            <div class="mt-8">
-                <h3 class="text-2xl font-semibold mb-4">Training Considerations</h3>
+            <div class="code-block"><button class="copy-btn">Copy</button><span class="cm"># Example PyTorch training loop for diffusion models</span>
+<span class="kw">def</span> <span class="fn">train_step</span>(model, x_0, optimizer):
+    batch_size = x_0.shape[0]
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-semibold text-lg mb-3">Hyperparameters</h4>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li><strong>Number of timesteps (T):</strong> Usually 1000 for training, can be reduced for sampling</li>
-                            <li><strong>Noise schedule:</strong> Linear, cosine, or quadratic schedule for β<sub>t</sub></li>
-                            <li><strong>Batch size:</strong> Typical values range from 32 to 256</li>
-                            <li><strong>Learning rate:</strong> Often around 1e-4 to 2e-5</li>
-                            <li><strong>EMA rate:</strong> Exponential moving average of model weights (often 0.9999)</li>
-                        </ul>
-                    </div>
+    <span class="cm"># Sample random timesteps</span>
+    t = torch.randint(1, timesteps, (batch_size,), device=x_0.device).long()
 
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-semibold text-lg mb-3">Optimization Techniques</h4>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li><strong>Weight initialization:</strong> Careful initialization helps stabilize training</li>
-                            <li><strong>Gradient clipping:</strong> Prevents exploding gradients</li>
-                            <li><strong>Learning rate scheduling:</strong> Cosine decay often works well</li>
-                            <li><strong>Mixed precision training:</strong> Speeds up training on modern GPUs</li>
-                            <li><strong>EMA:</strong> Maintaining an exponential moving average of model weights often improves results</li>
-                        </ul>
-                    </div>
+    <span class="cm"># Sample random noise</span>
+    noise = torch.randn_like(x_0)
+
+    <span class="cm"># Get noisy samples</span>
+    x_t = get_noisy_samples(x_0, t, noise)
+
+    <span class="cm"># Predict noise</span>
+    predicted_noise = model(x_t, t)
+
+    <span class="cm"># Calculate loss</span>
+    loss = F.mse_loss(predicted_noise, noise)
+
+    <span class="cm"># Update model</span>
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    <span class="kw">return</span> loss.item()</div>
+        </div>
+
+        <div class="subsection">
+            <h3>Training Considerations</h3>
+
+            <div class="two-col" style="margin-top:0">
+                <div class="panel">
+                    <h4>Hyperparameters</h4>
+                    <ul>
+                        <li><strong>Number of timesteps (T):</strong> Usually 1000 for training, can be reduced for sampling</li>
+                        <li><strong>Noise schedule:</strong> Linear, cosine, or quadratic schedule for β<sub>t</sub></li>
+                        <li><strong>Batch size:</strong> Typical values range from 32 to 256</li>
+                        <li><strong>Learning rate:</strong> Often around 1e-4 to 2e-5</li>
+                        <li><strong>EMA rate:</strong> Exponential moving average of model weights (often 0.9999)</li>
+                    </ul>
+                </div>
+
+                <div class="panel">
+                    <h4>Optimization Techniques</h4>
+                    <ul>
+                        <li><strong>Weight initialization:</strong> Careful initialization helps stabilize training</li>
+                        <li><strong>Gradient clipping:</strong> Prevents exploding gradients</li>
+                        <li><strong>Learning rate scheduling:</strong> Cosine decay often works well</li>
+                        <li><strong>Mixed precision training:</strong> Speeds up training on modern GPUs</li>
+                        <li><strong>EMA:</strong> Maintaining an exponential moving average of model weights often improves results</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="highlight-box mt-8">
-                <p class="font-semibold">Training Stability:</p>
-                <p>Diffusion models are generally more stable to train than GANs. They don't suffer from problems like mode collapse and have more consistent convergence properties. This stability is one of their major advantages.</p>
-            </div>
+        <div class="info-box success">
+            <h3><i class="fas fa-circle-check"></i> Training Stability:</h3>
+            <p>Diffusion models are generally more stable to train than GANs. They don't suffer from problems like mode collapse and have more consistent convergence properties. This stability is one of their major advantages.</p>
+        </div>
 
-            <div class="mt-8">
-                <h3 class="text-2xl font-semibold mb-4">Conditional Training</h3>
+        <div class="subsection">
+            <h3>Conditional Training</h3>
 
-                <p class="mb-4">Training conditional diffusion models requires additional considerations:</p>
+            <p>Training conditional diffusion models requires additional considerations:</p>
 
-                <div class="accordion" id="accordion-class">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Class-Conditional Generation</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>To train a class-conditional diffusion model:</p>
-                        <ol class="list-decimal pl-5 mt-2">
-                            <li>Input the class label along with the noisy image and timestep</li>
-                            <li>Convert class labels to embeddings, often using a learned embedding layer</li>
-                            <li>Combine these embeddings with the timestep embeddings</li>
-                            <li>Inject the combined information into the model at various points</li>
-                        </ol>
-                        <p class="mt-2">This allows the model to learn to generate images conditioned on specific classes.</p>
-                    </div>
-                </div>
-
-                <div class="accordion mt-4" id="accordion-text">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Text-Conditional Generation</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>For text-to-image diffusion models:</p>
-                        <ol class="list-decimal pl-5 mt-2">
-                            <li>Encode text prompts using a pre-trained text encoder (e.g., CLIP)</li>
-                            <li>Process these text embeddings through additional layers</li>
-                            <li>Inject the processed embeddings into the model, often using cross-attention mechanisms</li>
-                            <li>The model learns to generate images that match the text descriptions</li>
-                        </ol>
-                        <p class="mt-2">This approach is used in models like DALL-E 2 and Stable Diffusion.</p>
-                    </div>
-                </div>
-
-                <div class="accordion mt-4" id="accordion-guidance">
-                    <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                        <span class="font-semibold">Classifier-Free Guidance</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-content">
-                        <p>A powerful technique for improving conditional generation:</p>
-                        <ol class="list-decimal pl-5 mt-2">
-                            <li>Train a single model to handle both conditional and unconditional generation</li>
-                            <li>During training, randomly drop the conditioning information with some probability</li>
-                            <li>During sampling, interpolate between conditional and unconditional predictions:
-                                <div class="math-formula mt-2">
-                                    ε<sub>θ</sub><sup>CFG</sup>(x<sub>t</sub>, c, t) = ε<sub>θ</sub>(x<sub>t</sub>, ∅, t) + w · (ε<sub>θ</sub>(x<sub>t</sub>, c, t) - ε<sub>θ</sub>(x<sub>t</sub>, ∅, t))
-                                </div>
-                            </li>
-                        </ol>
-                        <p class="mt-2">Where w > 1 is the guidance scale, controlling how strongly the model follows the conditioning.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Applications -->
-        <section class="section" id="applications">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Applications of Diffusion Models</h2>
-
-            <p class="mb-6">Diffusion models have quickly become the foundation for numerous cutting-edge AI applications, particularly in the realm of content generation. Their ability to produce high-quality outputs with unprecedented control has opened new frontiers in AI creativity.</p>
-
-            <div class="card-grid">
-                <div class="card">
-                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-image text-indigo-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Text-to-Image Generation</h3>
-                    <p>Create high-quality images from textual descriptions with remarkable fidelity and creativity.</p>
-                    <p class="mt-4 text-sm text-gray-600"><strong>Examples:</strong> DALL-E 2, Stable Diffusion, Midjourney</p>
-                </div>
-
-                <div class="card">
-                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-paint-brush text-indigo-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Image Editing</h3>
-                    <p>Modify existing images in controlled ways, from simple inpainting to complex semantic modifications.</p>
-                    <p class="mt-4 text-sm text-gray-600"><strong>Examples:</strong> Stable Diffusion inpainting, DALL-E 2 outpainting</p>
-                </div>
-
-                <div class="card">
-                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-video text-indigo-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Video Generation</h3>
-                    <p>Generate short video clips from text prompts or extend existing videos temporally.</p>
-                    <p class="mt-4 text-sm text-gray-600"><strong>Examples:</strong> Stable Video Diffusion, Gen-1, Runway</p>
-                </div>
-
-                <div class="card">
-                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-music text-indigo-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Audio Generation</h3>
-                    <p>Create realistic audio, from speech to music and sound effects, using audio diffusion models.</p>
-                    <p class="mt-4 text-sm text-gray-600"><strong>Examples:</strong> AudioLDM, Riffusion, MusicLM</p>
-                </div>
-
-                <div class="card">
-                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-cube text-indigo-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">3D Content Generation</h3>
-                    <p>Generate 3D models, textures, and environments from text descriptions or 2D images.</p>
-                    <p class="mt-4 text-sm text-gray-600"><strong>Examples:</strong> Point-E, Magic3D, DreamFusion</p>
-                </div>
-
-                <div class="card">
-                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-dna text-indigo-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Scientific Applications</h3>
-                    <p>Accelerate scientific discovery in fields like drug discovery, protein folding, and materials science.</p>
-                    <p class="mt-4 text-sm text-gray-600"><strong>Examples:</strong> AlphaFold Diffusion, DiffDock</p>
-                </div>
-            </div>
-
-            <div class="mt-12">
-                <h3 class="text-2xl font-semibold mb-6">Application Deep Dive: Text-to-Image Generation</h3>
-
-                <div class="flex flex-col md:flex-row gap-8">
-                    <div class="md:w-1/2">
-                        <p class="mb-4">Text-to-image generation has been revolutionized by diffusion models, which can now create photorealistic images from detailed text prompts with unprecedented quality and control.</p>
-
-                        <h4 class="font-semibold text-lg mb-3 mt-6">The Generation Process:</h4>
-                        <ol class="list-decimal pl-5 space-y-2">
-                            <li>User provides a text prompt (e.g., "A serene landscape with mountains at sunset")</li>
-                            <li>Text encoder (typically CLIP) converts the text into embeddings</li>
-                            <li>The diffusion model uses these embeddings to condition the generation process</li>
-                            <li>Starting from random noise, the model gradually denoises to create an image matching the description</li>
-                            <li>Additional techniques like classifier-free guidance enhance the quality and prompt adherence</li>
-                        </ol>
-
-                        <h4 class="font-semibold text-lg mb-3 mt-6">Advanced Control Techniques:</h4>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li><strong>Control-Net:</strong> Allows control over spatial layout, pose, edge maps, etc.</li>
-                            <li><strong>Prompt Engineering:</strong> Crafting precise prompts for specific styles and outcomes</li>
-                            <li><strong>LoRA:</strong> Fine-tuning specific aspects of models for consistent subjects or styles</li>
-                            <li><strong>Negative Prompting:</strong> Specifying what to avoid in the generated image</li>
-                        </ul>
-                    </div>
-
-                    <div class="md:w-1/2">
-                        <div class="bg-white p-6 rounded-lg shadow-sm h-full">
-                            <h4 class="font-semibold text-lg mb-4 text-center">Example Text-to-Image System</h4>
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Text Prompt:</label>
-                                <div class="relative">
-                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="A serene landscape with mountains at sunset" disabled>
-                                    <button class="absolute right-2 top-2 text-indigo-600" disabled>
-                                        <i class="fas fa-magic"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Guidance Scale:</label>
-                                <input type="range" min="1" max="20" value="7.5" class="interactive-slider" disabled>
-                                <div class="flex justify-between text-xs text-gray-500">
-                                    <span>Creative</span>
-                                    <span>Balanced</span>
-                                    <span>Precise</span>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Sampling Steps:</label>
-                                <input type="range" min="10" max="150" value="50" class="interactive-slider" disabled>
-                                <div class="flex justify-between text-xs text-gray-500">
-                                    <span>Fast</span>
-                                    <span>Standard</span>
-                                    <span>Detailed</span>
-                                </div>
-                            </div>
-
-                            <div class="text-center mt-6">
-                                <button class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200 disabled:opacity-50" disabled>
-                                    Generate Image
-                                </button>
-                            </div>
-
-                            <div class="mt-6 text-center">
-                                <div class="border border-gray-200 rounded-lg p-2 inline-block">
-                                    <div class="h-48 w-48 bg-gray-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-image text-gray-400 text-4xl"></i>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-600 mt-2">Generated image would appear here</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-12">
-                <h3 class="text-2xl font-semibold mb-6">Model Comparison</h3>
-
-                <div class="overflow-x-auto">
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>Architecture</th>
-                                <th>Key Features</th>
-                                <th>Strengths</th>
-                                <th>Limitations</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>DALL-E 2</td>
-                                <td>CLIP + Diffusion</td>
-                                <td>Cascaded diffusion models, CLIP image embedding</td>
-                                <td>High photorealism, good composition</td>
-                                <td>Closed source, limited customization</td>
-                            </tr>
-                            <tr>
-                                <td>Stable Diffusion</td>
-                                <td>Latent Diffusion</td>
-                                <td>Works in compressed latent space, open source</td>
-                                <td>Efficiency, community extensions, customizability</td>
-                                <td>Sometimes less coherent than DALL-E 2</td>
-                            </tr>
-                            <tr>
-                                <td>Midjourney</td>
-                                <td>Diffusion (proprietary)</td>
-                                <td>Focuses on artistic quality, Discord interface</td>
-                                <td>Exceptional aesthetic quality, artistic styles</td>
-                                <td>Less control, Discord-only interface</td>
-                            </tr>
-                            <tr>
-                                <td>Google Imagen</td>
-                                <td>Cascaded Diffusion</td>
-                                <td>T5 text encoder, super-resolution diffusion</td>
-                                <td>Strong text alignment, high resolution</td>
-                                <td>Limited public access</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="highlight-box mt-8">
-                <p class="font-semibold">Future Directions:</p>
-                <p>The field of diffusion models is rapidly evolving, with several exciting directions:</p>
-                <ul class="list-disc pl-5 mt-2">
-                    <li><strong>Multimodal models:</strong> Combining text, image, audio, and video in unified diffusion frameworks</li>
-                    <li><strong>Faster sampling:</strong> New techniques to reduce the number of sampling steps without compromising quality</li>
-                    <li><strong>More controllable generation:</strong> Enhanced methods for precise control over generated content</li>
-                    <li><strong>Improved efficiency:</strong> Making diffusion models more compute-efficient and accessible</li>
-                    <li><strong>Domain-specific applications:</strong> Specialized diffusion models for scientific, medical, and industrial applications</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Advanced Topics -->
-        <section class="section" id="advanced">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Advanced Topics in Diffusion Models</h2>
-
-            <p class="mb-6">Beyond the fundamental concepts, several advanced topics and techniques have emerged to enhance diffusion models' capabilities, efficiency, and control. These innovations represent the cutting edge of diffusion model research.</p>
-
-            <div class="accordion" id="accordion-sampling">
-                <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                    <span class="font-semibold">Advanced Sampling Techniques</span>
+            <div class="accordion" id="accordion-class">
+                <div class="accordion-header">
+                    <span>Class-Conditional Generation</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="accordion-content">
-                    <p>Numerous techniques have been developed to make the sampling process more efficient:</p>
-
-                    <h4 class="font-semibold mt-4 mb-2">DDIM Sampling</h4>
-                    <p>Denoising Diffusion Implicit Models (DDIM) enables non-Markovian sampling paths, allowing:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Significantly fewer sampling steps (10-50 vs. 1000+)</li>
-                        <li>Deterministic generation for the same noise seed</li>
-                        <li>Interpolation between latent points for smooth transitions</li>
-                    </ul>
-
-                    <h4 class="font-semibold mt-4 mb-2">DPM-Solver</h4>
-                    <p>Treats diffusion as an ordinary differential equation (ODE) problem:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Uses higher-order solvers for more accurate approximations</li>
-                        <li>Achieves high-quality results in as few as 10-20 steps</li>
-                    </ul>
-
-                    <h4 class="font-semibold mt-4 mb-2">Ancestral Sampling</h4>
-                    <p>Introduces controlled randomness during the sampling process:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Balances determinism and stochasticity</li>
-                        <li>Can generate more diverse outputs</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="accordion mt-4" id="accordion-latent">
-                <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                    <span class="font-semibold">Latent Diffusion Models</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="accordion-content">
-                    <p>Latent Diffusion Models (LDMs) operate in a compressed latent space rather than pixel space:</p>
-
-                    <div class="flex flex-col md:flex-row gap-6 mt-4">
-                        <div class="md:w-1/2">
-                            <h4 class="font-semibold mb-2">Architecture:</h4>
-                            <ol class="list-decimal pl-5 mt-2">
-                                <li>An encoder (often a VAE) compresses images to a lower-dimensional latent space</li>
-                                <li>The diffusion process operates in this latent space</li>
-                                <li>A decoder reconstructs the final image from the denoised latent</li>
-                            </ol>
-
-                            <h4 class="font-semibold mt-4 mb-2">Advantages:</h4>
-                            <ul class="list-disc pl-5 mt-2">
-                                <li>Dramatically reduced computational requirements</li>
-                                <li>Faster training and sampling</li>
-                                <li>Enables generation of higher-resolution images</li>
-                                <li>Still maintains high quality with proper implementation</li>
-                            </ul>
-                        </div>
-
-                        <div class="md:w-1/2">
-                            <h4 class="font-semibold mb-2">Implementation Details:</h4>
-                            <ul class="list-disc pl-5 mt-2">
-                                <li>Common latent space dimensions are 4×64×64 for 512×512 images (compression factor of 8)</li>
-                                <li>The VAE encoder/decoder is trained first, then frozen during diffusion model training</li>
-                                <li>Cross-attention layers in the U-Net enable text conditioning</li>
-                                <li>The compressed representation preserves semantic information while discarding unnecessary details</li>
-                            </ul>
-
-                            <div class="mt-4 text-sm text-gray-600">
-                                <p>Stable Diffusion is the most well-known implementation of Latent Diffusion Models.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion mt-4" id="accordion-control">
-                <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                    <span class="font-semibold">Advanced Control Mechanisms</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="accordion-content">
-                    <p>Various techniques have been developed to provide fine-grained control over the generation process:</p>
-
-                    <h4 class="font-semibold mt-4 mb-2">ControlNet</h4>
-                    <p>Adds spatial conditioning capabilities to pre-trained diffusion models:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Preserves the knowledge of the base model</li>
-                        <li>Supports multiple control types: edges, depth maps, poses, segmentation maps</li>
-                        <li>Enables precise control over spatial layout while maintaining text adherence</li>
-                    </ul>
-
-                    <h4 class="font-semibold mt-4 mb-2">Textual Inversion</h4>
-                    <p>Learns new concepts from just a few examples:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Creates a new "word" (embedding) that represents a specific concept</li>
-                        <li>Allows personalization without full model fine-tuning</li>
-                        <li>Enable consistent generation of specific objects, styles, or characters</li>
-                    </ul>
-
-                    <h4 class="font-semibold mt-4 mb-2">LoRA (Low-Rank Adaptation)</h4>
-                    <p>Efficient fine-tuning technique that adds small, trainable matrices to existing weights:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Requires minimal additional parameters (typically <1% of original model)</li>
-                        <li>Can be trained on consumer GPUs with limited VRAM</li>
-                        <li>Multiple LoRAs can be combined for complex effects</li>
-                        <li>Enables style adaptation, subject-specific tuning, and artistic control</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="accordion mt-4" id="accordion-cascaded">
-                <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                    <span class="font-semibold">Cascaded Diffusion Models</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="accordion-content">
-                    <p>Cascaded diffusion models use a series of models at progressively higher resolutions:</p>
-
-                    <h4 class="font-semibold mt-4 mb-2">Architecture:</h4>
-                    <ol class="list-decimal pl-5 mt-2">
-                        <li>Base model generates low-resolution images (e.g., 64×64)</li>
-                        <li>Upsampler diffusion models progressively increase resolution</li>
-                        <li>Each upsampler is conditioned on the output of the previous stage</li>
-                        <li>Final outputs can reach very high resolutions (1024×1024 or beyond)</li>
+                    <p>To train a class-conditional diffusion model:</p>
+                    <ol>
+                        <li>Input the class label along with the noisy image and timestep</li>
+                        <li>Convert class labels to embeddings, often using a learned embedding layer</li>
+                        <li>Combine these embeddings with the timestep embeddings</li>
+                        <li>Inject the combined information into the model at various points</li>
                     </ol>
-
-                    <h4 class="font-semibold mt-4 mb-2">Advantages:</h4>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Enables generation of extremely high-resolution images</li>
-                        <li>Each model in the cascade has a focused task</li>
-                        <li>More efficient than training a single model for high resolutions</li>
-                    </ul>
-
-                    <p class="mt-4 text-sm text-gray-600">This approach is used in models like DALL-E 2 and Imagen to generate high-resolution images while maintaining global coherence.</p>
+                    <p>This allows the model to learn to generate images conditioned on specific classes.</p>
                 </div>
             </div>
 
-            <div class="accordion mt-4" id="accordion-video">
-                <div class="accordion-header bg-gray-50 hover:bg-gray-100">
-                    <span class="font-semibold">Video Diffusion Models</span>
+            <div class="accordion" id="accordion-text">
+                <div class="accordion-header">
+                    <span>Text-Conditional Generation</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="accordion-content">
-                    <p>Extending diffusion models to the temporal dimension enables video generation:</p>
-
-                    <h4 class="font-semibold mt-4 mb-2">Approaches:</h4>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li><strong>3D U-Net:</strong> Treats video as a 3D volume (2D space + time)</li>
-                        <li><strong>Transformer-based:</strong> Uses attention to capture temporal dependencies</li>
-                        <li><strong>Latent video diffusion:</strong> Operates in a compressed video latent space</li>
-                    </ul>
-
-                    <h4 class="font-semibold mt-4 mb-2">Challenges:</h4>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Computational demands grow significantly with video length</li>
-                        <li>Maintaining temporal consistency is difficult</li>
-                        <li>Balancing frame quality with smooth motion</li>
-                    </ul>
-
-                    <h4 class="font-semibold mt-4 mb-2">Recent Advances:</h4>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li>Frame interpolation techniques to increase effective framerate</li>
-                        <li>Motion guidance methods for more controlled animation</li>
-                        <li>Text-to-video models that generate consistent short clips from prompts</li>
-                    </ul>
-
-                    <p class="mt-4 text-sm text-gray-600">Examples include Stable Video Diffusion, Runway Gen-2, and Google's Imagen Video.</p>
+                    <p>For text-to-image diffusion models:</p>
+                    <ol>
+                        <li>Encode text prompts using a pre-trained text encoder (e.g., CLIP)</li>
+                        <li>Process these text embeddings through additional layers</li>
+                        <li>Inject the processed embeddings into the model, often using cross-attention mechanisms</li>
+                        <li>The model learns to generate images that match the text descriptions</li>
+                    </ol>
+                    <p>This approach is used in models like DALL-E 2 and Stable Diffusion.</p>
                 </div>
             </div>
 
-            <div class="mt-12">
-                <h3 class="text-2xl font-semibold mb-6">Theoretical Connections</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-semibold text-lg mb-3">Score-Based Generative Models</h4>
-                        <p class="mb-3">Diffusion models have deep connections to score-based generative models:</p>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li>Both approach data generation by reversing a noising process</li>
-                            <li>Score-based models directly estimate the gradient of the log-density</li>
-                            <li>Under certain conditions, the two approaches are mathematically equivalent</li>
-                            <li>Score-based models frame the process in terms of stochastic differential equations (SDEs)</li>
-                        </ul>
-                        <p class="mt-3 text-sm text-gray-600">This connection has led to unified frameworks that bridge the two approaches, enabling new theoretical insights and sampling techniques.</p>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-semibold text-lg mb-3">Variational Inference</h4>
-                        <p class="mb-3">Diffusion models can be understood through the lens of variational inference:</p>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li>The training objective is derived from a variational lower bound</li>
-                            <li>They can be seen as hierarchical VAEs with a very large number of latent variables</li>
-                            <li>The forward process defines the prior, while the reverse process learns the posterior</li>
-                            <li>This connection helps explain why diffusion models produce high-quality, diverse samples</li>
-                        </ul>
-                        <p class="mt-3 text-sm text-gray-600">Understanding this connection has enabled researchers to derive more efficient training objectives and sampling procedures.</p>
-                    </div>
+            <div class="accordion" id="accordion-guidance">
+                <div class="accordion-header">
+                    <span>Classifier-Free Guidance</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>A powerful technique for improving conditional generation:</p>
+                    <ol>
+                        <li>Train a single model to handle both conditional and unconditional generation</li>
+                        <li>During training, randomly drop the conditioning information with some probability</li>
+                        <li>During sampling, interpolate between conditional and unconditional predictions:
+                            <div class="math-formula">
+                                ε<sub>θ</sub><sup>CFG</sup>(x<sub>t</sub>, c, t) = ε<sub>θ</sub>(x<sub>t</sub>, ∅, t) + w · (ε<sub>θ</sub>(x<sub>t</sub>, c, t) - ε<sub>θ</sub>(x<sub>t</sub>, ∅, t))
+                            </div>
+                        </li>
+                    </ol>
+                    <p>Where w &gt; 1 is the guidance scale, controlling how strongly the model follows the conditioning.</p>
                 </div>
             </div>
-
-            <div class="highlight-box mt-8">
-                <p class="font-semibold">Research Frontiers:</p>
-                <p>Current research focuses on several challenging aspects of diffusion models:</p>
-                <ul class="list-disc pl-5 mt-2">
-                    <li><strong>Computational efficiency:</strong> Reducing the computational demands for training and sampling</li>
-                    <li><strong>Sample quality vs. speed:</strong> Improving the quality-speed tradeoff in sampling</li>
-                    <li><strong>Theoretical understanding:</strong> Deepening the mathematical foundations</li>
-                    <li><strong>Multi-modal generation:</strong> Extending diffusion to broader types of data and cross-modal generation</li>
-                    <li><strong>Ethical considerations:</strong> Addressing bias, harmful content, and copyright issues</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Resources Section -->
-        <section class="section" id="resources">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Learning Resources</h2>
-
-            <p class="mb-6">Explore these resources to deepen your understanding of diffusion models and stay updated with the latest developments in this rapidly evolving field.</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-xl font-semibold mb-4">Research Papers</h3>
-                    <ul class="list-disc pl-5 space-y-3">
-                        <li><strong>Foundational:</strong> "Deep Unsupervised Learning using Nonequilibrium Thermodynamics" (Sohl-Dickstein et al., 2015)</li>
-                        <li><strong>Core DDPM:</strong> "Denoising Diffusion Probabilistic Models" (Ho et al., 2020)</li>
-                        <li><strong>Improvements:</strong> "Improved Denoising Diffusion Probabilistic Models" (Nichol & Dhariwal, 2021)</li>
-                        <li><strong>Latent Space:</strong> "High-Resolution Image Synthesis with Latent Diffusion Models" (Rombach et al., 2022)</li>
-                        <li><strong>Guidance:</strong> "Classifier-Free Diffusion Guidance" (Ho & Salimans, 2022)</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-xl font-semibold mb-4">Tutorials & Courses</h3>
-                    <ul class="list-disc pl-5 space-y-3">
-                        <li><strong>Math Background:</strong> "Understanding Diffusion Models: A Unified Perspective" by Calvin Luo</li>
-                        <li><strong>Code Walkthroughs:</strong> "Diffusion Models from Scratch" by Hugging Face</li>
-                        <li><strong>Video Tutorials:</strong> "Diffusion Models | Paper Explanation" by Yannic Kilcher</li>
-                        <li><strong>Interactive:</strong> "Diffusion Models: A Practical Guide" by Google AI</li>
-                        <li><strong>Full Course:</strong> "Generative AI with Diffusion Models" on popular learning platforms</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-xl font-semibold mb-4">Code & Implementation</h3>
-                    <ul class="list-disc pl-5 space-y-3">
-                        <li><strong>PyTorch Implementation:</strong> "denoising-diffusion-pytorch" by Phil Wang</li>
-                        <li><strong>Production Code:</strong> Stable Diffusion's GitHub repository</li>
-                        <li><strong>JAX Implementation:</strong> "score_sde" by Yang Song</li>
-                        <li><strong>Simplified Demo:</strong> "Diffusion Models Tutorial" from HuggingFace</li>
-                        <li><strong>Interactive Tools:</strong> Colab notebooks for experimenting with diffusion models</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mt-12">
-                <h3 class="text-2xl font-semibold mb-4">Learning Path</h3>
-
-                <div class="timeline">
-                    <div class="timeline-line"></div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker">1</div>
-                        <div class="timeline-content">
-                            <h4 class="font-semibold text-lg">Foundations</h4>
-                            <p>Start with the basics of probability, Markov chains, and generative models. Ensure you understand concepts like Gaussian distributions and KL divergence.</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker">2</div>
-                        <div class="timeline-content">
-                            <h4 class="font-semibold text-lg">Core Concepts</h4>
-                            <p>Study the forward and reverse diffusion processes. Understand how noise is systematically added and removed, and how this relates to data generation.</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker">3</div>
-                        <div class="timeline-content">
-                            <h4 class="font-semibold text-lg">Neural Network Architecture</h4>
-                            <p>Learn about U-Net architecture and how it's adapted for diffusion models. Understand how timestep information is incorporated and how conditioning works.</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker">4</div>
-                        <div class="timeline-content">
-                            <h4 class="font-semibold text-lg">Training & Sampling</h4>
-                            <p>Dive into the training objectives and sampling procedures. Implement a simple diffusion model in PyTorch or TensorFlow to gain hands-on experience.</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker">5</div>
-                        <div class="timeline-content">
-                            <h4 class="font-semibold text-lg">Advanced Topics</h4>
-                            <p>Explore advanced concepts like latent diffusion, classifier-free guidance, and accelerated sampling techniques. Study how these innovations improve the basic model.</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker">6</div>
-                        <div class="timeline-content">
-                            <h4 class="font-semibold text-lg">Applications & Projects</h4>
-                            <p>Apply diffusion models to practical projects. Experiment with text-to-image generation, inpainting, or other creative applications to reinforce your understanding.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Conclusion -->
-        <section class="section" id="conclusion">
-            <h2 class="text-3xl font-bold mb-6 text-indigo-600">Conclusion</h2>
-
-            <div class="bg-indigo-50 p-8 rounded-lg">
-                <p class="mb-4">Diffusion models represent a significant milestone in generative AI, offering a powerful, flexible, and theoretically grounded approach to generating high-quality data across various domains. Their success stems from several key advantages:</p>
-
-                <ul class="list-disc pl-5 space-y-2 mb-6">
-                    <li><strong>Stable Training:</strong> Unlike GANs, diffusion models have stable training dynamics without mode collapse or oscillations</li>
-                    <li><strong>High-Quality Outputs:</strong> They generate state-of-the-art results for many types of data</li>
-                    <li><strong>Controllable Generation:</strong> They offer precise control through various conditioning mechanisms</li>
-                    <li><strong>Theoretical Foundation:</strong> They are grounded in sound statistical and mathematical principles</li>
-                    <li><strong>Architectural Flexibility:</strong> They can incorporate advances in neural network design</li>
-                </ul>
-
-                <p class="mb-4">As research continues to advance, we can expect diffusion models to become even more powerful, efficient, and applicable to a wider range of problems. The combination of their theoretical elegance and practical effectiveness makes them a cornerstone of modern generative AI.</p>
-
-                <p>We hope this guide has provided a comprehensive understanding of diffusion models, from their fundamental principles to advanced techniques and applications. As you continue your journey in exploring this fascinating field, remember that diffusion models exemplify how seemingly simple ideas, when carefully developed and extended, can lead to extraordinary capabilities.</p>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="mt-12 py-8 border-t border-gray-200">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div>
-                    <h3 class="text-xl font-bold text-indigo-600">Understanding Diffusion Models</h3>
-                    <p class="text-gray-600 mt-2">A comprehensive guide to the theory and practice of diffusion-based generative models</p>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <p class="text-gray-600">Created by <span class="text-indigo-600 font-semibold">Genspark AI</span></p>
-                    <p class="text-gray-500 text-sm mt-1">© 2025 All Rights Reserved</p>
-                </div>
-            </div>
-        </footer>
+        </div>
     </div>
 
-    <script>
-        // Accordion functionality
-        document.querySelectorAll('.accordion-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const accordion = header.parentElement;
-                accordion.classList.toggle('active');
-                const icon = header.querySelector('i');
-                if (accordion.classList.contains('active')) {
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
-                } else {
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                }
-            });
-        });
+    <!-- Applications -->
+    <div class="section fade-up" id="applications">
+        <h2 class="section-title"><i class="fas fa-wand-magic-sparkles"></i> Applications of Diffusion Models</h2>
 
-        // Tab functionality
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
+        <p>Diffusion models have quickly become the foundation for numerous cutting-edge AI applications, particularly in the realm of content generation. Their ability to produce high-quality outputs with unprecedented control has opened new frontiers in AI creativity.</p>
 
-                // Remove active class from all tabs and content
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        <div class="grid" style="margin-top:24px">
+            <div class="card">
+                <div class="mod-icon"><i class="fas fa-image"></i></div>
+                <h3>Text-to-Image Generation</h3>
+                <p>Create high-quality images from textual descriptions with remarkable fidelity and creativity.</p>
+                <p class="small text-muted"><strong>Examples:</strong> DALL-E 2, Stable Diffusion, Midjourney</p>
+            </div>
 
-                // Add active class to selected tab and content
-                tab.classList.add('active');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
+            <div class="card">
+                <div class="mod-icon"><i class="fas fa-paint-brush"></i></div>
+                <h3>Image Editing</h3>
+                <p>Modify existing images in controlled ways, from simple inpainting to complex semantic modifications.</p>
+                <p class="small text-muted"><strong>Examples:</strong> Stable Diffusion inpainting, DALL-E 2 outpainting</p>
+            </div>
 
-        // Process visualization
-        const processBar = document.getElementById('process-bar');
-        const playProcess = document.getElementById('play-process');
+            <div class="card">
+                <div class="mod-icon"><i class="fas fa-video"></i></div>
+                <h3>Video Generation</h3>
+                <p>Generate short video clips from text prompts or extend existing videos temporally.</p>
+                <p class="small text-muted"><strong>Examples:</strong> Stable Video Diffusion, Gen-1, Runway</p>
+            </div>
 
-        playProcess.addEventListener('click', () => {
-            processBar.style.width = '0%';
-            setTimeout(() => {
-                processBar.style.width = '100%';
-            }, 100);
-        });
+            <div class="card">
+                <div class="mod-icon"><i class="fas fa-music"></i></div>
+                <h3>Audio Generation</h3>
+                <p>Create realistic audio, from speech to music and sound effects, using audio diffusion models.</p>
+                <p class="small text-muted"><strong>Examples:</strong> AudioLDM, Riffusion, MusicLM</p>
+            </div>
 
-        // Fade-in animation on scroll
-        document.addEventListener('DOMContentLoaded', () => {
-            const fadeElements = document.querySelectorAll('.fade-in');
+            <div class="card">
+                <div class="mod-icon"><i class="fas fa-cube"></i></div>
+                <h3>3D Content Generation</h3>
+                <p>Generate 3D models, textures, and environments from text descriptions or 2D images.</p>
+                <p class="small text-muted"><strong>Examples:</strong> Point-E, Magic3D, DreamFusion</p>
+            </div>
 
-            const fadeInObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('appear');
-                        fadeInObserver.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
+            <div class="card">
+                <div class="mod-icon"><i class="fas fa-dna"></i></div>
+                <h3>Scientific Applications</h3>
+                <p>Accelerate scientific discovery in fields like drug discovery, protein folding, and materials science.</p>
+                <p class="small text-muted"><strong>Examples:</strong> AlphaFold Diffusion, DiffDock</p>
+            </div>
+        </div>
 
-            fadeElements.forEach(element => {
-                fadeInObserver.observe(element);
-            });
-        });
-    </script>
-<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+        <div class="subsection">
+            <h3>Application Deep Dive: Text-to-Image Generation</h3>
+
+            <div class="two-col" style="margin-top:0">
+                <div>
+                    <p>Text-to-image generation has been revolutionized by diffusion models, which can now create photorealistic images from detailed text prompts with unprecedented quality and control.</p>
+
+                    <h4>The Generation Process:</h4>
+                    <ol>
+                        <li>User provides a text prompt (e.g., "A serene landscape with mountains at sunset")</li>
+                        <li>Text encoder (typically CLIP) converts the text into embeddings</li>
+                        <li>The diffusion model uses these embeddings to condition the generation process</li>
+                        <li>Starting from random noise, the model gradually denoises to create an image matching the description</li>
+                        <li>Additional techniques like classifier-free guidance enhance the quality and prompt adherence</li>
+                    </ol>
+
+                    <h4>Advanced Control Techniques:</h4>
+                    <ul>
+                        <li><strong>Control-Net:</strong> Allows control over spatial layout, pose, edge maps, etc.</li>
+                        <li><strong>Prompt Engineering:</strong> Crafting precise prompts for specific styles and outcomes</li>
+                        <li><strong>LoRA:</strong> Fine-tuning specific aspects of models for consistent subjects or styles</li>
+                        <li><strong>Negative Prompting:</strong> Specifying what to avoid in the generated image</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="panel">
+                        <h4 class="center">Example Text-to-Image System</h4>
+                        <div class="form-group">
+                            <label class="form-label">Text Prompt:</label>
+                            <div class="input-wrap">
+                                <input type="text" class="form-input" placeholder="A serene landscape with mountains at sunset" disabled>
+                                <button class="icon-btn" disabled>
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Guidance Scale:</label>
+                            <input type="range" min="1" max="20" value="7.5" class="interactive-slider" disabled>
+                            <div class="between">
+                                <span>Creative</span>
+                                <span>Balanced</span>
+                                <span>Precise</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Sampling Steps:</label>
+                            <input type="range" min="10" max="150" value="50" class="interactive-slider" disabled>
+                            <div class="between">
+                                <span>Fast</span>
+                                <span>Standard</span>
+                                <span>Detailed</span>
+                            </div>
+                        </div>
+
+                        <div class="center" style="margin-top:20px">
+                            <button class="btn btn-primary" disabled>
+                                Generate Image
+                            </button>
+                        </div>
+
+                        <div class="center" style="margin-top:16px">
+                            <div class="img-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <p class="small text-muted" style="margin-top:8px">Generated image would appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3>Model Comparison</h3>
+
+            <div class="table-wrap">
+                <table class="dark-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Architecture</th>
+                            <th>Key Features</th>
+                            <th>Strengths</th>
+                            <th>Limitations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DALL-E 2</td>
+                            <td>CLIP + Diffusion</td>
+                            <td>Cascaded diffusion models, CLIP image embedding</td>
+                            <td>High photorealism, good composition</td>
+                            <td>Closed source, limited customization</td>
+                        </tr>
+                        <tr>
+                            <td>Stable Diffusion</td>
+                            <td>Latent Diffusion</td>
+                            <td>Works in compressed latent space, open source</td>
+                            <td>Efficiency, community extensions, customizability</td>
+                            <td>Sometimes less coherent than DALL-E 2</td>
+                        </tr>
+                        <tr>
+                            <td>Midjourney</td>
+                            <td>Diffusion (proprietary)</td>
+                            <td>Focuses on artistic quality, Discord interface</td>
+                            <td>Exceptional aesthetic quality, artistic styles</td>
+                            <td>Less control, Discord-only interface</td>
+                        </tr>
+                        <tr>
+                            <td>Google Imagen</td>
+                            <td>Cascaded Diffusion</td>
+                            <td>T5 text encoder, super-resolution diffusion</td>
+                            <td>Strong text alignment, high resolution</td>
+                            <td>Limited public access</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-rocket"></i> Future Directions:</h3>
+            <p>The field of diffusion models is rapidly evolving, with several exciting directions:</p>
+            <ul>
+                <li><strong>Multimodal models:</strong> Combining text, image, audio, and video in unified diffusion frameworks</li>
+                <li><strong>Faster sampling:</strong> New techniques to reduce the number of sampling steps without compromising quality</li>
+                <li><strong>More controllable generation:</strong> Enhanced methods for precise control over generated content</li>
+                <li><strong>Improved efficiency:</strong> Making diffusion models more compute-efficient and accessible</li>
+                <li><strong>Domain-specific applications:</strong> Specialized diffusion models for scientific, medical, and industrial applications</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Advanced Topics -->
+    <div class="section fade-up" id="advanced">
+        <h2 class="section-title"><i class="fas fa-flask"></i> Advanced Topics in Diffusion Models</h2>
+
+        <p>Beyond the fundamental concepts, several advanced topics and techniques have emerged to enhance diffusion models' capabilities, efficiency, and control. These innovations represent the cutting edge of diffusion model research.</p>
+
+        <div class="accordion" id="accordion-sampling">
+            <div class="accordion-header">
+                <span>Advanced Sampling Techniques</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Numerous techniques have been developed to make the sampling process more efficient:</p>
+
+                <h4>DDIM Sampling</h4>
+                <p>Denoising Diffusion Implicit Models (DDIM) enables non-Markovian sampling paths, allowing:</p>
+                <ul>
+                    <li>Significantly fewer sampling steps (10-50 vs. 1000+)</li>
+                    <li>Deterministic generation for the same noise seed</li>
+                    <li>Interpolation between latent points for smooth transitions</li>
+                </ul>
+
+                <h4>DPM-Solver</h4>
+                <p>Treats diffusion as an ordinary differential equation (ODE) problem:</p>
+                <ul>
+                    <li>Uses higher-order solvers for more accurate approximations</li>
+                    <li>Achieves high-quality results in as few as 10-20 steps</li>
+                </ul>
+
+                <h4>Ancestral Sampling</h4>
+                <p>Introduces controlled randomness during the sampling process:</p>
+                <ul>
+                    <li>Balances determinism and stochasticity</li>
+                    <li>Can generate more diverse outputs</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordion" id="accordion-latent">
+            <div class="accordion-header">
+                <span>Latent Diffusion Models</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Latent Diffusion Models (LDMs) operate in a compressed latent space rather than pixel space:</p>
+
+                <div class="two-col" style="margin-top:8px">
+                    <div>
+                        <h4>Architecture:</h4>
+                        <ol>
+                            <li>An encoder (often a VAE) compresses images to a lower-dimensional latent space</li>
+                            <li>The diffusion process operates in this latent space</li>
+                            <li>A decoder reconstructs the final image from the denoised latent</li>
+                        </ol>
+
+                        <h4>Advantages:</h4>
+                        <ul>
+                            <li>Dramatically reduced computational requirements</li>
+                            <li>Faster training and sampling</li>
+                            <li>Enables generation of higher-resolution images</li>
+                            <li>Still maintains high quality with proper implementation</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4>Implementation Details:</h4>
+                        <ul>
+                            <li>Common latent space dimensions are 4×64×64 for 512×512 images (compression factor of 8)</li>
+                            <li>The VAE encoder/decoder is trained first, then frozen during diffusion model training</li>
+                            <li>Cross-attention layers in the U-Net enable text conditioning</li>
+                            <li>The compressed representation preserves semantic information while discarding unnecessary details</li>
+                        </ul>
+
+                        <div class="small text-muted">
+                            <p>Stable Diffusion is the most well-known implementation of Latent Diffusion Models.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion" id="accordion-control">
+            <div class="accordion-header">
+                <span>Advanced Control Mechanisms</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Various techniques have been developed to provide fine-grained control over the generation process:</p>
+
+                <h4>ControlNet</h4>
+                <p>Adds spatial conditioning capabilities to pre-trained diffusion models:</p>
+                <ul>
+                    <li>Preserves the knowledge of the base model</li>
+                    <li>Supports multiple control types: edges, depth maps, poses, segmentation maps</li>
+                    <li>Enables precise control over spatial layout while maintaining text adherence</li>
+                </ul>
+
+                <h4>Textual Inversion</h4>
+                <p>Learns new concepts from just a few examples:</p>
+                <ul>
+                    <li>Creates a new "word" (embedding) that represents a specific concept</li>
+                    <li>Allows personalization without full model fine-tuning</li>
+                    <li>Enable consistent generation of specific objects, styles, or characters</li>
+                </ul>
+
+                <h4>LoRA (Low-Rank Adaptation)</h4>
+                <p>Efficient fine-tuning technique that adds small, trainable matrices to existing weights:</p>
+                <ul>
+                    <li>Requires minimal additional parameters (typically &lt;1% of original model)</li>
+                    <li>Can be trained on consumer GPUs with limited VRAM</li>
+                    <li>Multiple LoRAs can be combined for complex effects</li>
+                    <li>Enables style adaptation, subject-specific tuning, and artistic control</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordion" id="accordion-cascaded">
+            <div class="accordion-header">
+                <span>Cascaded Diffusion Models</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Cascaded diffusion models use a series of models at progressively higher resolutions:</p>
+
+                <h4>Architecture:</h4>
+                <ol>
+                    <li>Base model generates low-resolution images (e.g., 64×64)</li>
+                    <li>Upsampler diffusion models progressively increase resolution</li>
+                    <li>Each upsampler is conditioned on the output of the previous stage</li>
+                    <li>Final outputs can reach very high resolutions (1024×1024 or beyond)</li>
+                </ol>
+
+                <h4>Advantages:</h4>
+                <ul>
+                    <li>Enables generation of extremely high-resolution images</li>
+                    <li>Each model in the cascade has a focused task</li>
+                    <li>More efficient than training a single model for high resolutions</li>
+                </ul>
+
+                <p class="small text-muted">This approach is used in models like DALL-E 2 and Imagen to generate high-resolution images while maintaining global coherence.</p>
+            </div>
+        </div>
+
+        <div class="accordion" id="accordion-video">
+            <div class="accordion-header">
+                <span>Video Diffusion Models</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Extending diffusion models to the temporal dimension enables video generation:</p>
+
+                <h4>Approaches:</h4>
+                <ul>
+                    <li><strong>3D U-Net:</strong> Treats video as a 3D volume (2D space + time)</li>
+                    <li><strong>Transformer-based:</strong> Uses attention to capture temporal dependencies</li>
+                    <li><strong>Latent video diffusion:</strong> Operates in a compressed video latent space</li>
+                </ul>
+
+                <h4>Challenges:</h4>
+                <ul>
+                    <li>Computational demands grow significantly with video length</li>
+                    <li>Maintaining temporal consistency is difficult</li>
+                    <li>Balancing frame quality with smooth motion</li>
+                </ul>
+
+                <h4>Recent Advances:</h4>
+                <ul>
+                    <li>Frame interpolation techniques to increase effective framerate</li>
+                    <li>Motion guidance methods for more controlled animation</li>
+                    <li>Text-to-video models that generate consistent short clips from prompts</li>
+                </ul>
+
+                <p class="small text-muted">Examples include Stable Video Diffusion, Runway Gen-2, and Google's Imagen Video.</p>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3>Theoretical Connections</h3>
+
+            <div class="two-col" style="margin-top:0">
+                <div class="panel">
+                    <h4>Score-Based Generative Models</h4>
+                    <p>Diffusion models have deep connections to score-based generative models:</p>
+                    <ul>
+                        <li>Both approach data generation by reversing a noising process</li>
+                        <li>Score-based models directly estimate the gradient of the log-density</li>
+                        <li>Under certain conditions, the two approaches are mathematically equivalent</li>
+                        <li>Score-based models frame the process in terms of stochastic differential equations (SDEs)</li>
+                    </ul>
+                    <p class="small text-muted">This connection has led to unified frameworks that bridge the two approaches, enabling new theoretical insights and sampling techniques.</p>
+                </div>
+
+                <div class="panel">
+                    <h4>Variational Inference</h4>
+                    <p>Diffusion models can be understood through the lens of variational inference:</p>
+                    <ul>
+                        <li>The training objective is derived from a variational lower bound</li>
+                        <li>They can be seen as hierarchical VAEs with a very large number of latent variables</li>
+                        <li>The forward process defines the prior, while the reverse process learns the posterior</li>
+                        <li>This connection helps explain why diffusion models produce high-quality, diverse samples</li>
+                    </ul>
+                    <p class="small text-muted">Understanding this connection has enabled researchers to derive more efficient training objectives and sampling procedures.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-microscope"></i> Research Frontiers:</h3>
+            <p>Current research focuses on several challenging aspects of diffusion models:</p>
+            <ul>
+                <li><strong>Computational efficiency:</strong> Reducing the computational demands for training and sampling</li>
+                <li><strong>Sample quality vs. speed:</strong> Improving the quality-speed tradeoff in sampling</li>
+                <li><strong>Theoretical understanding:</strong> Deepening the mathematical foundations</li>
+                <li><strong>Multi-modal generation:</strong> Extending diffusion to broader types of data and cross-modal generation</li>
+                <li><strong>Ethical considerations:</strong> Addressing bias, harmful content, and copyright issues</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Resources Section -->
+    <div class="section fade-up" id="resources">
+        <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Learning Resources</h2>
+
+        <p>Explore these resources to deepen your understanding of diffusion models and stay updated with the latest developments in this rapidly evolving field.</p>
+
+        <div class="three-col">
+            <div class="panel">
+                <h3>Research Papers</h3>
+                <ul>
+                    <li><strong>Foundational:</strong> "Deep Unsupervised Learning using Nonequilibrium Thermodynamics" (Sohl-Dickstein et al., 2015)</li>
+                    <li><strong>Core DDPM:</strong> "Denoising Diffusion Probabilistic Models" (Ho et al., 2020)</li>
+                    <li><strong>Improvements:</strong> "Improved Denoising Diffusion Probabilistic Models" (Nichol &amp; Dhariwal, 2021)</li>
+                    <li><strong>Latent Space:</strong> "High-Resolution Image Synthesis with Latent Diffusion Models" (Rombach et al., 2022)</li>
+                    <li><strong>Guidance:</strong> "Classifier-Free Diffusion Guidance" (Ho &amp; Salimans, 2022)</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h3>Tutorials &amp; Courses</h3>
+                <ul>
+                    <li><strong>Math Background:</strong> "Understanding Diffusion Models: A Unified Perspective" by Calvin Luo</li>
+                    <li><strong>Code Walkthroughs:</strong> "Diffusion Models from Scratch" by Hugging Face</li>
+                    <li><strong>Video Tutorials:</strong> "Diffusion Models | Paper Explanation" by Yannic Kilcher</li>
+                    <li><strong>Interactive:</strong> "Diffusion Models: A Practical Guide" by Google AI</li>
+                    <li><strong>Full Course:</strong> "Generative AI with Diffusion Models" on popular learning platforms</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h3>Code &amp; Implementation</h3>
+                <ul>
+                    <li><strong>PyTorch Implementation:</strong> "denoising-diffusion-pytorch" by Phil Wang</li>
+                    <li><strong>Production Code:</strong> Stable Diffusion's GitHub repository</li>
+                    <li><strong>JAX Implementation:</strong> "score_sde" by Yang Song</li>
+                    <li><strong>Simplified Demo:</strong> "Diffusion Models Tutorial" from HuggingFace</li>
+                    <li><strong>Interactive Tools:</strong> Colab notebooks for experimenting with diffusion models</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3>Learning Path</h3>
+
+            <div class="timeline">
+                <div class="timeline-line"></div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">1</div>
+                    <div class="timeline-content">
+                        <h4>Foundations</h4>
+                        <p>Start with the basics of probability, Markov chains, and generative models. Ensure you understand concepts like Gaussian distributions and KL divergence.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">2</div>
+                    <div class="timeline-content">
+                        <h4>Core Concepts</h4>
+                        <p>Study the forward and reverse diffusion processes. Understand how noise is systematically added and removed, and how this relates to data generation.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">3</div>
+                    <div class="timeline-content">
+                        <h4>Neural Network Architecture</h4>
+                        <p>Learn about U-Net architecture and how it's adapted for diffusion models. Understand how timestep information is incorporated and how conditioning works.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">4</div>
+                    <div class="timeline-content">
+                        <h4>Training &amp; Sampling</h4>
+                        <p>Dive into the training objectives and sampling procedures. Implement a simple diffusion model in PyTorch or TensorFlow to gain hands-on experience.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">5</div>
+                    <div class="timeline-content">
+                        <h4>Advanced Topics</h4>
+                        <p>Explore advanced concepts like latent diffusion, classifier-free guidance, and accelerated sampling techniques. Study how these innovations improve the basic model.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">6</div>
+                    <div class="timeline-content">
+                        <h4>Applications &amp; Projects</h4>
+                        <p>Apply diffusion models to practical projects. Experiment with text-to-image generation, inpainting, or other creative applications to reinforce your understanding.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="section fade-up" id="conclusion">
+        <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Conclusion</h2>
+
+        <div class="info-box success">
+            <p>Diffusion models represent a significant milestone in generative AI, offering a powerful, flexible, and theoretically grounded approach to generating high-quality data across various domains. Their success stems from several key advantages:</p>
+
+            <ul>
+                <li><strong>Stable Training:</strong> Unlike GANs, diffusion models have stable training dynamics without mode collapse or oscillations</li>
+                <li><strong>High-Quality Outputs:</strong> They generate state-of-the-art results for many types of data</li>
+                <li><strong>Controllable Generation:</strong> They offer precise control through various conditioning mechanisms</li>
+                <li><strong>Theoretical Foundation:</strong> They are grounded in sound statistical and mathematical principles</li>
+                <li><strong>Architectural Flexibility:</strong> They can incorporate advances in neural network design</li>
+            </ul>
+
+            <p>As research continues to advance, we can expect diffusion models to become even more powerful, efficient, and applicable to a wider range of problems. The combination of their theoretical elegance and practical effectiveness makes them a cornerstone of modern generative AI.</p>
+
+            <p>We hope this guide has provided a comprehensive understanding of diffusion models, from their fundamental principles to advanced techniques and applications. As you continue your journey in exploring this fascinating field, remember that diffusion models exemplify how seemingly simple ideas, when carefully developed and extended, can lead to extraordinary capabilities.</p>
+        </div>
+    </div>
+
+    <div class="page-nav"><a class="nav-btn prev" href="/">← Home</a><a class="nav-btn next" href="/courses.html">All courses →</a></div>
+</div>
+
+<footer class="footer"><div class="footer-bottom">© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
 <script>
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-    const btn=document.getElementById('themeToggleBtn');
-    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
-    const back=document.querySelector('a[href="/cs/index.html"]');
-    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
-        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
-    }
-})();
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn'))return;
-        pre.classList.add('has-copy');pre.style.position='relative';
-        var btn=document.createElement('button');btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
-        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
-        pre.appendChild(btn);
+    // Accordion functionality
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const accordion = header.parentElement;
+            accordion.classList.toggle('active');
+            const icon = header.querySelector('i');
+            if (accordion.classList.contains('active')) {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        });
     });
-});
+
+    // Tab functionality
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Add active class to selected tab and content
+            tab.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Process visualization
+    const processBar = document.getElementById('process-bar');
+    const playProcess = document.getElementById('play-process');
+
+    playProcess.addEventListener('click', () => {
+        processBar.style.width = '0%';
+        setTimeout(() => {
+            processBar.style.width = '100%';
+        }, 100);
+    });
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

@@ -138,6 +138,12 @@
             catch(e){alert('Copy failed');}finally{document.body.removeChild(ta);}
         }
     </script>
+<link rel="stylesheet" href="/assets/legacy-align.css">
+<style>
+.scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+.scroll-top.visible{opacity:1;pointer-events:auto}
+.scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+</style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#toc-nav" data-bs-offset="100">
 
@@ -989,11 +995,11 @@ if __name__ == '__main__':
     function toggleTheme(){
         document.body.classList.toggle('light-mode');
         const l=document.body.classList.contains('light-mode');
-        localStorage.setItem('theme',l?'light':'dark');
+        localStorage.setItem('ab-theme',l?'light':'dark');
         document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';
     }
     (function(){
-        if(localStorage.getItem('theme')==='light'){
+        if(localStorage.getItem('ab-theme')==='light'){
             document.body.classList.add('light-mode');
             document.getElementById('themeIcon').className='fa-solid fa-moon';
         }
@@ -1008,5 +1014,7 @@ if __name__ == '__main__':
         links.forEach(l=>{ l.classList.toggle('active',l.getAttribute('href')==='#'+cur); });
     });
 </script>
+<button class="scroll-top" id="scrollTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+<script>window.addEventListener('scroll',function(){document.getElementById('scrollTop').classList.toggle('visible',window.pageYOffset>400);},{passive:true});</script>
 </body>
 </html>

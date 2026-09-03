@@ -13,468 +13,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arduino Analog Pins A0-A5 Tutorial</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0a0e27;
-            --bg-secondary: #141935;
-            --bg-tertiary: #1e2749;
-            --accent-blue: #00d4ff;
-            --accent-green: #00ff88;
-            --accent-orange: #ff6b35;
-            --text-primary: #e8f1f5;
-            --text-secondary: #a8c5da;
-            --code-bg: #0d1117;
-            --border-color: #2a3f5f;
-        }
-
-        body {
-            font-family: 'Space Mono', monospace;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.8;
-            overflow-x: hidden;
-        }
-
-        /* Circuit board pattern background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-            border-bottom: 3px solid var(--accent-blue);
-            margin-bottom: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.1), transparent);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.2); opacity: 0.6; }
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5em;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            animation: slideDown 0.8s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .subtitle {
-            font-size: 1.2em;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        .pin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
-        }
-
-        .pin-card {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pin-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .pin-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-blue);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        }
-
-        .pin-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .pin-number {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5em;
-            font-weight: 900;
-            color: var(--accent-blue);
-            margin-bottom: 10px;
-        }
-
-        .section {
-            background: var(--bg-secondary);
-            border-left: 4px solid var(--accent-green);
-            padding: 40px;
-            margin: 40px 0;
-            border-radius: 8px;
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2em;
-            color: var(--accent-green);
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        h2::before {
-            content: '▶';
-            color: var(--accent-blue);
-            font-size: 0.7em;
-        }
-
-        h3 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent-blue);
-            margin: 30px 0 15px;
-            font-size: 1.5em;
-        }
-
-        .info-box {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-orange);
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 6px;
-        }
-
-        .info-box.important {
-            border-left-color: var(--accent-orange);
-            background: rgba(255, 107, 53, 0.05);
-        }
-
-        .info-box.tip {
-            border-left-color: var(--accent-green);
-            background: rgba(0, 255, 136, 0.05);
-        }
-
-        .code-block {
-            background: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 25px;
-            margin: 20px 0;
-            overflow-x: auto;
-            position: relative;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .code-block::before {
-            content: 'Arduino Code';
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 0.75em;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        pre {
-            margin: 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
-
-        code {
-            color: var(--accent-green);
-        }
-
-        .keyword { color: #ff79c6; }
-        .function { color: #50fa7b; }
-        .number { color: #bd93f9; }
-        .comment { color: #6272a4; font-style: italic; }
-        .string { color: #f1fa8c; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 30px 0;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th {
-            background: var(--bg-primary);
-            color: var(--accent-blue);
-            padding: 15px;
-            text-align: left;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9em;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover {
-            background: rgba(0, 212, 255, 0.05);
-        }
-
-        .voltage-range {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 30px 0;
-            padding: 25px;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-        }
-
-        .voltage-bar {
-            flex: 1;
-            height: 40px;
-            background: linear-gradient(90deg, #000 0%, var(--accent-blue) 50%, var(--accent-green) 100%);
-            border-radius: 20px;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
-        }
-
-        .voltage-bar::before,
-        .voltage-bar::after {
-            position: absolute;
-            top: -30px;
-            font-size: 0.9em;
-            color: var(--text-secondary);
-        }
-
-        .voltage-bar::before {
-            content: '0V';
-            left: 0;
-        }
-
-        .voltage-bar::after {
-            content: '5V';
-            right: 0;
-        }
-
-        .example-card {
-            background: var(--bg-tertiary);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            margin: 30px 0;
-            transition: all 0.3s ease;
-        }
-
-        .example-card:hover {
-            border-color: var(--accent-green);
-            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
-        }
-
-        .example-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent-orange);
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .example-title::before {
-            content: '⚡';
-            font-size: 1.2em;
-        }
-
-        ul, ol {
-            margin: 20px 0;
-            padding-left: 30px;
-        }
-
-        li {
-            margin: 10px 0;
-            color: var(--text-secondary);
-        }
-
-        .highlight {
-            color: var(--accent-blue);
-            font-weight: 700;
-        }
-
-        .formula {
-            background: var(--code-bg);
-            padding: 15px 25px;
-            margin: 20px 0;
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1em;
-            text-align: center;
-            color: var(--accent-green);
-            border: 1px dashed var(--border-color);
-        }
-
-        .pin-diagram {
-            background: var(--bg-tertiary);
-            padding: 40px;
-            margin: 30px 0;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .arduino-board {
-            display: inline-block;
-            background: #2d5f3f;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .pins-container {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .pin {
-            width: 40px;
-            height: 80px;
-            background: #ffd700;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #000;
-            font-size: 0.8em;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .pin:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
-        }
-
-        .pin::after {
-            content: attr(data-label);
-            position: absolute;
-            bottom: -25px;
-            font-size: 0.9em;
-            color: var(--text-primary);
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px;
-            margin-top: 60px;
-            border-top: 2px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        .diagram-container {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(10, 14, 39, 0.5);
-            border-radius: 8px;
-        }
-
-        .diagram-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2em; }
-            .section { padding: 20px; }
-            .pin-grid { grid-template-columns: repeat(3, 1fr); }
-        }
+    <meta name="description" content="Complete guide to Arduino Uno analog pins A0-A5: 10-bit ADC, voltage conversion, analogRead(), map(), potentiometer, TMP36, LDR and soil moisture examples, specs and best practices.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#00979d;--primary-hover:#33b3b8;--glow:rgba(0,151,157,.14)}
+.section{scroll-margin-top:84px}
+.code-block .comment{color:#8b949e;font-style:italic}.code-block .keyword{color:#ff7b72}.code-block .function{color:#d2a8ff}.code-block .string{color:#a5d6ff}.code-block .number{color:#79c0ff}.code-block .type{color:#ffa657}.code-block .preprocessor{color:#ff7b72}
+.code-block code{background:none;padding:0;color:inherit;font-size:inherit;font-family:inherit}
+.section>h3.sub-h{font-size:1.25rem;font-weight:700;margin:28px 0 12px;color:var(--text)}
+.hero h1 .emoji{-webkit-text-fill-color:initial}
+.footer-bottom span{display:block}
+.pin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:24px 0}
+.pin-card{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:22px 16px;text-align:center;color:var(--text2);transition:all .2s}
+.pin-card:hover{border-color:var(--primary);transform:translateY(-3px)}
+.pin-number{font-size:2rem;font-weight:800;color:var(--primary);line-height:1.2;margin-bottom:6px}
+.highlight{color:var(--primary);font-weight:700}
+.voltage-range{display:flex;align-items:center;margin:32px 0 24px;padding:40px 24px 20px;background:var(--surface2);border-radius:8px}
+.voltage-bar{flex:1;height:36px;background:linear-gradient(90deg,#0b0f19 0%,var(--primary) 50%,#22c55e 100%);border-radius:18px;position:relative}
+.voltage-bar::before,.voltage-bar::after{position:absolute;top:-28px;font-size:.85rem;color:var(--text2);font-family:'JetBrains Mono',monospace}
+.voltage-bar::before{content:'0V';left:0}.voltage-bar::after{content:'5V';right:0}
+.formula{background:var(--code);border:1px dashed var(--border2);color:#7ee787;padding:14px 24px;margin:16px 0;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:1.05rem;text-align:center}
+.pin-diagram{background:var(--surface2);padding:32px;margin:20px 0;border-radius:12px;text-align:center}
+.arduino-board{display:inline-block;background:#2d5f3f;padding:30px 30px 44px;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.pins-container{display:flex;gap:10px;justify-content:center}
+.pin{width:40px;height:80px;background:#ffd700;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:.8rem;position:relative;cursor:pointer;transition:all .3s}
+.pin:hover{transform:translateY(-5px);box-shadow:0 5px 15px rgba(255,215,0,.5)}
+.pin::after{content:attr(data-label);position:absolute;bottom:-26px;font-size:.85rem;color:#fff}
+.example-card{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:24px;margin:24px 0;transition:border-color .2s}
+.example-card:hover{border-color:var(--primary)}
+.example-title{font-weight:700;color:var(--primary);font-size:1.15rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}.example-title::before{content:'\26A1'}
+.example-card .info-box{background:var(--surface)}
+.diagram-container{text-align:center;margin-top:20px}.diagram-container img{border-radius:8px;border:1px solid var(--border2);background:#fff}
+.info-box h3{font-size:1.05rem}
     </style>
 </head>
 <body>
-    <header>
-        <h1>Arduino Analog Pins</h1>
-        <p class="subtitle">A Complete Guide to A0 - A5</p>
-    </header>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="/ros2/"><i class="fas fa-microchip"></i> Analog Pins</a>
+  <div class="nav-links"><a href="#overview">Overview</a><a href="#how">How it Works</a><a href="#reading">Reading</a><a href="#converting">Converting</a><a href="#sensors">Sensors</a><a href="#specs">Specs</a><a href="#exercise">Practice</a><a href="/ros2/">ROS2 Course</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="#overview">Overview</a><a href="#how">How it Works</a><a href="#reading">Reading</a><a href="#converting">Converting</a><a href="#sensors">Sensors</a><a href="#specs">Specs</a><a href="#exercise">Practice</a><a href="/ros2/">ROS2 Course</a></div>
+<section class="hero"><div class="hero-content"><h1>Arduino Analog Pins</h1><p class="hero-sub">A Complete Guide to A0 - A5</p><span class="diff-badge">Beginner</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~40 min</span></div></section>
+<div class="container">
 
-    <div class="container">
         <!-- Pin Overview -->
-        <section class="section">
-            <h2>Analog Pin Overview</h2>
+        <div class="section fade-up" id="overview">
+            <h2 class="section-title"><i class="fas fa-circle-info"></i> Analog Pin Overview</h2>
             <p>The Arduino Uno features <span class="highlight">6 analog input pins</span> labeled A0 through A5. These pins are essential for reading analog sensors and converting real-world analog signals into digital values that your Arduino can process.</p>
 
             <div class="pin-grid">
@@ -504,26 +91,24 @@
                 </div>
             </div>
 
-            <div class="info-box tip">
-                <strong>💡 Did You Know?</strong> Analog pins A0-A5 can also be used as digital pins! They can be referenced as pins 14-19 respectively when using digitalWrite() or digitalRead().
-            </div>
-        </section>
+            <div class="info-box success"><p><strong>💡 Did You Know?</strong> Analog pins A0-A5 can also be used as digital pins! They can be referenced as pins 14-19 respectively when using digitalWrite() or digitalRead().</p></div>
+        </div>
 
         <!-- How Analog Pins Work -->
-        <section class="section">
-            <h2>How Analog Input Works</h2>
+        <div class="section fade-up" id="how">
+            <h2 class="section-title"><i class="fas fa-wave-square"></i> How Analog Input Works</h2>
 
-            <h3>Voltage Range</h3>
+            <h3 class="sub-h">Voltage Range</h3>
             <p>Arduino analog pins can read voltages between <span class="highlight">0V and 5V</span>. The voltage is converted to a digital value using the built-in Analog-to-Digital Converter (ADC).</p>
 
             <div class="voltage-range">
                 <div class="voltage-bar"></div>
             </div>
 
-            <h3>Analog-to-Digital Conversion (ADC)</h3>
+            <h3 class="sub-h">Analog-to-Digital Conversion (ADC)</h3>
             <p>The Arduino Uno uses a <span class="highlight">10-bit ADC</span>, which means it converts the analog voltage into a digital value ranging from <span class="highlight">0 to 1023</span>.</p>
 
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Input Voltage</th>
@@ -548,26 +133,24 @@
                         <td>Maximum value (VCC)</td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
 
-            <div class="info-box important">
-                <strong>⚠️ Important:</strong> Never apply voltage greater than 5V to analog pins! This can damage your Arduino. Always check your sensor specifications.
-            </div>
+            <div class="info-box warning"><p><strong>⚠️ Important:</strong> Never apply voltage greater than 5V to analog pins! This can damage your Arduino. Always check your sensor specifications.</p></div>
 
-            <h3>Resolution Formula</h3>
+            <h3 class="sub-h">Resolution Formula</h3>
             <div class="formula">
                 Voltage = (ADC Value × 5V) ÷ 1024
             </div>
-            <p style="text-align: center; color: var(--text-secondary); margin-top: 10px;">
+            <p style="text-align: center; color: var(--text2); margin-top: 10px;">
                 Each step represents approximately 4.88 mV (0.00488V)
             </p>
-        </section>
+        </div>
 
         <!-- Pin Diagram -->
-        <section class="section">
-            <h2>Pin Location on Arduino Uno</h2>
+        <div class="section fade-up" id="location">
+            <h2 class="section-title"><i class="fas fa-location-dot"></i> Pin Location on Arduino Uno</h2>
             <div class="pin-diagram">
-                <p style="margin-bottom: 30px; color: var(--text-secondary);">Analog pins are located on the bottom right side of the Arduino Uno</p>
+                <p style="margin-bottom: 30px; color: var(--text2);">Analog pins are located on the bottom right side of the Arduino Uno</p>
                 <div class="arduino-board">
                     <div class="pins-container">
                         <div class="pin" data-label="A0">A0</div>
@@ -579,24 +162,21 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Reading Analog Values -->
-        <section class="section">
-            <h2>Reading Analog Values</h2>
+        <div class="section fade-up" id="reading">
+            <h2 class="section-title"><i class="fas fa-gauge"></i> Reading Analog Values</h2>
 
-            <h3>Basic Syntax</h3>
-            <div class="code-block">
-                <pre><code><span class="keyword">int</span> <span class="function">analogRead</span>(<span class="keyword">int</span> pin);</code></pre>
-            </div>
+            <h3 class="sub-h">Basic Syntax</h3>
+            <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> <span class="function">analogRead</span>(<span class="keyword">int</span> pin);</code></div>
 
             <p>The <code>analogRead()</code> function reads the voltage on an analog pin and returns a value between 0 and 1023.</p>
 
-            <h3>Example 1: Simple Analog Read</h3>
+            <h3 class="sub-h">Example 1: Simple Analog Read</h3>
             <div class="example-card">
                 <div class="example-title">Reading a Potentiometer</div>
-                <div class="code-block">
-<pre><code><span class="comment">// Read potentiometer connected to A0</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="comment">// Read potentiometer connected to A0</span>
 <span class="keyword">int</span> potPin = A0;    <span class="comment">// Analog pin A0</span>
 <span class="keyword">int</span> potValue = <span class="number">0</span>;  <span class="comment">// Variable to store the value</span>
 
@@ -611,24 +191,22 @@
   <span class="function">Serial.println</span>(potValue);  <span class="comment">// Print value (0-1023)</span>
 
   <span class="function">delay</span>(<span class="number">500</span>);  <span class="comment">// Wait 500ms</span>
-}</code></pre>
-                </div>
+}</code></div>
                 <p style="margin-top: 20px;"><strong>Wiring:</strong> Connect the potentiometer's middle pin to A0, one outer pin to 5V, and the other to GND.</p>
                 <div class="diagram-container">
                     <img src="potentiometer.png" alt="Potentiometer Wiring Diagram">
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Converting Values -->
-        <section class="section">
-            <h2>Converting Analog Values</h2>
+        <div class="section fade-up" id="converting">
+            <h2 class="section-title"><i class="fas fa-right-left"></i> Converting Analog Values</h2>
 
-            <h3>Converting to Voltage</h3>
+            <h3 class="sub-h">Converting to Voltage</h3>
             <div class="example-card">
                 <div class="example-title">Display Voltage Reading</div>
-                <div class="code-block">
-<pre><code><span class="keyword">int</span> sensorPin = A0;
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> sensorPin = A0;
 <span class="keyword">int</span> sensorValue = <span class="number">0</span>;
 <span class="keyword">float</span> voltage = <span class="number">0.0</span>;
 
@@ -649,16 +227,14 @@
   <span class="function">Serial.println</span>(<span class="string">" V"</span>);
 
   <span class="function">delay</span>(<span class="number">1000</span>);
-}</code></pre>
-                </div>
+}</code></div>
             </div>
 
-            <h3>Using map() Function</h3>
+            <h3 class="sub-h">Using map() Function</h3>
             <p>The <code>map()</code> function is useful for converting the 0-1023 range to other ranges.</p>
             <div class="example-card">
                 <div class="example-title">Control LED Brightness with Potentiometer</div>
-                <div class="code-block">
-<pre><code><span class="keyword">int</span> potPin = A0;      <span class="comment">// Potentiometer on A0</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> potPin = A0;      <span class="comment">// Potentiometer on A0</span>
 <span class="keyword">int</span> ledPin = <span class="number">9</span>;       <span class="comment">// LED on PWM pin 9</span>
 <span class="keyword">int</span> potValue = <span class="number">0</span>;
 <span class="keyword">int</span> brightness = <span class="number">0</span>;
@@ -682,8 +258,7 @@
   <span class="function">Serial.println</span>(brightness);
 
   <span class="function">delay</span>(<span class="number">100</span>);
-}</code></pre>
-                </div>
+}</code></div>
                 <p style="margin-top: 20px;"><strong>Wiring Instructions:</strong></p>
                 <ul style="margin-top: 10px;">
                     <li><strong>Potentiometer:</strong> Pin 1 (left) to GND, Pin 2 (middle) to A0, Pin 3 (right) to 5V</li>
@@ -693,20 +268,17 @@
                 <div class="diagram-container">
                     <img src="potentiometer_led.png" alt="Potentiometer controlling LED brightness wiring diagram">
                 </div>
-                <div class="info-box tip" style="margin-top: 20px;">
-                    <strong>💡 How it works:</strong> The potentiometer produces a voltage between 0-5V, which is read as 0-1023 by A0. The <code>map()</code> function converts this to 0-255 (PWM range), and <code>analogWrite()</code> adjusts the LED brightness. Turn the potentiometer knob to see the LED brightness change in real-time!
-                </div>
+                <div class="info-box success" style="margin-top: 20px;"><p><strong>💡 How it works:</strong> The potentiometer produces a voltage between 0-5V, which is read as 0-1023 by A0. The <code>map()</code> function converts this to 0-255 (PWM range), and <code>analogWrite()</code> adjusts the LED brightness. Turn the potentiometer knob to see the LED brightness change in real-time!</p></div>
             </div>
-        </section>
+        </div>
 
         <!-- Multiple Analog Inputs -->
-        <section class="section">
-            <h2>Reading Multiple Analog Pins</h2>
+        <div class="section fade-up" id="multiple">
+            <h2 class="section-title"><i class="fas fa-layer-group"></i> Reading Multiple Analog Pins</h2>
 
             <div class="example-card">
                 <div class="example-title">Reading All 6 Analog Pins</div>
-                <div class="code-block">
-<pre><code><span class="keyword">void</span> <span class="function">setup</span>() {
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">void</span> <span class="function">setup</span>() {
   <span class="function">Serial.begin</span>(<span class="number">9600</span>);
   <span class="function">Serial.println</span>(<span class="string">"Reading all analog pins..."</span>);
 }
@@ -725,19 +297,17 @@
   <span class="function">Serial.println</span>();
 
   <span class="function">delay</span>(<span class="number">1000</span>);
-}</code></pre>
-                </div>
+}</code></div>
             </div>
-        </section>
+        </div>
 
         <!-- Common Sensors -->
-        <section class="section">
-            <h2>Common Sensors Using Analog Pins</h2>
+        <div class="section fade-up" id="sensors">
+            <h2 class="section-title"><i class="fas fa-temperature-half"></i> Common Sensors Using Analog Pins</h2>
 
             <div class="example-card">
                 <div class="example-title">Temperature Sensor (TMP36)</div>
-                <div class="code-block">
-<pre><code><span class="keyword">int</span> tempPin = A0;
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> tempPin = A0;
 
 <span class="keyword">void</span> <span class="function">setup</span>() {
   <span class="function">Serial.begin</span>(<span class="number">9600</span>);
@@ -758,15 +328,13 @@
   <span class="function">Serial.println</span>(<span class="string">" °C"</span>);
 
   <span class="function">delay</span>(<span class="number">1000</span>);
-}</code></pre>
-                </div>
+}</code></div>
                 <p style="margin-top: 20px;"><strong>Wiring:</strong> TMP36 pin 1 (left) to 5V, pin 2 (middle) to A0, pin 3 (right) to GND.</p>
             </div>
 
             <div class="example-card">
                 <div class="example-title">Light Sensor (LDR - Light Dependent Resistor)</div>
-                <div class="code-block">
-<pre><code><span class="keyword">int</span> ldrPin = A0;
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> ldrPin = A0;
 <span class="keyword">int</span> ledPin = <span class="number">13</span>;
 
 <span class="keyword">void</span> <span class="function">setup</span>() {
@@ -790,15 +358,13 @@
   }
 
   <span class="function">delay</span>(<span class="number">500</span>);
-}</code></pre>
-                </div>
+}</code></div>
                 <p style="margin-top: 20px;"><strong>Wiring:</strong> LDR and 10kΩ resistor in series between 5V and GND. Connect A0 to the junction between LDR and resistor.</p>
             </div>
 
             <div class="example-card">
                 <div class="example-title">Soil Moisture Sensor</div>
-                <div class="code-block">
-<pre><code><span class="keyword">int</span> moisturePin = A1;
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> moisturePin = A1;
 <span class="keyword">int</span> pumpPin = <span class="number">8</span>;
 
 <span class="keyword">void</span> <span class="function">setup</span>() {
@@ -825,16 +391,15 @@
   }
 
   <span class="function">delay</span>(<span class="number">2000</span>);
-}</code></pre>
-                </div>
+}</code></div>
             </div>
-        </section>
+        </div>
 
         <!-- Technical Details -->
-        <section class="section">
-            <h2>Technical Specifications</h2>
+        <div class="section fade-up" id="specs">
+            <h2 class="section-title"><i class="fas fa-table-list"></i> Technical Specifications</h2>
 
-            <table>
+            <div class="table-wrap"><table class="dark-table">
                 <thead>
                     <tr>
                         <th>Parameter</th>
@@ -884,14 +449,14 @@
                         <td>Can use as pins 14-19</td>
                     </tr>
                 </tbody>
-            </table>
-        </section>
+            </table></div>
+        </div>
 
         <!-- Best Practices -->
-        <section class="section">
-            <h2>Best Practices & Tips</h2>
+        <div class="section fade-up" id="practices">
+            <h2 class="section-title"><i class="fas fa-check-double"></i> Best Practices & Tips</h2>
 
-            <div class="info-box tip">
+            <div class="info-box success">
                 <h3 style="margin-top: 0;">✓ Do's</h3>
                 <ul>
                     <li>Always stay within 0-5V range</li>
@@ -903,7 +468,7 @@
                 </ul>
             </div>
 
-            <div class="info-box important">
+            <div class="info-box warning">
                 <h3 style="margin-top: 0;">✗ Don'ts</h3>
                 <ul>
                     <li>Never exceed 5V on analog pins - this can damage the Arduino</li>
@@ -914,11 +479,10 @@
                 </ul>
             </div>
 
-            <h3>Noise Reduction Technique</h3>
+            <h3 class="sub-h">Noise Reduction Technique</h3>
             <div class="example-card">
                 <div class="example-title">Averaging Multiple Readings</div>
-                <div class="code-block">
-<pre><code><span class="keyword">int</span> readAnalogAverage(<span class="keyword">int</span> pin, <span class="keyword">int</span> samples) {
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="keyword">int</span> readAnalogAverage(<span class="keyword">int</span> pin, <span class="keyword">int</span> samples) {
   <span class="keyword">long</span> sum = <span class="number">0</span>;
 
   <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < samples; i++) {
@@ -940,14 +504,13 @@
   <span class="function">Serial.println</span>(avgValue);
 
   <span class="function">delay</span>(<span class="number">1000</span>);
-}</code></pre>
-                </div>
+}</code></div>
             </div>
-        </section>
+        </div>
 
         <!-- Summary -->
-        <section class="section">
-            <h2>Summary</h2>
+        <div class="section fade-up" id="summary">
+            <h2 class="section-title"><i class="fas fa-list-check"></i> Summary</h2>
             <p>Arduino analog pins A0-A5 are powerful tools for interfacing with the real world. Key points to remember:</p>
             <ul>
                 <li><span class="highlight">6 analog input pins</span> (A0-A5) on Arduino Uno</li>
@@ -958,11 +521,11 @@
                 <li>Perfect for sensors: temperature, light, moisture, potentiometers, and more</li>
                 <li>Always protect pins from over-voltage conditions</li>
             </ul>
-        </section>
+        </div>
 
         <!-- Practice Exercise -->
-        <section class="section">
-            <h2>Practice Exercise</h2>
+        <div class="section fade-up" id="exercise">
+            <h2 class="section-title"><i class="fas fa-flask"></i> Practice Exercise</h2>
             <div class="example-card">
                 <div class="example-title">Challenge: Multi-Sensor Dashboard</div>
                 <p style="margin: 15px 0;"><strong>Objective:</strong> Create a system that reads three different sensors simultaneously and displays formatted data.</p>
@@ -977,21 +540,18 @@
                     <li>Add conditions to trigger warnings (e.g., too hot, too dark)</li>
                 </ul>
 
-                <div class="code-block">
-<pre><code><span class="comment">// Your code here!</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><code><span class="comment">// Your code here!</span>
 <span class="comment">// Hint: Use arrays to store pin numbers and sensor names</span>
 <span class="comment">// Hint: Create functions for each sensor type</span>
-<span class="comment">// Hint: Format output nicely with Serial.print()</span></code></pre>
-                </div>
+<span class="comment">// Hint: Format output nicely with Serial.print()</span></code></div>
             </div>
-        </section>
+        </div>
+
+        <div class="page-nav"><a class="nav-btn prev" href="arduino_index.html"><i class="fas fa-arrow-left"></i> Arduino Fundamentals</a><a class="nav-btn next" href="arduino_progressive_tutorial.html">Sensors &amp; Actuators <i class="fas fa-arrow-right"></i></a></div>
     </div>
 
-    <footer>
-        <p>Arduino Analog Pins Tutorial | A0 - A5</p>
-        <p style="margin-top: 10px; font-size: 0.9em;">Created for Arduino Lab Practice</p>
-    </footer>
-
+    <footer class="footer"><div class="footer-bottom"><span>Arduino Analog Pins Tutorial | A0 - A5</span><span>Created for Arduino Lab Practice</span><span>&copy; Al-banna Tutorials &middot; Dr. Abedal-Kareem Al-Banna</span></div></footer>
+    <button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
     <script>
         // Add smooth scroll animation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1011,28 +571,7 @@
                 alert(`Pin ${pinName}\n• Analog Input Pin\n• Voltage Range: 0-5V\n• Output: 0-1023\n• Can also be used as digital I/O`);
             });
         });
-
-        // Add animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.section, .example-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
     </script>
+    <script src="/assets/theme.js"></script>
 </body>
 </html>

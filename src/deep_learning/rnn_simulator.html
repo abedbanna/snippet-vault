@@ -95,6 +95,11 @@
         .footer-bottom{padding:18px 24px;text-align:center;color:var(--text2);font-size:.8rem}
         @media(max-width:768px){.hero h1{font-size:1.6rem}.nav-links{display:none}.ctl input[type=text]{width:100%}}
     </style>
+<style>
+.scroll-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900}
+.scroll-top.visible{opacity:1;pointer-events:auto}
+.scroll-top:hover{border-color:var(--primary);color:var(--primary)}
+</style>
 </head>
 <body>
     <nav class="navbar">
@@ -264,8 +269,8 @@
 <script>
 "use strict";
 /* ---------- theme ---------- */
-function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('dl-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
-(function(){const s=localStorage.getItem('dl-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
+function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('ab-theme',l?'light':'dark');document.getElementById('themeIcon').className=l?'fa-solid fa-moon':'fa-solid fa-sun';}
+(function(){const s=localStorage.getItem('ab-theme');if(s==='light'){document.body.classList.add('light-mode');document.getElementById('themeIcon').className='fa-solid fa-moon';}})();
 
 /* ---------- helpers ---------- */
 const S=x=>1/(1+Math.exp(-x));
@@ -710,5 +715,7 @@ SIMS.lstm=new LstmSim();
 SIMS.gru=new GruSim();
 SIMS.bilstm=new BiSim();
 </script>
+<button class="scroll-top" id="scrollTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+<script>window.addEventListener('scroll',function(){document.getElementById('scrollTop').classList.toggle('visible',window.pageYOffset>400);},{passive:true});</script>
 </body>
 </html>

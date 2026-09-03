@@ -13,209 +13,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Classification with Transformers</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="Build your first NLP model: a step-by-step text classification tutorial with transformers, Hugging Face and PyTorch, from tokenization to fine-tuning and deployment.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
-        .slide {
-            min-height: 100vh;
-            padding: 2rem;
-            page-break-inside: avoid;
-            border-bottom: 1px solid #eaeaea;
-        }
-        code {
-            font-family: 'Consolas', 'Monaco', monospace;
-            background-color: #f5f5f5;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        pre {
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            padding: 1rem;
-            overflow-x: auto;
-            margin: 1rem 0;
-            border-left: 4px solid #4299e1;
-        }
-        .mini-challenge {
-            background-color: #ebf8ff;
-            border-left: 4px solid #4299e1;
-            padding: 1rem;
-            margin-top: 1.5rem;
-            border-radius: 4px;
-        }
-        .key-feature {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        .key-feature i {
-            color: #4299e1;
-            margin-right: 0.5rem;
-            margin-top: 0.2rem;
-        }
+        :root{--primary:#f59e0b;--primary-hover:#fbbf24;--glow:rgba(245,158,11,.14)}
+        .icon-list{list-style:none!important;padding-left:0!important}
+        .icon-list li{display:flex;align-items:flex-start;gap:10px;margin:6px 0}
+        .icon-list li>i{color:var(--primary);margin-top:6px;flex-shrink:0;width:18px;text-align:center}
+        .icon-list li>i.ok{color:var(--success)}
+        .icon-list li>i.info{color:var(--secondary)}
+        .icon-list li>i.star{color:var(--primary)}
+        .icon-list li strong{display:block;color:var(--text)}
+        .icon-list li p{font-size:.88rem;margin:2px 0 0}
+        .grid-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:4px 24px}
+        .grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+        .grid.three{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+        .split{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start}
+        @media(max-width:768px){.split{grid-template-columns:1fr}}
+        .card h3{margin-top:0}
+        .card p:last-child{margin-bottom:0}
+        .card pre{margin-bottom:0}
+        .card pre+p{margin-top:14px}
+        .info-box .grid p strong,.info-box p strong{color:var(--text)}
+        .info-box .grid>div>p{margin-bottom:4px}
+        .info-box ul{margin-top:4px}
+        .info-box pre{margin:12px 0}
+        .small{font-size:.88rem}
+        .congrats{text-align:center;background:var(--glow);border:1px solid var(--primary);border-radius:12px;padding:32px 24px;margin-top:24px}
+        .congrats h2{font-size:1.8rem;font-weight:800;color:var(--text);margin-bottom:10px}
+        .congrats p{margin-bottom:8px}
+        .congrats p:last-child{font-style:italic;margin-top:16px;margin-bottom:0}
+        .section pre{padding-top:34px}
+        .section pre .copy-btn{top:8px}
     </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style id="dark-theme-override">
-:root {
-    --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-    --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-    --text:#f1f5f9;--text2:#94a3b8;
-    --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-    --code:#0d1117;
-}
-body { background:var(--bg)!important; color:var(--text)!important; font-family:'Inter',sans-serif!important; }
-.bg-white, .bg-light, .bg-gray-50, .bg-gray-100, [class*="bg-white"], [class*="bg-light"] { background:var(--surface)!important; }
-.card, .card-body, .section-container, .container, main, article, section, .content { background:var(--surface)!important; color:var(--text)!important; }
-.text-muted, .text-gray-600, .text-gray-700, .text-gray-500, p, li, span, td { color:var(--text2)!important; }
-h1,h2,h3,h4,h5,h6,.card-title { color:var(--text)!important; }
-.border, .card, .border-gray-200 { border-color:var(--border2)!important; }
-pre, code, .code-block { background:var(--code)!important; color:#e6edf3!important; border-color:var(--border2)!important; }
-table, th, td { border-color:var(--border2)!important; }
-th { background:var(--surface2)!important; color:var(--text)!important; }
-td { background:var(--surface)!important; color:var(--text2)!important; }
-tr:nth-child(even) td { background:rgba(255,255,255,.02)!important; }
-a { color:var(--primary)!important; }
-a:hover { color:#60a5fa!important; }
-.badge { opacity:0.9; }
-nav, .navbar, header, .nav { background:rgba(11,15,25,.9)!important; backdrop-filter:blur(20px)!important; border-bottom:1px solid var(--border)!important; }
-nav a, .navbar a, .nav-link { color:var(--text2)!important; }
-nav a:hover, .navbar a:hover { color:var(--text)!important; }
-.hero, .hero-pattern, .hero-section, [class*="hero"] { background:linear-gradient(135deg,#0b0f19,#1e293b)!important; }
-.info-box, .alert, .note, [class*="info"], [class*="alert"], [class*="note"], [class*="tip"] { background:var(--surface2)!important; border-color:var(--border2)!important; color:var(--text2)!important; }
-.sidebar, aside, [class*="sidebar"] { background:var(--surface)!important; border-color:var(--border2)!important; }
-.sidebar a, aside a { color:var(--text2)!important; }
-.sidebar a:hover, aside a:hover { color:var(--primary)!important; }
-.sidebar a.active, aside a.active { color:var(--primary)!important; }
-footer, .footer { background:#080c14!important; border-top:1px solid var(--border)!important; color:var(--text2)!important; }
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
-img { border-radius:8px; }
-.shadow, .shadow-sm, .shadow-lg, .shadow-md, [class*="shadow"] { box-shadow:0 2px 8px rgba(0,0,0,0.3)!important; }
-/* Light mode */
-body.light-mode { --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;--primary:#2563eb;--secondary:#7c3aed;--success:#059669;--text:#0f172a;--text2:#334155;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);--code:#1e293b; }
-body.light-mode nav, body.light-mode .navbar, body.light-mode header { background:rgba(255,255,255,.92)!important; }
-body.light-mode .hero, body.light-mode .hero-pattern, body.light-mode [class*="hero"] { background:linear-gradient(135deg,#f0f4f8,#e2e8f0)!important; }
-body.light-mode .hero h1, body.light-mode .hero h2, body.light-mode .hero p { color:#0f172a!important; }
-body.light-mode pre, body.light-mode code { background:#1e293b!important; color:#e2e8f0!important; }
-body.light-mode footer { background:#e2e8f0!important; }
-body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3px rgba(0,0,0,0.08)!important; }
-</style>
 </head>
-<body class="bg-gray-50">
-<a href="/cs/index.html" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--surface);border:1px solid var(--border2);color:var(--primary);padding:6px 14px;border-radius:8px;font-size:0.85rem;font-family:'Inter',sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s;"><i class="fa-solid fa-arrow-left"></i> Back to Course</a>
-    <nav class="bg-blue-600 text-white shadow-md sticky top-0 z-10 print:hidden">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <a href="#" class="font-bold text-xl">
-                    <i class="fas fa-robot mr-2"></i>Text Classification with Transformers
-                </a>
-                <div class="flex space-x-4">
-                    <a href="index.html" class="hover:text-blue-200">Home</a>
-                    <a href="#intro" class="hover:text-blue-200">Intro</a>
-                    <a href="#setup" class="hover:text-blue-200">Setup</a>
-                    <a href="#dataset" class="hover:text-blue-200">Dataset</a>
-                    <a href="#tokenization" class="hover:text-blue-200">Tokenization</a>
-                    <a href="#features" class="hover:text-blue-200">Features</a>
-                    <a href="#baseline" class="hover:text-blue-200">Baseline</a>
-                    <a href="#finetuning" class="hover:text-blue-200">Fine-tuning</a>
-                    <a href="#evaluation" class="hover:text-blue-200">Evaluation</a>
-                    <a href="#deployment" class="hover:text-blue-200">Deployment</a>
-                    <a href="#next" class="hover:text-blue-200">Next Steps</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="#"><i class="fas fa-robot"></i> Text Classification</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#intro">Intro</a>
+    <a href="#setup">Setup</a>
+    <a href="#dataset">Dataset</a>
+    <a href="#tokenization">Tokenization</a>
+    <a href="#baseline">Baseline</a>
+    <a href="#finetuning">Fine-tuning</a>
+    <a href="#deployment">Deployment</a>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="#intro">Intro</a>
+  <a href="#setup">Setup</a>
+  <a href="#dataset">Dataset</a>
+  <a href="#tokenization">Tokenization</a>
+  <a href="#features">Features</a>
+  <a href="#baseline">Baseline</a>
+  <a href="#finetuning">Fine-tuning</a>
+  <a href="#evaluation">Evaluation</a>
+  <a href="#deployment">Deployment</a>
+  <a href="#next">Next Steps</a>
+</div>
+
+<section class="hero"><div class="hero-content">
+  <h1>Text Classification with Transformers</h1>
+  <p class="hero-sub">Build Your First NLP Model</p>
+  <p class="hero-sub" style="font-size:.95rem;margin-top:4px">A step-by-step tutorial to learn natural language processing with transformers, Hugging Face, and PyTorch.</p>
+  <span class="diff-badge">Beginner</span>
+  <span class="cat-badge"><i class="fas fa-language" style="margin-right:6px"></i>NLP</span>
+  <span class="cat-badge"><i class="fas fa-clock" style="margin-right:6px"></i>~60 min</span>
+</div></section>
+
+<div class="container">
 
     <!-- Slide 1: Introduction -->
-    <div id="intro" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-4xl font-bold text-blue-600 mb-6">Text Classification with Transformers</h1>
-            <h2 class="text-2xl font-semibold mb-4">Build Your First NLP Model</h2>
-            <p class="text-lg mb-6">A step-by-step tutorial to learn natural language processing with transformers, Hugging Face, and PyTorch.</p>
-
-            <h3 class="text-xl font-semibold mb-3 mt-8">What You'll Learn</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div class="key-feature">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Load and explore datasets from Hugging Face</span>
-                </div>
-                <div class="key-feature">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Tokenize and prepare text data</span>
-                </div>
-                <div class="key-feature">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Extract features from pre-trained models</span>
-                </div>
-                <div class="key-feature">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Build a simple baseline classifier</span>
-                </div>
-                <div class="key-feature">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Fine-tune transformer models</span>
-                </div>
-                <div class="key-feature">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Deploy your model to Hugging Face Hub</span>
-                </div>
-            </div>
-
-            <p class="text-lg mb-2">By the end of this tutorial, you'll have a functional emotion classification model that can identify emotions in text.</p>
-            <p class="text-lg italic text-gray-600">No prior transformer knowledge required, basic Python and ML understanding helpful</p>
+    <div class="section fade-up" id="intro">
+        <h2 class="section-title"><i class="fas fa-bullseye"></i> What You'll Learn</h2>
+        <div class="info-box success">
+            <ul class="icon-list grid-list">
+                <li><i class="fas fa-check-circle ok"></i><span>Load and explore datasets from Hugging Face</span></li>
+                <li><i class="fas fa-check-circle ok"></i><span>Tokenize and prepare text data</span></li>
+                <li><i class="fas fa-check-circle ok"></i><span>Extract features from pre-trained models</span></li>
+                <li><i class="fas fa-check-circle ok"></i><span>Build a simple baseline classifier</span></li>
+                <li><i class="fas fa-check-circle ok"></i><span>Fine-tune transformer models</span></li>
+                <li><i class="fas fa-check-circle ok"></i><span>Deploy your model to Hugging Face Hub</span></li>
+            </ul>
         </div>
+
+        <p class="section-desc" style="margin-top:16px">By the end of this tutorial, you'll have a functional emotion classification model that can identify emotions in text.</p>
+        <p class="section-desc" style="font-style:italic">No prior transformer knowledge required, basic Python and ML understanding helpful</p>
     </div>
 
     <!-- Slide 2: What are Transformers? -->
-    <div id="setup" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">What are Transformers?</h1>
+    <div class="section fade-up" id="setup">
+        <h2 class="section-title"><i class="fas fa-bolt"></i> What are Transformers?</h2>
 
-            <div class="flex flex-col md:flex-row gap-8">
-                <div class="md:w-2/3">
-                    <p class="mb-4">Transformers are neural network architectures that revolutionized NLP with attention mechanisms, enabling models to understand context better than previous approaches.</p>
+        <div class="split">
+            <div>
+                <p>Transformers are neural network architectures that revolutionized NLP with attention mechanisms, enabling models to understand context better than previous approaches.</p>
 
-                    <h3 class="text-xl font-semibold mb-3 mt-6">Key Features</h3>
-                    <div class="space-y-2 mb-6">
-                        <div class="key-feature">
-                            <i class="fas fa-bolt text-xl"></i>
-                            <span><strong>Attention mechanism</strong> - allows models to focus on relevant parts of the input</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-brain text-xl"></i>
-                            <span><strong>Pre-training & fine-tuning</strong> - learn general language understanding, then adapt to specific tasks</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-expand-arrows-alt text-xl"></i>
-                            <span><strong>Parallelization</strong> - process entire sequences at once, unlike RNNs</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-graduation-cap text-xl"></i>
-                            <span><strong>Transfer learning</strong> - leverage knowledge from large datasets for your specific task</span>
-                        </div>
-                    </div>
+                <h3><i class="fas fa-star"></i> Key Features</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-bolt"></i><span><strong style="display:inline">Attention mechanism</strong> - allows models to focus on relevant parts of the input</span></li>
+                    <li><i class="fas fa-brain"></i><span><strong style="display:inline">Pre-training &amp; fine-tuning</strong> - learn general language understanding, then adapt to specific tasks</span></li>
+                    <li><i class="fas fa-expand-arrows-alt"></i><span><strong style="display:inline">Parallelization</strong> - process entire sequences at once, unlike RNNs</span></li>
+                    <li><i class="fas fa-graduation-cap"></i><span><strong style="display:inline">Transfer learning</strong> - leverage knowledge from large datasets for your specific task</span></li>
+                </ul>
 
-                    <h3 class="text-xl font-semibold mb-3">Popular Models</h3>
-                    <ul class="list-disc pl-6 mb-6 space-y-1">
-                        <li><strong>BERT</strong> (Bidirectional Encoder Representations from Transformers)</li>
-                        <li><strong>DistilBERT</strong> - Lighter, faster version of BERT with similar performance</li>
-                        <li><strong>RoBERTa</strong> - Optimized BERT training</li>
-                        <li><strong>GPT</strong> models - Generative pre-trained transformers</li>
-                    </ul>
-                </div>
+                <h3><i class="fas fa-cubes"></i> Popular Models</h3>
+                <ul>
+                    <li><strong>BERT</strong> (Bidirectional Encoder Representations from Transformers)</li>
+                    <li><strong>DistilBERT</strong> - Lighter, faster version of BERT with similar performance</li>
+                    <li><strong>RoBERTa</strong> - Optimized BERT training</li>
+                    <li><strong>GPT</strong> models - Generative pre-trained transformers</li>
+                </ul>
+            </div>
 
-                <div class="md:w-1/3 bg-blue-50 p-4 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-3 text-blue-700">Setting Up Your Environment</h3>
-                    <pre><code># Install required packages
+            <div class="info-box" style="margin:0">
+                <h3><i class="fas fa-download"></i> Setting Up Your Environment</h3>
+                <pre><code># Install required packages
 !pip install transformers[torch]
 !pip install datasets
 !pip install scikit-learn
@@ -224,44 +144,41 @@ body.light-mode .shadow, body.light-mode [class*="shadow"] { box-shadow:0 1px 3p
 !pip install matplotlib
 !pip install torch</code></pre>
 
-                    <div class="mt-4">
-                        <p class="font-semibold">We'll use:</p>
-                        <ul class="list-disc pl-6 mt-2 space-y-1">
-                            <li>Python 3.8+</li>
-                            <li>PyTorch</li>
-                            <li>Hugging Face libraries</li>
-                            <li>Scikit-learn for evaluation</li>
-                        </ul>
-                    </div>
+                <div>
+                    <p><strong>We'll use:</strong></p>
+                    <ul>
+                        <li>Python 3.8+</li>
+                        <li>PyTorch</li>
+                        <li>Hugging Face libraries</li>
+                        <li>Scikit-learn for evaluation</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Verify your setup is complete! Run these commands and make sure you get successful output:</p>
-                <pre><code>import torch
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Verify your setup is complete! Run these commands and make sure you get successful output:</p>
+            <pre><code>import torch
 import transformers
 import datasets
 
 print(f"PyTorch version: {torch.__version__}")
 print(f"Transformers version: {transformers.__version__}")
 print(f"Datasets version: {datasets.__version__}")</code></pre>
-                <p class="mt-2 text-sm">Having trouble? Check the respective library's installation guide or try using Google Colab, which has many libraries pre-installed.</p>
-            </div>
+            <p class="small">Having trouble? Check the respective library's installation guide or try using Google Colab, which has many libraries pre-installed.</p>
         </div>
     </div>
 
     <!-- Slide 3: Loading and Exploring the Dataset -->
-    <div id="dataset" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Loading and Exploring the Dataset</h1>
+    <div class="section fade-up" id="dataset">
+        <h2 class="section-title"><i class="fas fa-database"></i> Loading and Exploring the Dataset</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">Hugging Face's Datasets library provides easy access to numerous public datasets. We'll use the emotions dataset, which contains text labeled with emotions.</p>
+        <p>Hugging Face's Datasets library provides easy access to numerous public datasets. We'll use the emotions dataset, which contains text labeled with emotions.</p>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Loading the Dataset</h3>
-                    <pre><code>from datasets import load_dataset
+        <div class="card">
+            <h3>Loading the Dataset</h3>
+            <pre><code>from datasets import load_dataset
 
 # Load the emotions dataset
 emotions = load_dataset("dair-ai/emotion")
@@ -269,12 +186,12 @@ emotions = load_dataset("dair-ai/emotion")
 # Check what we got
 print(emotions)
 </code></pre>
-                </div>
+        </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Examining Dataset Structure</h3>
-                        <pre><code># Check dataset features
+        <div class="grid two" style="margin-top:16px">
+            <div class="card">
+                <h3>Examining Dataset Structure</h3>
+                <pre><code># Check dataset features
 emotions["train"].features
 
 # Check column names
@@ -283,11 +200,11 @@ emotions["train"].column_names
 # Look at some examples
 emotions["train"]["text"][:2]
 emotions["train"]["label"][:2]</code></pre>
-                    </div>
+            </div>
 
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Converting to Pandas</h3>
-                        <pre><code>import pandas as pd
+            <div class="card">
+                <h3>Converting to Pandas</h3>
+                <pre><code>import pandas as pd
 
 # Convert to pandas
 emotions.set_format(type="pandas")
@@ -301,12 +218,12 @@ df["label_name"] = df["label"].apply(convert_label_int_2_string)
 
 # View the dataframe
 df.head()</code></pre>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <div class="mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Visualizing the Data</h3>
-                    <pre><code>import matplotlib.pyplot as plt
+        <div class="subsection">
+            <h3><i class="fas fa-chart-bar"></i> Visualizing the Data</h3>
+            <pre><code>import matplotlib.pyplot as plt
 
 # Visualize label distribution
 df["label_name"].value_counts(ascending=True).plot.barh()
@@ -314,62 +231,58 @@ plt.title("Distribution of Emotions in Dataset")
 plt.xlabel("Count")
 plt.ylabel("Emotion")
 plt.show()</code></pre>
-                    <p class="mt-3 text-gray-700">Visualizing helps us understand the distribution of emotions in our dataset and identify any class imbalance issues.</p>
+            <p>Visualizing helps us understand the distribution of emotions in our dataset and identify any class imbalance issues.</p>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> About the Emotions Dataset</h3>
+            <div class="grid two">
+                <div>
+                    <p><strong>Dataset Structure:</strong></p>
+                    <ul>
+                        <li>Text: Sentences expressing emotions</li>
+                        <li>Label: Emotion categories (0-5)</li>
+                        <li>Split into train, validation, test sets</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Emotion Categories:</strong></p>
+                    <ul>
+                        <li>Sadness</li>
+                        <li>Joy</li>
+                        <li>Love</li>
+                        <li>Anger</li>
+                        <li>Fear</li>
+                        <li>Surprise</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">About the Emotions Dataset</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="font-semibold">Dataset Structure:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li>Text: Sentences expressing emotions</li>
-                            <li>Label: Emotion categories (0-5)</li>
-                            <li>Split into train, validation, test sets</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Emotion Categories:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li>Sadness</li>
-                            <li>Joy</li>
-                            <li>Love</li>
-                            <li>Anger</li>
-                            <li>Fear</li>
-                            <li>Surprise</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Calculate and print the percentage of each emotion class in the training set:</p>
-                <pre><code># Calculate the percentage of each emotion
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Calculate and print the percentage of each emotion class in the training set:</p>
+            <pre><code># Calculate the percentage of each emotion
 emotion_percentages = df["label_name"].value_counts(normalize=True) * 100
 print(emotion_percentages)
 
 # Which emotion is the most common? Which is the least common?</code></pre>
-                <p class="mt-2 text-sm">This helps identify if we need to address class imbalance in our model training.</p>
-            </div>
+            <p class="small">This helps identify if we need to address class imbalance in our model training.</p>
         </div>
     </div>
 
     <!-- Slide 4: Tokenization and Data Preparation -->
-    <div id="tokenization" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Tokenization and Data Preparation</h1>
+    <div class="section fade-up" id="tokenization">
+        <h2 class="section-title"><i class="fas fa-puzzle-piece"></i> Tokenization and Data Preparation</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">Before feeding text to our model, we need to convert it into a numerical format that the model can understand. This process is called tokenization.</p>
+        <p>Before feeding text to our model, we need to convert it into a numerical format that the model can understand. This process is called tokenization.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">What is Tokenization?</h3>
-                        <p class="mb-3">Tokenization breaks text into smaller units (tokens) and converts them to numeric IDs.</p>
-                        <p class="text-sm text-gray-700 mb-3">Consider a simple example:</p>
-                        <pre><code>text = "My name is kareem"
+        <div class="grid two">
+            <div class="card">
+                <h3>What is Tokenization?</h3>
+                <p>Tokenization breaks text into smaller units (tokens) and converts them to numeric IDs.</p>
+                <p class="small">Consider a simple example:</p>
+                <pre><code>text = "My name is kareem"
 
 # Manual tokenization (character level)
 tokenized_text = list(text)
@@ -377,12 +290,12 @@ token2index = {ch:index for index, ch
                in enumerate(sorted(set(tokenized_text)))}
 print(token2index)
 # Output: {' ': 0, 'M': 1, ..., 's': 15}</code></pre>
-                        <p class="text-sm text-gray-700 mt-2">In practice, we use more sophisticated tokenizers like WordPiece, BPE, or SentencePiece.</p>
-                    </div>
+                <p class="small">In practice, we use more sophisticated tokenizers like WordPiece, BPE, or SentencePiece.</p>
+            </div>
 
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Using Hugging Face Tokenizers</h3>
-                        <pre><code>from transformers import AutoTokenizer
+            <div class="card">
+                <h3>Using Hugging Face Tokenizers</h3>
+                <pre><code>from transformers import AutoTokenizer
 
 # Load a pre-trained tokenizer
 model_ckp = "distilbert-base-uncased"
@@ -400,12 +313,12 @@ print(tokens)
 
 # And back to text
 print(tokenizer.convert_tokens_to_string(tokens))</code></pre>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Tokenizer Properties</h3>
-                    <pre><code># Explore tokenizer properties
+        <div class="card" style="margin-top:16px">
+            <h3>Tokenizer Properties</h3>
+            <pre><code># Explore tokenizer properties
 print(f"Vocabulary size: {tokenizer.vocab_size}")
 print(f"Model input names: {tokenizer.model_input_names}")
 print(f"Maximum sequence length: {tokenizer.model_max_length}")
@@ -414,11 +327,11 @@ print(f"Maximum sequence length: {tokenizer.model_max_length}")
 # 1. input_ids: Token IDs
 # 2. attention_mask: Indicates which tokens should be attended to
 # 3. special tokens: [CLS], [SEP], etc. that have special meaning</code></pre>
-                </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Tokenizing the Entire Dataset</h3>
-                    <pre><code># Define a function to tokenize batches
+        <div class="card" style="margin-top:16px">
+            <h3>Tokenizing the Entire Dataset</h3>
+            <pre><code># Define a function to tokenize batches
 def tokenize(batch):
     return tokenizer(batch["text"], padding=True, truncation=True)
 
@@ -432,35 +345,34 @@ print(emotion_encoded.column_names)
 # - input_ids
 # - attention_mask
 # - plus original columns</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-sliders"></i> Tokenization Parameters</h3>
+            <div class="grid two">
+                <div>
+                    <p><strong>padding:</strong></p>
+                    <ul>
+                        <li><code>True</code>: Pad sequences to the longest in the batch</li>
+                        <li><code>'max_length'</code>: Pad to model's max length</li>
+                        <li>Padding adds special tokens to make sequences the same length</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>truncation:</strong></p>
+                    <ul>
+                        <li><code>True</code>: Cut sequences longer than model's max</li>
+                        <li>Prevents errors with sequences that are too long</li>
+                        <li>May lose information from truncated text</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Tokenization Parameters</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="font-semibold">padding:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li><code>True</code>: Pad sequences to the longest in the batch</li>
-                            <li><code>'max_length'</code>: Pad to model's max length</li>
-                            <li>Padding adds special tokens to make sequences the same length</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">truncation:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li><code>True</code>: Cut sequences longer than model's max</li>
-                            <li>Prevents errors with sequences that are too long</li>
-                            <li>May lose information from truncated text</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Tokenize a custom sentence and investigate the outputs:</p>
-                <pre><code># Tokenize this sentence
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Tokenize a custom sentence and investigate the outputs:</p>
+            <pre><code># Tokenize this sentence
 sentence = "I am feeling both happy and sad at the same time."
 
 # 1. Encode the sentence
@@ -474,23 +386,20 @@ tokens = tokenizer.convert_ids_to_tokens(encoded.input_ids)
 print(tokens)
 
 # 4. Which tokens get split into subwords?</code></pre>
-                <p class="mt-2 text-sm">Understanding tokenization helps you debug issues with model inputs and explains how the model "sees" your text.</p>
-            </div>
+            <p class="small">Understanding tokenization helps you debug issues with model inputs and explains how the model "sees" your text.</p>
         </div>
     </div>
 
     <!-- Slide 5: Feature Extraction from Pre-trained Models -->
-    <div id="features" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Feature Extraction from Pre-trained Models</h1>
+    <div class="section fade-up" id="features">
+        <h2 class="section-title"><i class="fas fa-layer-group"></i> Feature Extraction from Pre-trained Models</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">Before fine-tuning a transformer, we can extract features from a pre-trained model to use with a simple classifier. This approach is faster and requires less computational resources.</p>
+        <p>Before fine-tuning a transformer, we can extract features from a pre-trained model to use with a simple classifier. This approach is faster and requires less computational resources.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Loading the Pre-trained Model</h3>
-                        <pre><code>from transformers import AutoModel
+        <div class="grid two">
+            <div class="card">
+                <h3>Loading the Pre-trained Model</h3>
+                <pre><code>from transformers import AutoModel
 import torch
 
 # Set device (GPU if available, else CPU)
@@ -503,24 +412,24 @@ model = AutoModel.from_pretrained(model_chk).to(device)
 
 # This loads the model without the classification head
 # We'll use it as a feature extractor</code></pre>
-                        <p class="text-sm text-gray-700 mt-2">The model is moved to GPU if available for faster processing.</p>
-                    </div>
+                <p class="small">The model is moved to GPU if available for faster processing.</p>
+            </div>
 
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Understanding Hidden States</h3>
-                        <p class="mb-2">Transformers produce contextualized embeddings called "hidden states" for each token:</p>
-                        <ul class="list-disc pl-6 mb-3">
-                            <li>Each token gets a vector representation</li>
-                            <li>Final layer contains the most task-relevant features</li>
-                            <li>The [CLS] token (first token) often summarizes the sentence</li>
-                        </ul>
-                        <p class="text-sm text-gray-700">For classification, we typically use the [CLS] token's representation from the last layer.</p>
-                    </div>
-                </div>
+            <div class="card">
+                <h3>Understanding Hidden States</h3>
+                <p>Transformers produce contextualized embeddings called "hidden states" for each token:</p>
+                <ul>
+                    <li>Each token gets a vector representation</li>
+                    <li>Final layer contains the most task-relevant features</li>
+                    <li>The [CLS] token (first token) often summarizes the sentence</li>
+                </ul>
+                <p class="small">For classification, we typically use the [CLS] token's representation from the last layer.</p>
+            </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Feature Extraction Function</h3>
-                    <pre><code># Define feature extraction function
+        <div class="card" style="margin-top:16px">
+            <h3>Feature Extraction Function</h3>
+            <pre><code># Define feature extraction function
 def extract_hidden_states(batch):
     # Move inputs to the device
     inputs = {k: v.to(device) for k, v in batch.items()
@@ -533,12 +442,12 @@ def extract_hidden_states(batch):
 
     # Return the [CLS] token's representation
     return {"hidden_state": last_hidden_state[:,0].cpu().numpy()}</code></pre>
-                    <p class="text-sm text-gray-700 mt-2">This function extracts the final layer's hidden state for the [CLS] token, which works well for sentence classification.</p>
-                </div>
+            <p class="small">This function extracts the final layer's hidden state for the [CLS] token, which works well for sentence classification.</p>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Processing the Dataset</h3>
-                    <pre><code># Set format to PyTorch tensors
+        <div class="card" style="margin-top:16px">
+            <h3>Processing the Dataset</h3>
+            <pre><code># Set format to PyTorch tensors
 emotion_encoded.set_format("torch",
                           columns=["input_ids", "attention_mask", "label"])
 
@@ -555,36 +464,35 @@ y_valid = np.array(emotions_hidden["validation"]["label"])
 
 print(f"Training features shape: {X_train.shape}")
 print(f"Validation features shape: {X_valid.shape}")</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-scale-balanced"></i> Feature Extraction Benefits</h3>
+            <div class="grid two">
+                <div>
+                    <p><strong>Advantages:</strong></p>
+                    <ul>
+                        <li>Much faster than fine-tuning</li>
+                        <li>Less computational resources required</li>
+                        <li>Still leverages pre-trained knowledge</li>
+                        <li>Works well for many tasks with small datasets</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Limitations:</strong></p>
+                    <ul>
+                        <li>Not optimized for the specific task</li>
+                        <li>May not capture task-specific nuances</li>
+                        <li>Performance ceiling lower than fine-tuning</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Feature Extraction Benefits</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="font-semibold">Advantages:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li>Much faster than fine-tuning</li>
-                            <li>Less computational resources required</li>
-                            <li>Still leverages pre-trained knowledge</li>
-                            <li>Works well for many tasks with small datasets</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Limitations:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li>Not optimized for the specific task</li>
-                            <li>May not capture task-specific nuances</li>
-                            <li>Performance ceiling lower than fine-tuning</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Investigate the feature dimensions and visualize the embeddings:</p>
-                <pre><code># 1. Print the shape of the feature vectors
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Investigate the feature dimensions and visualize the embeddings:</p>
+            <pre><code># 1. Print the shape of the feature vectors
 print(f"Feature vector size: {X_train.shape[1]}")
 
 # 2. Calculate the average feature vector for each emotion
@@ -600,24 +508,21 @@ for i, emotion in enumerate(emotions_list):
 # X_train_umap = reducer.fit_transform(X_train)
 # plt.scatter(X_train_umap[:, 0], X_train_umap[:, 1], c=y_train, cmap='viridis')
 # plt.colorbar()</code></pre>
-                <p class="mt-2 text-sm">Visualizing the embeddings can help you understand if your features are capturing emotion differences.</p>
-            </div>
+            <p class="small">Visualizing the embeddings can help you understand if your features are capturing emotion differences.</p>
         </div>
     </div>
 
     <!-- Slide 6: Creating a Baseline Model with Logistic Regression -->
-    <div id="baseline" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Creating a Baseline Model with Logistic Regression</h1>
+    <div class="section fade-up" id="baseline">
+        <h2 class="section-title"><i class="fas fa-chart-line"></i> Creating a Baseline Model with Logistic Regression</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">Before investing time in fine-tuning, it's good practice to create a simple baseline model to establish performance benchmarks.</p>
+        <p>Before investing time in fine-tuning, it's good practice to create a simple baseline model to establish performance benchmarks.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Dummy Classifier</h3>
-                        <p class="mb-3">Let's start with the simplest possible model:</p>
-                        <pre><code>from sklearn.dummy import DummyClassifier
+        <div class="grid two">
+            <div class="card">
+                <h3>Dummy Classifier</h3>
+                <p>Let's start with the simplest possible model:</p>
+                <pre><code>from sklearn.dummy import DummyClassifier
 
 # Create a dummy classifier that always predicts
 # the most frequent class
@@ -630,11 +535,11 @@ print(f"Dummy classifier accuracy: {dummy_score:.4f}")
 
 # This establishes the simplest baseline
 # Any real model should perform better than this</code></pre>
-                    </div>
+            </div>
 
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Logistic Regression</h3>
-                        <pre><code>from sklearn.linear_model import LogisticRegression
+            <div class="card">
+                <h3>Logistic Regression</h3>
+                <pre><code>from sklearn.linear_model import LogisticRegression
 
 # Create a logistic regression classifier
 # We increase max_iter to ensure convergence
@@ -650,12 +555,12 @@ print(f"Logistic regression accuracy: {lr_score:.4f}")
 # Compare with dummy classifier
 print(f"Improvement: {lr_score - dummy_score:.4f}")
 </code></pre>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Confusion Matrix</h3>
-                    <pre><code>from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+        <div class="card" style="margin-top:16px">
+            <h3>Confusion Matrix</h3>
+            <pre><code>from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 import matplotlib.pyplot as plt
 
 # Define function to plot confusion matrix
@@ -674,12 +579,12 @@ y_preds = lr_clf.predict(X_valid)
 # Plot confusion matrix
 labels = emotions["train"].features["label"].names
 plot_confusion_matrix(y_preds, y_valid, labels)</code></pre>
-                    <p class="text-sm text-gray-700 mt-2">The confusion matrix helps identify which emotions are most often confused with each other.</p>
-                </div>
+            <p class="small">The confusion matrix helps identify which emotions are most often confused with each other.</p>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Additional Metrics</h3>
-                    <pre><code>from sklearn.metrics import classification_report
+        <div class="card" style="margin-top:16px">
+            <h3>Additional Metrics</h3>
+            <pre><code>from sklearn.metrics import classification_report
 
 # Generate a detailed classification report
 report = classification_report(y_valid, y_preds,
@@ -688,36 +593,35 @@ print(report)
 
 # This report shows precision, recall, and F1-score
 # for each emotion class</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-question-circle"></i> Why Create a Baseline?</h3>
+            <div class="grid two">
+                <div>
+                    <p><strong>Benefits of a Simple Baseline:</strong></p>
+                    <ul>
+                        <li>Establishes minimum performance expectations</li>
+                        <li>Quick to implement and evaluate</li>
+                        <li>Helps identify easy vs. difficult classes</li>
+                        <li>Reference point for more complex models</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Interpreting Results:</strong></p>
+                    <ul>
+                        <li>High baseline performance may indicate dataset issues</li>
+                        <li>Similar performance across models suggests feature limitations</li>
+                        <li>Class imbalance often visible in baseline results</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Why Create a Baseline?</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="font-semibold">Benefits of a Simple Baseline:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li>Establishes minimum performance expectations</li>
-                            <li>Quick to implement and evaluate</li>
-                            <li>Helps identify easy vs. difficult classes</li>
-                            <li>Reference point for more complex models</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Interpreting Results:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li>High baseline performance may indicate dataset issues</li>
-                            <li>Similar performance across models suggests feature limitations</li>
-                            <li>Class imbalance often visible in baseline results</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Try a different classifier and compare with logistic regression:</p>
-                <pre><code>from sklearn.ensemble import RandomForestClassifier
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Try a different classifier and compare with logistic regression:</p>
+            <pre><code>from sklearn.ensemble import RandomForestClassifier
 
 # Train a random forest classifier
 rf_clf = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -733,22 +637,19 @@ rf_preds = rf_clf.predict(X_valid)
 rf_report = classification_report(y_valid, rf_preds,
                                  target_names=labels)
 print(rf_report)</code></pre>
-                <p class="mt-2 text-sm">Different classifiers may perform better for different emotion classes. This helps you understand your data better.</p>
-            </div>
+            <p class="small">Different classifiers may perform better for different emotion classes. This helps you understand your data better.</p>
         </div>
     </div>
 
     <!-- Slide 7: Fine-tuning a Transformer Model -->
-    <div id="finetuning" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Fine-tuning a Transformer Model</h1>
+    <div class="section fade-up" id="finetuning">
+        <h2 class="section-title"><i class="fas fa-wand-magic-sparkles"></i> Fine-tuning a Transformer Model</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">Now let's fine-tune a pre-trained transformer model specifically for our emotion classification task. This adapts the entire model to our specific data.</p>
+        <p>Now let's fine-tune a pre-trained transformer model specifically for our emotion classification task. This adapts the entire model to our specific data.</p>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Loading a Classification Model</h3>
-                    <pre><code>from transformers import AutoModelForSequenceClassification
+        <div class="card">
+            <h3>Loading a Classification Model</h3>
+            <pre><code>from transformers import AutoModelForSequenceClassification
 import torch
 
 # Number of classes in our dataset
@@ -763,11 +664,11 @@ model = AutoModelForSequenceClassification.from_pretrained(
 
 # This model has the same base as before but with
 # an added classification layer on top</code></pre>
-                </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Evaluation Metrics</h3>
-                    <pre><code>from sklearn.metrics import accuracy_score, f1_score
+        <div class="card" style="margin-top:16px">
+            <h3>Evaluation Metrics</h3>
+            <pre><code>from sklearn.metrics import accuracy_score, f1_score
 
 # Define our evaluation metrics
 def compute_metrics(pred):
@@ -784,11 +685,11 @@ def compute_metrics(pred):
         "accuracy": acc,
         "f1": f1
     }</code></pre>
-                </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Setting Up the Trainer</h3>
-                    <pre><code>from transformers import Trainer, TrainingArguments
+        <div class="card" style="margin-top:16px">
+            <h3>Setting Up the Trainer</h3>
+            <pre><code>from transformers import Trainer, TrainingArguments
 
 # Set training parameters
 batch_size = 64
@@ -819,11 +720,11 @@ trainer = Trainer(
     eval_dataset=emotion_encoded["validation"],
     tokenizer=tokenizer
 )</code></pre>
-                </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Training the Model</h3>
-                    <pre><code># Start the training process
+        <div class="card" style="margin-top:16px">
+            <h3>Training the Model</h3>
+            <pre><code># Start the training process
 trainer.train()
 
 # This will:
@@ -831,34 +732,33 @@ trainer.train()
 # 2. Report metrics after each epoch
 # 3. Save checkpoints
 # 4. Show a progress bar unless disabled</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-sliders"></i> Training Arguments Explained</h3>
+            <div class="grid two">
+                <div>
+                    <ul>
+                        <li><strong>output_dir</strong>: Where to save model checkpoints</li>
+                        <li><strong>num_train_epochs</strong>: Number of training cycles</li>
+                        <li><strong>learning_rate</strong>: Controls step size during optimization</li>
+                        <li><strong>per_device_train_batch_size</strong>: Examples per batch</li>
+                    </ul>
+                </div>
+                <div>
+                    <ul>
+                        <li><strong>weight_decay</strong>: L2 regularization to prevent overfitting</li>
+                        <li><strong>evaluation_strategy</strong>: When to evaluate ("epoch", "steps")</li>
+                        <li><strong>push_to_hub</strong>: Whether to upload to Hugging Face Hub</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Training Arguments Explained</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li><strong>output_dir</strong>: Where to save model checkpoints</li>
-                            <li><strong>num_train_epochs</strong>: Number of training cycles</li>
-                            <li><strong>learning_rate</strong>: Controls step size during optimization</li>
-                            <li><strong>per_device_train_batch_size</strong>: Examples per batch</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li><strong>weight_decay</strong>: L2 regularization to prevent overfitting</li>
-                            <li><strong>evaluation_strategy</strong>: When to evaluate ("epoch", "steps")</li>
-                            <li><strong>push_to_hub</strong>: Whether to upload to Hugging Face Hub</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Modify the training arguments to improve performance:</p>
-                <pre><code># Try adjusting these parameters:
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Modify the training arguments to improve performance:</p>
+            <pre><code># Try adjusting these parameters:
 
 # 1. Change learning rate
 training_args = TrainingArguments(
@@ -885,23 +785,20 @@ trainer = Trainer(
     # ... other arguments ...
     callbacks=[EarlyStoppingCallback(early_stopping_patience=2)]
 )</code></pre>
-                <p class="mt-2 text-sm">Experiment with these parameters to find the optimal settings for your task.</p>
-            </div>
+            <p class="small">Experiment with these parameters to find the optimal settings for your task.</p>
         </div>
     </div>
 
     <!-- Slide 8: Evaluating Model Performance -->
-    <div id="evaluation" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Evaluating Model Performance</h1>
+    <div class="section fade-up" id="evaluation">
+        <h2 class="section-title"><i class="fas fa-clipboard-check"></i> Evaluating Model Performance</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">After training, we need to evaluate our model thoroughly to understand its strengths and weaknesses.</p>
+        <p>After training, we need to evaluate our model thoroughly to understand its strengths and weaknesses.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Evaluating on Validation Set</h3>
-                        <pre><code># Evaluate the model
+        <div class="grid two">
+            <div class="card">
+                <h3>Evaluating on Validation Set</h3>
+                <pre><code># Evaluate the model
 validation_results = trainer.evaluate()
 
 print(f"Validation Accuracy: {validation_results['eval_accuracy']:.4f}")
@@ -911,11 +808,11 @@ print(f"Validation F1 Score: {validation_results['eval_f1']:.4f}")
 print(f"Baseline Accuracy: {lr_score:.4f}")
 print(f"Improvement: {validation_results['eval_accuracy'] - lr_score:.4f}")
 </code></pre>
-                    </div>
+            </div>
 
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Confusion Matrix</h3>
-                        <pre><code># Get predictions on validation set
+            <div class="card">
+                <h3>Confusion Matrix</h3>
+                <pre><code># Get predictions on validation set
 validation_preds = trainer.predict(emotion_encoded["validation"])
 
 # Get predicted classes
@@ -926,12 +823,12 @@ y_valid = validation_preds.label_ids
 labels = emotions["train"].features["label"].names
 plot_confusion_matrix(y_preds, y_valid, labels)
 </code></pre>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Detailed Classification Report</h3>
-                    <pre><code>from sklearn.metrics import classification_report
+        <div class="card" style="margin-top:16px">
+            <h3>Detailed Classification Report</h3>
+            <pre><code>from sklearn.metrics import classification_report
 
 # Generate a detailed report
 report = classification_report(
@@ -940,11 +837,11 @@ print(report)
 
 # This shows precision, recall, F1 for each emotion class
 # Look for classes with lower performance</code></pre>
-                </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Error Analysis</h3>
-                    <pre><code># Get the actual texts and analyze errors
+        <div class="card" style="margin-top:16px">
+            <h3>Error Analysis</h3>
+            <pre><code># Get the actual texts and analyze errors
 validation_texts = emotions["validation"]["text"]
 validation_labels = emotions["validation"]["label"]
 
@@ -965,37 +862,36 @@ for i, error in enumerate(errors[:5]):
     print(f"True label: {error['true']}")
     print(f"Predicted: {error['predicted']}")
     print("---")</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-gauge-high"></i> Understanding Model Performance</h3>
+            <div class="grid two">
+                <div>
+                    <p><strong>Key Metrics:</strong></p>
+                    <ul>
+                        <li><strong>Accuracy</strong>: Overall percentage of correct predictions</li>
+                        <li><strong>Precision</strong>: How many of the predicted positives are actually positive</li>
+                        <li><strong>Recall</strong>: How many of the actual positives were correctly identified</li>
+                        <li><strong>F1 Score</strong>: Harmonic mean of precision and recall</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Common Patterns in Errors:</strong></p>
+                    <ul>
+                        <li>Confusion between similar emotions (love/joy)</li>
+                        <li>Ambiguous expressions with multiple emotions</li>
+                        <li>Sarcasm and figurative language</li>
+                        <li>Cultural or contextual references</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Understanding Model Performance</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="font-semibold">Key Metrics:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li><strong>Accuracy</strong>: Overall percentage of correct predictions</li>
-                            <li><strong>Precision</strong>: How many of the predicted positives are actually positive</li>
-                            <li><strong>Recall</strong>: How many of the actual positives were correctly identified</li>
-                            <li><strong>F1 Score</strong>: Harmonic mean of precision and recall</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Common Patterns in Errors:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li>Confusion between similar emotions (love/joy)</li>
-                            <li>Ambiguous expressions with multiple emotions</li>
-                            <li>Sarcasm and figurative language</li>
-                            <li>Cultural or contextual references</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Create a function to test your model on custom inputs:</p>
-                <pre><code>def predict_emotion(text):
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Create a function to test your model on custom inputs:</p>
+            <pre><code>def predict_emotion(text):
     # Tokenize the input
     inputs = tokenizer(text, return_tensors="pt").to(device)
 
@@ -1036,23 +932,20 @@ for example in examples:
     for emotion, prob in result['all_probs'].items():
         print(f"  {emotion}: {prob:.4f}")
     print("---")</code></pre>
-                <p class="mt-2 text-sm">This function lets you interactively test your model on new inputs to better understand its behavior.</p>
-            </div>
+            <p class="small">This function lets you interactively test your model on new inputs to better understand its behavior.</p>
         </div>
     </div>
 
     <!-- Slide 9: Deploying the Model to Hugging Face Hub -->
-    <div id="deployment" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Deploying the Model to Hugging Face Hub</h1>
+    <div class="section fade-up" id="deployment">
+        <h2 class="section-title"><i class="fas fa-cloud-arrow-up"></i> Deploying the Model to Hugging Face Hub</h2>
 
-            <div class="mb-6">
-                <p class="mb-4">Now that we have a trained model, let's share it with the world by uploading it to the Hugging Face Hub.</p>
+        <p>Now that we have a trained model, let's share it with the world by uploading it to the Hugging Face Hub.</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Setting Up Hugging Face Account</h3>
-                        <pre><code># Login to Hugging Face
+        <div class="grid two">
+            <div class="card">
+                <h3>Setting Up Hugging Face Account</h3>
+                <pre><code># Login to Hugging Face
 from huggingface_hub import notebook_login
 
 notebook_login()
@@ -1062,12 +955,12 @@ notebook_login()
 
 # You can get a token from:
 # https://huggingface.co/settings/tokens</code></pre>
-                        <p class="text-sm text-gray-700 mt-2">If you're running this in a script instead of a notebook, use <code>huggingface-cli login</code> in your terminal first.</p>
-                    </div>
+                <p class="small">If you're running this in a script instead of a notebook, use <code>huggingface-cli login</code> in your terminal first.</p>
+            </div>
 
-                    <div class="bg-white shadow-md rounded-lg p-5">
-                        <h3 class="font-semibold text-lg mb-3">Pushing the Model to Hub</h3>
-                        <pre><code># Push the model to the Hub
+            <div class="card">
+                <h3>Pushing the Model to Hub</h3>
+                <pre><code># Push the model to the Hub
 trainer.push_to_hub(commit_message="Training completed!")
 
 # This uploads:
@@ -1078,12 +971,12 @@ trainer.push_to_hub(commit_message="Training completed!")
 
 # Your model will be available at:
 # https://huggingface.co/YOUR_USERNAME/distilbert-base-uncased-finetuned-emotion</code></pre>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Creating a Model Card</h3>
-                    <pre><code># To create a more detailed model card, you can edit the README.md
+        <div class="card" style="margin-top:16px">
+            <h3>Creating a Model Card</h3>
+            <pre><code># To create a more detailed model card, you can edit the README.md
 # Either directly on the Hugging Face website, or by:
 
 model_card = """
@@ -1119,11 +1012,11 @@ This model is intended for sentiment analysis and emotion detection in English t
 
 # You can then push this to the hub
 # trainer.push_to_hub(commit_message="Update model card", model_card=model_card)</code></pre>
-                </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5 mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Using Your Model</h3>
-                    <pre><code># Once deployed, anyone can use your model with:
+        <div class="card" style="margin-top:16px">
+            <h3>Using Your Model</h3>
+            <pre><code># Once deployed, anyone can use your model with:
 from transformers import pipeline
 
 # Replace YOUR_USERNAME with your actual Hugging Face username
@@ -1136,37 +1029,36 @@ classifier = pipeline("text-classification", model=model_name)
 result = classifier("I'm so excited to see this working!")
 print(result)
 # [{'label': 'joy', 'score': 0.9874}]</code></pre>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-share-nodes"></i> Hugging Face Hub Benefits</h3>
+            <div class="grid two">
+                <div>
+                    <p><strong>Advantages:</strong></p>
+                    <ul>
+                        <li>Easy sharing with the community</li>
+                        <li>Version control for model iterations</li>
+                        <li>Automatic model cards and documentation</li>
+                        <li>Widgets to test your model in the browser</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Additional Features:</strong></p>
+                    <ul>
+                        <li>Model discussions and community feedback</li>
+                        <li>Download statistics and usage metrics</li>
+                        <li>Spaces for creating interactive demos</li>
+                        <li>Integration with many ML frameworks</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Hugging Face Hub Benefits</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="font-semibold">Advantages:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li>Easy sharing with the community</li>
-                            <li>Version control for model iterations</li>
-                            <li>Automatic model cards and documentation</li>
-                            <li>Widgets to test your model in the browser</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Additional Features:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li>Model discussions and community feedback</li>
-                            <li>Download statistics and usage metrics</li>
-                            <li>Spaces for creating interactive demos</li>
-                            <li>Integration with many ML frameworks</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mini-challenge">
-                <h3 class="font-semibold text-blue-800 mb-2"><i class="fas fa-tasks mr-2"></i>Mini-Challenge</h3>
-                <p>Create a simple Gradio interface for your model (optional, requires internet access):</p>
-                <pre><code># Install gradio
+        <div class="info-box success">
+            <h3><i class="fas fa-tasks"></i>Mini-Challenge</h3>
+            <p>Create a simple Gradio interface for your model (optional, requires internet access):</p>
+            <pre><code># Install gradio
 # !pip install gradio
 
 import gradio as gr
@@ -1190,232 +1082,129 @@ demo.launch()
 
 # This creates an interactive web interface for your model
 # You can also deploy this permanently on Hugging Face Spaces</code></pre>
-                <p class="mt-2 text-sm">Creating a demo makes your model more accessible to non-technical users and provides an easy way to showcase your work.</p>
-            </div>
+            <p class="small">Creating a demo makes your model more accessible to non-technical users and provides an easy way to showcase your work.</p>
         </div>
     </div>
 
     <!-- Slide 10: Next Steps and Conclusion -->
-    <div id="next" class="slide">
-        <div class="container mx-auto max-w-5xl">
-            <h1 class="text-3xl font-bold text-blue-600 mb-6">Next Steps and Conclusion</h1>
+    <div class="section fade-up" id="next">
+        <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Next Steps and Conclusion</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white shadow-md rounded-lg p-5">
-                    <h3 class="font-semibold text-lg mb-3">What You've Learned</h3>
-                    <div class="space-y-2">
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Loading and exploring datasets from Hugging Face</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Tokenizing and preparing text for transformer models</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Extracting features from pre-trained models</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Creating baseline models with scikit-learn</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Fine-tuning transformer models for classification</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Evaluating model performance with metrics and visualizations</span>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Deploying models to Hugging Face Hub</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-md rounded-lg p-5">
-                    <h3 class="font-semibold text-lg mb-3">Improving Your Model</h3>
-                    <div class="space-y-3">
-                        <div class="key-feature">
-                            <i class="fas fa-arrow-circle-up text-blue-500"></i>
-                            <div>
-                                <span class="font-medium">Try Different Architectures</span>
-                                <p class="text-sm text-gray-600">Experiment with RoBERTa, BERT, or other transformer models as your base.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-arrow-circle-up text-blue-500"></i>
-                            <div>
-                                <span class="font-medium">Hyperparameter Tuning</span>
-                                <p class="text-sm text-gray-600">Optimize learning rate, batch size, and training epochs with grid or random search.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-arrow-circle-up text-blue-500"></i>
-                            <div>
-                                <span class="font-medium">Data Augmentation</span>
-                                <p class="text-sm text-gray-600">Generate additional training examples by synonym replacement, random insertion, or swap.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-arrow-circle-up text-blue-500"></i>
-                            <div>
-                                <span class="font-medium">Address Class Imbalance</span>
-                                <p class="text-sm text-gray-600">Use techniques like weighted loss, oversampling, or generate synthetic examples.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="grid two">
+            <div class="card">
+                <h3>What You've Learned</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-check-circle ok"></i><span>Loading and exploring datasets from Hugging Face</span></li>
+                    <li><i class="fas fa-check-circle ok"></i><span>Tokenizing and preparing text for transformer models</span></li>
+                    <li><i class="fas fa-check-circle ok"></i><span>Extracting features from pre-trained models</span></li>
+                    <li><i class="fas fa-check-circle ok"></i><span>Creating baseline models with scikit-learn</span></li>
+                    <li><i class="fas fa-check-circle ok"></i><span>Fine-tuning transformer models for classification</span></li>
+                    <li><i class="fas fa-check-circle ok"></i><span>Evaluating model performance with metrics and visualizations</span></li>
+                    <li><i class="fas fa-check-circle ok"></i><span>Deploying models to Hugging Face Hub</span></li>
+                </ul>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white shadow-md rounded-lg p-5">
-                    <h3 class="font-semibold text-lg mb-3">Advanced Topics to Explore</h3>
-                    <div class="space-y-3">
-                        <div class="key-feature">
-                            <i class="fas fa-star text-yellow-500"></i>
-                            <div>
-                                <span class="font-medium">Prompt Engineering</span>
-                                <p class="text-sm text-gray-600">Learn how to design effective prompts for large language models.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-star text-yellow-500"></i>
-                            <div>
-                                <span class="font-medium">Multi-task Learning</span>
-                                <p class="text-sm text-gray-600">Train models to perform multiple NLP tasks simultaneously.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-star text-yellow-500"></i>
-                            <div>
-                                <span class="font-medium">Few-shot Learning</span>
-                                <p class="text-sm text-gray-600">Train effective models with very limited labeled examples.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-star text-yellow-500"></i>
-                            <div>
-                                <span class="font-medium">Model Distillation</span>
-                                <p class="text-sm text-gray-600">Create smaller, faster models that retain performance.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="card">
+                <h3>Improving Your Model</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-arrow-circle-up info"></i><div><strong>Try Different Architectures</strong><p>Experiment with RoBERTa, BERT, or other transformer models as your base.</p></div></li>
+                    <li><i class="fas fa-arrow-circle-up info"></i><div><strong>Hyperparameter Tuning</strong><p>Optimize learning rate, batch size, and training epochs with grid or random search.</p></div></li>
+                    <li><i class="fas fa-arrow-circle-up info"></i><div><strong>Data Augmentation</strong><p>Generate additional training examples by synonym replacement, random insertion, or swap.</p></div></li>
+                    <li><i class="fas fa-arrow-circle-up info"></i><div><strong>Address Class Imbalance</strong><p>Use techniques like weighted loss, oversampling, or generate synthetic examples.</p></div></li>
+                </ul>
+            </div>
+        </div>
 
-                <div class="bg-white shadow-md rounded-lg p-5">
-                    <h3 class="font-semibold text-lg mb-3">Project Ideas</h3>
-                    <div class="space-y-3">
-                        <div class="key-feature">
-                            <i class="fas fa-lightbulb text-yellow-400"></i>
-                            <div>
-                                <span class="font-medium">Multi-label Emotion Detection</span>
-                                <p class="text-sm text-gray-600">Detect multiple emotions in the same text (e.g., both surprise and joy).</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-lightbulb text-yellow-400"></i>
-                            <div>
-                                <span class="font-medium">Emotion Intensity Predictor</span>
-                                <p class="text-sm text-gray-600">Predict not just the emotion but its intensity on a scale.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-lightbulb text-yellow-400"></i>
-                            <div>
-                                <span class="font-medium">Sentiment Analysis Dashboard</span>
-                                <p class="text-sm text-gray-600">Build a web app that analyzes emotions in social media or customer feedback.</p>
-                            </div>
-                        </div>
-                        <div class="key-feature">
-                            <i class="fas fa-lightbulb text-yellow-400"></i>
-                            <div>
-                                <span class="font-medium">Cross-lingual Emotion Detection</span>
-                                <p class="text-sm text-gray-600">Create a model that works across multiple languages.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="grid two" style="margin-top:16px">
+            <div class="card">
+                <h3>Advanced Topics to Explore</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-star star"></i><div><strong>Prompt Engineering</strong><p>Learn how to design effective prompts for large language models.</p></div></li>
+                    <li><i class="fas fa-star star"></i><div><strong>Multi-task Learning</strong><p>Train models to perform multiple NLP tasks simultaneously.</p></div></li>
+                    <li><i class="fas fa-star star"></i><div><strong>Few-shot Learning</strong><p>Train effective models with very limited labeled examples.</p></div></li>
+                    <li><i class="fas fa-star star"></i><div><strong>Model Distillation</strong><p>Create smaller, faster models that retain performance.</p></div></li>
+                </ul>
             </div>
 
-            <div class="bg-blue-50 p-5 rounded-lg shadow-sm mb-6">
-                <h3 class="font-semibold text-lg mb-3 text-blue-700">Resources for Further Learning</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <p class="font-semibold">Documentation:</p>
-                        <ul class="list-disc pl-6 mt-1 mb-3">
-                            <li><a href="https://huggingface.co/docs/transformers/index" class="text-blue-600 hover:underline">Hugging Face Transformers</a></li>
-                            <li><a href="https://huggingface.co/docs/datasets/index" class="text-blue-600 hover:underline">Hugging Face Datasets</a></li>
-                            <li><a href="https://scikit-learn.org/stable/documentation.html" class="text-blue-600 hover:underline">Scikit-learn</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Courses:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li><a href="https://huggingface.co/learn/nlp-course/chapter1/1" class="text-blue-600 hover:underline">Hugging Face NLP Course</a></li>
-                            <li><a href="https://www.deeplearning.ai/short-courses/" class="text-blue-600 hover:underline">DeepLearning.AI Short Courses</a></li>
-                            <li><a href="https://www.fast.ai/" class="text-blue-600 hover:underline">Fast.ai</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <p class="font-semibold">Communities:</p>
-                        <ul class="list-disc pl-6 mt-1">
-                            <li><a href="https://discuss.huggingface.co/" class="text-blue-600 hover:underline">Hugging Face Forums</a></li>
-                            <li><a href="https://www.reddit.com/r/MachineLearning/" class="text-blue-600 hover:underline">r/MachineLearning</a></li>
-                            <li><a href="https://stackoverflow.com/questions/tagged/huggingface-transformers" class="text-blue-600 hover:underline">Stack Overflow</a></li>
-                        </ul>
-                    </div>
+            <div class="card">
+                <h3>Project Ideas</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-lightbulb star"></i><div><strong>Multi-label Emotion Detection</strong><p>Detect multiple emotions in the same text (e.g., both surprise and joy).</p></div></li>
+                    <li><i class="fas fa-lightbulb star"></i><div><strong>Emotion Intensity Predictor</strong><p>Predict not just the emotion but its intensity on a scale.</p></div></li>
+                    <li><i class="fas fa-lightbulb star"></i><div><strong>Sentiment Analysis Dashboard</strong><p>Build a web app that analyzes emotions in social media or customer feedback.</p></div></li>
+                    <li><i class="fas fa-lightbulb star"></i><div><strong>Cross-lingual Emotion Detection</strong><p>Create a model that works across multiple languages.</p></div></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-book"></i> Resources for Further Learning</h3>
+            <div class="grid three">
+                <div>
+                    <p><strong>Documentation:</strong></p>
+                    <ul>
+                        <li><a href="https://huggingface.co/docs/transformers/index">Hugging Face Transformers</a></li>
+                        <li><a href="https://huggingface.co/docs/datasets/index">Hugging Face Datasets</a></li>
+                        <li><a href="https://scikit-learn.org/stable/documentation.html">Scikit-learn</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Courses:</strong></p>
+                    <ul>
+                        <li><a href="https://huggingface.co/learn/nlp-course/chapter1/1">Hugging Face NLP Course</a></li>
+                        <li><a href="https://www.deeplearning.ai/short-courses/">DeepLearning.AI Short Courses</a></li>
+                        <li><a href="https://www.fast.ai/">Fast.ai</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Communities:</strong></p>
+                    <ul>
+                        <li><a href="https://discuss.huggingface.co/">Hugging Face Forums</a></li>
+                        <li><a href="https://www.reddit.com/r/MachineLearning/">r/MachineLearning</a></li>
+                        <li><a href="https://stackoverflow.com/questions/tagged/huggingface-transformers">Stack Overflow</a></li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg text-center">
-                <h2 class="text-2xl font-bold mb-3">Congratulations!</h2>
-                <p class="text-lg mb-4">You've built your first text classification model with transformers!</p>
-                <p>You now have the foundation to tackle more complex NLP tasks and build powerful AI-powered applications.</p>
-                <p class="mt-4 italic">Keep exploring, experimenting, and building amazing things with NLP!</p>
-            </div>
+        <div class="congrats">
+            <h2>Congratulations!</h2>
+            <p style="font-size:1.1rem;color:var(--text)">You've built your first text classification model with transformers!</p>
+            <p>You now have the foundation to tackle more complex NLP tasks and build powerful AI-powered applications.</p>
+            <p>Keep exploring, experimenting, and building amazing things with NLP!</p>
         </div>
     </div>
 
-    <footer class="bg-gray-800 text-white py-8 mt-10">
-        <div class="container mx-auto text-center">
-            <p>Text Classification with Transformers - A Comprehensive Tutorial</p>
-            <p class="text-sm mt-2">Created for educational purposes</p>
-        </div>
-    </footer>
-<button onclick="toggleTheme()" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px;position:fixed;top:16px;right:16px;z-index:9999;" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+    <div class="page-nav"><a class="nav-btn prev" href="/cs/index.html"><i class="fas fa-arrow-left"></i> Back to Course</a><a class="nav-btn next" href="/courses.html">All courses <i class="fas fa-arrow-right"></i></a></div>
+</div>
+
+<footer class="footer"><div class="footer-bottom">Text Classification with Transformers - A Comprehensive Tutorial &middot; Created for educational purposes<br>© Al-banna Tutorials · Dr. Abedal-Kareem Al-Banna</div></footer>
+
+<div class="toc" id="toc"><h4>Text Classification</h4>
+    <a class="toc-item" href="#intro">Intro</a>
+    <a class="toc-item" href="#setup">Setup</a>
+    <a class="toc-item" href="#dataset">Dataset</a>
+    <a class="toc-item" href="#tokenization">Tokenization</a>
+    <a class="toc-item" href="#features">Features</a>
+    <a class="toc-item" href="#baseline">Baseline</a>
+    <a class="toc-item" href="#finetuning">Fine-tuning</a>
+    <a class="toc-item" href="#evaluation">Evaluation</a>
+    <a class="toc-item" href="#deployment">Deployment</a>
+    <a class="toc-item" href="#next">Next Steps</a>
+</div>
+
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 <script>
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-    const btn=document.getElementById('themeToggleBtn');
-    if(btn){btn.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.15)';btn.style.color=isLight?'#334155':'rgba(255,255,255,.7)';}
-    const back=document.querySelector('a[href="/cs/index.html"]');
-    if(back){back.style.background=isLight?'#ffffff':'var(--surface)';back.style.borderColor=isLight?'rgba(0,0,0,.12)':'rgba(255,255,255,.08)';}
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');if(icon)icon.className='fa-solid fa-moon';
-        const btn=document.getElementById('themeToggleBtn');if(btn){btn.style.borderColor='rgba(0,0,0,.12)';btn.style.color='#334155';}
-    }
-})();
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
+    // Add a copy button to every code block (theme.js wires up the click handler)
+    document.querySelectorAll('.section pre').forEach(function(pre){
         if(pre.querySelector('.copy-btn'))return;
-        pre.classList.add('has-copy');pre.style.position='relative';
-        var btn=document.createElement('button');btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5';
-        btn.onclick=function(e){e.stopPropagation();var code=pre.querySelector('code')||pre;navigator.clipboard.writeText(code.textContent);this.innerHTML='<i class="fa-solid fa-check"></i> Copied';var b=this;setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);};
-        pre.appendChild(btn);
+        var btn=document.createElement('button');
+        btn.className='copy-btn';
+        btn.type='button';
+        btn.textContent='Copy';
+        pre.insertBefore(btn,pre.firstChild);
     });
-});
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

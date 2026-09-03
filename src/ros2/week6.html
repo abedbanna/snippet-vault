@@ -12,792 +12,47 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 6: Parameters, Launch Systems, and Configuration | ROS2 Tutorial</title>    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Week 6: Parameters, Launch Systems, and Configuration | ROS2 Tutorial</title>
+    <meta name="description" content="ROS2 Week 6: parameter server configuration, Python launch files for multi-node systems, dynamic reconfiguration at runtime, RQT tools and a configurable robot project.">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1.2em;
-        }
-
-        nav {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #667eea;
-            padding: 10px 20px;
-            border: 2px solid #667eea;
-            border-radius: 25px;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        nav a:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            color: #667eea;
-            font-size: 2em;
-            margin: 30px 0 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        h3 {
-            color: #764ba2;
-            font-size: 1.5em;
-            margin: 25px 0 15px 0;
-        }
-
-        h4 {
-            color: #555;
-            font-size: 1.2em;
-            margin: 20px 0 10px 0;
-        }
-
-        .topic-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 25px;
-            margin: 20px 0;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .code-block {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
-            position: relative;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .code-wrapper {
-            position: relative;
-        }
-
-        .copy-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: 600;
-            transition: all 0.3s;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .copy-button:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .copy-button:active {
-            transform: translateY(0);
-        }
-
-        .copy-button.copied {
-            background: #28a745;
-        }
-
-        .copy-button.copied::before {
-            content: " ";
-        }
-
-        .code-header {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 8px 8px 0 0;
-            font-size: 0.85em;
-            margin: 15px 0 0 0;
-            font-weight: 600;
-        }
-
-        .code-block + .code-block {
-            margin-top: 0;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .keyword { color: #ff79c6; }
-        .string { color: #50fa7b; }
-        .comment { color: #6272a4; font-style: italic; }
-        .function { color: #8be9fd; }
-        .number { color: #bd93f9; }
-        .class { color: #f1fa8c; }
-
-        .interactive-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .interactive-box h4 {
-            color: #ff6f00;
-            margin-top: 0;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border: 2px solid #dc3545;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .info-box {
-            background: #d1ecf1;
-            border: 2px solid #17a2b8;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .success-box {
-            background: #d4edda;
-            border: 2px solid #28a745;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        ul, ol {
-            margin: 15px 0 15px 30px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        .project-section {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-            border: 3px solid #ff6f00;
-        }
-
-        .deliverable {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border-left: 4px solid #28a745;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: #667eea;
-            color: white;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background: #f5f5f5;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-        }
-
-        .btn:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .accordion {
-            margin: 15px 0;
-        }
-
-        .accordion-item {
-            margin: 10px 0;
-        }
-
-        .accordion-header {
-            background: #667eea;
-            color: white;
-            padding: 15px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .accordion-header:hover {
-            background: #764ba2;
-        }
-
-        .accordion-content {
-            display: none;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 0 0 8px 8px;
-            border: 2px solid #667eea;
-            border-top: none;
-        }
-
-        .accordion-content.active {
-            display: block;
-        }
-
-        footer {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            text-align: center;
-            border-radius: 15px;
-            margin-top: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 1.8em; }
-            h2 { font-size: 1.5em; }
-            nav ul { flex-direction: column; }
-            .content { padding: 20px; }
-        }
-    
-        /* DARK THEME OVERRIDE */
-        *{box-sizing:border-box}
-        :root{
-            --bg:#0b0f19;--surface:#111827;--surface2:#1e293b;
-            --primary:#3b82f6;--secondary:#8b5cf6;--success:#10b981;
-            --warning:#f59e0b;--danger:#ef4444;
-            --text:#f1f5f9;--text2:#94a3b8;
-            --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);
-            --code:#0d1117;
-        }
-        body.light-mode{
-            --bg:#f0f4f8;--surface:#ffffff;--surface2:#e2e8f0;
-            --primary:#2563eb;--secondary:#7c3aed;--success:#059669;
-            --warning:#d97706;--danger:#dc2626;
-            --text:#0f172a;--text2:#334155;
-            --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.12);
-            --code:#1e293b;
-        }
-        body{
-            font-family:'Inter',sans-serif !important;
-            background:var(--bg) !important;
-            color:var(--text) !important;
-            line-height:1.7;
-        }
-        a{color:var(--primary);transition:color .2s}
-        a:hover{color:#60a5fa}
-
-        /* Bootstrap overrides */
-        .navbar{
-            background:rgba(11,15,25,.92) !important;
-            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-            border-bottom:1px solid var(--border) !important;
-            padding:0 24px !important;
-            box-shadow:none !important;
-        }
-        body.light-mode .navbar{background:rgba(255,255,255,.92) !important;border-bottom-color:rgba(0,0,0,.08) !important}
-        .navbar-brand{
-            font-weight:700 !important;font-size:1.15rem !important;
-            color:var(--text) !important;display:flex !important;align-items:center !important;gap:10px !important;
-        }
-        .navbar-brand i{color:var(--primary) !important;font-size:1.3rem}
-        .navbar-nav .nav-link{
-            color:var(--text2) !important;font-size:.875rem !important;font-weight:500 !important;
-            padding:8px 16px !important;border-radius:8px !important;transition:all .2s !important;
-        }
-        .navbar-nav .nav-link:hover,.navbar-nav .nav-link.active{color:var(--text) !important;background:rgba(255,255,255,.05) !important}
-        body.light-mode .navbar-nav .nav-link{color:#334155 !important}
-        body.light-mode .navbar-nav .nav-link:hover,body.light-mode .navbar-nav .nav-link.active{color:#0f172a !important;background:rgba(0,0,0,.05) !important}
-        .navbar-toggler{border-color:var(--border2) !important;color:var(--text) !important}
-        .navbar-toggler-icon{filter:invert(1) !important}
-        body.light-mode .navbar-toggler-icon{filter:none !important}
-        .navbar-collapse{background:transparent !important}
-        @media(max-width:991px){
-            .navbar-collapse{
-                background:rgba(11,15,25,.98) !important;
-                border-radius:0 0 12px 12px;padding:12px 0;
-                border:1px solid var(--border);border-top:none;
-            }
-            body.light-mode .navbar-collapse{background:rgba(255,255,255,.98) !important}
-        }
-
-        /* Theme toggle button */
-        .theme-toggle{
-            background:none !important;border:1px solid var(--border2) !important;
-            color:var(--text2) !important;width:36px;height:36px;border-radius:8px;
-            cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
-            transition:all .2s;margin-left:8px;
-        }
-        .theme-toggle:hover{border-color:var(--primary) !important;color:var(--primary) !important}
-
-        /* Hero */
-        .hero, .hero-section{
-            background:var(--bg) !important;
-            color:var(--text) !important;
-            position:relative;overflow:hidden;
-            padding:80px 0 60px !important;
-            margin-bottom:0 !important;
-        }
-        .hero::before,.hero-section::before{
-            content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;
-            transform:translate(-50%,-50%);
-            background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none;
-        }
-        .hero::after,.hero-section::after{
-            content:'';position:absolute;inset:0;
-            background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
-            background-size:32px 32px;pointer-events:none;
-        }
-        body.light-mode .hero::before,body.light-mode .hero-section::before{background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%)}
-        body.light-mode .hero::after,body.light-mode .hero-section::after{background-image:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1px)}
-        .hero h1,.hero-section h1{
-            font-weight:800 !important;letter-spacing:-.02em;line-height:1.1 !important;
-            background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%) !important;
-            -webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
-            color:transparent !important;
-        }
-        .hero p,.hero .lead,.hero-section p,.hero-section .lead{
-            color:var(--text2) !important;opacity:1 !important;
-        }
-        .hero .display-4{font-size:2.8rem !important}
-
-        /* Cards */
-        .card{
-            background:var(--surface) !important;
-            border:1px solid var(--border2) !important;
-            border-radius:12px !important;
-            box-shadow:none !important;
-            color:var(--text) !important;
-        }
-        .card:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3) !important}
-        .card-body{background:transparent !important;color:var(--text) !important}
-        .card-header{
-            background:var(--surface2) !important;
-            color:var(--text) !important;
-            border-bottom:1px solid var(--border) !important;
-            font-weight:600;
-        }
-        .card-title{color:var(--text) !important}
-        .card-text{color:var(--text2) !important}
-
-        /* Section titles */
-        .section-title, h2.section-title, h3.section-title{
-            color:var(--text) !important;
-            border-bottom-color:var(--primary) !important;
-        }
-        .section-title::before{background:var(--primary) !important}
-        h1,h2,h3,h4,h5,h6{color:var(--text) !important}
-        p{color:var(--text2)}
-
-        /* Info/Warning/Success boxes */
-        .info-box,.alert-info-custom,.alert-info,.key-concept{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--primary) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .info-box h3,.info-box h4,.info-box strong,.alert-info-custom strong{color:var(--text) !important}
-        .info-box p,.info-box li,.alert-info-custom p{color:var(--text2) !important}
-        
-        .warning-box,.alert-warning-custom,.alert-warning{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--warning) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .warning-box strong,.alert-warning-custom strong{color:var(--warning) !important}
-        .warning-box p,.alert-warning-custom p{color:var(--text2) !important}
-        
-        .success-box,.alert-success-custom,.alert-success{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--success) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .success-box strong{color:var(--success) !important}
-        .success-box p{color:var(--text2) !important}
-
-        .alert-tip-custom{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--secondary) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .alert-danger,.alert-danger-custom{
-            background:var(--surface2) !important;
-            border:1px solid var(--border2) !important;
-            border-left:3px solid var(--danger) !important;
-            border-radius:8px !important;
-            color:var(--text) !important;
-        }
-        .alert{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
-
-        /* Code blocks */
-        pre, pre[class*="language-"]{
-            background:var(--code) !important;
-            border:1px solid var(--border2) !important;
-            border-radius:8px !important;
-            color:#e6edf3 !important;
-            font-family:'JetBrains Mono',monospace !important;
-            font-size:.875rem !important;
-            line-height:1.6 !important;
-            padding:20px !important;
-        }
-        code{
-            font-family:'JetBrains Mono',monospace !important;
-            background:var(--surface2) !important;
-            color:var(--primary) !important;
-            padding:2px 6px;border-radius:4px;
-            font-size:.85em !important;
-        }
-        pre code{
-            background:transparent !important;
-            color:#e6edf3 !important;
-            padding:0 !important;
-        }
-        .code-block{position:relative;margin:16px 0}
-        .code-block .copy-btn, .copy-btn{
-            position:absolute;top:10px;right:10px;
-            background:var(--surface2) !important;border:1px solid var(--border2) !important;
-            color:var(--text2) !important;padding:4px 12px;border-radius:6px;
-            cursor:pointer;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;z-index:10;
-        }
-        .copy-btn:hover{border-color:var(--primary) !important;color:var(--primary) !important}
-
-        /* Tables */
-        .table,.dark-table,table{
-            color:var(--text) !important;
-            border-color:var(--border) !important;
-        }
-        .table th,table th{
-            background:var(--surface2) !important;
-            color:var(--text) !important;
-            border-color:var(--border2) !important;
-            font-weight:600;
-        }
-        .table td,table td{
-            color:var(--text2) !important;
-            border-color:var(--border) !important;
-            background:transparent !important;
-        }
-        .table-striped>tbody>tr:nth-of-type(odd)>*{
-            background:rgba(255,255,255,.02) !important;
-            color:var(--text2) !important;
-        }
-        .table-hover>tbody>tr:hover>*{background:rgba(59,130,246,.04) !important}
-        .table-bordered{border-color:var(--border2) !important}
-        thead{border-bottom:2px solid var(--border2) !important}
-        body.light-mode .table th,body.light-mode table th{background:var(--surface2) !important;color:var(--text) !important}
-        body.light-mode .table td,body.light-mode table td{color:var(--text2) !important}
-
-        /* Sidebar / TOC */
-        .sidebar,.toc{
-            background:var(--surface) !important;
-            border:1px solid var(--border2) !important;
-            border-radius:10px !important;
-            padding:16px !important;
-        }
-        .sidebar a,.toc a,.toc .nav-link{
-            color:var(--text2) !important;
-            border-left-color:transparent !important;
-        }
-        .sidebar a:hover,.sidebar a.active,.toc a:hover,.toc .nav-link:hover,.toc .nav-link.active{
-            color:var(--primary) !important;
-            border-left-color:var(--primary) !important;
-            background:rgba(59,130,246,.05) !important;
-        }
-        .list-group-item{
-            background:var(--surface) !important;
-            border-color:var(--border) !important;
-            color:var(--text2) !important;
-        }
-        .list-group-item:hover{background:var(--surface2) !important;color:var(--primary) !important}
-
-        /* Badges */
-        .badge,.badge-custom{
-            background:var(--surface2) !important;
-            color:var(--primary) !important;
-            border:1px solid var(--border2);
-        }
-        .badge.bg-primary,.bg-primary{background:var(--primary) !important;color:#fff !important;border:none}
-        .badge.bg-success,.bg-success{background:var(--success) !important;color:#fff !important;border:none}
-        .badge.bg-warning,.bg-warning{background:var(--warning) !important;color:#000 !important;border:none}
-        .badge.bg-danger,.bg-danger{background:var(--danger) !important;color:#fff !important;border:none}
-        .badge.bg-info,.bg-info{background:var(--primary) !important;color:#fff !important;border:none}
-        .badge.bg-secondary,.bg-secondary{background:var(--secondary) !important;color:#fff !important;border:none}
-
-        /* Buttons */
-        .btn-primary{background:var(--primary) !important;border-color:var(--primary) !important;color:#fff !important}
-        .btn-primary:hover{background:#2563eb !important;border-color:#2563eb !important}
-        .btn-success{background:var(--success) !important;border-color:var(--success) !important;color:#fff !important}
-        .btn-success:hover{background:#059669 !important;border-color:#059669 !important}
-        .btn-outline-primary{color:var(--primary) !important;border-color:var(--primary) !important;background:transparent !important}
-        .btn-outline-primary:hover{background:var(--primary) !important;color:#fff !important}
-        .btn-outline-secondary{color:var(--text2) !important;border-color:var(--border2) !important}
-        .btn-outline-secondary:hover{background:var(--surface2) !important;color:var(--text) !important}
-        .btn-outline-light{color:var(--text2) !important;border-color:var(--border2) !important}
-        .btn-outline-success{color:var(--success) !important;border-color:var(--success) !important}
-
-        /* Misc Bootstrap */
-        .breadcrumb{background:var(--surface) !important}
-        .breadcrumb-item a{color:var(--primary) !important}
-        .breadcrumb-item.active{color:var(--text2) !important}
-        .accordion-item{background:var(--surface) !important;border-color:var(--border2) !important}
-        .accordion-button{background:var(--surface2) !important;color:var(--text) !important}
-        .accordion-button:not(.collapsed){background:var(--surface2) !important;color:var(--primary) !important}
-        .accordion-body{background:var(--surface) !important;color:var(--text2) !important}
-        .modal-content{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--text) !important}
-        .modal-header{border-bottom-color:var(--border) !important}
-        .modal-footer{border-top-color:var(--border) !important}
-        .form-control,.form-select{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text) !important}
-        .form-control:focus,.form-select:focus{border-color:var(--primary) !important;box-shadow:0 0 0 .25rem rgba(59,130,246,.15) !important}
-        .input-group-text{background:var(--surface2) !important;border-color:var(--border2) !important;color:var(--text2) !important}
-        .nav-tabs{border-bottom-color:var(--border2) !important}
-        .nav-tabs .nav-link{color:var(--text2) !important;border-color:transparent !important}
-        .nav-tabs .nav-link.active{background:var(--surface) !important;color:var(--primary) !important;border-color:var(--border2) var(--border2) var(--surface) !important}
-        .nav-tabs .nav-link:hover{border-color:var(--border2) !important;color:var(--text) !important}
-        .nav-pills .nav-link{color:var(--text2) !important}
-        .nav-pills .nav-link.active{background:var(--primary) !important;color:#fff !important}
-        .progress{background:var(--surface2) !important}
-        .progress-bar{background:var(--primary) !important}
-        .page-link{background:var(--surface) !important;border-color:var(--border2) !important;color:var(--primary) !important}
-        hr{border-color:var(--border) !important;opacity:.5}
-        .text-muted{color:var(--text2) !important}
-        .text-dark{color:var(--text) !important}
-        .bg-light{background:var(--surface2) !important}
-        .bg-white{background:var(--surface) !important}
-        .border{border-color:var(--border2) !important}
-        .shadow,.shadow-sm,.shadow-lg{box-shadow:none !important}
-        .lead{color:var(--text2) !important}
-        strong,b{color:var(--text) !important}
-        ::selection{background:rgba(59,130,246,.3);color:#fff}
-
-        /* Step cards / numbered steps */
-        .step-card{border-left-color:var(--primary) !important;background:var(--surface) !important}
-        .step-number{background:var(--primary) !important;color:#fff !important}
-
-        /* Scroll to top */
-        .scroll-top{
-            position:fixed;bottom:28px;right:28px;width:44px;height:44px;
-            border-radius:10px;background:var(--surface);border:1px solid var(--border2);
-            color:var(--text2);display:flex;align-items:center;justify-content:center;
-            cursor:pointer;font-size:1rem;transition:all .2s;opacity:0;pointer-events:none;z-index:900;
-        }
-        .scroll-top.visible{opacity:1;pointer-events:auto}
-        .scroll-top:hover{border-color:var(--primary);color:var(--primary)}
-
-        /* Footer override */
-        footer,.footer{
-            background:var(--surface) !important;
-            border-top:1px solid var(--border) !important;
-            color:var(--text2) !important;
-        }
-        footer a{color:var(--primary) !important}
-        footer p,footer span,footer div{color:var(--text2) !important}
-
-        /* Legacy element overrides (old hardcoded CSS fix) */
-        header{
-            background:var(--surface) !important;
-            border-bottom:1px solid var(--border) !important;
-            box-shadow:0 1px 0 var(--border) !important;
-            color:var(--text) !important;
-        }
-        header h1{color:var(--text) !important}
-        header .subtitle{color:var(--text2) !important}
-        nav{
-            background:var(--surface) !important;
-            border:1px solid var(--border2) !important;
-            box-shadow:none !important;
-        }
-        nav a{
-            color:var(--text2) !important;
-            border-color:var(--border2) !important;
-        }
-        nav a:hover{
-            background:var(--primary) !important;
-            color:#fff !important;
-            border-color:var(--primary) !important;
-        }
-        .content{
-            background:var(--surface) !important;
-            box-shadow:none !important;
-            border:1px solid var(--border2) !important;
-            color:var(--text) !important;
-        }
-        .topic-card{
-            background:var(--surface2) !important;
-            border-left-color:var(--primary) !important;
-            box-shadow:none !important;
-            color:var(--text) !important;
-        }
-        .project-section{
-            background:var(--surface2) !important;
-            border-color:var(--warning) !important;
-            color:var(--text) !important;
-        }
-        .deliverable{
-            background:var(--surface) !important;
-            border-left-color:var(--success) !important;
-            color:var(--text) !important;
-        }
-        .interactive-box{
-            background:var(--surface2) !important;
-            border-color:var(--warning) !important;
-            color:var(--text) !important;
-        }
-        .interactive-box h4{color:var(--warning) !important}
-        .accordion-header{
-            background:var(--primary) !important;
-            color:#fff !important;
-        }
-        .accordion-header:hover{background:var(--secondary) !important}
-        .accordion-content{
-            background:var(--surface2) !important;
-            border-color:var(--border2) !important;
-            color:var(--text2) !important;
-        }
-        tr:hover>td{background:rgba(59,130,246,.04) !important}
-
-        /* Light mode reversals for legacy elements */
-        body.light-mode header{background:var(--surface) !important}
-        body.light-mode nav{background:var(--surface) !important}
-        body.light-mode .content{background:var(--surface) !important}
-        body.light-mode .topic-card{background:var(--surface2) !important}
-        body.light-mode .project-section{background:var(--surface2) !important}
-        body.light-mode .deliverable{background:var(--surface) !important}
-        body.light-mode .interactive-box{background:var(--surface2) !important}
-        body.light-mode .accordion-content{background:var(--surface2) !important}
-
+        :root{--primary:#3b82f6;--primary-hover:#60a5fa;--glow:rgba(59,130,246,.14)}
+        .info-box{color:var(--text2);font-size:.92rem}
+        .info-box>strong{color:var(--text)}
+        .info-box h4{font-size:1rem;font-weight:600;margin:0 0 8px;display:flex;align-items:center;gap:8px;color:var(--text)}
+        .info-box h4 i{color:var(--primary)}.info-box.warning h4 i{color:var(--warning)}.info-box.success h4 i{color:var(--success)}.info-box.danger h4 i{color:var(--danger)}
+        .code-header{background:var(--surface2);border:1px solid var(--border2);border-bottom:0;border-radius:8px 8px 0 0;padding:8px 14px;font-size:.8rem;font-weight:600;color:var(--text2);margin:14px 0 0;display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
+        .code-header i{color:var(--primary)}
+        .code-header+.code-block{margin-top:0;border-radius:0 0 8px 8px}
+        .code-block .keyword{color:#ff7b72}.code-block .string{color:#a5d6ff}.code-block .comment{color:#8b949e;font-style:italic}.code-block .function{color:#d2a8ff}.code-block .number{color:#79c0ff}.code-block .class{color:#ffa657}
+        .accordion{margin:14px 0}.accordion-item{margin:10px 0}
+        .accordion-header{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:14px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:8px}
+        .accordion-header i{color:var(--primary)}.accordion-header:hover{border-color:var(--primary)}
+        .accordion-content{display:none;padding:16px 20px;border:1px solid var(--border2);border-top:0;border-radius:0 0 8px 8px;background:var(--surface)}
+        .accordion-content.active{display:block}
+        .accordion-item:has(.accordion-content.active) .accordion-header{border-radius:8px 8px 0 0;border-color:var(--primary)}
+        .ext-labs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+        .ext-labs h2{font-size:.85rem;font-weight:600;margin:0;padding:8px 14px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--primary);transition:all .2s}
+        .ext-labs a:hover h2{border-color:var(--primary)}
+        .section h4{color:var(--text)}
+        .section h3{margin-top:24px}
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fa-solid fa-robot"></i> Week 6: Parameters, Launch Systems, and Configuration</h1>
-            <p class="subtitle">Advanced ROS2 Robotics Programming</p>
-        </header>
-
-        <nav>
-            <ul>
-                <li><a href="#overview">Overview</a></li>
-                <li><a href="#parameters">Parameters</a></li>
-                <li><a href="#launch">Launch Systems</a></li>
-                <li><a href="#dynamic">Dynamic Config</a></li>
-                <li><a href="#rqt">RQT Tools</a></li>
-                <li><a href="#project">Project</a></li>
-            </ul>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:38px;height:38px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-left:8px"><i class="fa-solid fa-sun" id="themeIcon"></i></button></nav>
-
-        <div class="content">
-            <section id="overview">
-                <h2><i class="fa-solid fa-book"></i> Learning Objectives</h2>
-                <div class="topic-card">
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fa-solid fa-robot"></i> ROS2 Robotics</a>
+  <div class="nav-links"><a href="#overview">Overview</a><a href="#parameters">Parameters</a><a href="#launch">Launch Systems</a><a href="#dynamic">Dynamic Config</a><a href="#rqt">RQT Tools</a><a href="#project">Project</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="#overview">Overview</a><a href="#parameters">Parameters</a><a href="#launch">Launch Systems</a><a href="#dynamic">Dynamic Config</a><a href="#rqt">RQT Tools</a><a href="#project">Project</a></div>
+<section class="hero"><div class="hero-content"><h1><i class="fa-solid fa-robot"></i> Week 6: Parameters, Launch Systems, and Configuration</h1><p class="hero-sub">Advanced ROS2 Robotics Programming</p><span class="diff-badge">Advanced</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~90 min</span></div></section>
+<div class="container">
+<div class="section fade-up" id="overview">
+                <h2 class="section-title"><i class="fa-solid fa-book"></i> Learning Objectives</h2>
+                <div class="info-box">
                     <p>By the end of this week, you will master:</p>
                     <ul>
                         <li>Parameter server configuration for intelligent robot behavior</li>
@@ -807,10 +62,10 @@
                         <li>RQT tools for parameter visualization and management</li>
                     </ul>
                 </div>
-            </section>
+            </div>
 
-            <section id="parameters">
-                <h2><i class="fa-solid fa-gear"></i> 1. Parameter Server for Intelligent Robot Configuration</h2>
+            <div class="section fade-up" id="parameters">
+                <h2 class="section-title"><i class="fa-solid fa-gear"></i> 1. Parameter Server for Intelligent Robot Configuration</h2>
 
                 <h3>What are ROS2 Parameters?</h3>
                 <p>Parameters are configuration values that can be set for ROS2 nodes without recompiling code. They enable dynamic behavior modification and are essential for creating flexible, configurable robotic systems.</p>
@@ -820,7 +75,7 @@
                 </div>
 
                 <h3>Parameter Types in ROS2</h3>
-                <table>
+                <div class="table-wrap"><table class="dark-table">
                     <thead>
                         <tr>
                             <th>Type</th>
@@ -855,7 +110,7 @@
                             <td>waypoints: [1.0, 2.0, 3.0]</td>
                         </tr>
                     </tbody>
-                </table>
+                </table></div>
 
                 <h3>Step-by-Step: Building Your First Parameterized Node</h3>
 
@@ -873,9 +128,7 @@
                 <p>Let's start with the simplest possible parameterized node - a robot that can change its speed.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> simple_robot_step1.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">import rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 
 class SimpleRobot(Node):
@@ -907,25 +160,18 @@ def main(args=None):
 if __name__ == '__main__':
     main()
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 1</h4>
                     <p><strong>Run with default value:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 run my_package simple_robot_step1</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 run my_package simple_robot_step1</div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">[INFO] [simple_robot]: Robot initialized with speed: 1.0 m/s
 [INFO] [simple_robot]: Moving at 1.0 m/s
 [INFO] [simple_robot]: Moving at 1.0 m/s</div>
 
                     <p><strong>Run with custom value:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 run my_package simple_robot_step1 --ros-args -p speed:=2.5</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 run my_package simple_robot_step1 --ros-args -p speed:=2.5</div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">[INFO] [simple_robot]: Robot initialized with speed: 2.5 m/s
 [INFO] [simple_robot]: Moving at 2.5 m/s</div>
@@ -935,9 +181,7 @@ if __name__ == '__main__':
                 <p>Now let's add more parameters and make them self-documenting.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> simple_robot_step2.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">import rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 from rcl_interfaces.msg import ParameterDescriptor
 
@@ -990,24 +234,17 @@ def main(args=None):
 if __name__ == '__main__':
     main()
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 2</h4>
                     <p><strong>Run with multiple parameters:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 run my_package simple_robot_step2 --ros-args \
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 run my_package simple_robot_step2 --ros-args \
   -p speed:=3.0 \
   -p robot_name:="Explorer" \
   -p enable_safety:=false</div>
-                    </div>
 
                     <p><strong>Check parameter descriptions:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 param describe /simple_robot speed</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 param describe /simple_robot speed</div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">Parameter name: speed
   Type: double
@@ -1019,9 +256,7 @@ if __name__ == '__main__':
                 <p>Let's add validation to prevent invalid values that could damage the robot.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> simple_robot_step3.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">import rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 
@@ -1091,28 +326,21 @@ def main(args=None):
 if __name__ == '__main__':
     main()
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 3 - Validation</h4>
                     <p><strong>Test 1: Try to set invalid speed (should fail)</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># In terminal 1: Run the robot
+                    <div class="code-block"><button class="copy-btn">Copy</button># In terminal 1: Run the robot
 ros2 run my_package simple_robot_step3
 
 # In terminal 2: Try invalid speed
 ros2 param set /simple_robot speed 10.0</div>
-                    </div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">[ERROR] [simple_robot]: Speed must be between 0.1 and 5.0, got 10.0
 Set parameter failed</div>
 
                     <p><strong>Test 2: Set valid speed (should succeed)</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 param set /simple_robot speed 2.5</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 param set /simple_robot speed 2.5</div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">[INFO] [simple_robot]:  Speed updated to 2.5 m/s
 Set parameter successful</div>
@@ -1122,9 +350,7 @@ Set parameter successful</div>
                 <p>Finally, let's create a complete robot that responds to sensor data and runtime parameter changes.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> configurable_robot.py (Complete)</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">import</span> rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">import</span> rclpy
 <span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
 <span class="keyword">from</span> geometry_msgs.msg <span class="keyword">import</span> Twist
 <span class="keyword">from</span> sensor_msgs.msg <span class="keyword">import</span> LaserScan
@@ -1225,13 +451,10 @@ Set parameter successful</div>
 <span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
     main()
 </div>
-                </div>
 
                 <h3>Setting Parameters via Command Line</h3>
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Terminal Commands</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="comment"># Run node with custom parameters</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="comment"># Run node with custom parameters</span>
 ros2 run my_package configurable_robot --ros-args \
   -p max_speed:=<span class="number">2.5</span> \
   -p safety_distance:=<span class="number">0.8</span> \
@@ -1249,13 +472,10 @@ ros2 param set /configurable_robot max_speed <span class="number">3.0</span>
 <span class="comment"># Dump all parameters to file</span>
 ros2 param dump /configurable_robot --output-dir ./config
 </div>
-                </div>
 
                 <h3>Using YAML Configuration Files</h3>
                 <div class="code-header"><i class="fa-solid fa-file"></i> robot_config.yaml</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">configurable_robot:
+                <div class="code-block"><button class="copy-btn">Copy</button>configurable_robot:
   ros__parameters:
     max_speed: <span class="number">2.0</span>
     safety_distance: <span class="number">0.6</span>
@@ -1263,18 +483,14 @@ ros2 param dump /configurable_robot --output-dir ./config
     enable_safety: <span class="keyword">true</span>
     robot_name: <span class="string">"Explorer-1"</span>
 </div>
-                </div>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Loading Parameters from YAML</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="comment"># Run with YAML configuration</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="comment"># Run with YAML configuration</span>
 ros2 run my_package configurable_robot --ros-args \
   --params-file ./config/robot_config.yaml
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-bullseye"></i> Practice Exercise</h4>
                     <p>Create a node with the following parameters:</p>
                     <ul>
@@ -1285,15 +501,15 @@ ros2 run my_package configurable_robot --ros-args \
                     </ul>
                     <p>Test changing parameters at runtime using <code>ros2 param set</code></p>
                 </div>
-            </section>
+            </div>
 
-            <section id="launch">
-                <h2><i class="fa-solid fa-rocket"></i> 2. Python Launch Files for Complex Systems</h2>
+            <div class="section fade-up" id="launch">
+                <h2 class="section-title"><i class="fa-solid fa-rocket"></i> 2. Python Launch Files for Complex Systems</h2>
 
                 <h3>Why Launch Files?</h3>
                 <p>Launch files allow you to start multiple nodes with specific configurations in a single command. They're essential for complex robotic systems that require coordination between many components.</p>
 
-                <div class="topic-card">
+                <div class="info-box">
                     <h4>Benefits of Launch Files:</h4>
                     <ul>
                         <li>Start multiple nodes simultaneously</li>
@@ -1304,7 +520,7 @@ ros2 run my_package configurable_robot --ros-args \
                     </ul>
                 </div>
 
-                <div class="topic-card">
+                <div class="info-box">
                     <h4>Benefits of Launch Files:</h4>
                     <ul>
                         <li>Start multiple nodes simultaneously</li>
@@ -1330,9 +546,7 @@ ros2 run my_package configurable_robot --ros-args \
                 <p>Let's create the simplest possible launch file that starts one node.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> step1_single_node.launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">from launch import LaunchDescription
+                <div class="code-block"><button class="copy-btn">Copy</button>from launch import LaunchDescription
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -1344,18 +558,14 @@ def generate_launch_description():
         )
     ])
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 1</h4>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># Run the launch file
+                    <div class="code-block"><button class="copy-btn">Copy</button># Run the launch file
 ros2 launch my_package step1_single_node.launch.py
 
 # Verify the node is running
 ros2 node list</div>
-                    </div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">/my_robot</div>
                 </div>
@@ -1364,9 +574,7 @@ ros2 node list</div>
                 <p>Now let's add parameters to configure the node at startup.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> step2_with_parameters.launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">from launch import LaunchDescription
+                <div class="code-block"><button class="copy-btn">Copy</button>from launch import LaunchDescription
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -1384,14 +592,10 @@ def generate_launch_description():
         )
     ])
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 2</h4>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 launch my_package step2_with_parameters.launch.py</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 launch my_package step2_with_parameters.launch.py</div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">[INFO] [explorer_bot]: === Explorer-1 Configuration ===
 [INFO] [explorer_bot]: Speed: 2.0 m/s
@@ -1402,9 +606,7 @@ def generate_launch_description():
                 <p>Let's launch multiple nodes that work together.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> step3_multi_node.launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">from launch import LaunchDescription
+                <div class="code-block"><button class="copy-btn">Copy</button>from launch import LaunchDescription
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -1447,18 +649,14 @@ def generate_launch_description():
         controller
     ])
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 3</h4>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># Launch all three nodes
+                    <div class="code-block"><button class="copy-btn">Copy</button># Launch all three nodes
 ros2 launch my_package step3_multi_node.launch.py
 
 # In another terminal, check all running nodes
 ros2 node list</div>
-                    </div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">/navigator
 /sensor_handler
@@ -1469,9 +667,7 @@ ros2 node list</div>
                 <p>For complex configurations, it's better to use YAML files.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> config/robot_params.yaml</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"># Robot configuration file
+                <div class="code-block"><button class="copy-btn">Copy</button># Robot configuration file
 navigator:
   ros__parameters:
     speed: 2.0
@@ -1490,12 +686,9 @@ motion_controller:
     kp_angular: 2.0
     max_acceleration: 0.5
 </div>
-                </div>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> step4_with_yaml.launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">import os
+                <div class="code-block"><button class="copy-btn">Copy</button>import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -1532,35 +725,26 @@ def generate_launch_description():
         )
     ])
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 4</h4>
                     <p><strong>Important:</strong> First, install the config file in your package's setup.py:</p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># In setup.py, add to data_files:
+                    <div class="code-block"><button class="copy-btn">Copy</button># In setup.py, add to data_files:
 (os.path.join('share', package_name, 'config'),
  glob('config/*.yaml')),</div>
-                    </div>
 
                     <p><strong>Then rebuild and launch:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">cd ~/ros2_ws
+                    <div class="code-block"><button class="copy-btn">Copy</button>cd ~/ros2_ws
 colcon build --packages-select my_package
 source install/setup.bash
 ros2 launch my_package step4_with_yaml.launch.py</div>
-                    </div>
                 </div>
 
                 <h4><i class="fa-solid fa-pen-to-square"></i> Step 5: Launch Arguments for Flexibility</h4>
                 <p>The most powerful feature: allow users to customize the launch without editing files.</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> step5_with_arguments.launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">from launch import LaunchDescription
+                <div class="code-block"><button class="copy-btn">Copy</button>from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -1605,30 +789,20 @@ def generate_launch_description():
         robot_node
     ])
 </div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4><i class="fa-solid fa-flask"></i> Test Step 5</h4>
                     <p><strong>Test 1: Use default values</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 launch my_package step5_with_arguments.launch.py</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 launch my_package step5_with_arguments.launch.py</div>
 
                     <p><strong>Test 2: Override with custom values</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 launch my_package step5_with_arguments.launch.py \
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 launch my_package step5_with_arguments.launch.py \
   speed:=3.0 \
   robot_name:="SpeedRacer" \
   enable_safety:=false</div>
-                    </div>
 
                     <p><strong>Test 3: See available arguments</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block">ros2 launch my_package step5_with_arguments.launch.py --show-args</div>
-                    </div>
+                    <div class="code-block"><button class="copy-btn">Copy</button>ros2 launch my_package step5_with_arguments.launch.py --show-args</div>
                     <p><strong>Expected output:</strong></p>
                     <div class="code-block">Arguments (pass arguments as '<name>:=<value>'):
 
@@ -1647,9 +821,7 @@ def generate_launch_description():
 
                 <h3>Basic Python Launch File Structure</h3>
                 <div class="code-header"><i class="fa-solid fa-file"></i> basic_launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
 <span class="keyword">from</span> launch_ros.actions <span class="keyword">import</span> Node
 
 <span class="keyword">def</span> <span class="function">generate_launch_description</span>():
@@ -1666,13 +838,10 @@ def generate_launch_description():
         )
     ])
 </div>
-                </div>
 
                 <h3>Advanced Multi-Node Launch File</h3>
                 <div class="code-header"><i class="fa-solid fa-file"></i> robot_system_launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">import</span> os
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">import</span> os
 <span class="keyword">from</span> ament_index_python.packages <span class="keyword">import</span> get_package_share_directory
 <span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
 <span class="keyword">from</span> launch.actions <span class="keyword">import</span> DeclareLaunchArgument, IncludeLaunchDescription
@@ -1755,13 +924,10 @@ def generate_launch_description():
         controller_node
     ])
 </div>
-                </div>
 
                 <h3>Launch File with Environment Configurations</h3>
                 <div class="code-header"><i class="fa-solid fa-file"></i> multi_environment_launch.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">import</span> os
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">import</span> os
 <span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
 <span class="keyword">from</span> launch.actions <span class="keyword">import</span> DeclareLaunchArgument, OpaqueFunction
 <span class="keyword">from</span> launch.substitutions <span class="keyword">import</span> LaunchConfiguration
@@ -1825,13 +991,10 @@ def generate_launch_description():
         OpaqueFunction(function=launch_setup)
     ])
 </div>
-                </div>
 
                 <h3>Running Launch Files</h3>
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch Commands</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="comment"># Basic launch</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="comment"># Basic launch</span>
 ros2 launch my_package robot_system_launch.py
 
 <span class="comment"># Launch with arguments</span>
@@ -1844,9 +1007,8 @@ ros2 launch my_package robot_system_launch.py \
 <span class="comment"># List available launch files in a package</span>
 ros2 launch my_package --show-args
 </div>
-                </div>
 
-                <div class="success-box">
+                <div class="info-box success">
                     <strong><i class="fa-solid fa-check"></i> Best Practice:</strong> Organize launch files by system complexity:
                     <ul>
                         <li><code>basic_launch.py</code> - Simple single-node launches</li>
@@ -1855,13 +1017,15 @@ ros2 launch my_package --show-args
                         <li><code>hardware_launch.py</code> - Real robot deployment</li>
                     </ul>
                 </div>
-            </section>
+            </div>
 
-            <section id="dynamic">
+            <div class="section fade-up" id="dynamic">
+                <div class="ext-labs">
                 <a href="arduino/arduino_index.html"><h2>External Lab 1</h2></a>
                 <a href="arduino/arduino_analog_pins_tutorial.html"><h2>External Lab 3</h2></a>
                 <a href="arduino/arduino_progressive_tutorial.html"><h2>External Lab 4</h2></a>
-                <h2><i class="fa-solid fa-arrows-rotate"></i> 3. Dynamic Reconfiguration at Runtime</h2>
+                </div>
+                <h2 class="section-title"><i class="fa-solid fa-arrows-rotate"></i> 3. Dynamic Reconfiguration at Runtime</h2>
 
                 <h3>What is Dynamic Reconfiguration?</h3>
                 <p>Dynamic reconfiguration allows you to change node parameters while the system is running, without restarting nodes. This is crucial for tuning robot behavior in real-time.</p>
@@ -1878,9 +1042,7 @@ ros2 launch my_package --show-args
 
                 <h3>Implementing Parameter Callbacks</h3>
                 <div class="code-header"><i class="fa-solid fa-file"></i> dynamic_robot.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">import</span> rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">import</span> rclpy
 <span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
 <span class="keyword">from</span> rcl_interfaces.msg <span class="keyword">import</span> SetParametersResult, Parameter
 
@@ -1960,15 +1122,12 @@ ros2 launch my_package --show-args
             <span class="string">f'Running in {mode} mode: speed={speed} m/s, sensitivity={sensitivity}%'</span>
         )
 </div>
-                </div>
 
                 <h3>Parameter Services</h3>
                 <p>ROS2 provides services for parameter manipulation that can be called programmatically:</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> parameter_client.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">import</span> rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">import</span> rclpy
 <span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
 <span class="keyword">from</span> rcl_interfaces.srv <span class="keyword">import</span> SetParameters, GetParameters
 <span class="keyword">from</span> rcl_interfaces.msg <span class="keyword">import</span> Parameter, ParameterValue, ParameterType
@@ -2019,15 +1178,14 @@ ros2 launch my_package --show-args
             value = future.result().values[i]
             self.get_logger().info(<span class="string">f'{name}: {value.double_value if value.type == 3 else value.string_value if value.type == 4 else value.integer_value}'</span>)
 </div>
-                </div>
 
-                <div class="warning-box">
+                <div class="info-box danger">
                     <strong><i class="fa-solid fa-triangle-exclamation"></i> Important:</strong> Always validate parameter values in callbacks to prevent invalid configurations that could damage the robot or cause unsafe behavior.
                 </div>
-            </section>
+            </div>
 
-            <section id="rqt">
-                <h2>️ 4. RQT Tools for Parameter Management</h2>
+            <div class="section fade-up" id="rqt">
+                <h2 class="section-title">️ 4. RQT Tools for Parameter Management</h2>
 
                 <h3>What is RQT?</h3>
                 <p>RQT is a Qt-based framework for GUI development in ROS. It provides various plugins for visualization, debugging, and runtime parameter management.</p>
@@ -2048,27 +1206,21 @@ ros2 launch my_package --show-args
 
                 <h4><i class="fa-solid fa-pen-to-square"></i> Step 1: Dynamic Reconfiguration with rqt_reconfigure</h4>
 
-                <div class="topic-card">
+                <div class="info-box">
                     <p><strong>Scenario:</strong> You have a robot running and want to tune its speed in real-time without restarting.</p>
                 </div>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 1.1: Start your robot</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"># Terminal 1: Launch the robot
+                <div class="code-block"><button class="copy-btn">Copy</button># Terminal 1: Launch the robot
 ros2 run my_package simple_robot_step3 --ros-args \
   -p speed:=1.0 \
   -p robot_name:="TestBot"</div>
-                </div>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 1.2: Open rqt_reconfigure</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"># Terminal 2: Launch rqt_reconfigure
+                <div class="code-block"><button class="copy-btn">Copy</button># Terminal 2: Launch rqt_reconfigure
 ros2 run rqt_reconfigure rqt_reconfigure</div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4>What You'll See:</h4>
                     <ol>
                         <li><strong>Left Panel:</strong> List of nodes with parameters (look for /simple_robot)</li>
@@ -2092,16 +1244,14 @@ ros2 run rqt_reconfigure rqt_reconfigure</div>
 
                 <h4><i class="fa-solid fa-pen-to-square"></i> Step 2: Plotting Data with rqt_plot</h4>
 
-                <div class="topic-card">
+                <div class="info-box">
                     <p><strong>Scenario:</strong> You want to visualize how your robot's speed changes over time.</p>
                 </div>
 
                 <p>First, let's create a simple node that publishes data to plot:</p>
 
                 <div class="code-header"><i class="fa-solid fa-file"></i> data_publisher.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">import rclpy
+                <div class="code-block"><button class="copy-btn">Copy</button>import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float64
 import math
@@ -2128,23 +1278,16 @@ def main():
 if __name__ == '__main__':
     main()
 </div>
-                </div>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 2.1: Start publishing data</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"># Terminal 1: Run the data publisher
+                <div class="code-block"><button class="copy-btn">Copy</button># Terminal 1: Run the data publisher
 ros2 run my_package data_publisher</div>
-                </div>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 2.2: Launch rqt_plot</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"># Terminal 2: Launch plotter
+                <div class="code-block"><button class="copy-btn">Copy</button># Terminal 2: Launch plotter
 ros2 run rqt_plot rqt_plot</div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4>How to Use rqt_plot:</h4>
                     <ol>
                         <li>In the topic field at the top, type: <code>/robot_speed/data</code></li>
@@ -2164,13 +1307,10 @@ ros2 run rqt_plot rqt_plot</div>
                 <h4><i class="fa-solid fa-pen-to-square"></i> Step 3: System Visualization with rqt_graph</h4>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 3: Launch rqt_graph</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"># While your nodes are running, open:
+                <div class="code-block"><button class="copy-btn">Copy</button># While your nodes are running, open:
 ros2 run rqt_graph rqt_graph</div>
-                </div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4>Understanding the Graph:</h4>
                     <ul>
                         <li><strong>Circles/Ovals:</strong> Represent nodes</li>
@@ -2196,12 +1336,9 @@ ros2 run rqt_graph rqt_graph</div>
                 <h4><i class="fa-solid fa-pen-to-square"></i> Step 4: Debugging with rqt_console</h4>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 4: Launch rqt_console</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">ros2 run rqt_console rqt_console</div>
-                </div>
+                <div class="code-block"><button class="copy-btn">Copy</button>ros2 run rqt_console rqt_console</div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4>Using rqt_console Effectively:</h4>
 
                     <p><strong>Filter by Severity:</strong></p>
@@ -2217,10 +1354,7 @@ ros2 run rqt_graph rqt_graph</div>
                     <ol>
                         <li>Set severity filter to "WARN" or higher</li>
                         <li>In another terminal, try to set an invalid parameter:
-                            <div class="code-wrapper">
-                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                <div class="code-block">ros2 param set /simple_robot speed 100.0</div>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button>ros2 param set /simple_robot speed 100.0</div>
                         </li>
                         <li>Watch the ERROR message appear in rqt_console</li>
                         <li>Click on the message to see full details</li>
@@ -2236,12 +1370,9 @@ ros2 run rqt_graph rqt_graph</div>
                 <h4><i class="fa-solid fa-pen-to-square"></i> Step 5: Create Your Custom Dashboard</h4>
 
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Step 5.1: Launch main RQT</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block">rqt</div>
-                </div>
+                <div class="code-block"><button class="copy-btn">Copy</button>rqt</div>
 
-                <div class="interactive-box">
+                <div class="info-box warning">
                     <h4>Building Your Dashboard:</h4>
 
                     <p><strong>Step-by-Step:</strong></p>
@@ -2280,14 +1411,11 @@ ros2 run rqt_graph rqt_graph</div>
                     </ol>
 
                     <p><strong>Load Saved Layout:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># Next time, load your saved perspective
+                    <div class="code-block"><button class="copy-btn">Copy</button># Next time, load your saved perspective
 rqt --perspective-file ~/.config/ros.org/rqt_gui.ini</div>
-                    </div>
                 </div>
 
-                <div class="success-box">
+                <div class="info-box success">
                     <h4><i class="fa-solid fa-check"></i> Complete RQT Workflow Example</h4>
                     <p>Here's how professionals use RQT for robot development:</p>
                     <ol>
@@ -2312,10 +1440,7 @@ rqt --perspective-file ~/.config/ros.org/rqt_gui.ini</div>
                             <p>The most important tool for runtime parameter adjustment with a user-friendly GUI.</p>
 
                             <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_reconfigure</div>
-                            <div class="code-wrapper">
-                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                <div class="code-block">ros2 run rqt_reconfigure rqt_reconfigure</div>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button>ros2 run rqt_reconfigure rqt_reconfigure</div>
 
                             <p><strong>Features:</strong></p>
                             <ul>
@@ -2335,15 +1460,12 @@ rqt --perspective-file ~/.config/ros.org/rqt_gui.ini</div>
                             <p>Plot parameter values and topic data in real-time.</p>
 
                             <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_plot</div>
-                            <div class="code-wrapper">
-                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                <div class="code-block"><span class="comment"># Plot specific topics</span>
+                            <div class="code-block"><button class="copy-btn">Copy</button><span class="comment"># Plot specific topics</span>
 ros2 run rqt_plot rqt_plot /robot/speed /robot/distance
 
 <span class="comment"># Monitor parameter changes over time</span>
 ros2 run rqt_plot rqt_plot /parameter_events
 </div>
-                            </div>
                         </div>
                     </div>
 
@@ -2355,10 +1477,7 @@ ros2 run rqt_plot rqt_plot /parameter_events
                             <p>Visualize the ROS2 computation graph showing nodes, topics, and their connections.</p>
 
                             <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_graph</div>
-                            <div class="code-wrapper">
-                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                <div class="code-block">ros2 run rqt_graph rqt_graph</div>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button>ros2 run rqt_graph rqt_graph</div>
 
                             <p>Useful for understanding system architecture and debugging communication issues.</p>
                         </div>
@@ -2372,10 +1491,7 @@ ros2 run rqt_plot rqt_plot /parameter_events
                             <p>View and filter log messages from all nodes in one place.</p>
 
                             <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_console</div>
-                            <div class="code-wrapper">
-                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                <div class="code-block">ros2 run rqt_console rqt_console</div>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button>ros2 run rqt_console rqt_console</div>
 
                             <p><strong>Features:</strong></p>
                             <ul>
@@ -2395,10 +1511,7 @@ ros2 run rqt_plot rqt_plot /parameter_events
                             <p>GUI for manually controlling robot movement.</p>
 
                             <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch rqt_robot_steering</div>
-                            <div class="code-wrapper">
-                                <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                <div class="code-block">ros2 run rqt_robot_steering rqt_robot_steering</div>
-                            </div>
+                            <div class="code-block"><button class="copy-btn">Copy</button>ros2 run rqt_robot_steering rqt_robot_steering</div>
 
                             <p>Provides sliders for linear and angular velocity control, publishing to <code>/cmd_vel</code> topic.</p>
                         </div>
@@ -2407,9 +1520,7 @@ ros2 run rqt_plot rqt_plot /parameter_events
 
                 <h3>Complete RQT Interface</h3>
                 <div class="code-header"><i class="fa-solid fa-desktop"></i> Launch Full RQT with All Plugins</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="comment"># Launch main rqt interface</span>
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="comment"># Launch main rqt interface</span>
 rqt
 
 <span class="comment"># You can then add plugins from: Plugins menu</span>
@@ -2419,18 +1530,15 @@ rqt
 <span class="comment"># - Topics > Message Publisher</span>
 <span class="comment"># - Visualization > Plot</span>
 </div>
-                </div>
 
-                <div class="success-box">
+                <div class="info-box success">
                     <strong><i class="fa-solid fa-check"></i> Pro Tip:</strong> Save your RQT perspective (window layout and plugins) for quick access:
                     <br>Perspectives → Save Perspective → "my_robot_debug"
                 </div>
 
                 <h3>Creating Custom RQT Plugin (Advanced)</h3>
                 <div class="code-header"><i class="fa-solid fa-file"></i> my_rqt_plugin.py</div>
-                <div class="code-wrapper">
-                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                    <div class="code-block"><span class="keyword">from</span> rqt_gui_py.plugin <span class="keyword">import</span> Plugin
+                <div class="code-block"><button class="copy-btn">Copy</button><span class="keyword">from</span> rqt_gui_py.plugin <span class="keyword">import</span> Plugin
 <span class="keyword">from</span> python_qt_binding.QtWidgets <span class="keyword">import</span> QWidget, QVBoxLayout, QPushButton, QLabel
 
 <span class="keyword">class</span> <span class="class">MyRobotControl</span>(Plugin):
@@ -2466,23 +1574,22 @@ rqt
         <span class="comment"># Call parameter service to stop robot</span>
         self.status_label.setText(<span class="string">'Robot Status: Stopped'</span>)
 </div>
-                </div>
-            </section>
+            </div>
 
-            <section id="project">
+            <div class="section fade-up" id="project">
                 <div class="project-section">
-                    <h2><i class="fa-solid fa-bullseye"></i> Hands-on Project 6.1: Configurable Intelligent Robot System</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> Hands-on Project 6.1: Configurable Intelligent Robot System</h2>
 
                     <h3>Project Overview</h3>
                     <p>Build a complete configurable robot system with multiple nodes, runtime parameter tuning, and environment-specific configurations.</p>
 
                 <div class="project-section">
-                    <h2><i class="fa-solid fa-bullseye"></i> Hands-on Project 6.1: Configurable Intelligent Robot System</h2>
+                    <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> Hands-on Project 6.1: Configurable Intelligent Robot System</h2>
 
                     <h3>Project Overview</h3>
                     <p>Build a complete configurable robot system with multiple nodes, runtime parameter tuning, and environment-specific configurations.</p>
 
-                    <div class="success-box">
+                    <div class="info-box success">
                         <h4><i class="fa-solid fa-book"></i> Complete Step-by-Step Guide</h4>
                         <p>Follow this detailed walkthrough to complete the project successfully. Each step builds on the previous one.</p>
                     </div>
@@ -2491,32 +1598,24 @@ rqt
 
                     <h4>Phase 1: Project Setup (15 minutes)</h4>
 
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p><strong>Step 1.1: Create ROS2 Package</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">cd ~/ros2_ws/src
+                        <div class="code-block"><button class="copy-btn">Copy</button>cd ~/ros2_ws/src
 ros2 pkg create --build-type ament_python intelligent_robot \
   --dependencies rclpy geometry_msgs sensor_msgs std_msgs
 
 cd intelligent_robot</div>
-                        </div>
 
                         <p><strong>Step 1.2: Create Directory Structure</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">mkdir -p config launch
+                        <div class="code-block"><button class="copy-btn">Copy</button>mkdir -p config launch
 touch intelligent_robot/robot_node.py
 touch intelligent_robot/sensor_node.py
 touch intelligent_robot/safety_node.py
 touch intelligent_robot/telemetry_node.py</div>
-                        </div>
 
                         <p><strong>Step 1.3: Update setup.py</strong></p>
                         <p>Edit <code>setup.py</code> and add:</p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">import os
+                        <div class="code-block"><button class="copy-btn">Copy</button>import os
 from glob import glob
 from setuptools import setup
 
@@ -2553,19 +1652,16 @@ setup(
         ],
     },
 )</div>
-                        </div>
                     </div>
 
                     <h4>Phase 2: Main Robot Node (30 minutes)</h4>
 
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p><strong>Step 2.1: Create robot_node.py</strong></p>
                         <p>This is your main navigation node with full parameter support.</p>
 
                         <div class="code-header"><i class="fa-solid fa-file"></i> intelligent_robot/robot_node.py</div>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">#!/usr/bin/env python3
+                        <div class="code-block"><button class="copy-btn">Copy</button>#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
@@ -2711,12 +1807,9 @@ def main(args=None):
 if __name__ == '__main__':
     main()
 </div>
-                        </div>
 
                         <p><strong>Step 2.2: Test the Robot Node</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">cd ~/ros2_ws
+                        <div class="code-block"><button class="copy-btn">Copy</button>cd ~/ros2_ws
 colcon build --packages-select intelligent_robot
 source install/setup.bash
 
@@ -2727,17 +1820,14 @@ ros2 run intelligent_robot robot_node
 ros2 run intelligent_robot robot_node --ros-args \
   -p max_speed:=2.0 \
   -p robot_name:="Explorer"</div>
-                        </div>
                     </div>
 
                     <h4>Phase 3: Configuration Files (20 minutes)</h4>
 
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p><strong>Step 3.1: Create Indoor Configuration</strong></p>
                         <div class="code-header"><i class="fa-solid fa-file"></i> config/indoor_config.yaml</div>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">robot_navigator:
+                        <div class="code-block"><button class="copy-btn">Copy</button>robot_navigator:
   ros__parameters:
     max_speed: 1.0
     safety_distance: 0.5
@@ -2761,7 +1851,6 @@ telemetry_publisher:
     publish_rate: 1.0
     include_diagnostics: true
 </div>
-                        </div>
 
                         <p><strong>Step 3.2: Create Other Environment Configs</strong></p>
                         <p>Create similar files for each environment:</p>
@@ -2774,12 +1863,10 @@ telemetry_publisher:
 
                     <h4>Phase 4: Launch Files (25 minutes)</h4>
 
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p><strong>Step 4.1: Create Main Launch File</strong></p>
                         <div class="code-header"><i class="fa-solid fa-file"></i> launch/robot_system.launch.py</div>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block">#!/usr/bin/env python3
+                        <div class="code-block"><button class="copy-btn">Copy</button>#!/usr/bin/env python3
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -2841,12 +1928,9 @@ def generate_launch_description():
         telemetry_node
     ])
 </div>
-                        </div>
 
                         <p><strong>Step 4.2: Test the Launch File</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block"># Rebuild after adding launch file
+                        <div class="code-block"><button class="copy-btn">Copy</button># Rebuild after adding launch file
 cd ~/ros2_ws
 colcon build --packages-select intelligent_robot
 source install/setup.bash
@@ -2857,18 +1941,15 @@ ros2 launch intelligent_robot robot_system.launch.py
 # Launch with outdoor config
 ros2 launch intelligent_robot robot_system.launch.py \
   config_file:=config/outdoor_config.yaml</div>
-                        </div>
                     </div>
 
                     <h4>Phase 5: Testing & Validation (20 minutes)</h4>
 
-                    <div class="interactive-box">
+                    <div class="info-box warning">
                         <h4><i class="fa-solid fa-flask"></i> Complete Testing Checklist</h4>
 
                         <p><strong>Test 1: Basic Functionality</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block"># Terminal 1: Launch system
+                        <div class="code-block"><button class="copy-btn">Copy</button># Terminal 1: Launch system
 ros2 launch intelligent_robot robot_system.launch.py
 
 # Terminal 2: Verify all nodes are running
@@ -2879,12 +1960,9 @@ ros2 node list
 # /sensor_handler
 # /safety_monitor
 # /telemetry_publisher</div>
-                        </div>
 
                         <p><strong>Test 2: Parameter Changes</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block"># View current parameters
+                        <div class="code-block"><button class="copy-btn">Copy</button># View current parameters
 ros2 param list /robot_navigator
 
 # Try valid parameter change
@@ -2892,21 +1970,15 @@ ros2 param set /robot_navigator max_speed 2.5
 
 # Try invalid parameter change (should fail)
 ros2 param set /robot_navigator max_speed 10.0</div>
-                        </div>
 
                         <p><strong>Test 3: RQT Integration</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block"># Open RQT reconfigure
+                        <div class="code-block"><button class="copy-btn">Copy</button># Open RQT reconfigure
 ros2 run rqt_reconfigure rqt_reconfigure
 
 # Adjust parameters using GUI and verify changes</div>
-                        </div>
 
                         <p><strong>Test 4: Environment Switching</strong></p>
-                        <div class="code-wrapper">
-                            <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                            <div class="code-block"># Test each environment configuration
+                        <div class="code-block"><button class="copy-btn">Copy</button># Test each environment configuration
 ros2 launch intelligent_robot robot_system.launch.py \
   config_file:=config/indoor_config.yaml
 
@@ -2918,13 +1990,12 @@ ros2 launch intelligent_robot robot_system.launch.py \
 
 ros2 launch intelligent_robot robot_system.launch.py \
   config_file:=config/competition_config.yaml</div>
-                        </div>
                     </div>
 
                     <h3>Requirements</h3>
 
                     <h4>1. Parameterized Robot Node</h4>
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p>Create a robot node with the following configurable parameters:</p>
                         <ul>
                             <li><strong>max_speed</strong> (double): Maximum linear velocity (0.1 - 5.0 m/s)</li>
@@ -2937,7 +2008,7 @@ ros2 launch intelligent_robot robot_system.launch.py \
                     </div>
 
                     <h4>2. Multi-Node Launch System</h4>
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p>Implement a launch file that starts:</p>
                         <ul>
                             <li>Main robot navigation node</li>
@@ -2949,7 +2020,7 @@ ros2 launch intelligent_robot robot_system.launch.py \
                     </div>
 
                     <h4>3. Runtime Parameter Tuning</h4>
-                    <div class="topic-card">
+                    <div class="info-box">
                         <ul>
                             <li>Implement parameter validation callbacks</li>
                             <li>Support dynamic reconfiguration without node restart</li>
@@ -2959,7 +2030,7 @@ ros2 launch intelligent_robot robot_system.launch.py \
                     </div>
 
                     <h4>4. Configuration Profiles</h4>
-                    <div class="topic-card">
+                    <div class="info-box">
                         <p>Create configuration files for different environments:</p>
                         <ul>
                             <li><strong>Indoor</strong>: Low speed, high safety</li>
@@ -2977,16 +2048,13 @@ ros2 launch intelligent_robot robot_system.launch.py \
                                 Step 1: Create Package Structure
                             </div>
                             <div class="accordion-content">
-                                <div class="code-wrapper">
-                                    <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                                    <div class="code-block">cd ~/ros2_ws/src
+                                <div class="code-block"><button class="copy-btn">Copy</button>cd ~/ros2_ws/src
 ros2 pkg create --build-type ament_python intelligent_robot \
   --dependencies rclpy geometry_msgs sensor_msgs
 
 cd intelligent_robot
 mkdir -p config launch
 </div>
-                                </div>
                             </div>
                         </div>
 
@@ -3054,7 +2122,7 @@ mkdir -p config launch
 
                     <h3><i class="fa-solid fa-clipboard-list"></i> Deliverables</h3>
 
-                    <div class="deliverable">
+                    <div class="info-box success">
                         <h4><i class="fa-solid fa-check"></i> 1. Parameterized Robot Node</h4>
                         <ul>
                             <li>Complete Python node with all required parameters</li>
@@ -3064,7 +2132,7 @@ mkdir -p config launch
                         </ul>
                     </div>
 
-                    <div class="deliverable">
+                    <div class="info-box success">
                         <h4><i class="fa-solid fa-check"></i> 2. Launch File System</h4>
                         <ul>
                             <li>Multi-node launch file</li>
@@ -3074,7 +2142,7 @@ mkdir -p config launch
                         </ul>
                     </div>
 
-                    <div class="deliverable">
+                    <div class="info-box success">
                         <h4><i class="fa-solid fa-check"></i> 3. Configuration Documentation</h4>
                         <ul>
                             <li>README.md with project overview</li>
@@ -3086,7 +2154,7 @@ mkdir -p config launch
                     </div>
 
                     <h3>Testing Checklist</h3>
-                    <div class="interactive-box">
+                    <div class="info-box warning">
                         <h4><i class="fa-solid fa-flask"></i> Verify Your Implementation</h4>
                         <ul>
                             <li> All parameters can be set via command line</li>
@@ -3101,7 +2169,7 @@ mkdir -p config launch
                     </div>
 
                     <h3>Bonus Challenges <i class="fa-solid fa-star"></i></h3>
-                    <div class="topic-card">
+                    <div class="info-box">
                         <ol>
                             <li><strong>Parameter Presets:</strong> Implement a service to switch between predefined parameter sets</li>
                             <li><strong>Auto-Tuning:</strong> Create a node that automatically adjusts parameters based on sensor feedback</li>
@@ -3111,11 +2179,11 @@ mkdir -p config launch
                         </ol>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section>
-                <h2><i class="fa-solid fa-book-open"></i> Additional Resources</h2>
-                <div class="topic-card">
+            <div class="section fade-up" id="resources">
+                <h2 class="section-title"><i class="fa-solid fa-book-open"></i> Additional Resources</h2>
+                <div class="info-box">
                     <h4>Official Documentation:</h4>
                     <ul>
                         <li><a href="https://docs.ros.org/en/humble/Tutorials/Parameters.html" target="_blank">ROS2 Parameters Tutorial</a></li>
@@ -3133,23 +2201,21 @@ mkdir -p config launch
                         <li>Test parameter changes thoroughly before deployment</li>
                     </ul>
                 </div>
-            </section>
+            </div>
 
-            <section>
-                <h2><i class="fa-solid fa-wrench"></i> Troubleshooting Common Issues</h2>
+            <div class="section fade-up" id="troubleshooting">
+                <h2 class="section-title"><i class="fa-solid fa-wrench"></i> Troubleshooting Common Issues</h2>
 
-                <div class="warning-box">
+                <div class="info-box danger">
                     <strong><i class="fa-solid fa-triangle-exclamation"></i> Having problems? Follow these step-by-step solutions!</strong>
                 </div>
 
                 <h3>Problem 1: "Package not found"</h3>
-                <div class="topic-card">
+                <div class="info-box">
                     <p><strong>Error:</strong> <code>Package 'my_package' not found</code></p>
 
                     <p><strong>Solution:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># Step 1: Build the package
+                    <div class="code-block"><button class="copy-btn">Copy</button># Step 1: Build the package
 cd ~/ros2_ws
 colcon build --packages-select my_package
 
@@ -3158,16 +2224,13 @@ source install/setup.bash
 
 # Step 3: Verify
 ros2 pkg list | grep my_package</div>
-                    </div>
                 </div>
 
                 <h3>Problem 2: YAML Parameters Not Loading</h3>
-                <div class="topic-card">
+                <div class="info-box">
                     <p><strong>Common Mistake:</strong> Wrong YAML format</p>
 
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># <i class="fa-solid fa-check"></i> CORRECT (note double underscore):
+                    <div class="code-block"><button class="copy-btn">Copy</button># <i class="fa-solid fa-check"></i> CORRECT (note double underscore):
 node_name:
   ros__parameters:
     param1: value1
@@ -3176,12 +2239,9 @@ node_name:
 node_name:
   ros_parameters:  # Missing underscore!
     param1: value1</div>
-                    </div>
 
                     <p><strong>Also check setup.py:</strong></p>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># Ensure config files are installed:
+                    <div class="code-block"><button class="copy-btn">Copy</button># Ensure config files are installed:
 data_files=[
     (os.path.join('share', package_name, 'config'),
      glob('config/*.yaml')),
@@ -3189,11 +2249,10 @@ data_files=[
 
 # Then rebuild:
 cd ~/ros2_ws && colcon build</div>
-                    </div>
                 </div>
 
                 <h3>Problem 3: Parameters Won't Change at Runtime</h3>
-                <div class="topic-card">
+                <div class="info-box">
                     <p><strong>Checklist - All 4 items required:</strong></p>
                     <ol>
                         <li> Declare: <code>self.declare_parameter('speed', 1.0)</code></li>
@@ -3203,11 +2262,9 @@ cd ~/ros2_ws && colcon build</div>
                     </ol>
                 </div>
 
-                <div class="success-box">
+                <div class="info-box success">
                     <h4><i class="fa-solid fa-check"></i> Quick Debug Commands</h4>
-                    <div class="code-wrapper">
-                        <button class="copy-button" onclick="copyCode(this)"><i class="fa-solid fa-clipboard-list"></i> Copy</button>
-                        <div class="code-block"># Check if ROS2 is sourced
+                    <div class="code-block"><button class="copy-btn">Copy</button># Check if ROS2 is sourced
 echo $ROS_DISTRO
 
 # List running nodes
@@ -3218,13 +2275,12 @@ ros2 param list /node_name
 
 # Visualize system
 ros2 run rqt_graph rqt_graph</div>
-                    </div>
                 </div>
-            </section>
+            </div>
 
-            <section>
-                <h2><i class="fa-solid fa-graduation-cap"></i> Summary</h2>
-                <div class="success-box">
+            <div class="section fade-up" id="summary">
+                <h2 class="section-title"><i class="fa-solid fa-graduation-cap"></i> Summary</h2>
+                <div class="info-box success">
                     <p>In this week, you learned:</p>
                     <ul>
                         <li><i class="fa-solid fa-check"></i> How to create fully parameterized ROS2 nodes</li>
@@ -3238,43 +2294,12 @@ ros2 run rqt_graph rqt_graph</div>
 
                     <p><strong>Next Week:</strong> We'll explore advanced topics including TF transformations, URDF robot descriptions, and robot state publishers!</p>
                 </div>
-            </section>
-        </div>
-
-        <footer>
-            <p><i class="fa-solid fa-robot"></i> <strong>Robotics Programming Course - Week 6</strong></p>
-            <p>Parameters, Launch Systems, and Configuration</p>
-            <p style="margin-top: 10px; color: #666;">Happy Coding! <i class="fa-solid fa-rocket"></i></p>
-        </footer>
-    </div>
-
-    <script>
-        function copyCode(button) {
-            const codeWrapper = button.parentElement;
-            const codeBlock = codeWrapper.querySelector('.code-block');
-            const code = codeBlock.innerText;
-
-            // Copy to clipboard
-            navigator.clipboard.writeText(code).then(() => {
-                // Visual feedback
-                const originalText = button.textContent;
-                button.textContent = ' Copied!';
-                button.classList.add('copied');
-
-                // Reset button after 2 seconds
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                button.textContent = '<i class="fa-solid fa-xmark"></i> Failed';
-                setTimeout(() => {
-                    button.textContent = '<i class="fa-solid fa-clipboard-list"></i> Copy';
-                }, 2000);
-            });
-        }
-
+            </div>
+    <div class="page-nav"><a class="nav-btn prev" href="week5.html"><i class="fa-solid fa-arrow-left"></i> Week 5: Actions</a><a class="nav-btn next" href="index.html">Course index <i class="fa-solid fa-arrow-right"></i></a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">&copy; Al-banna Tutorials &middot; Dr. Abedal-Kareem Al-Banna</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script>
         function toggleAccordion(header) {
             const content = header.nextElementSibling;
             const allContents = document.querySelectorAll('.accordion-content');
@@ -3289,81 +2314,7 @@ ros2 run rqt_graph rqt_graph</div>
             // Toggle current accordion
             content.classList.toggle('active');
         }
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            });
-        });
-    </script>
-
-<script>
-// Theme toggle
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    const isLight=document.body.classList.contains('light-mode');
-    localStorage.setItem('theme',isLight?'light':'dark');
-    document.getElementById('themeIcon').className=isLight?'fa-solid fa-moon':'fa-solid fa-sun';
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='light'){
-        document.body.classList.add('light-mode');
-        const icon=document.getElementById('themeIcon');
-        if(icon) icon.className='fa-solid fa-moon';
-    }
-})();
-
-// Copy code
-function copyCode(btn){
-    const code=btn.closest('pre,.code-block,.code-container').querySelector('code,pre');
-    const text=code?code.textContent:btn.parentElement.textContent;
-    navigator.clipboard.writeText(text.replace(/^Copy\s*/,''));
-    btn.innerHTML='<i class="fa-solid fa-check"></i> Copied';
-    setTimeout(()=>btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy',2000);
-}
-
-// Add copy buttons to all code blocks
-document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('pre:not(.has-copy)').forEach(function(pre){
-        if(pre.querySelector('.copy-btn')) return;
-        pre.classList.add('has-copy');
-        pre.style.position='relative';
-        var btn=document.createElement('button');
-        btn.className='copy-btn';
-        btn.innerHTML='<i class="fa-regular fa-copy"></i> Copy';
-        btn.style.cssText='position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;z-index:5;transition:all .2s';
-        btn.onmouseover=function(){this.style.borderColor='#3b82f6';this.style.color='#3b82f6'};
-        btn.onmouseout=function(){this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'};
-        btn.onclick=function(e){
-            e.stopPropagation();
-            var code=pre.querySelector('code')||pre;
-            navigator.clipboard.writeText(code.textContent.replace(/^Copy\s*/,''));
-            this.innerHTML='<i class="fa-solid fa-check"></i> Copied';
-            var b=this;
-            setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> Copy'},2000);
-        };
-        pre.appendChild(btn);
-    });
-
-    // Scroll to top button
-    var st=document.createElement('button');
-    st.id='scrollTopBtn';
-    st.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
-    st.style.cssText='position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:10px;background:var(--surface,#111827);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;opacity:0;pointer-events:none;z-index:900;transition:all .2s';
-    st.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
-    document.body.appendChild(st);
-    window.addEventListener('scroll',function(){
-        st.style.opacity=window.scrollY>500?'1':'0';
-        st.style.pointerEvents=window.scrollY>500?'auto':'none';
-    });
-});
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>
