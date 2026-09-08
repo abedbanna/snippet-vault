@@ -192,7 +192,7 @@ def head_html(url,lang,title,desc,has_desc,course,role,modules,alt,has_hreflang)
     if not has_desc: parts.append(f'<meta name="description" content="{esc(desc)}">')
     parts+= [f'<link rel="canonical" href="{esc(BASE+url)}">',
         '<link rel="icon" href="/favicon.ico" sizes="any">','<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">',
-        '<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">','<link rel="manifest" href="/site.webmanifest">',
+        '<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">',  # no rel="manifest": the site is a plain website, not an installable app
         f'<meta name="theme-color" content="{SITE["brand"]["dark"]}">',
         f'<meta name="author" content="{esc(SITE["author"]["name"])}">',
         f'<meta property="og:site_name" content="{esc(SITE["name"])}">',f'<meta property="og:type" content="{og_type}">',
