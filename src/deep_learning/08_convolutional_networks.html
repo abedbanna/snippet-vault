@@ -14,10 +14,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Convolutional Networks - Deep Learning</title>
     <meta name="description" content="Convolutional Neural Networks (CNNs) explained: the convolution operation worked by hand, stride/padding and the output-size formula, channels and parameter counting, pooling, and a full CNN architecture with a PyTorch example. Module 8 of Dr. Abdulkarim Albanna's Deep Learning course.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{--bg:#0b0f19;--surface:#111827;--surface2:#1e293b;--primary:#10b981;--secondary:#10b981;--success:#10b981;--text:#f1f5f9;--text2:#94a3b8;--warning:#f59e0b;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.08);--footer:#080c14;--code:#0d1117}
@@ -208,6 +208,15 @@
                 <h3><i class="fa-solid fa-3"></i> Translation invariance</h3>
                 <p class="section-desc">Because the same filter is applied everywhere, a feature is detected no matter <em>where</em> it appears. A cat in the corner fires the same detectors as a cat in the centre.</p>
             </div>
+            <!-- lesson-video:1:start -->
+            <div class="lesson-video">
+                <h4><i class="fa-solid fa-circle-play"></i> Watch this lesson &mdash; Why dense layers cannot see <span>2:15</span></h4>
+                <button class="video-thumb" data-yt="KO4nuLYnasc" aria-label="Play lesson 1: Why dense layers cannot see">
+                    <img src="images/video/08_convolutional_networks_01_why_dense_layers_cannot_see.jpg" alt="" loading="lazy" width="640" height="360">
+                    <span class="video-play" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                </button>
+            </div>
+            <!-- lesson-video:1:end -->
         </div>
 
         <!-- Convolution -->
@@ -258,6 +267,15 @@
                     <p>The output is near zero over flat regions and spikes where brightness changes horizontally. A single \(3\times3\) filter &mdash; nine numbers &mdash; became a reusable edge detector. Different kernels detect different things: box/averaging kernels <em>blur</em>, and Laplacian-style kernels <em>sharpen</em>. In a CNN we don't hand-pick these numbers &mdash; <strong>they are learned by backprop</strong>.</p>
                 </div>
             </div>
+            <!-- lesson-video:2:start -->
+            <div class="lesson-video">
+                <h4><i class="fa-solid fa-circle-play"></i> Watch this lesson &mdash; The convolution operation <span>3:02</span></h4>
+                <button class="video-thumb" data-yt="hcOitjfy2n4" aria-label="Play lesson 2: The convolution operation">
+                    <img src="images/video/08_convolutional_networks_02_the_convolution_operation.jpg" alt="" loading="lazy" width="640" height="360">
+                    <span class="video-play" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                </button>
+            </div>
+            <!-- lesson-video:2:end -->
         </div>
 
         <!-- Stride, padding, output size -->
@@ -289,6 +307,15 @@
                     <p>A \(3 \times 3\) kernel with \(P=1\) and \(S=1\) always preserves the spatial size. That is why modern architectures (VGG, ResNet) stack many \(3\times3\), \(P=1\) convolutions and downsample <em>only</em> at pooling or strided layers.</p>
                 </div>
             </div>
+            <!-- lesson-video:3:start -->
+            <div class="lesson-video">
+                <h4><i class="fa-solid fa-circle-play"></i> Watch this lesson &mdash; Stride, padding and output size <span>3:38</span></h4>
+                <button class="video-thumb" data-yt="DUEsIFX3YjY" aria-label="Play lesson 3: Stride, padding and output size">
+                    <img src="images/video/08_convolutional_networks_03_stride_padding_and_output_size.jpg" alt="" loading="lazy" width="640" height="360">
+                    <span class="video-play" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                </button>
+            </div>
+            <!-- lesson-video:3:end -->
         </div>
 
         <!-- Channels -->
@@ -343,6 +370,15 @@
                     <p>Pooling has <strong>zero learnable parameters</strong> &mdash; it is a fixed operation. Many modern networks drop it in favour of <strong>strided convolutions</strong> (a conv with \(S=2\) downsamples <em>and</em> learns how), but max pooling remains simple, effective, and everywhere in classic architectures.</p>
                 </div>
             </div>
+            <!-- lesson-video:4:start -->
+            <div class="lesson-video">
+                <h4><i class="fa-solid fa-circle-play"></i> Watch this lesson &mdash; Channels, parameters and pooling <span>3:59</span></h4>
+                <button class="video-thumb" data-yt="6iNXmZ7-g_w" aria-label="Play lesson 4: Channels, parameters and pooling">
+                    <img src="images/video/08_convolutional_networks_04_channels_parameters_and_pooling.jpg" alt="" loading="lazy" width="640" height="360">
+                    <span class="video-play" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                </button>
+            </div>
+            <!-- lesson-video:4:end -->
         </div>
 
         <!-- Architecture -->
@@ -415,6 +451,15 @@ x = torch.randn(<span class="num">1</span>, <span class="num">1</span>, <span cl
                 <h3><i class="fa-solid fa-circle-check"></i> Note the tensor layout</h3>
                 <p>PyTorch expects images as <code>(N, C, H, W)</code> &mdash; batch, channels, height, width. <code>Conv2d(in_channels, out_channels, kernel_size)</code> mirrors our parameter formula exactly: <code>out_channels</code> is the number of filters \(F\), and each filter spans <code>in_channels</code>.</p>
             </div>
+            <!-- lesson-video:5:start -->
+            <div class="lesson-video">
+                <h4><i class="fa-solid fa-circle-play"></i> Watch this lesson &mdash; A complete network, traced <span>4:25</span></h4>
+                <button class="video-thumb" data-yt="UH8zRjcWavc" aria-label="Play lesson 5: A complete network, traced">
+                    <img src="images/video/08_convolutional_networks_05_a_complete_network_traced.jpg" alt="" loading="lazy" width="640" height="360">
+                    <span class="video-play" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                </button>
+            </div>
+            <!-- lesson-video:5:end -->
         </div>
 
         <!-- TorchCode practice -->

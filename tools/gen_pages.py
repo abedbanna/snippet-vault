@@ -4,8 +4,9 @@ import os, sys, json, html as H
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import portal_lib as P
 SRC=os.path.join(P.ROOT,'src'); S=P.SITE; A=S['author']; esc=lambda s:H.escape(str(s),quote=True)
-FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">'
-FA='<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">'
+# Self-hosted fonts + Font Awesome (no third-party origins on the render path).
+FONTS='<link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>\n    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>\n    <link rel="stylesheet" href="/assets/fonts.css">'
+FA='<link rel="stylesheet" href="/assets/fa/all.min.css">'
 GA=f"""<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={S['ga4_id']}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{S['ga4_id']}');</script>"""

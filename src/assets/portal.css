@@ -67,4 +67,41 @@ html[dir=rtl] .ab-crumbs li+li::before{content:"‹"}
   .ab-brand span{font-size:13px}
 }
 @media (max-width:480px){ .ab-search{display:none} .ab-bar.ab-open .ab-search{display:flex;width:100%;order:9} .ab-bar.ab-open .ab-search input{width:100%} }
-@media print{.ab-bar,.ab-crumbs,.ab-footer{display:none!important}}
+@media print{.lesson-video.is-docked{display:none!important}.ab-bar,.ab-crumbs,.ab-footer{display:none!important}}
+
+/* ---- lesson videos ------------------------------------------------------ */
+.lesson-video{margin:26px 0 4px;max-width:620px;background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--success);border-radius:10px;overflow:hidden}
+.lesson-video h4{margin:0;padding:11px 14px;font-size:.92rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;line-height:1.4}
+.lesson-video h4 i{color:var(--success)}
+.lesson-video h4 span{margin-left:auto;color:var(--text2);font-weight:500;font-size:.82rem;flex-shrink:0}
+.video-thumb{position:relative;display:block;width:100%;padding:0;border:0;background:#000;cursor:pointer;line-height:0;aspect-ratio:16/9}
+.video-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
+.video-thumb:hover img,.video-thumb:focus-visible img{opacity:.72}
+.video-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.video-play i{display:flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:50%;background:rgba(16,185,129,.92);color:#04121b;font-size:1.1rem;padding-left:4px;box-shadow:0 4px 18px rgba(0,0,0,.45);transition:transform .18s}
+.video-thumb:hover .video-play i,.video-thumb:focus-visible .video-play i{transform:scale(1.09)}
+/* padding-box ratio rather than aspect-ratio: an iframe whose height cannot be
+   computed falls back to 300x150, which is why the player came out tiny */
+.lesson-video .video-frame{position:relative;width:100%;padding-top:56.25%;background:#000}
+.lesson-video .video-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;display:block}
+
+/* ---- the docked mini-player --------------------------------------------
+   Bottom-LEFT on purpose: .scroll-top (bottom:28px right:28px) and .toc
+   (right rail, wide screens) both own the right-hand side. z-index 950 sits
+   above those two (900) and below the navbar (1000). */
+.lesson-video.is-docked{position:fixed;left:20px;bottom:20px;width:360px;max-width:calc(100vw - 40px);margin:0;z-index:950;box-shadow:0 12px 40px rgba(0,0,0,.55);border-color:var(--success);cursor:pointer}
+.lesson-video.is-docked h4{font-size:.8rem;padding:8px 34px 8px 11px}
+.video-placeholder{margin:26px 0 4px}
+.video-close{position:absolute;top:4px;right:6px;width:26px;height:26px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--text2);font-size:1.25rem;line-height:1;cursor:pointer;display:none}
+.lesson-video.is-docked .video-close{display:block}
+.video-close:hover,.video-close:focus-visible{background:rgba(255,255,255,.1);color:var(--text)}
+.lesson-video{position:relative;transition:box-shadow .18s}
+/* drag-to-resize: the grip sits over the player, and the iframe is switched off
+   while dragging because an iframe swallows mousemove and kills the drag */
+.video-resize{position:absolute;right:0;bottom:0;width:22px;height:22px;cursor:ew-resize;display:none;z-index:2;background:linear-gradient(135deg,transparent 50%,var(--success) 50%);opacity:.75;border-bottom-right-radius:9px}
+.lesson-video.is-docked .video-resize{display:block}
+.video-resize:hover{opacity:1}
+body.ab-resizing{user-select:none;cursor:ew-resize}
+body.ab-resizing iframe{pointer-events:none}
+@media(max-width:768px){.lesson-video.is-docked{width:45vw;min-width:200px;left:12px;bottom:12px}.lesson-video.is-docked h4{font-size:.7rem;padding:6px 30px 6px 9px}}
+@media(prefers-reduced-motion:reduce){.lesson-video,.video-thumb img,.video-play i{transition:none}}

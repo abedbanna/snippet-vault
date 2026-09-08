@@ -73,3 +73,195 @@
   // Mark active nav link
   var links=document.querySelectorAll('.ab-links a'); for(var l=0;l<links.length;l++){ var h=links[l].getAttribute('href'); if(h&&h!=='/'&&location.pathname.indexOf(h.replace(/index\.html$/,''))===0) links[l].classList.add('ab-active'); }
 })();
+
+/* Lesson videos.
+
+   The thumbnail is a facade: the YouTube iframe is only created when someone clicks, so
+   a page with six lessons stays light and makes no third-party request until asked.
+
+   Once playing, the video follows the reader — when it scrolls out of view it docks to
+   the bottom-left corner (clear of .scroll-top and .toc, both on the right) so the
+   lesson can be read and watched at the same time. */
+(function () {
+  'use strict';
+  var active = null;      // the .lesson-video currently holding an iframe
+  var io = null;
+  var MINW = 220, KEY = 'ab-mini-w';
+
+  function savedWidth() {
+    var w = parseInt(window.localStorage ? localStorage.getItem(KEY) : 0, 10);
+    return w > 0 ? w : 360;
+  }
+
+  function maxWidth() {
+    return Math.max(MINW, Math.min(720, window.innerWidth - 40));
+  }
+
+  function setWidth(card, w) {
+    w = Math.max(MINW, Math.min(maxWidth(), w));
+    card.style.width = w + 'px';
+    try { localStorage.setItem(KEY, w); } catch (err) {}
+    return w;
+  }
+
+  function restore(card) {
+    if (!card) return;
+    if (card.classList.contains('is-docked')) dock(card, false);
+    if (io && card._abAnchor) io.unobserve(card._abAnchor);
+    var btn = card._abThumb;
+    var frame = card.querySelector('.video-frame');
+    if (frame && btn) frame.replaceWith(btn);
+    var a = card._abAnchor;
+    if (a && a.parentNode) a.parentNode.removeChild(a);
+    card._abAnchor = null;
+    var close = card.querySelector('.video-close');
+    if (close) close.remove();
+    card.classList.remove('is-docked');
+    if (active === card) active = null;
+  }
+
+  function startResize(card, startX) {
+    var startW = card.offsetWidth;
+    // an iframe swallows mousemove, so switch it off for the duration of the drag
+    document.body.classList.add('ab-resizing');
+
+    function move(ev) {
+      var x = ev.touches ? ev.touches[0].clientX : ev.clientX;
+      setWidth(card, startW + (x - startX));
+      if (ev.cancelable) ev.preventDefault();
+    }
+    function stop() {
+      document.body.classList.remove('ab-resizing');
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', stop);
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('touchend', stop);
+    }
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', stop);
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', stop);
+  }
+
+  function dock(card, on) {
+    if (on === card.classList.contains('is-docked')) return;
+    var a = card._abAnchor;
+    if (!a) return;
+    if (on) {
+      a.style.height = card.offsetHeight + 'px';   // hold the space, no page jump
+      // .fade-up.visible sets transform:translateY(0), and any transform other than
+      // `none` becomes the containing block for position:fixed children — the player
+      // would dock to the corner of its own card. <body> escapes that.
+      document.body.appendChild(card);
+      card.classList.add('is-docked');
+      setWidth(card, savedWidth());
+    } else {
+      card.classList.remove('is-docked');
+      card.style.width = '';                        // inline width is docked-only
+      a.parentNode.insertBefore(card, a);           // back exactly where it was
+      a.style.height = '0px';
+    }
+  }
+
+  function watch(card) {
+    if (!('IntersectionObserver' in window)) return;   // old browser: stays inline
+    if (!io) {
+      io = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          var e = entries[i];
+          var owner = e.target._abCard;
+          // Observe the anchor, not the card. Docking moves the card into the
+          // viewport, so watching the card makes it dock/undock forever — the flicker.
+          if (owner && owner === active) dock(owner, !e.isIntersecting);
+        }
+      }, { threshold: 0 });
+    }
+    io.observe(card._abAnchor);
+  }
+
+  function onGrab(e) {
+    var grip = e.target.closest && e.target.closest('.video-resize');
+    if (!grip) return;
+    var card = grip.closest('.lesson-video');
+    if (!card || !card.classList.contains('is-docked')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    startResize(card, e.touches ? e.touches[0].clientX : e.clientX);
+  }
+  document.addEventListener('mousedown', onGrab);
+  document.addEventListener('touchstart', onGrab, { passive: false });
+
+  window.addEventListener('resize', function () {
+    if (active && active.classList.contains('is-docked')) {
+      setWidth(active, active.offsetWidth);         // keep it on screen
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('.video-resize')) return;
+    var close = e.target.closest && e.target.closest('.video-close');
+    if (close) {
+      e.preventDefault();
+      restore(close.closest('.lesson-video'));
+      return;
+    }
+
+    // clicking the docked player takes you back to where it belongs
+    var docked = e.target.closest && e.target.closest('.lesson-video.is-docked');
+    if (docked && !e.target.closest('.video-close')) {
+      var anchor = docked._abPlaceholder;
+      if (anchor && anchor.scrollIntoView) {
+        anchor.scrollIntoView({ block: 'center',
+          behavior: window.matchMedia('(prefers-reduced-motion:reduce)').matches
+            ? 'auto' : 'smooth' });
+      }
+      return;
+    }
+
+    var btn = e.target.closest && e.target.closest('.video-thumb');
+    if (!btn || !btn.dataset.yt) return;
+
+    var card = btn.closest('.lesson-video');
+    if (active && active !== card) restore(active);   // only one player at a time
+
+    var wrap = document.createElement('div');
+    wrap.className = 'video-frame';
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + btn.dataset.yt +
+            '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    f.title = btn.getAttribute('aria-label') || 'Lesson video';
+    f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+    f.allowFullscreen = true;
+    // explicit attributes too, so the player is never left at the 300x150 default
+    f.setAttribute('width', '560');
+    f.setAttribute('height', '315');
+    wrap.appendChild(f);
+
+    if (card) {
+      card._abThumb = btn;
+      var anchor = document.createElement('div');
+      anchor.className = 'video-placeholder';
+      anchor.style.height = '0px';
+      anchor._abCard = card;
+      card.parentNode.insertBefore(anchor, card);
+      card._abAnchor = anchor;
+      var x = document.createElement('button');
+      x.className = 'video-close';
+      x.type = 'button';
+      x.setAttribute('aria-label', 'Close video');
+      x.innerHTML = '&times;';
+      card.appendChild(x);
+      var grip = document.createElement('div');
+      grip.className = 'video-resize';
+      grip.setAttribute('aria-hidden', 'true');
+      card.appendChild(grip);
+      active = card;
+      watch(card);
+    }
+    btn.replaceWith(wrap);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && active) restore(active);
+  });
+}());
