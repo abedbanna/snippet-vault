@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Step and Multi-Agent Workflows - AI Administrator</title>
+    <meta name="description" content="Sequential, parallel and supervisor patterns, critic-and-revision loops, A2A and MCP, and an OpenClaw and Hermes demo. Module 9 of the AI Administrator course.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Multi-Step and Multi-Agent Workflows</h1>
+  <p class="hero-sub">Chain agents together only where it pays, cap the loops, and recognise an always-on personal agent when you see one.</p>
+  <p class="hero-meta">Module 9 of 14 &middot; Day 5 · Session 9 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 09</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~50 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Describe the <strong>sequential, parallel and supervisor</strong> patterns and give an office example of each.</li><li>Design a critic-and-revision loop with a hard cap on iterations.</li><li>Explain what A2A and MCP each standardise, in one sentence each.</li><li>Decide when a single well-prompted step beats a multi-agent design.</li><li>Recognise the always-on personal agent category (OpenClaw, Hermes) and its risks.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="08_building_an_agent.html">Module 8: Building Your First Agent</a>. Your Ops Desk assistant workflow should be working.</p>
+</div>
+<div class="section fade-up" id="patterns">
+  <h2 class="section-title"><i class="fas fa-diagram-project"></i> 1. Three shapes of multi-step work</h2>
+  <p>Once a single AI step or agent works, the temptation is to add more. Three shapes cover nearly every case, and each maps to a way of organising people that you already know.</p>
+<div class="grid">
+<div class="card"><h3><i class="fas fa-arrow-right-long"></i> Sequential</h3><p>An assembly line. Extract the fields, then classify, then draft. Each step gets the previous output. Easiest to test and log; slowest if the steps are heavy.</p></div>
+<div class="card"><h3><i class="fas fa-grip-lines-vertical"></i> Parallel</h3><p>Fan out, then merge. Three summarisers each read one tracker at the same time, and a fourth step combines them. Faster, and each part can use a different model.</p></div>
+<div class="card"><h3><i class="fas fa-sitemap"></i> Supervisor</h3><p>A manager agent reads the request and hands it to a specialist: scheduling, suppliers, reporting. Flexible, but the supervisor is another model call that can misroute.</p></div>
+</div>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Office task</th><th>Shape</th><th>Why</th></tr></thead><tbody>
+<tr><td>Invoice to approved payment file</td><td>Sequential</td><td>Every invoice takes the same steps in the same order</td></tr>
+<tr><td>Weekly report from five project trackers</td><td>Parallel</td><td>Trackers are independent; summarise them at once, then merge</td></tr>
+<tr><td>A department chat desk that handles scheduling, suppliers and reports</td><td>Supervisor</td><td>The request type is not known until it is read</td></tr>
+</tbody></table></div>
+<p>In n8n the shapes are literal: sequential is nodes in a row, parallel is branches into a <strong>Merge</strong> node, supervisor is an AI Agent whose tools are <em>other workflows</em>.</p>
+</div><div class="section fade-up" id="critic">
+  <h2 class="section-title"><i class="fas fa-rotate-left"></i> 2. The critic-and-revision loop</h2>
+  <p>The most useful two-agent pattern in office work is the <strong>writer and critic</strong>. One step drafts; a second step, with a different prompt and ideally a different model, checks the draft against a checklist and either approves it or returns specific fixes; the writer revises. It is a code review for text.</p>
+<p>What the critic checks is whatever you would check: facts match the source, tone matches policy, nothing promised that we cannot deliver, no personal data, under the word limit. Write the checklist into the critic's prompt and make it answer in a fixed form: <code>APPROVED</code> or <code>REVISE:</code> followed by numbered points.</p>
+<div class="info-box danger"><h3><i class="fas fa-ban"></i> Cap the loop</h3><p>Two agents can disagree forever, and each round costs money. Set a hard maximum, two revisions is typical, and route to a person when the cap is reached. In n8n the cap is a counter field incremented on each pass and checked by an <strong>IF</strong> node before looping back. Module 10 treats the cap as a formal control.</p></div>
+<p>A critic loop with a cap of two roughly triples the cost of a draft step. Use it where the reader is a customer, a regulator or the board; not for internal reminders.</p>
+</div><div class="section fade-up" id="handoffs">
+  <h2 class="section-title"><i class="fas fa-handshake"></i> 3. Hand-offs, and the two protocols</h2>
+  <p>When one agent passes work to another, the hand-off should carry three things: the <strong>task</strong> in one sentence, the <strong>facts gathered so far</strong>, and the <strong>constraints</strong> (deadline, tone, what not to do). Anything not passed is lost; the next agent does not see the previous conversation unless you send it. Passing everything is expensive and confusing; pass a summary plus the raw items that matter.</p>
+<p><strong>MCP</strong> (Model Context Protocol, Module 7) standardises how an agent talks to <em>tools and data</em>: one plug for CRMs, calendars and files. <strong>A2A</strong> (Agent-to-Agent) standardises how an agent talks to <em>another agent</em>, possibly from a different vendor: how it announces what it can do, how a task is handed over, and how progress and results are reported back. In short, MCP is the agent's hands; A2A is the agent's colleagues. For an administrator, both mean one thing: the supplier's agent and yours can be made to cooperate without a bespoke integration project.</p>
+</div><div class="section fade-up" id="overkill">
+  <h2 class="section-title"><i class="fas fa-scale-unbalanced"></i> 4. When multi-agent is overkill</h2>
+  <p>Multi-agent designs are fashionable, and most of them should be one good prompt. Add a second agent only when at least one of these is true:</p>
+<ul>
+<li>The steps need <strong>different tools or data</strong> and you want each agent to have access to as little as possible.</li>
+<li>The steps need <strong>different models</strong> (a cheap classifier, an expensive drafter).</li>
+<li>You need an <strong>independent check</strong>, where the checker must not share the writer's assumptions.</li>
+<li>The steps run in <strong>parallel</strong> and the time saving matters.</li>
+</ul>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Design</th><th>Model calls per item</th><th>Typical latency</th><th>Failure points</th></tr></thead><tbody>
+<tr><td>Single AI step</td><td>1</td><td>2 to 5 seconds</td><td>1</td></tr>
+<tr><td>Sequential, three steps</td><td>3</td><td>6 to 15 seconds</td><td>3</td></tr>
+<tr><td>Writer + critic, cap 2</td><td>3 to 5</td><td>10 to 30 seconds</td><td>3, plus the loop</td></tr>
+<tr><td>Supervisor + three specialists</td><td>2 to 6</td><td>10 to 40 seconds</td><td>Misrouting, plus each specialist</td></tr>
+</tbody></table></div>
+<p>Every extra agent is another prompt to maintain, another log to read and another place for something to go wrong. Count the calls and the failure points before you draw the diagram.</p>
+</div><div class="section fade-up" id="demo">
+  <h2 class="section-title"><i class="fas fa-comment-dots"></i> 5. Instructor demo: always-on personal agents</h2>
+  <p>Everything so far runs inside a workflow you trigger. A newer category runs <strong>all the time</strong> as a service on a server or laptop, and you talk to it on the messaging app you already use. Two open-source examples are widely used in 2026, and your instructor will demonstrate them live. This section is for recognition, not for building.</p>
+<div class="grid">
+<div class="card"><h3><i class="fas fa-user-ninja"></i> OpenClaw</h3><p>Open-source (MIT licence), a long-running service that connects to WhatsApp, Telegram, Slack and more. Its capabilities are <strong>skills</strong>: folders with a <code>SKILL.md</code> file describing when and how to do something, installable from a public marketplace called <strong>ClawHub</strong>. It can run tools inside a Docker sandbox, but that isolation is <strong>off by default</strong>.</p></div>
+<div class="card"><h3><i class="fas fa-brain"></i> Hermes Agent</h3><p>From Nous Research. Built around <strong>persistent memory</strong> in three layers (working, episodic and long-term skills), so it remembers across sessions and gets more capable with use. When it works out a non-trivial procedure it saves it as a reusable skill. Reachable from twenty-plus messaging platforms through one gateway, and it runs on cloud or local models.</p></div>
+</div>
+<p>What to notice in the demo: the four parts are still there (model, tools, memory, instructions), but the <strong>memory is deep and personal</strong> and the <strong>tools are broad</strong> (shell, files, browser, email). That combination is powerful for one person and unsuitable for a shared department desk, which is why Module 8's memory advice was the opposite.</p>
+<div class="info-box danger"><h3><i class="fas fa-shield-halved"></i> Do not install these unsupervised</h3><p>Both tools need a server, API keys and broad permissions, and both have had real security incidents: malicious skills in the OpenClaw marketplace that stole API keys and rewrote the agent's memory files, and sandbox escapes fixed in later releases. They are shown here so you can recognise the category and ask the right questions. Module 11 uses the OpenClaw incidents as a case study in agent security and supply-chain controls. If your organisation wants an always-on agent, that is an IT and security project, not a lab exercise.</p></div>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will extend Module 8 into a <strong>writer, critic, reviser</strong> chain for supplier emails in n8n. The writer drafts; the critic checks against a checklist and returns APPROVED or numbered fixes; the writer revises, at most twice; every pass is logged to a Sheet, and anything still not approved after two revisions goes to a person.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Start from a form</h3><p>New workflow <em>Supplier email with review</em>. Add an <strong>n8n Form Trigger</strong> with fields: supplier name, purpose of email, key facts, deadline. This replaces the chat so the run is repeatable.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Add a counter</h3><p>Add a <strong>Set</strong> node that creates a field <code>revision</code> with value 0 and a field <code>feedback</code> that is empty. The counter is your loop cap.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Add the writer</h3><p>Add a <strong>Basic LLM Chain</strong> called <em>Writer</em>. Prompt:</p><div class="code-block"><button class="copy-btn">Copy</button>Write a professional email to the supplier below on behalf of the Finance team.
+Use only the facts given. Do not promise payment dates or amounts not listed. Under 150 words. Sign off as "Finance Operations".
+If reviewer feedback is present, revise the previous draft to address every numbered point.
+
+Supplier: {{ $json.supplier }}
+Purpose: {{ $json.purpose }}
+Facts: {{ $json.facts }}
+Deadline: {{ $json.deadline }}
+Reviewer feedback: {{ $json.feedback }}</div></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Add the critic</h3><p>Add a second <strong>Basic LLM Chain</strong> called <em>Critic</em>, ideally on a different model. Prompt:</p><div class="code-block"><button class="copy-btn">Copy</button>You review outgoing supplier emails for the Finance team. Check the draft against this list:
+1. Uses only the facts provided; nothing invented.
+2. No payment date or amount promised unless in the facts.
+3. Polite, professional, under 150 words.
+4. Mentions the deadline if one was given.
+5. No personal data beyond the supplier's company name.
+Reply with exactly APPROVED if all five pass. Otherwise reply with REVISE: followed by numbered points, each naming the failing item and the fix.
+
+Facts: {{ $json.facts }}
+Deadline: {{ $json.deadline }}
+Draft: {{ $json.draft }}</div></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Log every pass</h3><p>After the critic add a <strong>Google Sheets</strong> node, <em>Append row</em>, into a sheet <em>Review log</em> with columns timestamp, supplier, revision, critic verdict, draft. This is the audit trail Module 10 will ask you for.</p></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Decide and loop</h3><p>Add an <strong>IF</strong> node: verdict starts with APPROVED. True branch: a <strong>Gmail</strong> node, <em>Create draft</em>, for a person to send. False branch: a <strong>Set</strong> node that increments <code>revision</code> by 1 and copies the critic's points into <code>feedback</code>, then a second <strong>IF</strong>: revision is 2 or less. True: connect back to the Writer. False: a <strong>Slack</strong> or Gmail node that notifies a person with the last draft and the critic's points.</p></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Run three cases</h3><p>Submit the form three times: a simple request (should approve first pass), one with a tempting missing fact such as "ask them to confirm the payment date" with no date given (should trigger a revision), and one that is impossible to satisfy (should escalate after two revisions). Check the Review log shows every pass.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>A screenshot of the loop on the canvas with the counter and both IF nodes visible, and the <em>Review log</em> sheet showing at least five rows across the three cases, including one escalation. Save as <code>M9-writer-critic</code>.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="1"><p>1. Which shape fits 'summarise five independent project trackers into one report'?</p><label><input type="radio" name="q0" value="0"> <span>Sequential</span></label><label><input type="radio" name="q0" value="1"> <span>Parallel then merge</span></label><label><input type="radio" name="q0" value="2"> <span>Supervisor</span></label><label><input type="radio" name="q0" value="3"> <span>Single agent with no tools</span></label><div class="quiz-why"><strong>Why:</strong> The trackers are independent, so summarise them at the same time and combine the results.</div></div><div class="quiz-q" data-answer="1"><p>2. What must every critic-and-revision loop have?</p><label><input type="radio" name="q1" value="0"> <span>A third agent to break ties</span></label><label><input type="radio" name="q1" value="1"> <span>A hard cap on revisions with a route to a person</span></label><label><input type="radio" name="q1" value="2"> <span>The same model for writer and critic</span></label><label><input type="radio" name="q1" value="3"> <span>No logging, to save cost</span></label><div class="quiz-why"><strong>Why:</strong> Two agents can disagree indefinitely; the cap bounds cost and hands unresolved cases to a human.</div></div><div class="quiz-q" data-answer="1"><p>3. In one sentence, what does A2A standardise?</p><label><input type="radio" name="q2" value="0"> <span>How an agent reads files</span></label><label><input type="radio" name="q2" value="1"> <span>How an agent talks to another agent, including hand-offs and progress</span></label><label><input type="radio" name="q2" value="2"> <span>How prompts are written</span></label><label><input type="radio" name="q2" value="3"> <span>How models are trained</span></label><div class="quiz-why"><strong>Why:</strong> MCP covers tools and data; A2A covers agent-to-agent cooperation across vendors.</div></div><div class="quiz-q" data-answer="1"><p>4. Which is a good reason to split a task across two agents?</p><label><input type="radio" name="q3" value="0"> <span>It looks more advanced</span></label><label><input type="radio" name="q3" value="1"> <span>The steps need different tools and each agent should see as little as possible</span></label><label><input type="radio" name="q3" value="2"> <span>The vendor recommends it</span></label><label><input type="radio" name="q3" value="3"> <span>Single prompts are limited to 100 words</span></label><div class="quiz-why"><strong>Why:</strong> Least privilege, different models, independent checking and parallelism are the legitimate reasons; fashion is not.</div></div><div class="quiz-q" data-answer="1"><p>5. Why are OpenClaw and Hermes shown as a demo rather than a lab?</p><label><input type="radio" name="q4" value="0"> <span>They are too expensive</span></label><label><input type="radio" name="q4" value="1"> <span>They need servers, keys and broad permissions, and have had real security incidents</span></label><label><input type="radio" name="q4" value="2"> <span>They only work in English</span></label><label><input type="radio" name="q4" value="3"> <span>They cannot use tools</span></label><div class="quiz-why"><strong>Why:</strong> They are powerful personal agents whose deployment is an IT and security project. Module 11 uses their incidents as a case study.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. Describe an office process for each of the three shapes and say what the n8n node structure would look like.</summary><div><p>Sequential: nodes in a row (invoice extract, classify, draft). Parallel: branches into a Merge node (tracker summaries). Supervisor: an AI Agent whose tools are other workflows (department desk).</p></div></details><details class="solution"><summary>2. What three things should a hand-off between agents carry?</summary><div><p>The task in one sentence, the facts gathered so far, and the constraints such as deadline, tone and prohibited actions.</p></div></details><details class="solution"><summary>3. What is the key design difference between a personal always-on agent and a shared department assistant?</summary><div><p>Personal agents have deep, persistent memory and broad tools for one trusted user; shared assistants need per-user, short-window memory and narrow, mostly read-only tools.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>Sequential, parallel and supervisor are the three shapes; in n8n they are a row, branches into Merge, and an agent whose tools are workflows.</li><li>The writer-and-critic loop is code review for text: fixed verdict format, hard revision cap, human route when the cap is hit.</li><li>Hand-offs carry task, facts and constraints. MCP is the agent's hands; A2A is the agent's colleagues.</li><li>Add agents only for least privilege, different models, independent checks or parallelism; count calls and failure points first.</li><li>OpenClaw and Hermes are always-on personal agents: recognise the category, and treat deployment as an IT and security project.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/a2a.html">Agent-to-Agent Protocols</a> &middot; <a href="/mcp.html">Model Context Protocol</a> &middot; <a href="/langgraph.html">LangGraph: agents as graphs</a> &middot; <a href="/openmanus.html">OpenManus multi-agent architecture</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="08_building_an_agent.html">&larr; Module 8: First agent</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="10_controls_human_in_the_loop.html">Module 10: Human-in-the-loop &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting Tools, Data and Knowledge - AI Administrator</title>
+    <meta name="description" content="Connectors, APIs and webhooks in plain words, MCP as the universal plug for agents, and RAG for company documents. Module 7 of the AI Administrator course.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Connecting Tools, Data and Knowledge</h1>
+  <p class="hero-sub">Wire your automations and agents to the systems and documents your organisation actually uses, safely and without code.</p>
+  <p class="hero-meta">Module 7 of 14 &middot; Day 4 · Session 7 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 07</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~50 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Explain in plain words what a connector, an API, a credential and a webhook are, and when each is used.</li><li>Describe the <strong>Model Context Protocol (MCP)</strong> as hosts, clients and servers, and say why it matters for agents.</li><li>Explain how a knowledge source works (retrieval-augmented generation) and why answers should cite the document they came from.</li><li>Decide which data may be sent to a model provider and which must stay inside the organisation.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="06_ai_steps_in_automations.html">Module 6: Adding AI Steps to Automations</a>. You need n8n plus a Google Drive, Notion or Airtable account with a few sample documents.</p>
+</div>
+<div class="section fade-up" id="connectors">
+  <h2 class="section-title"><i class="fas fa-puzzle-piece"></i> 1. Connectors, credentials and APIs in plain words</h2>
+  <p>An <strong>API</strong> (application programming interface) is a door a system leaves open so other software can ask it things: "give me today's calendar", "create this ticket", "send this email". Every modern tool has one. You will never call an API by hand; you will use a <strong>connector</strong>, which is a ready-made node in n8n, Make, Zapier or Power Automate that knows how to knock on that door.</p>
+<p>To use a connector you attach a <strong>credential</strong>: usually a sign-in through the familiar "Allow this app to access your Google account" screen (called OAuth), or an <strong>API key</strong>, a long secret string copied from the tool's settings page. Two rules for administrators:</p>
+<ul>
+<li>Create a <strong>dedicated service account</strong> for automations where you can (for example automations@yourcompany.com). If a person leaves, the automations keep running, and the audit log shows the automation, not a colleague.</li>
+<li>Grant the <strong>narrowest scope</strong> the connector offers. A triage workflow needs read and label on the inbox, not send-as-anyone.</li>
+</ul>
+<div class="info-box"><h3><i class="fas fa-bell"></i> Webhooks: the door that knocks on you</h3><p>An API is you asking the system. A <strong>webhook</strong> is the system telling you, immediately, that something happened: a payment cleared, a form was submitted, a ticket changed. n8n gives you a webhook URL you paste into the other tool's settings. Use webhooks when seconds matter; use polling triggers (check every minute) when they do not.</p></div>
+</div><div class="section fade-up" id="mcp">
+  <h2 class="section-title"><i class="fas fa-network-wired"></i> 2. MCP: a universal plug for agents</h2>
+  <p>Connectors work well for fixed automations, where the designer decides in advance which door to knock on. Agents are different: the model decides at run time which tool to use, so it needs a <em>standard way</em> to discover tools and call them. That standard is the <strong>Model Context Protocol (MCP)</strong>, published as an open protocol and now supported by most agent products.</p>
+<div class="grid">
+<div class="card"><h3><i class="fas fa-house"></i> Host</h3><p>The application the agent lives in: a chat app, n8n, Claude, Copilot, an IDE. The host decides which servers are available and asks the user for permission.</p></div>
+<div class="card"><h3><i class="fas fa-right-left"></i> Client</h3><p>The connection inside the host that talks to one server. You never see it; it is plumbing.</p></div>
+<div class="card"><h3><i class="fas fa-server"></i> Server</h3><p>A small program that exposes one system: your CRM, a file share, a calendar, a database. It advertises <strong>tools</strong> (actions) and <strong>resources</strong> (things to read).</p></div>
+</div>
+<p>The analogy that sticks: before USB, every device needed its own cable. MCP is the USB port for agents. A CRM vendor publishes one MCP server, and every agent product can use it, instead of every product building its own CRM connector. For you this means a growing catalogue of ready-made servers, and one place, the host, where you decide what the agent may touch.</p>
+<div class="info-box warning"><h3><i class="fas fa-triangle-exclamation"></i> A plug is also a hole</h3><p>An MCP server that can create records can also delete them if the tool is exposed. Read the tool list of any server before you enable it, and enable only the tools the workflow needs. Module 11 covers the permission model in depth.</p></div>
+</div><div class="section fade-up" id="knowledge">
+  <h2 class="section-title"><i class="fas fa-book-open"></i> 3. Knowledge sources and RAG for administrators</h2>
+  <p>Models know the public internet up to a date; they know nothing about your leave policy, price list or onboarding checklist. The way to give them that knowledge is <strong>retrieval-augmented generation (RAG)</strong>, which sounds technical but is three plain steps:</p>
+<ol>
+<li><strong>Upload.</strong> You point the tool at a folder of documents: PDFs, Word files, Notion pages, a help centre.</li>
+<li><strong>Chunk and index.</strong> The tool cuts each document into passages of a few hundred words and stores them so that passages with similar meaning sit close together. This is done once, and again when a document changes.</li>
+<li><strong>Retrieve, then answer.</strong> When a question arrives, the tool finds the five or ten most relevant passages and hands them to the model with the instruction "answer only from these". The model writes the answer and names the passage it used.</li>
+</ol>
+<p>Why the citation matters: it is the only way a reader can tell a grounded answer from a fluent guess. A knowledge assistant that cannot say "from Leave Policy v3, section 4" should not be trusted with policy questions, and a good prompt instructs it to say <strong>not found</strong> rather than improvise.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Knowledge problem</th><th>Usual cause</th><th>Fix</th></tr></thead><tbody>
+<tr><td>Confident wrong answer</td><td>Prompt allows general knowledge</td><td>"Answer only from the provided passages; otherwise say not found"</td></tr>
+<tr><td>Right document, wrong version</td><td>Old file still in the folder</td><td>One folder, one owner, delete superseded versions</td></tr>
+<tr><td>Answer misses a table</td><td>Table split across chunks</td><td>Keep tables on one page; use larger chunks for tabular docs</td></tr>
+<tr><td>Cannot find obvious content</td><td>Scanned PDF with no text layer</td><td>Run OCR or re-export from the source</td></tr>
+</tbody></table></div>
+</div><div class="section fade-up" id="hygiene">
+  <h2 class="section-title"><i class="fas fa-broom"></i> 4. Data hygiene: what may leave the building</h2>
+  <p>Every AI step sends its input to a model provider unless you run the model yourself. Before connecting a data source, sort its contents into three buckets:</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Bucket</th><th>Examples</th><th>Rule</th></tr></thead><tbody>
+<tr><td><strong>Public or internal-general</strong></td><td>Policies, product docs, templates, published prices</td><td>May be sent to a reputable provider under a business agreement</td></tr>
+<tr><td><strong>Personal data</strong></td><td>Names with contact details, HR records, customer histories</td><td>Only under a data-processing agreement, with a lawful basis, and minimised: send the fields the step needs, not the whole record</td></tr>
+<tr><td><strong>Restricted</strong></td><td>Payroll, medical, legal privilege, credentials, unreleased financials</td><td>Do not send to external models. Use an approved in-house model or keep the step human</td></tr>
+</tbody></table></div>
+<p>Practical habits: use the provider's <strong>business or enterprise tier</strong>, which contractually excludes your data from training; turn on <strong>redaction</strong> nodes that mask emails and phone numbers before the AI step; and keep a one-page register of which workflows send which data where. Module 11 turns this into a policy.</p>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will build a <em>policy Q&amp;A</em> workflow: a chat message arrives, the workflow retrieves the most relevant passages from a folder of company documents, and an AI node answers only from those passages, citing the document, or replies "not found". Use three or four non-sensitive documents such as a leave policy, an expenses policy and an IT acceptable-use policy. Sample policies from your AI assistant are fine if you have none to hand.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Prepare the document folder</h3><p>Create a folder called <em>Policies</em> in Google Drive (or a Notion page tree or an Airtable base with attachments). Put three or four PDFs or Docs in it. Delete any old versions so each policy exists once.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Connect the source</h3><p>In n8n add a <strong>Google Drive</strong> node (or Notion / Airtable), attach the credential with read-only scope, and set it to list the files in the <em>Policies</em> folder. Run it and confirm you see your documents.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Build the index</h3><p>Add a <strong>Default Data Loader</strong> and a <strong>Recursive Character Text Splitter</strong> feeding a <strong>Simple Vector Store</strong> (insert mode) with an embeddings credential. Run this branch once; it reads every file, chunks it and stores it. Re-run only when documents change.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Add the question trigger</h3><p>In a second branch add a <strong>Chat Trigger</strong> node. This gives you a test chat window in n8n and can later be embedded in a page or connected to Slack.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Retrieve and answer</h3><p>Add a <strong>Question and Answer Chain</strong> node connected to the same vector store in <em>retrieve</em> mode, with a chat model attached. Set the system prompt to:</p><div class="code-block"><button class="copy-btn">Copy</button>You answer staff questions using ONLY the policy passages provided to you.
+If the passages do not contain the answer, reply exactly: "Not found in the current policies. Please contact HR."
+Never use general knowledge. Never guess dates, amounts or limits.
+End every answer with: Source: [document name and section].
+Keep answers under 120 words.</div></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Test with eight questions</h3><p>Ask four questions the documents answer, two the documents do not answer, and two that try to trick it (for example, "what is the leave allowance at Google?"). You want four cited answers and four "not found" replies. If it improvises, strengthen the ONLY and never-guess lines.</p></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Record what left the building</h3><p>Open a sheet called <em>Data register</em> with columns workflow, data sent, provider, tier, owner. Add one row for this workflow. This register grows with every module and is part of your capstone.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>A screenshot of the two-branch workflow, the chat transcript of your eight test questions, and the first row of your data register. Save as <code>M7-policy-qa</code>.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="1"><p>1. What is a webhook?</p><label><input type="radio" name="q0" value="0"> <span>A key you copy from a settings page</span></label><label><input type="radio" name="q0" value="1"> <span>A way for a system to notify your workflow immediately when something happens</span></label><label><input type="radio" name="q0" value="2"> <span>A type of spreadsheet</span></label><label><input type="radio" name="q0" value="3"> <span>A folder of documents</span></label><div class="quiz-why"><strong>Why:</strong> An API is you asking the system; a webhook is the system telling you, which is why it is used when seconds matter.</div></div><div class="quiz-q" data-answer="2"><p>2. In MCP, which part exposes a system's tools and resources?</p><label><input type="radio" name="q1" value="0"> <span>Host</span></label><label><input type="radio" name="q1" value="1"> <span>Client</span></label><label><input type="radio" name="q1" value="2"> <span>Server</span></label><label><input type="radio" name="q1" value="3"> <span>Model</span></label><div class="quiz-why"><strong>Why:</strong> A server wraps one system, such as a CRM, and advertises its tools and resources. The host decides which servers the agent may use.</div></div><div class="quiz-q" data-answer="1"><p>3. Why should a knowledge assistant cite the document it used?</p><label><input type="radio" name="q2" value="0"> <span>To look professional</span></label><label><input type="radio" name="q2" value="1"> <span>So a reader can tell a grounded answer from a fluent guess</span></label><label><input type="radio" name="q2" value="2"> <span>Because models cannot answer otherwise</span></label><label><input type="radio" name="q2" value="3"> <span>To reduce tokens</span></label><div class="quiz-why"><strong>Why:</strong> Citations are the only check a reader has. Without them, a wrong answer and a right one look identical.</div></div><div class="quiz-q" data-answer="2"><p>4. Which of these should not be sent to an external model provider?</p><label><input type="radio" name="q3" value="0"> <span>The published price list</span></label><label><input type="radio" name="q3" value="1"> <span>The expenses policy</span></label><label><input type="radio" name="q3" value="2"> <span>Payroll records</span></label><label><input type="radio" name="q3" value="3"> <span>A product FAQ</span></label><div class="quiz-why"><strong>Why:</strong> Payroll is restricted data. Use an approved in-house model or keep the step human.</div></div><div class="quiz-q" data-answer="1"><p>5. Why create a dedicated service account for automations?</p><label><input type="radio" name="q4" value="0"> <span>It is cheaper</span></label><label><input type="radio" name="q4" value="1"> <span>Automations keep running when a person leaves, and the audit log shows the automation rather than a colleague</span></label><label><input type="radio" name="q4" value="2"> <span>It has more storage</span></label><label><input type="radio" name="q4" value="3"> <span>It bypasses permissions</span></label><div class="quiz-why"><strong>Why:</strong> Continuity and accountability. The account should still be given the narrowest scope that works.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. Explain MCP to a colleague using the USB analogy in three sentences.</summary><div><p>Before USB every device needed its own cable; MCP is the standard port for agents. A vendor publishes one MCP server and every agent product can use it. The host, where the agent lives, decides which servers and tools are allowed.</p></div></details><details class="solution"><summary>2. What three instructions make a RAG prompt safe for policy questions?</summary><div><p>Answer only from the provided passages; say 'not found' rather than guess; cite the document and section in every answer.</p></div></details><details class="solution"><summary>3. Sort these into the three data buckets: leave policy, customer email address, payroll file, product FAQ.</summary><div><p>Leave policy and product FAQ are public or internal-general; the customer email address is personal data (minimise and use a processing agreement); the payroll file is restricted and stays in-house.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>Connectors knock on a system's API for you; credentials should be service accounts with the narrowest scope.</li><li>Webhooks push events to you instantly; polling triggers check on a schedule.</li><li>MCP is the universal plug that lets an agent discover and use tools; enable only the tools a workflow needs.</li><li>RAG gives models your documents: upload, index, retrieve, then answer only from the passages with a citation or 'not found'.</li><li>Sort data into public, personal and restricted before connecting anything, and keep a register of what goes where.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/mcp.html">Model Context Protocol guide</a> &middot; <a href="/n8n.html">n8n for intelligence workflows</a> &middot; <a href="/langchain.html">LangChain and RAG pipelines</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="06_ai_steps_in_automations.html">&larr; Module 6: AI steps</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="08_building_an_agent.html">Module 8: First agent &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

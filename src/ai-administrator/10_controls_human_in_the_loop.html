@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controls I: Human-in-the-Loop Design - AI Administrator</title>
+    <meta name="description" content="Tier agent actions by risk, choose the right human-in-the-loop pattern, add approval gates and audit trails in n8n. Module 10 of the AI Administrator course.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Controls I: Human-in-the-Loop Design</h1>
+  <p class="hero-sub">Decide which actions an automation may take on its own, which need a person, and build the approval gate and audit trail that make that decision stick.</p>
+  <p class="hero-meta">Module 10 of 14 &middot; Day 5 · Session 10 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 10</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~50 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Sort any action an agent can take into one of five <strong>risk tiers</strong> and name the control each tier needs.</li><li>Choose between the four human-in-the-loop patterns: approve before, review after, edit-then-approve, and escalate on low confidence.</li><li>Explain the interrupt-and-resume idea (pause, human decides, continue) and implement it with an n8n Wait node.</li><li>Add iteration and budget limits and an audit trail that records who approved what, and when.</li><li>Recognise approval fatigue and design gates that people will actually use.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="09_multi_agent_workflows.html">Module 9: Multi-agent workflows</a>, and the triage flow you built in <a href="06_ai_steps_in_automations.html">Module 6</a>.</p>
+</div>
+<div class="section fade-up" id="why-controls">
+  <h2 class="section-title"><i class="fas fa-shield-halved"></i> 1. Why controls come after capability</h2>
+  <p>Modules 5 to 9 taught you to make things happen automatically. This module teaches you to decide, on purpose, what should <em>not</em> happen without a person. That order is deliberate. Until you have watched an automation act on its own, the need for a gate feels theoretical. After the first wrong email goes to a customer, it feels obvious.</p>
+<p>"Human-in-the-loop" (HITL) is the general name for any design where a person can see, approve, change or stop what an automated system does. It is not a single feature. It is a set of decisions about <strong>where</strong> the person sits, <strong>what</strong> they see and <strong>how much</strong> they are asked to do. Get those decisions right and the automation is trusted and used. Get them wrong and one of two things happens: the gate is ignored because it fires too often, or the gate is missing where it mattered.</p>
+<div class="info-box"><h3><i class="fas fa-circle-info"></i> The administrator's question</h3><p>For every action in a workflow, ask: <em>If this ran wrongly a hundred times before anyone noticed, what would it cost?</em> The answer decides the tier, and the tier decides the control.</p></div>
+</div><div class="section fade-up" id="risk-tiers">
+  <h2 class="section-title"><i class="fas fa-layer-group"></i> 2. Risk tiering: five kinds of action</h2>
+  <p>Every tool an agent can call falls into one of five tiers. The tier is about the <strong>consequence</strong> of a wrong call, not about how clever the step is.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Tier</th><th>What it does</th><th>Examples</th><th>Control needed</th></tr></thead><tbody>
+<tr><td><strong>1. Read-only</strong></td><td>Looks something up, changes nothing</td><td>Search a sheet, read a calendar, fetch a ticket</td><td>None beyond logging. Let it run.</td></tr>
+<tr><td><strong>2. Reversible write</strong></td><td>Changes internal data that can be undone</td><td>Add a row, set a label, create a draft, move a card</td><td>Review after. Spot-check a sample weekly.</td></tr>
+<tr><td><strong>3. Irreversible internal</strong></td><td>Cannot be undone, but stays inside the organisation</td><td>Delete a record, overwrite a file, close a ticket</td><td>Approve before, or convert to reversible (archive instead of delete).</td></tr>
+<tr><td><strong>4. External / customer-facing</strong></td><td>Leaves the organisation</td><td>Send an email, post to a customer portal, reply on social media</td><td>Approve before, or edit-then-approve. Always.</td></tr>
+<tr><td><strong>5. Money, people, legal</strong></td><td>Commits funds, affects a person's status, or creates legal exposure</td><td>Issue a refund, approve leave, sign a contract, change pay</td><td>The system prepares; a named person decides. No auto-run, ever.</td></tr>
+</tbody></table></div>
+<p>Two habits make tiering easy. First, tier the <em>tool</em>, not the workflow: an "email" tool is Tier 4 wherever it appears. Second, look for a cheaper tier that gives the same result. "Delete" becomes "archive" (Tier 3 to Tier 2). "Send email" becomes "create draft in the sender's mailbox" (Tier 4 to Tier 2), with the human pressing send. Most approval gates can be avoided by choosing a lower-tier tool.</p>
+<div class="info-box warning"><h3><i class="fas fa-triangle-exclamation"></i> The tier is set by the worst case</h3><p>An agent that "usually" only reads but "occasionally" sends is a Tier 4 agent. Controls follow the highest tier the agent can reach, not the average.</p></div>
+</div><div class="section fade-up" id="patterns">
+  <h2 class="section-title"><i class="fas fa-people-arrows"></i> 3. The four human-in-the-loop patterns</h2>
+  <p>Once you know the tier, pick the pattern. There are only four, and each answers a different question: <em>before or after</em>, and <em>every time or only when unsure</em>.</p>
+<div class="grid">
+<div class="card"><h3><i class="fas fa-hand"></i> Approve before action</h3><p>The workflow pauses and shows the person exactly what it is about to do. Nothing happens until they say yes. Use for Tier 3 and 4 actions. Cost: one click per run, so volume must be manageable.</p></div>
+<div class="card"><h3><i class="fas fa-magnifying-glass"></i> Review after</h3><p>The action runs, and the person sees a digest (daily or weekly) of what happened, with an undo path. Use for Tier 2 writes at high volume. Cost: near zero per run, but mistakes live for a while before they are caught.</p></div>
+<div class="card"><h3><i class="fas fa-pen-to-square"></i> Edit-then-approve</h3><p>The system drafts, the person adjusts and sends. The best pattern for customer-facing text: the person stays the author, the machine removes the blank page. Cost: a minute per item, so it suits tens per day, not thousands.</p></div>
+<div class="card"><h3><i class="fas fa-arrow-up-right-from-square"></i> Escalate on low confidence</h3><p>The workflow runs alone when the model is sure, and routes to a person when it is not. Use when most cases are easy and a few are hard. Requires the AI step to report a confidence or a category such as "unsure".</p></div>
+</div>
+<p>Real workflows combine them. The Module 6 triage flow, for example, can <strong>run alone</strong> for labelling (Tier 2), <strong>escalate</strong> anything the model marks "unsure", and use <strong>edit-then-approve</strong> for every outgoing reply (Tier 4).</p>
+</div><div class="section fade-up" id="interrupt">
+  <h2 class="section-title"><i class="fas fa-pause"></i> 4. Interrupt and resume: how a gate actually works</h2>
+  <p>Under every approval gate is the same mechanism, whatever tool you use. The workflow reaches a checkpoint, <strong>saves its state</strong> (everything it knows so far), <strong>stops</strong>, and <strong>waits</strong> for a signal. When a person sends the signal, the workflow <strong>resumes</strong> from exactly where it stopped, with the person's decision added to what it knows.</p>
+<p>In developer frameworks this is explicit. LangGraph, for example, lets a designer mark a step as "interrupt before": the graph pauses just before that step, a checkpoint is stored, and a human call is needed to continue. The same idea appears in every no-code tool under a friendlier name:</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Tool</th><th>How the pause is built</th><th>How the human resumes it</th></tr></thead><tbody>
+<tr><td>n8n</td><td><strong>Wait</strong> node set to "resume on webhook call" or "on form submission"</td><td>Clicks an approve or reject link in Slack or email; the link calls the resume address</td></tr>
+<tr><td>n8n (simpler)</td><td>Gmail or Slack node with "Send and wait for approval"</td><td>Presses Approve or Decline in the message</td></tr>
+<tr><td>Power Automate</td><td><strong>Approvals</strong> action ("Start and wait for an approval")</td><td>Responds in Teams, Outlook or the Approvals app</td></tr>
+<tr><td>Make / Zapier</td><td>Split into two scenarios: one ends by sending the request, a second starts from the approval webhook</td><td>Clicks a link that fires the second scenario</td></tr>
+</tbody></table></div>
+<p>Three design details decide whether a gate is any good:</p>
+<ul>
+<li><strong>Show the actual action.</strong> The approval message must contain the exact email text, recipient and subject, not "Approve email?". People cannot approve what they cannot see.</li>
+<li><strong>Time out safely.</strong> If nobody answers within, say, 24 hours, the default must be the safe choice: do nothing and notify, never "send anyway".</li>
+<li><strong>Carry the decision forward.</strong> The approver's name, time and any edit must flow into the rest of the workflow and into the log.</li>
+</ul>
+<div class="info-box"><h3><i class="fas fa-lightbulb"></i> Deep dive</h3><p>If you want to see the mechanism in code, the <a href="/langgraph.html">LangGraph tutorial</a> on this site walks through checkpointing and interrupt-before step by step. You do not need it for the labs; it is there for the curious.</p></div>
+</div><div class="section fade-up" id="limits">
+  <h2 class="section-title"><i class="fas fa-gauge-high"></i> 5. Limits and audit trails</h2>
+  <p>Approval gates control <em>which</em> actions run. Two more controls limit <em>how much</em> can go wrong between gates.</p>
+<div class="subsection"><h3>Iteration and budget limits</h3>
+<p>An agent (Module 8) loops until it decides it is done. Give it a ceiling: at most 10 tool calls per task, at most a fixed model spend per run, at most 50 runs per hour for the whole workflow. In n8n's AI Agent node this is the "max iterations" option; in most builders it is a similar setting. When the ceiling is hit the agent must stop and hand the task to a person with what it has so far, not silently give up.</p></div>
+<div class="subsection"><h3>Audit trails</h3>
+<p>An audit trail answers, months later, "what did the system do, and who said it could?" At minimum log one row per gated action:</p>
+<div class="code-block"><button class="copy-btn">Copy</button>timestamp | workflow | run id | action proposed | tier | approver | decision (approved / rejected / edited / timed out) | final content sent | notes</div>
+<p>A Google Sheet or Airtable base is enough to start. The important properties are that the log is <strong>append-only</strong> (nobody edits history), <strong>complete</strong> (every gated action, including rejections and timeouts), and <strong>readable by someone who was not there</strong>.</p></div>
+<div class="subsection"><h3>Approval fatigue</h3>
+<p>A gate that fires 200 times a day gets rubber-stamped by lunchtime, and a rubber-stamped gate is worse than none, because it creates false confidence. Warning signs: median approval time under five seconds, approval rate above 98%, the same person approving everything. Fixes: lower the tier of the tool (draft instead of send), batch approvals into a digest, escalate only low-confidence cases, rotate approvers, and review the numbers monthly.</p></div>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will add an approval gate to the email-triage workflow from Module 6 so that <strong>no reply leaves without a person seeing it</strong>, and every decision is logged. You need your n8n workspace, a Gmail or Slack connection, and a Google Sheet named <code>Approval log</code> with the columns from Section 5.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Tier every node</h3><p>Open the triage workflow. Beside each node, note its tier: the trigger and the classify step are Tier 1, the label step is Tier 2, and the reply step is Tier 4. That last one needs a gate.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Insert the gate</h3><p>Between the "draft reply" AI step and the "send email" node, add an approval step. Easiest: replace the send node with a Gmail node set to <strong>Send and wait for approval</strong>, addressed to yourself, with the drafted subject and body in the message. Alternative: a <strong>Wait</strong> node set to "resume on webhook call", preceded by a Slack message containing the draft and two links built from the Wait node's resume address (one with <code>?decision=approve</code>, one with <code>?decision=reject</code>).</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Branch on the decision</h3><p>After the gate add an <strong>IF</strong> node: if the decision is approve, continue to the real send node; otherwise go to a node that labels the email "needs human" and stops.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Log both paths</h3><p>On each branch add a <strong>Google Sheets: append row</strong> node writing to <code>Approval log</code>. Map the timestamp, run id, the proposed reply, the tier, your name as approver, the decision, and the final text. Rejections must be logged too.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Set a safe timeout</h3><p>In the Wait or approval node set a time limit of 24 hours. On timeout, route to the "needs human" branch and log the decision as <em>timed out</em>. Confirm that a timeout never reaches the send node.</p></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Test approve and reject</h3><p>Send two test emails to the triage inbox. Approve the first draft and reject the second. Check that exactly one email was sent, both rows appear in the log, and the rejected email carries the "needs human" label.</p></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Add a limit</h3><p>If your flow has an AI Agent node, set its maximum iterations to 8. Add a note on the canvas recording the tiers you assigned and why the reply step is gated.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>An export of the gated workflow, a screenshot of the approval message showing the full draft, and the <code>Approval log</code> sheet with at least one approved, one rejected and one timed-out row. Save as <code>M10-approval-gate</code>.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="2"><p>1. An agent can read tickets, add labels, and occasionally send a customer an email. Which tier sets its controls?</p><label><input type="radio" name="q0" value="0"> <span>Tier 1, because most calls are reads</span></label><label><input type="radio" name="q0" value="1"> <span>Tier 2, the average of what it does</span></label><label><input type="radio" name="q0" value="2"> <span>Tier 4, the highest tier it can reach</span></label><label><input type="radio" name="q0" value="3"> <span>No tier; agents are always Tier 5</span></label><div class="quiz-why"><strong>Why:</strong> Controls follow the worst case an agent can reach. Sending customer email is Tier 4, so the agent is gated as Tier 4.</div></div><div class="quiz-q" data-answer="1"><p>2. Which pattern best fits 30 customer replies a day where the wording matters?</p><label><input type="radio" name="q1" value="0"> <span>Review after</span></label><label><input type="radio" name="q1" value="1"> <span>Edit-then-approve</span></label><label><input type="radio" name="q1" value="2"> <span>Escalate on low confidence</span></label><label><input type="radio" name="q1" value="3"> <span>No gate</span></label><div class="quiz-why"><strong>Why:</strong> Customer-facing text is Tier 4. At tens per day, having the person adjust and send each draft is affordable and keeps them the author.</div></div><div class="quiz-q" data-answer="2"><p>3. What should happen when an approval request is not answered within the time limit?</p><label><input type="radio" name="q2" value="0"> <span>Send anyway, since silence is consent</span></label><label><input type="radio" name="q2" value="1"> <span>Retry the model and send the new draft</span></label><label><input type="radio" name="q2" value="2"> <span>Do nothing, log "timed out", and notify a person</span></label><label><input type="radio" name="q2" value="3"> <span>Delete the run</span></label><div class="quiz-why"><strong>Why:</strong> The safe default on timeout is to not act. Acting on silence turns the gate into a delay, not a control.</div></div><div class="quiz-q" data-answer="1"><p>4. Which of these is a sign of approval fatigue?</p><label><input type="radio" name="q3" value="0"> <span>Approvers ask for more context</span></label><label><input type="radio" name="q3" value="1"> <span>Median approval time is three seconds and 99% are approved</span></label><label><input type="radio" name="q3" value="2"> <span>Some requests are rejected</span></label><label><input type="radio" name="q3" value="3"> <span>Approvals are logged</span></label><div class="quiz-why"><strong>Why:</strong> Near-instant, near-universal approval means people are clicking without reading. The gate has stopped being a control.</div></div><div class="quiz-q" data-answer="1"><p>5. The cheapest way to remove the need for a gate on a "send email" step is to...</p><label><input type="radio" name="q4" value="0"> <span>Increase the model's temperature</span></label><label><input type="radio" name="q4" value="1"> <span>Change the tool to "create a draft" so a person presses send</span></label><label><input type="radio" name="q4" value="2"> <span>Log the email after sending</span></label><label><input type="radio" name="q4" value="3"> <span>Add a second approver</span></label><div class="quiz-why"><strong>Why:</strong> Lowering the tier of the tool (send becomes draft) keeps the benefit and removes the irreversible action, so no gate is needed.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. List the five risk tiers and give one action from your own work for each.</summary><div><p>Read-only (look up a record), reversible write (add a row or label), irreversible internal (delete or overwrite), external (email a customer), and money/people/legal (approve a refund or leave). Any concrete mapping is acceptable if the consequence matches the tier.</p></div></details><details class="solution"><summary>2. Describe interrupt-and-resume in three sentences without naming a product.</summary><div><p>The workflow reaches a checkpoint and saves everything it knows. It stops and waits for a signal from a person. When the signal arrives, it continues from the checkpoint with the person's decision included.</p></div></details><details class="solution"><summary>3. What must an audit-trail row contain for a gated action, and why must the log be append-only?</summary><div><p>Timestamp, workflow and run id, the proposed action and tier, the approver, the decision including rejections and timeouts, and the final content. Append-only so that history cannot be edited after the fact and the record is trusted.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>Tier each tool by the cost of a wrong call: read-only, reversible, irreversible, external, and money/people/legal. Controls follow the highest tier reachable.</li><li>Four HITL patterns cover every case: approve before, review after, edit-then-approve, escalate on low confidence.</li><li>A gate is an interrupt: save state, pause, wait for a person, resume. In n8n that is a Wait node or a send-and-wait-for-approval node.</li><li>Limits cap how much can go wrong between gates; an append-only audit log records who approved what and when.</li><li>A gate people rubber-stamp is worse than none. Lower the tier, batch, or escalate only the uncertain cases.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/langgraph.html">LangGraph: checkpointing and human-in-the-loop</a> &middot; <a href="/n8n.html">n8n guide: error handling and approval steps</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="09_multi_agent_workflows.html">&larr; Module 9: Multi-agent</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="11_security_and_governance.html">Module 11: Security & governance &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

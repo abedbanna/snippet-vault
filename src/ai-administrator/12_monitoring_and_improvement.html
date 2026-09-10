@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring, Evaluation and Continuous Improvement - AI Administrator</title>
+    <meta name="description" content="Run logs, what to record for AI steps, retries and fallbacks, golden sets, LLM-as-judge, regression checks and cost dashboards. Module 12.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Monitoring, Evaluation and Continuous Improvement</h1>
+  <p class="hero-sub">Know what your automations did last night, measure whether the AI steps are right, and change a prompt without breaking what already worked.</p>
+  <p class="hero-meta">Module 12 of 14 &middot; Day 6 · Session 12 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 12</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~50 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Read an execution log and explain what each AI step received, produced and cost.</li><li>Design failure handling with retries, fallback paths and a human queue.</li><li>Build a <strong>golden set</strong> and score an AI step against it with a simple rubric.</li><li>Explain LLM-as-judge in plain words and say when it is and is not trustworthy.</li><li>Run a regression check before changing a prompt or model, and keep a one-sheet dashboard of runs, cost and accuracy.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="11_security_and_governance.html">Module 11: Security and governance</a>, and the gated triage flow from <a href="10_controls_human_in_the_loop.html">Module 10</a>.</p>
+</div>
+<div class="section fade-up" id="why-monitor">
+  <h2 class="section-title"><i class="fas fa-eye"></i> 1. Deployment is the start, not the end</h2>
+  <p>A traditional automation either works or throws an error. An AI step is different: it can run perfectly and still be wrong, confidently, every time. Nobody gets an alert when a model starts labelling refund requests as sales enquiries. The only way to know is to <strong>look</strong>, on purpose, with a method.</p>
+<p>This module gives you that method in three layers: <strong>logs</strong> (what happened), <strong>evaluation</strong> (was it right), and <strong>improvement</strong> (change it safely). The habit is borrowed from software operations, where it is called observability. You will do it in spreadsheets.</p>
+<div class="info-box"><h3><i class="fas fa-circle-info"></i> The monitoring question</h3><p>For each workflow, can you answer within five minutes: how many runs yesterday, how many failed, how much did it cost, and how often was the AI step wrong? If not, this module fixes that.</p></div>
+</div><div class="section fade-up" id="logs">
+  <h2 class="section-title"><i class="fas fa-list"></i> 2. Execution logs and what to record for AI steps</h2>
+  <p>Every automation platform keeps a run history. n8n calls it <strong>Executions</strong>: one entry per run, with the input and output of every node, the time it took, and where it failed. Zapier has <em>Zap history</em>, Make has the <em>scenario execution log</em>, Power Automate has <em>run history</em>. Open it daily for the first two weeks of any new workflow, then weekly.</p>
+<p>The platform log is not enough for AI steps, because it does not summarise. Add your own <strong>AI log</strong>: one row per AI call, appended to a sheet by the workflow itself.</p>
+<div class="code-block"><button class="copy-btn">Copy</button>timestamp | workflow | run id | step name | model | input (first 200 chars, redacted) | output | confidence or category | input tokens | output tokens | cost | latency ms | human decision (if gated)</div>
+<ul>
+<li><strong>Input and output</strong> let you re-read what the model saw and said. Redact PII before logging, as in Module 11.</li>
+<li><strong>Confidence or category</strong> makes escalation and evaluation possible. If the model does not return one, ask for it in the prompt ("also return a confidence from 1 to 5").</li>
+<li><strong>Tokens and cost</strong> come from the model node's output in most tools. Multiply by the vendor's price per token, or record the vendor's reported cost.</li>
+<li><strong>Latency</strong> shows when a model or tool is slowing down before users complain.</li>
+</ul>
+<p>Keep the log in the same workbook as the approval log from Module 10. One workbook per workflow, one tab per log, is a pattern you can maintain.</p>
+</div><div class="section fade-up" id="failures">
+  <h2 class="section-title"><i class="fas fa-triangle-exclamation"></i> 3. Failure handling: retries, fallbacks and the human queue</h2>
+  <p>Things fail for boring reasons: a model endpoint is busy, an email server times out, a sheet is locked. Design for it once and the workflow becomes reliable.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Technique</th><th>What it does</th><th>Where to set it</th></tr></thead><tbody>
+<tr><td><strong>Retry with backoff</strong></td><td>Try again after 5 s, then 15 s, then 45 s. Cures most transient errors.</td><td>Node settings: "retry on fail", max tries 3, wait between tries</td></tr>
+<tr><td><strong>Fallback path</strong></td><td>If the primary model fails, use a second model or a simpler rule ("if subject contains invoice, category = billing").</td><td>Error output of the node, routed to an alternative branch</td></tr>
+<tr><td><strong>Dead-letter / human queue</strong></td><td>Anything that still fails is written to a "needs human" sheet or channel with the full context, and a person handles it.</td><td>Error workflow (n8n) or a catch branch that appends to the queue and notifies</td></tr>
+<tr><td><strong>Idempotency</strong></td><td>Running the same input twice does not create two tickets or two emails. Check for an existing record before creating one.</td><td>A lookup step before every create step</td></tr>
+<tr><td><strong>Alerting</strong></td><td>A message when the failure rate passes a threshold, not on every failure.</td><td>A scheduled workflow that counts errors in the last hour</td></tr>
+</tbody></table></div>
+<div class="info-box warning"><h3><i class="fas fa-triangle-exclamation"></i> Retries and gates</h3><p>Never retry an action that may already have succeeded, such as "send email", without checking first. Retry the read, then decide again.</p></div>
+</div><div class="section fade-up" id="golden-set">
+  <h2 class="section-title"><i class="fas fa-star"></i> 4. Evaluation: the golden set and the rubric</h2>
+  <p>A <strong>golden set</strong> is a small collection of real inputs with the correct answer written by a person. Twenty examples is enough to start; fifty is comfortable. For the triage flow, that is twenty real (redacted) emails, each with the category a competent colleague would give it.</p>
+<p>To evaluate, run every golden input through the AI step and compare. For categories the score is simply <strong>accuracy</strong>: correct divided by total. For free text such as a drafted reply, use a <strong>rubric</strong>: three or four yes/no criteria a person can judge in ten seconds.</p>
+<div class="code-block"><button class="copy-btn">Copy</button>Reply-draft rubric (score 0-4)
+[ ] Answers the customer's actual question
+[ ] Contains no invented facts (prices, dates, policies)
+[ ] Matches the tone guide (polite, brief, no jargon)
+[ ] Safe to send without legal or financial commitment</div>
+<div class="subsection"><h3>Building a good golden set</h3>
+<ul>
+<li><strong>Sample the real mix.</strong> If 60% of emails are billing, the set should be about 60% billing. Add a few deliberately hard or ambiguous cases and label them as such.</li>
+<li><strong>Two labellers.</strong> Have two colleagues label independently and discuss the disagreements. If humans cannot agree on a case, the model cannot be marked wrong on it.</li>
+<li><strong>Keep it out of the prompt.</strong> Golden examples must not appear in the instructions, or you are testing memory, not skill.</li>
+<li><strong>Grow it from failures.</strong> Every escalation and every human correction from the approval log is a candidate golden example.</li>
+</ul></div>
+<div class="subsection"><h3>LLM-as-judge</h3>
+<p>Scoring fifty drafts by hand takes an hour. You can ask a second model to apply the rubric instead: give it the customer email, the draft and the four criteria, and ask for a score with a one-line reason per criterion. This is <strong>LLM-as-judge</strong>. It is fast and consistent, and it is good enough to catch big regressions. It is not a replacement for people on anything that matters, because the judge can share the blind spots of the model it is judging. The rule: <em>a person scores the golden set; the judge scores everything else, and a person checks a sample of the judge's scores each month.</em></p></div>
+</div><div class="section fade-up" id="regression">
+  <h2 class="section-title"><i class="fas fa-code-merge"></i> 5. Changing things safely: regression checks and cost</h2>
+  <p>Every prompt edit and every model upgrade is a change that can make some cases better and others worse. Software teams call an unnoticed "worse" a <strong>regression</strong>. The golden set is your regression test.</p>
+<ol>
+<li>Record the current score on the golden set (say 17/20).</li>
+<li>Make one change: a prompt edit, or a model swap. Not both.</li>
+<li>Rerun the golden set. Compare per item, not just the total: a change from 17/20 to 17/20 can still have fixed two cases and broken two others.</li>
+<li>Keep the change only if it is at least as good overall and breaks nothing that matters. Note the score, the change and the date in a changelog tab.</li>
+</ol>
+<div class="subsection"><h3>Cost tracking</h3>
+<p>Sum the cost column of the AI log per day and per workflow. Three numbers to watch: <strong>cost per run</strong> (rising means longer prompts or more loops), <strong>runs per day</strong> (rising means adoption, or a runaway trigger), and <strong>cost per correct outcome</strong> (cost divided by accuracy, the number that lets you compare a cheap-but-sloppy model with an expensive accurate one). Set a monthly budget per workflow and an alert at 80%.</p></div>
+<div class="subsection"><h3>The one-sheet dashboard</h3>
+<p>A single tab with a pivot or four formulas is enough: runs per day, failures per day, cost per day, and the latest golden-set score. Chart the first three as lines over the last 30 days. Anyone who opens the sheet should understand the health of the workflow in ten seconds.</p></div>
+</div><div class="section fade-up" id="adoption">
+  <h2 class="section-title"><i class="fas fa-people-group"></i> 6. Change management and the kill switch</h2>
+  <p>An automation nobody trusts is switched off within a month. Adoption is a design task, not a launch email.</p>
+<ul>
+<li><strong>Shadow mode first.</strong> Run the workflow for a week producing drafts and labels that nobody acts on. Compare with what people actually did. Fix the gaps, then go live.</li>
+<li><strong>Train the people in the loop.</strong> Approvers need to know what they are approving, how to reject, and where the log lives. Fifteen minutes with a real example beats a manual.</li>
+<li><strong>Make feedback one click.</strong> A "this was wrong" button or a column in the log turns every correction into a golden example.</li>
+<li><strong>Publish the numbers.</strong> A weekly line in the team channel: runs, hours saved, accuracy, cost. Trust grows from visible evidence.</li>
+<li><strong>Name an owner.</strong> Every workflow has one person who reads the dashboard weekly, owns the changelog, and answers "why did it do that?".</li>
+</ul>
+<div class="info-box danger"><h3><i class="fas fa-power-off"></i> The kill switch</h3><p>Before go-live, know exactly how to stop the workflow in under a minute (deactivate in n8n, turn off the Zap, disable the flow) and who is allowed to do it, including out of hours. Write it in the policy from Module 11 and test it once. An automation you cannot stop quickly is not under control.</p></div>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will measure the triage flow, change it, and measure again. You need the gated triage workflow, twenty real or realistic support emails (redacted), a colleague for ten minutes, and a workbook with three tabs: <code>Golden set</code>, <code>AI log</code>, <code>Dashboard</code>.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Build the golden set</h3><p>Paste twenty emails into the <code>Golden set</code> tab with columns: id, email text, my label. Ask a colleague to label the same twenty in a separate column without seeing yours. Resolve disagreements together and record the agreed label. Mark any case you both found hard.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Add the AI log</h3><p>After the classify step in the workflow, add a Google Sheets append-row node writing to <code>AI log</code> with the columns from Section 2. Use the model node's token counts for cost. Run one test email and check the row appears.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Score the current prompt</h3><p>Run the twenty golden emails through the workflow (a manual trigger with the sheet as input is easiest). Copy the model's labels next to the agreed labels and compute accuracy with a COUNTIF. Record the score and date in a <code>Changelog</code> tab.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Make one change</h3><p>Edit the classification prompt in one way: add clearer category definitions, or one example of each category (not from the golden set). Do not change the model at the same time.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Re-score and compare</h3><p>Rerun the twenty. Compare item by item: which cases improved, which got worse. Keep or revert the change and write the decision in the changelog.</p></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Add failure handling</h3><p>On the model node set retry on fail (3 tries, 10 s apart). Route the node's error output to a branch that appends the email to a <code>Needs human</code> tab and posts one message to your channel.</p></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Build the dashboard</h3><p>In the <code>Dashboard</code> tab compute runs per day, failures per day and cost per day from the AI log, plus the latest golden-set score. Add one line chart. Write the kill-switch instruction at the top of the tab: who deactivates the workflow and how.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>The workbook with golden set, AI log, changelog (two scored runs) and dashboard, plus a screenshot of the failure branch. Save as <code>M12-monitoring</code>.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="1"><p>1. Why is platform run history not enough for monitoring an AI step?</p><label><input type="radio" name="q0" value="0"> <span>It is deleted every hour</span></label><label><input type="radio" name="q0" value="1"> <span>It shows errors but cannot tell you whether a successful run was correct</span></label><label><input type="radio" name="q0" value="2"> <span>It costs extra</span></label><label><input type="radio" name="q0" value="3"> <span>It only works for email</span></label><div class="quiz-why"><strong>Why:</strong> An AI step can succeed technically and be wrong. Correctness has to be measured against known-good answers, which is what the golden set does.</div></div><div class="quiz-q" data-answer="1"><p>2. A golden set should...</p><label><input type="radio" name="q1" value="0"> <span>Be included in the system prompt so the model learns it</span></label><label><input type="radio" name="q1" value="1"> <span>Reflect the real mix of cases, be labelled by more than one person, and stay out of the prompt</span></label><label><input type="radio" name="q1" value="2"> <span>Contain only easy cases</span></label><label><input type="radio" name="q1" value="3"> <span>Be replaced every day</span></label><div class="quiz-why"><strong>Why:</strong> Representative, agreed labels make the score meaningful; keeping examples out of the prompt ensures you measure skill, not recall.</div></div><div class="quiz-q" data-answer="1"><p>3. When is LLM-as-judge appropriate?</p><label><input type="radio" name="q2" value="0"> <span>For every decision, replacing people entirely</span></label><label><input type="radio" name="q2" value="1"> <span>For scoring large volumes against a rubric, with a person scoring the golden set and sampling the judge's work</span></label><label><input type="radio" name="q2" value="2"> <span>Never</span></label><label><input type="radio" name="q2" value="3"> <span>Only for numbers</span></label><div class="quiz-why"><strong>Why:</strong> The judge is fast and consistent but can share the model's blind spots, so humans anchor the golden set and audit a sample.</div></div><div class="quiz-q" data-answer="1"><p>4. You change the prompt and the golden-set score stays at 17/20. What should you check?</p><label><input type="radio" name="q3" value="0"> <span>Nothing, the score is unchanged</span></label><label><input type="radio" name="q3" value="1"> <span>Per-item results, because two cases may have improved while two others broke</span></label><label><input type="radio" name="q3" value="2"> <span>The model's temperature</span></label><label><input type="radio" name="q3" value="3"> <span>Only the cost</span></label><div class="quiz-why"><strong>Why:</strong> Equal totals can hide regressions on specific cases. Compare item by item before keeping the change.</div></div><div class="quiz-q" data-answer="2"><p>5. Which action should never be retried automatically without a check?</p><label><input type="radio" name="q4" value="0"> <span>Reading a sheet</span></label><label><input type="radio" name="q4" value="1"> <span>Classifying an email</span></label><label><input type="radio" name="q4" value="2"> <span>Sending an email</span></label><label><input type="radio" name="q4" value="3"> <span>Fetching a calendar</span></label><div class="quiz-why"><strong>Why:</strong> A send may already have succeeded before the error was reported. Retrying blindly can send duplicates. Check first, then decide.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. List the columns of an AI log row and explain why confidence is included.</summary><div><p>Timestamp, workflow, run id, step, model, redacted input, output, confidence or category, tokens, cost, latency, human decision. Confidence enables escalation of uncertain cases and lets you evaluate whether the model knows when it is unsure.</p></div></details><details class="solution"><summary>2. Describe the four-step regression check.</summary><div><p>Record the current golden-set score; make one change; rerun and compare per item; keep only if at least as good and nothing important broke, then note it in the changelog.</p></div></details><details class="solution"><summary>3. What is the kill switch and what must be true about it before go-live?</summary><div><p>The documented way to stop the workflow in under a minute. Before go-live it must be written down, assigned to named people including out of hours, and tested once.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>AI steps can be wrong while succeeding, so monitoring means logs plus evaluation, not just error counts.</li><li>Log every AI call: redacted input, output, confidence, tokens, cost, latency, and any human decision.</li><li>Handle failure with retries (never on sends), fallbacks, a human queue and idempotency.</li><li>A 20-item golden set with agreed labels is your accuracy meter and your regression test; LLM-as-judge scales scoring but people anchor it.</li><li>Change one thing at a time, compare per item, track cost per correct outcome, keep a one-sheet dashboard, name an owner, and test the kill switch.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/devops/11_monitoring.html">Monitoring and observability (DevOps Lab, Module 11)</a> &middot; <a href="/n8n.html">n8n: error handling and recovery strategies</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="11_security_and_governance.html">&larr; Module 11: Security & governance</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="13_capstone.html">Module 13: Capstone &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

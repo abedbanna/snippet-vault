@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompting for Operators - AI Administrator</title>
+    <meta name="description" content="Write prompts that give reliable, structured results: roles, context, constraints, templates and assistants that know your files. Module 2 of AI Administrator.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Prompting for Operators</h1>
+  <p class="hero-sub">Write a prompt that returns the same shape of answer every time, keep a library of templates for your team, and set up an assistant that knows your own documents.</p>
+  <p class="hero-meta">Module 2 of 14 &middot; Day 1 · Session 2 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 02</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~45 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Use the five parts of a working prompt: <strong>role, context, task, constraints, output format</strong>.</li><li>Ask for structured outputs (tables, checklists, labelled fields) that can be copied straight into a spreadsheet or a workflow.</li><li>Turn a good prompt into a reusable <strong>template</strong> with placeholders, and improve it with examples.</li><li>Set up a project or custom assistant with uploaded policy documents, and test where it is reliable and where it is not.</li><li>Recognise hallucination and over-confidence, and know the three habits that catch them.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="01_agents_and_automation.html">Module 1: Agents and Automation, Explained</a>, plus an account on ChatGPT, Claude, Copilot or Gemini.</p>
+</div>
+<div class="section fade-up" id="why-prompting">
+  <h2 class="section-title"><i class="fas fa-lightbulb"></i> 1. A prompt is a work instruction</h2>
+  <p>When you hand a task to a new temp, you do not say "deal with the inbox". You say who they are standing in for, what the team does, what exactly to do, what they must not do, and what the finished result should look like. A prompt is the same instruction, written for a model. Vague instruction, vague output.</p>
+<p>The difference between a chat you enjoyed and a prompt you can put inside an automation is <strong>repeatability</strong>. In Module 6 the same prompt will run hundreds of times a day without you watching. It has to produce the same shape of answer for every input. That is the standard you are learning to write to now.</p>
+<div class="info-box"><h3><i class="fas fa-circle-info"></i> The five parts</h3><p><strong>Role</strong> (who the model is), <strong>context</strong> (what it needs to know), <strong>task</strong> (the one thing to do), <strong>constraints</strong> (limits, tone, what not to do), <strong>output format</strong> (the exact shape of the answer). Most weak prompts are missing two of these.</p></div>
+</div><div class="section fade-up" id="five-parts">
+  <h2 class="section-title"><i class="fas fa-list-ol"></i> 2. The five parts, with a before and after</h2>
+  <p>Here is a real request an office coordinator typed, and the version that works inside a workflow.</p>
+<div class="code-block"><button class="copy-btn">Copy</button>Before:
+Summarise this email and tell me what to do.</div>
+<div class="code-block"><button class="copy-btn">Copy</button>After:
+Role: You are an assistant to the facilities coordinator of a 200-person office.
+Context: We receive maintenance requests by email. Urgent means a safety risk or a stopped service (lift, water, power, access).
+Task: Read the email below and produce a triage note.
+Constraints: Do not invent details that are not in the email. If the urgency is unclear, say "unclear" rather than guessing. Maximum 80 words.
+Output format, exactly these labelled lines:
+Requester:
+Location:
+Issue (one sentence):
+Urgency (urgent / normal / unclear):
+Suggested next action:
+
+Email:
+[paste email here]</div>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Part</th><th>What it does</th><th>What goes wrong without it</th></tr></thead><tbody>
+<tr><td>Role</td><td>Sets vocabulary, tone and assumed knowledge</td><td>Generic, over-long answers</td></tr>
+<tr><td>Context</td><td>Gives the facts and definitions the model cannot know</td><td>The model guesses your policies</td></tr>
+<tr><td>Task</td><td>One verb, one deliverable</td><td>The model does three things badly</td></tr>
+<tr><td>Constraints</td><td>Length, tone, forbidden actions, what to do when unsure</td><td>Invented details, wrong register</td></tr>
+<tr><td>Output format</td><td>Makes the answer machine- and colleague-readable</td><td>Different shape every run; nothing downstream can use it</td></tr>
+</tbody></table></div>
+<p>The line <em>"If unclear, say unclear rather than guessing"</em> is the single most valuable sentence in the prompt. It turns a confident wrong answer into a flag a person can act on. You will reuse it in every AI step you build.</p>
+</div><div class="section fade-up" id="structured">
+  <h2 class="section-title"><i class="fas fa-table"></i> 3. Structured outputs and few-shot examples</h2>
+  <p>An automation cannot read prose. It reads <strong>fields</strong>. Ask for labelled lines, a fixed set of categories, a markdown table, or a small set of key-value pairs, and say the allowed values out loud: <em>"Category must be one of: billing, technical, sales, other."</em></p>
+<div class="subsection"><h3>Few-shot examples</h3>
+<p>Models copy patterns better than they follow descriptions. If your classification has edge cases, show two or three worked examples inside the prompt. This is called <em>few-shot prompting</em>.</p>
+<div class="code-block"><button class="copy-btn">Copy</button>Classify each message as billing, technical, sales or other.
+
+Example 1: "My invoice shows the old price" -> billing
+Example 2: "The portal logs me out every minute" -> technical
+Example 3: "Do you offer a plan for schools?" -> sales
+Example 4: "Thanks for the quick help yesterday" -> other
+
+Now classify: "[message]"
+Answer with the category only.</div></div>
+<div class="subsection"><h3>Iterating on a prompt</h3>
+<ol>
+<li>Collect ten real inputs, including two awkward ones.</li>
+<li>Run the prompt on all ten and mark each answer right or wrong in a sheet.</li>
+<li>Fix the prompt for the wrong ones by adding a constraint or an example. Never fix by adding "be more accurate".</li>
+<li>Re-run all ten. Stop when you are at nine or ten out of ten twice in a row.</li>
+</ol>
+<p>That ten-row sheet is your first <strong>test set</strong>. Keep it. In Module 12 you will use it again every time you change the prompt or the model.</p></div>
+</div><div class="section fade-up" id="projects">
+  <h2 class="section-title"><i class="fas fa-folder-open"></i> 4. Assistants that know your documents</h2>
+  <p>Every major assistant now lets you save a standing set of instructions together with uploaded files, so you do not repeat the context each time. The names differ; the idea is the same.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Product</th><th>Feature</th><th>What you can upload</th><th>Sharing</th></tr></thead><tbody>
+<tr><td>ChatGPT</td><td>Projects, custom GPTs</td><td>PDF, Word, spreadsheets, text</td><td>Custom GPTs can be shared with a team or link</td></tr>
+<tr><td>Claude</td><td>Projects with project knowledge</td><td>PDF, Word, text, images</td><td>Shared within a Team or Enterprise workspace</td></tr>
+<tr><td>Microsoft Copilot</td><td>Copilot agents, Copilot Notebooks</td><td>SharePoint and OneDrive files</td><td>Shared through Microsoft 365 permissions</td></tr>
+<tr><td>Google Gemini</td><td>Gems</td><td>Google Drive files</td><td>Shared with Workspace users</td></tr>
+</tbody></table></div>
+<p>A "department assistant" built this way is the simplest agent you will meet: a model, instructions, and memory in the form of your documents. It has no tools yet, so it can only answer, not act. That is a good thing while you learn what it gets wrong.</p>
+<div class="info-box warning"><h3><i class="fas fa-triangle-exclamation"></i> Data goes where the model goes</h3><p>Before you upload a policy, a contract or anything with personal data, check your organisation's rules and the product's data terms. Consumer tiers may use uploads for training; business tiers usually do not. Module 11 covers this properly. Until then, use public or dummy documents in the labs.</p></div>
+</div><div class="section fade-up" id="failure">
+  <h2 class="section-title"><i class="fas fa-triangle-exclamation"></i> 5. Where prompts fail: hallucination and over-confidence</h2>
+  <p>A language model produces the most plausible next words. When it lacks a fact it will often produce a plausible fact instead. This is <strong>hallucination</strong>, and it looks exactly like a correct answer. Three habits catch most of it:</p>
+<ul>
+<li><strong>Ground it.</strong> Give the model the source (paste the email, upload the policy) and instruct it to answer only from that source, quoting the line it used.</li>
+<li><strong>Give it an exit.</strong> "If the answer is not in the document, say so." A model told it may say "not found" will say it.</li>
+<li><strong>Check the checkable.</strong> Names, dates, numbers, order IDs and policy clauses can be verified in seconds. Verify them before they leave your desk.</li>
+</ul>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody>
+<tr><td>Cites a policy section that does not exist</td><td>No source provided, or source not searched</td><td>Upload the policy, require a quote</td></tr>
+<tr><td>Different category for the same email on two runs</td><td>Categories not defined, no examples</td><td>List allowed values, add few-shot examples</td></tr>
+<tr><td>Long, polite, says nothing</td><td>No task, no format</td><td>One verb, labelled output lines, word limit</td></tr>
+<tr><td>Confident answer to an ambiguous request</td><td>No "unclear" option</td><td>Add the unsure clause and route unclear items to a person</td></tr>
+</tbody></table></div>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will build two things: a five-template prompt library your team can reuse, and a department assistant that answers from uploaded documents. Use any of ChatGPT, Claude, Copilot or Gemini. For the documents, use public policies (for example a university's leave policy found online) or a made-up one; do not upload real internal documents yet.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Create the library document</h3><p>Open a new document called <code>M2-prompt-library</code>. Make five headings: <em>Triage an email</em>, <em>Summarise a meeting transcript</em>, <em>Draft a reply</em>, <em>Extract fields from a form</em>, <em>Classify a request</em>.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Write each template with the five parts</h3><p>Under each heading write role, context, task, constraints and output format. Use square-bracket placeholders such as <code>[department]</code> and <code>[paste text]</code> so a colleague can fill them in. Start from this skeleton:</p><div class="code-block"><button class="copy-btn">Copy</button>Role: You are an assistant to the [role] in [department].
+Context: [two or three facts and definitions the model must know]
+Task: [one verb, one deliverable]
+Constraints: Use only the information provided. If something is unclear or missing, write "unclear". Maximum [N] words. Tone: [plain / formal].
+Output format (exactly these lines):
+[Field 1]:
+[Field 2]:
+[Field 3]:
+
+Input:
+[paste text]</div></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Add examples to the classifier</h3><p>For the <em>Classify a request</em> template, list four allowed categories and write one example for each. Add a fifth, awkward example that should be classified as <em>other</em>.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Build the ten-row test set</h3><p>In a spreadsheet, write ten realistic inputs for the classifier, with the category you expect in the next column. Run the prompt on each and record the model's answer in a third column. Count the matches.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Fix and re-run</h3><p>For every mismatch, change the prompt (a constraint or an example, not a plea for accuracy) and run all ten again. Record the second score.</p></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Create the department assistant</h3><p>In your assistant, create a Project (or custom GPT, Gem, or Copilot agent). Paste this as its instructions and upload two public policy documents:</p><div class="code-block"><button class="copy-btn">Copy</button>You are the [department] policy assistant. Answer questions only from the uploaded documents. For every answer, quote the sentence you relied on and name the document. If the answer is not in the documents, reply: "Not covered by the uploaded policies. Please ask [named person]." Keep answers under 120 words.</div></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Test the assistant with a trap</h3><p>Ask it three questions the documents answer, then two they do not (for example a benefit that is not mentioned). Note whether it admits "not covered" or invents an answer. Record the results at the bottom of your library document.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>The <code>M2-prompt-library</code> document (five templates, test scores before and after, and the assistant's trap-test results) plus a screenshot of the assistant answering one question with a quotation.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="2"><p>1. Which of the five prompt parts is most often missing from a prompt that gives a different shape of answer every time?</p><label><input type="radio" name="q0" value="0"> <span>Role</span></label><label><input type="radio" name="q0" value="1"> <span>Context</span></label><label><input type="radio" name="q0" value="2"> <span>Output format</span></label><label><input type="radio" name="q0" value="3"> <span>Task</span></label><div class="quiz-why"><strong>Why:</strong> Without an explicit output format the model chooses its own shape each run, which breaks anything downstream.</div></div><div class="quiz-q" data-answer="1"><p>2. What is few-shot prompting?</p><label><input type="radio" name="q1" value="0"> <span>Asking the same question several times</span></label><label><input type="radio" name="q1" value="1"> <span>Including worked examples of input and expected output inside the prompt</span></label><label><input type="radio" name="q1" value="2"> <span>Using fewer than ten words</span></label><label><input type="radio" name="q1" value="3"> <span>Splitting a task across several models</span></label><div class="quiz-why"><strong>Why:</strong> Examples inside the prompt show the model the pattern to copy, which is more reliable than describing it.</div></div><div class="quiz-q" data-answer="1"><p>3. The best fix for a classifier that mislabels two of ten test emails is to...</p><label><input type="radio" name="q2" value="0"> <span>Add 'please be more accurate' to the prompt</span></label><label><input type="radio" name="q2" value="1"> <span>Add a constraint or an example that covers the failing cases, then re-run all ten</span></label><label><input type="radio" name="q2" value="2"> <span>Switch to a longer prompt</span></label><label><input type="radio" name="q2" value="3"> <span>Remove the two awkward emails from the test set</span></label><div class="quiz-why"><strong>Why:</strong> Prompts improve through specific constraints and examples, tested against the whole set so you do not break what already worked.</div></div><div class="quiz-q" data-answer="1"><p>4. A department assistant built from a Project with uploaded documents is best described as...</p><label><input type="radio" name="q3" value="0"> <span>A full autonomous agent</span></label><label><input type="radio" name="q3" value="1"> <span>A model plus instructions plus memory, with no tools</span></label><label><input type="radio" name="q3" value="2"> <span>An automation</span></label><label><input type="radio" name="q3" value="3"> <span>A search engine</span></label><div class="quiz-why"><strong>Why:</strong> It has three of the four agent parts. Without tools it can answer but cannot act, which is ideal while you learn what it gets wrong.</div></div><div class="quiz-q" data-answer="2"><p>5. Which single instruction most reduces the damage from hallucination?</p><label><input type="radio" name="q4" value="0"> <span>Answer in under 50 words</span></label><label><input type="radio" name="q4" value="1"> <span>Use a friendly tone</span></label><label><input type="radio" name="q4" value="2"> <span>If the answer is not in the source, say so instead of guessing</span></label><label><input type="radio" name="q4" value="3"> <span>Always give three options</span></label><div class="quiz-why"><strong>Why:</strong> Giving the model an explicit way to say 'not found' turns an invented answer into a flag a person can act on.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. Rewrite "Tell me what this contract says about cancellation" using all five parts.</summary><div><p>Role: contracts assistant to the procurement team. Context: we need the notice period and any penalties. Task: extract the cancellation terms from the contract below. Constraints: only from the text, quote the clause, say unclear if absent, under 100 words. Output: Notice period / Penalty / Clause quoted / Confidence.</p></div></details><details class="solution"><summary>2. Why keep the ten-row test set after the prompt works?</summary><div><p>Because prompts and models change. Re-running the same ten inputs after any change tells you immediately whether quality dropped. It becomes the evaluation set used in Module 12.</p></div></details><details class="solution"><summary>3. What is the difference between a project assistant and the agent you will build in Module 8?</summary><div><p>The project assistant has a model, instructions and document memory but no tools; it can only answer. The Module 8 agent adds tools, so it can look things up and take actions.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>A prompt is a work instruction: role, context, task, constraints, output format. Missing parts cause most failures.</li><li>Ask for labelled fields and allowed values, and show examples; that is what makes an answer usable by an automation.</li><li>Improve prompts with a ten-row test set, one constraint or example at a time, and keep the set for later.</li><li>Projects and custom assistants give the model your documents as memory; check data rules before uploading anything real.</li><li>Ground the model, give it an exit, and verify the checkable facts.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/llm_agents.html">A Visual Guide to LLM Agents</a> &middot; <a href="/langchain.html">LangChain and RAG concepts</a> &middot; <a href="/textClassification.html">Text classification with transformers</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="01_agents_and_automation.html">&larr; Module 1: Foundations</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="03_workflow_mapping_current_state.html">Module 3: Mapping I &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

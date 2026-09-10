@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Mapping I: The Current State - AI Administrator</title>
+    <meta name="description" content="Map a real process before automating it: SIPOC, swimlanes, triggers, hand-offs, wait times and pain points in draw.io. Module 3 of AI Administrator.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Workflow Mapping I: The Current State</h1>
+  <p class="hero-sub">Draw the process you chose in Module 1 exactly as it happens today, with who does what, how long each step waits, and where it hurts.</p>
+  <p class="hero-meta">Module 3 of 14 &middot; Day 2 · Session 3 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 03</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~45 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Explain why an unmapped process cannot be safely automated.</li><li>Produce a <strong>SIPOC</strong> summary (suppliers, inputs, process, outputs, customers) for a task.</li><li>Draw a <strong>swimlane diagram</strong> that shows every actor, step, decision, hand-off and wait.</li><li>Tag pain points with a consistent vocabulary and estimate the time each step takes.</li><li>Run a short mapping interview with a colleague without leading them.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="02_prompting_for_operators.html">Module 2: Prompting for Operators</a> and your task inventory from Module 1. You will need a free <a href="https://app.diagrams.net">draw.io</a> account or the desktop app.</p>
+</div>
+<div class="section fade-up" id="why-map">
+  <h2 class="section-title"><i class="fas fa-lightbulb"></i> 1. Why map before you automate</h2>
+  <p>The most common automation failure is not technical. It is automating the process as one person <em>thinks</em> it works, then discovering the exceptions that three other people quietly handle every week. Automation makes a process rigid. If you freeze a process you have not looked at, you freeze the workarounds too.</p>
+<p>Mapping is cheap. Two hours with a whiteboard or draw.io usually reveals duplicated data entry, approvals nobody reads, and a wait of days for a step that takes minutes. Often the map alone fixes a third of the problem before any tool is involved.</p>
+<div class="info-box"><h3><i class="fas fa-circle-info"></i> The rule</h3><p>You may only automate a step you can describe precisely enough that a stranger could do it from your description. Mapping is how you find out which steps those are.</p></div>
+</div><div class="section fade-up" id="sipoc">
+  <h2 class="section-title"><i class="fas fa-table-columns"></i> 2. Start wide: the SIPOC</h2>
+  <p>Before drawing steps, fix the boundaries. SIPOC is a one-line summary that stops you mapping the wrong thing.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Letter</th><th>Question</th><th>Example: leave requests</th></tr></thead><tbody>
+<tr><td><strong>S</strong>uppliers</td><td>Who provides the inputs?</td><td>Employees, line managers, HR system</td></tr>
+<tr><td><strong>I</strong>nputs</td><td>What arrives to start or feed the process?</td><td>Leave form, remaining balance, team calendar</td></tr>
+<tr><td><strong>P</strong>rocess</td><td>The five to seven biggest steps, no detail yet</td><td>Submit, check balance, manager decides, update calendar, confirm</td></tr>
+<tr><td><strong>O</strong>utputs</td><td>What leaves the process?</td><td>Approved or declined request, updated calendar, balance</td></tr>
+<tr><td><strong>C</strong>ustomers</td><td>Who receives the outputs?</td><td>Employee, payroll, the team</td></tr>
+</tbody></table></div>
+<p>Write the <strong>trigger</strong> (what starts it) and the <strong>end state</strong> (how you know it is finished) above the table. A process without a clear trigger cannot be automated, because automation tools need something to listen for.</p>
+</div><div class="section fade-up" id="swimlanes">
+  <h2 class="section-title"><i class="fas fa-water"></i> 3. The swimlane diagram</h2>
+  <p>A swimlane diagram is a flowchart with one horizontal lane per actor: each person, team or system that touches the work. Steps sit in the lane of whoever does them. Every time the flow crosses a lane, that is a <strong>hand-off</strong>, and hand-offs are where time is lost and information is dropped.</p>
+<div class="grid">
+<div class="card"><h3><i class="fas fa-play"></i> Trigger</h3><p>A rounded shape at the far left. "Email arrives", "Form submitted", "First of the month".</p></div>
+<div class="card"><h3><i class="fas fa-square-check"></i> Step</h3><p>A rectangle with a verb and an object: "Check leave balance". One action per box.</p></div>
+<div class="card"><h3><i class="fas fa-diamond"></i> Decision</h3><p>A diamond with a yes/no question and labelled exits. If a decision has more than two exits, it is usually two decisions.</p></div>
+<div class="card"><h3><i class="fas fa-hourglass-half"></i> Wait</h3><p>Annotate the arrow with how long the work sits before the next step starts. Waits are usually longer than the work.</p></div>
+</div>
+<div class="subsection"><h3>Two numbers on every step</h3>
+<p>Write <strong>touch time</strong> (minutes of actual work) and <strong>wait time</strong> (how long it sits before that work starts). A process with 25 minutes of touch time and 4 days of elapsed time is not slow because people are slow. It is slow because it queues six times. That distinction decides what you automate: notifications and routing fix waits; AI steps fix touch time.</p></div>
+<div class="info-box warning"><h3><i class="fas fa-triangle-exclamation"></i> Map what happens, not what should</h3><p>Include the workaround where the coordinator emails the manager privately because the system notification is ignored. That workaround is real; the official step is fiction. Automate reality.</p></div>
+</div><div class="section fade-up" id="pain">
+  <h2 class="section-title"><i class="fas fa-tags"></i> 4. Tagging pain points</h2>
+  <p>Once the map is drawn, walk through it with a fixed set of tags. Using the same vocabulary across every map lets you compare processes later.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Tag</th><th>Meaning</th><th>Typical fix</th></tr></thead><tbody>
+<tr><td><code>REKEY</code></td><td>Same data typed into a second system</td><td>Automation copies it</td></tr>
+<tr><td><code>WAIT</code></td><td>Work sits for hours or days for no reason but attention</td><td>Notifications, reminders, routing</td></tr>
+<tr><td><code>READ</code></td><td>A person reads free text to decide or extract something</td><td>AI classification or extraction step</td></tr>
+<tr><td><code>DRAFT</code></td><td>A person writes near-identical text repeatedly</td><td>AI drafting step, human sends</td></tr>
+<tr><td><code>CHASE</code></td><td>Someone reminds someone else to act</td><td>Scheduled reminders with escalation</td></tr>
+<tr><td><code>RUBBER</code></td><td>An approval that is always given without reading</td><td>Remove it, or turn it into an exception check</td></tr>
+<tr><td><code>JUDGE</code></td><td>A real decision needing judgement or accountability</td><td>Keep human; give them a better summary</td></tr>
+</tbody></table></div>
+<p>Notice that <code>JUDGE</code> is a pain-point tag too. It is not a problem to solve; it is a step to protect. Marking it now is how the human stays in the loop by design rather than by accident, which is the subject of Module 10.</p>
+</div><div class="section fade-up" id="interview">
+  <h2 class="section-title"><i class="fas fa-comments"></i> 5. Mapping with colleagues</h2>
+  <p>You rarely know the whole process. Twenty minutes with each person who touches it will change your map. Some rules that keep the interview honest:</p>
+<ul>
+<li>Ask <em>"walk me through the last one you did"</em>, not <em>"how does this work?"</em>. The last real case contains the exceptions.</li>
+<li>Ask <em>"what happens if...?"</em> at every decision: if the manager is on leave, if the balance is negative, if the form is incomplete.</li>
+<li>Ask for the <em>artefacts</em>: the actual email, the spreadsheet, the form. Take screenshots with permission.</li>
+<li>Do not propose fixes during the interview. People stop describing and start defending.</li>
+<li>Confirm the map with them afterwards. A map nobody has checked is a guess with boxes.</li>
+</ul>
+<div class="subsection"><h3>Drawing in draw.io</h3>
+<p>draw.io (also called diagrams.net) is free, needs no account for the desktop version, and saves to Google Drive or OneDrive. Use <em>Arrange &gt; Insert &gt; Layout &gt; Horizontal Flow</em> for a quick start, or search the shape panel for "swimlane" to insert a pool with lanes. Keep one process per page and export as PNG for sharing.</p></div>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will map the course task you selected in Module 1 as it runs today. Work in draw.io; if you prefer Miro or Lucidchart the steps are identical. Budget an hour, including a short conversation with at least one colleague who touches the process.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Write the SIPOC and trigger</h3><p>At the top of a new document, fill in Suppliers, Inputs, Process (five to seven steps), Outputs and Customers. Above it write the trigger and the end state in one sentence each.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Interview one colleague</h3><p>Spend fifteen minutes with someone who does part of the process. Use these openers and write down every exception they mention:</p><div class="code-block"><button class="copy-btn">Copy</button>1. Walk me through the last one you handled, from the moment it arrived.
+2. What did you have to look up, and where?
+3. Who did you wait for, and how long?
+4. When does this go wrong, and what do you do then?
+5. Is there a step you do that isn't in the official process?</div></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Create the swimlanes</h3><p>In draw.io insert a pool with one lane per actor, including systems (email, HR system, spreadsheet) as their own lanes. Place the trigger at the far left.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Add steps, decisions and hand-offs</h3><p>Add one rectangle per action and a diamond per decision, connected in order. Every arrow that crosses a lane is a hand-off; count them and write the number in the title.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Add the two numbers</h3><p>On each step write touch time in minutes. On each arrow write the typical wait. Total both at the bottom: total touch time versus total elapsed time.</p></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Tag the pain points</h3><p>Add a small coloured label to each step using the tags from Section 4 (<code>REKEY</code>, <code>WAIT</code>, <code>READ</code>, <code>DRAFT</code>, <code>CHASE</code>, <code>RUBBER</code>, <code>JUDGE</code>). A step may carry more than one.</p></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Ask your assistant to review the map</h3><p>Export the diagram as PNG and, if your assistant accepts images, upload it with this prompt. Otherwise paste a text list of the steps.</p><div class="code-block"><button class="copy-btn">Copy</button>This is a current-state swimlane map of a business process. List (1) any step that seems to be missing between two connected steps, (2) decisions that have no "no" path, and (3) the three hand-offs most likely to lose information. Do not suggest automation yet.</div></div></div><div class="step"><div class="step-num">8</div><div class="step-body"><h3>Confirm with your colleague</h3><p>Show them the map for five minutes and correct anything they push back on. Save as <code>M3-current-state</code>.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>The current-state swimlane (PNG and source file) with SIPOC, touch and wait times, pain-point tags, hand-off count, and a five-line note on what the colleague interview changed.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="1"><p>1. Why should a process be mapped before it is automated?</p><label><input type="radio" name="q0" value="0"> <span>Because automation tools require a diagram file</span></label><label><input type="radio" name="q0" value="1"> <span>Because automation freezes the process, including any workarounds and exceptions you have not seen</span></label><label><input type="radio" name="q0" value="2"> <span>To make the project look professional</span></label><label><input type="radio" name="q0" value="3"> <span>Because mapping replaces the need for testing</span></label><div class="quiz-why"><strong>Why:</strong> Automation makes a process rigid. Mapping first reveals the exceptions and workarounds that would otherwise be locked in or broken.</div></div><div class="quiz-q" data-answer="2"><p>2. In a swimlane diagram, what does an arrow crossing from one lane to another represent?</p><label><input type="radio" name="q1" value="0"> <span>A decision</span></label><label><input type="radio" name="q1" value="1"> <span>A loop</span></label><label><input type="radio" name="q1" value="2"> <span>A hand-off between actors</span></label><label><input type="radio" name="q1" value="3"> <span>The end of the process</span></label><div class="quiz-why"><strong>Why:</strong> Lanes are actors; crossing lanes is a hand-off, and hand-offs are where waits and lost information accumulate.</div></div><div class="quiz-q" data-answer="1"><p>3. A process has 25 minutes of touch time and four days of elapsed time. What does this tell you?</p><label><input type="radio" name="q2" value="0"> <span>The people are slow</span></label><label><input type="radio" name="q2" value="1"> <span>Most of the time is waiting, so notifications and routing will help more than AI steps</span></label><label><input type="radio" name="q2" value="2"> <span>It needs a full autonomous agent</span></label><label><input type="radio" name="q2" value="3"> <span>It cannot be automated</span></label><div class="quiz-why"><strong>Why:</strong> Elapsed time far above touch time means the work queues. Waits are fixed with reminders, routing and escalation, not with faster work.</div></div><div class="quiz-q" data-answer="2"><p>4. Which pain-point tag marks a step you should protect rather than automate?</p><label><input type="radio" name="q3" value="0"> <span>REKEY</span></label><label><input type="radio" name="q3" value="1"> <span>CHASE</span></label><label><input type="radio" name="q3" value="2"> <span>JUDGE</span></label><label><input type="radio" name="q3" value="3"> <span>RUBBER</span></label><div class="quiz-why"><strong>Why:</strong> JUDGE marks a real decision needing accountability. It stays with a person; the automation's job is to prepare a better summary for them.</div></div><div class="quiz-q" data-answer="2"><p>5. Which interview question is most likely to reveal the real process?</p><label><input type="radio" name="q4" value="0"> <span>How does this process work?</span></label><label><input type="radio" name="q4" value="1"> <span>What would you improve?</span></label><label><input type="radio" name="q4" value="2"> <span>Walk me through the last one you handled</span></label><label><input type="radio" name="q4" value="3"> <span>Do you follow the official procedure?</span></label><div class="quiz-why"><strong>Why:</strong> A specific recent case contains the exceptions and workarounds that a general description leaves out.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. What is the difference between touch time and wait time, and why does it change what you automate?</summary><div><p>Touch time is minutes of actual work; wait time is how long the item sits before that work starts. Large waits are fixed by notifications, routing and reminders; large touch time on reading or writing is fixed by AI steps.</p></div></details><details class="solution"><summary>2. Why do systems get their own swimlane?</summary><div><p>Because entering data into a system, or waiting for a system to send something, is a hand-off like any other. Showing it exposes REKEY and WAIT steps that people forget because they feel like part of the job.</p></div></details><details class="solution"><summary>3. Name two things a map must contain before you move to Module 4.</summary><div><p>A clear trigger and end state, actors in lanes with every step and decision, touch and wait times, pain-point tags, and confirmation from at least one colleague who does the work.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>Automation freezes a process. Map what really happens, including workarounds, before freezing anything.</li><li>SIPOC fixes the boundaries; a swimlane shows actors, steps, decisions, hand-offs and waits.</li><li>Two numbers on every step: touch time and wait time. They decide whether routing or AI is the fix.</li><li>Tag pain points with a fixed vocabulary, and mark JUDGE steps to protect the human decision.</li><li>Interview with 'walk me through the last one', ask 'what if', and confirm the map with the people who do the work.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/scrum/module3.html">Roles and accountabilities (Scrum course)</a> &middot; <a href="/devops/01_devops.html">Draw the loop (DevOps Lab, Module 1)</a> &middot; <a href="https://www.drawio.com/">draw.io</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="02_prompting_for_operators.html">&larr; Module 2: Prompting</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="04_workflow_mapping_future_state.html">Module 4: Mapping II &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

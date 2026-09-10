@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VKNNJ362N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7VKNNJ362N');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adding AI Steps to Automations - AI Administrator</title>
+    <meta name="description" content="Add classify, summarise, extract and draft steps to a no-code automation, with fixed outputs and an unsure route. Module 6 of the AI Administrator course.">
+    <link rel="preload" href="/assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts.css">
+    <link rel="stylesheet" href="/assets/fa/all.min.css">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>:root{--primary:#e11d48;--primary-hover:#fb7185;--glow:rgba(225,29,72,.14)}
+    .quiz-q{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin:14px 0}
+    .quiz-q p{color:var(--text);font-weight:600;margin-bottom:10px}
+    .quiz-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:.92rem}
+    .quiz-q label:hover{background:rgba(255,255,255,.04)} body.light-mode .quiz-q label:hover{background:rgba(0,0,0,.04)}
+    .quiz-q input{margin-top:5px;accent-color:var(--primary)}
+    .quiz-q.correct{border-color:var(--success)} .quiz-q.wrong{border-color:var(--danger)}
+    .quiz-why{display:none;margin-top:10px;font-size:.88rem;color:var(--text2);border-top:1px dashed var(--border2);padding-top:10px}
+    .quiz-q.correct .quiz-why,.quiz-q.wrong .quiz-why{display:block}
+    .quiz-score{font-weight:700;color:var(--text);margin-top:16px}
+    .lab-deliverable{margin-top:20px}
+    .fig{margin:22px 0 26px;padding:18px 16px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px}
+    .fig svg{display:block;width:100%;height:auto;max-width:760px;margin:0 auto}
+    .fig figcaption{margin-top:10px;font-size:.85rem;color:var(--text2);text-align:center;line-height:1.6}
+    body.light-mode .fig{background:#f8fafc}
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a class="nav-logo" href="index.html"><i class="fas fa-user-gear"></i> AI Administrator</a>
+  <div class="nav-links"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+  <div style="display:flex;gap:8px;align-items:center"><button class="theme-toggle" aria-label="Toggle light/dark theme"><i class="fas fa-sun"></i></button><button class="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button></div>
+</div></nav>
+<div class="mobile-menu"><a href="index.html#modules">Modules</a><a href="#lab">Lab</a><a href="#quiz">Quiz</a><a href="/courses.html">All courses</a></div>
+<section class="hero"><div class="hero-content">
+  <h1>Adding AI Steps to Automations</h1>
+  <p class="hero-sub">Put a language model inside a fixed workflow so it reads, sorts and drafts for you, without giving up predictability.</p>
+  <p class="hero-meta">Module 6 of 14 &middot; Day 3 · Session 6 &middot; AI Administrator: Agentic Workflows &amp; Automation</p>
+  <span class="diff-badge">Module 06</span> <span class="cat-badge"><i class="fas fa-clock"></i> ~45 min read + lab</span> <span class="cat-badge"><i class="fas fa-mouse-pointer"></i> No code</span>
+</div></section>
+<div class="container">
+<div class="section fade-up" id="objectives">
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> What you will learn</h2>
+  <ul><li>Name the four AI step types (<strong>classify, summarise, extract, draft</strong>) and pick the right one for a task.</li><li>Write a step prompt with a fixed output format so the next node can rely on it.</li><li>Design an <strong>unsure</strong> route so low-confidence items go to a person instead of the wrong queue.</li><li>Estimate the cost of an AI step per run and choose between a small and a large model.</li></ul>
+  <p><strong>Prerequisites:</strong> <a href="05_automation_basics_n8n.html">Module 5: Automation Basics with n8n</a>. You need a working n8n account with Gmail and Google Sheets credentials connected.</p>
+</div>
+<div class="section fade-up" id="four-types">
+  <h2 class="section-title"><i class="fas fa-shapes"></i> 1. The four AI step types</h2>
+  <p>Almost every useful AI step in an office workflow is one of four jobs. Naming the job first keeps the prompt short and the output predictable.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Step type</th><th>Input</th><th>Output</th><th>Typical use</th></tr></thead><tbody>
+<tr><td><strong>Classify</strong></td><td>A text</td><td>One label from a fixed list</td><td>Route emails, tag tickets, flag urgency</td></tr>
+<tr><td><strong>Summarise</strong></td><td>A long text or several texts</td><td>A short text</td><td>Weekly report from five trackers, meeting notes to actions</td></tr>
+<tr><td><strong>Extract</strong></td><td>A text</td><td>Named fields (order number, date, amount)</td><td>Invoices to a sheet, CVs to a table, forms to a CRM</td></tr>
+<tr><td><strong>Draft</strong></td><td>Facts plus a tone</td><td>A text for a person to review</td><td>Replies, reminders, announcements</td></tr>
+</tbody></table></div>
+<p>Classify and extract are the safest because their output is small and checkable. Draft is the riskiest because the output goes to a reader, so a draft step should almost always end in a <strong>human review</strong> rather than a send. Module 10 turns that rule into a formal control.</p>
+<div class="info-box"><h3><i class="fas fa-circle-info"></i> Chain them</h3><p>Real workflows chain the four: extract the fields from an invoice, classify it as within or above the approval limit, draft the reply, and summarise the day's invoices for finance. Each step is small, and each one can be tested on its own.</p></div>
+</div><div class="section fade-up" id="placement">
+  <h2 class="section-title"><i class="fas fa-location-dot"></i> 2. Where the AI step goes in the workflow</h2>
+  <p>Take the map you drew in Module 4. An AI step replaces exactly one box, usually one of the boxes you marked <em>AI-judged</em>. Around it the workflow stays as it was: a trigger before it, a router or a data node after it.</p>
+<ol>
+<li><strong>Trigger</strong> &mdash; the new email, form row or file arrives.</li>
+<li><strong>Prepare</strong> &mdash; pull out the text you want the model to see (subject and body, not the whole thread with signatures).</li>
+<li><strong>AI step</strong> &mdash; classify, summarise, extract or draft.</li>
+<li><strong>Route or store</strong> &mdash; a Switch node sends each label to its branch; a Sheets node stores the fields.</li>
+<li><strong>Act or hand over</strong> &mdash; apply a label, notify a person, or wait for approval.</li>
+</ol>
+<p>Two placement mistakes are common. Putting the AI step <em>first</em>, before any filtering, means paying for the model on every message including newsletters. Putting it <em>last</em>, after an action such as sending, means the model's judgement can no longer stop anything. Keep the AI step in the middle, after cheap filters and before consequential actions.</p>
+</div><div class="section fade-up" id="prompt">
+  <h2 class="section-title"><i class="fas fa-pen-ruler"></i> 3. Writing the step prompt with a fixed output</h2>
+  <p>A step prompt is different from a chat prompt. Nobody reads the answer; the next node does. So the prompt must pin down the <strong>exact shape</strong> of the output, and the allowed values.</p>
+<div class="code-block"><button class="copy-btn">Copy</button>You classify incoming customer emails for a small software company.
+Read the email below and reply with exactly one word from this list:
+billing, technical, sales, unsure
+Rules:
+- billing: invoices, payments, refunds, subscription changes
+- technical: errors, login problems, how-to questions about the product
+- sales: pricing, demos, new licences, partnerships
+- unsure: anything else, or if two labels fit equally well
+Reply with the single word only. No punctuation, no explanation.
+
+Email subject: {{ $json.subject }}
+Email body: {{ $json.text }}</div>
+<p>Notice the pattern: a one-line role, a closed list of allowed answers, a short definition of each, an explicit instruction to output nothing else, and the input at the end. The double curly braces are how n8n inserts fields from the previous node; you pick them from the left-hand panel, you do not type them.</p>
+<div class="subsection"><h3>Structured output to fields</h3>
+<p>For extract steps you want several fields, not one word. Ask for them in a fixed key: value form, one per line, and tell the model to write <code>none</code> when a value is missing. Most no-code AI nodes also offer a "structured output" or "JSON output" option that turns the answer into separate fields automatically; in n8n it is the <strong>Structured Output Parser</strong> attached to a Basic LLM Chain. Use it whenever a later node needs to read the values.</p></div>
+<div class="info-box warning"><h3><i class="fas fa-triangle-exclamation"></i> Never let the model invent a label</h3><p>If the list is billing, technical, sales, the model will sometimes answer "support" or "billing question". A Switch node will not match, and the item vanishes. Always include a catch-all value and a fallback branch.</p></div>
+</div><div class="section fade-up" id="unsure">
+  <h2 class="section-title"><i class="fas fa-clipboard-question"></i> 4. Confidence and the 'unsure' route</h2>
+  <p>A model is never certain; it is fluent, which is different. Your design has to make room for doubt. The simplest tool is a fourth label, <strong>unsure</strong>, that routes to a person. Three ways to fill it:</p>
+<ul>
+<li><strong>Let the model say so.</strong> Define <em>unsure</em> in the prompt as in Section 3. Models use it more readily than you would expect once it is allowed.</li>
+<li><strong>Ask for a confidence number.</strong> "Then on a second line write a confidence from 0 to 100." Route anything under 70 to the human queue. The number is a self-estimate, not a measurement, but it separates the obvious from the borderline surprisingly well.</li>
+<li><strong>Ask twice.</strong> Run the classification with two different prompts or models and route to a person when they disagree. Double the cost, but very effective for high-stakes sorting.</li>
+</ul>
+<p>The human queue is not a failure. It is where the interesting cases live, and it is the sample you review weekly to improve the prompt (Module 12). A healthy triage workflow sends 5 to 15 percent of items to a person; zero means the model is guessing.</p>
+</div><div class="section fade-up" id="cost">
+  <h2 class="section-title"><i class="fas fa-coins"></i> 5. Cost per run and model choice</h2>
+  <p>Every AI step costs tokens, roughly words in plus words out. A classification prompt with a 300-word email is about 500 tokens in and 1 token out. At typical small-model prices that is a fraction of a cent; at large-model prices it is a few cents. Multiply by volume before you decide.</p>
+<div class="table-wrap"><table class="dark-table"><thead><tr><th>Step</th><th>Model size</th><th>Why</th></tr></thead><tbody>
+<tr><td>Classify with a short label list</td><td>Small (mini / haiku / flash class)</td><td>Easy task, huge volume, milliseconds matter</td></tr>
+<tr><td>Extract a few fields from a clean form</td><td>Small</td><td>Same</td></tr>
+<tr><td>Summarise a long, messy thread</td><td>Large</td><td>Needs to follow references across pages</td></tr>
+<tr><td>Draft a reply a customer will read</td><td>Large</td><td>Tone and accuracy are visible</td></tr>
+<tr><td>Extract from scanned, low-quality documents</td><td>Large, with vision</td><td>Small models miss fields</td></tr>
+</tbody></table></div>
+<p>Two habits keep costs sane: trim the input (subject and body, not the whole thread) and set a <strong>monthly budget alert</strong> in the model provider's dashboard on day one. Module 12 adds proper cost tracking per workflow.</p>
+</div>
+<div class="section fade-up" id="lab">
+  <h2 class="section-title"><i class="fas fa-flask"></i> Practical lab</h2>
+  <p>You will build an inbox triage workflow in n8n: a new email arrives, an AI step classifies it as billing, technical, sales or unsure, a Switch node routes it, the three known classes get a Gmail label, and unsure items are written to a Google Sheet that a person reviews. Use a test mailbox, not your live one.</p>
+  <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Create the workflow and the trigger</h3><p>In n8n create a new workflow called <em>Inbox triage</em>. Add a <strong>Gmail Trigger</strong> node, choose your test Gmail credential, set the event to <em>Message received</em> and the poll interval to every minute. Click <em>Fetch test event</em> after sending yourself a test email so the fields appear.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><h3>Add the AI classification step</h3><p>Add a <strong>Basic LLM Chain</strong> node (or the OpenAI or Anthropic node in <em>text</em> mode) and connect a chat model credential. Paste the prompt from Section 3 into the prompt field, then replace the two placeholders by dragging <em>subject</em> and <em>text</em> from the input panel. Run the node on your test email; the output should be a single word.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><h3>Clean the answer</h3><p>Add a <strong>Set</strong> (Edit Fields) node after the AI step. Create a field called <code>label</code> and set it to the AI output, trimmed and lower-cased using the expression editor's <em>trim</em> and <em>toLowerCase</em> helpers. This protects the router from stray spaces or capitals.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><h3>Route with a Switch</h3><p>Add a <strong>Switch</strong> node with four rules on the <code>label</code> field: equals billing, equals technical, equals sales, and a fallback output for everything else. Rename the outputs so the canvas is readable.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><h3>Label the known classes</h3><p>On the billing, technical and sales outputs add a <strong>Gmail</strong> node, operation <em>Add label</em>, using the message ID from the trigger and a label you have pre-created in Gmail. Three small nodes, one per branch.</p></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><h3>Send unsure to a human queue</h3><p>On the fallback output add a <strong>Google Sheets</strong> node, operation <em>Append row</em>, into a sheet called <em>Triage review</em> with columns date, from, subject, snippet, link. This is the queue a person opens each morning.</p></div></div><div class="step"><div class="step-num">7</div><div class="step-body"><h3>Test with ten emails</h3><p>Send yourself ten test emails: three clearly billing, three technical, two sales, and two deliberately ambiguous. Check that eight get labels and two land in the sheet. If an obvious email goes to the sheet, tighten the definitions in the prompt; if an ambiguous one gets a label, add an example of it under <em>unsure</em>.</p></div></div><div class="step"><div class="step-num">8</div><div class="step-body"><h3>Activate and add a budget alert</h3><p>Switch the workflow to <em>Active</em>. Then open your model provider's usage page and set a monthly spending alert. Note the estimated cost per run from the execution log for your Module 12 tracker.</p></div></div>
+  <div class="info-box success lab-deliverable"><h3><i class="fas fa-paper-plane"></i> Deliverable</h3><p>A screenshot of the activated workflow, the <em>Triage review</em> sheet with your two ambiguous test emails in it, and a note of the per-run cost. Save as <code>M6-inbox-triage</code>.</p></div>
+</div>
+<div class="section fade-up" id="quiz">
+  <h2 class="section-title"><i class="fas fa-list-check"></i> Knowledge check</h2>
+  <p class="section-desc">Pick one answer per question, then check your score. These mirror the style of the final exam.</p>
+  <form id="quizForm" onsubmit="return false"><div class="quiz-q" data-answer="2"><p>1. Which AI step type produces one label from a fixed list?</p><label><input type="radio" name="q0" value="0"> <span>Summarise</span></label><label><input type="radio" name="q0" value="1"> <span>Extract</span></label><label><input type="radio" name="q0" value="2"> <span>Classify</span></label><label><input type="radio" name="q0" value="3"> <span>Draft</span></label><div class="quiz-why"><strong>Why:</strong> Classify maps a text to exactly one of a closed set of labels, which is what a router needs.</div></div><div class="quiz-q" data-answer="1"><p>2. Why should a step prompt end with 'reply with the single word only'?</p><label><input type="radio" name="q1" value="0"> <span>To save tokens</span></label><label><input type="radio" name="q1" value="1"> <span>Because the next node, not a person, reads the answer and must match it exactly</span></label><label><input type="radio" name="q1" value="2"> <span>Because models cannot write sentences</span></label><label><input type="radio" name="q1" value="3"> <span>It is required by n8n</span></label><div class="quiz-why"><strong>Why:</strong> A Switch node compares values literally. Extra words or punctuation cause a silent mismatch.</div></div><div class="quiz-q" data-answer="1"><p>3. What is the purpose of an 'unsure' label?</p><label><input type="radio" name="q2" value="0"> <span>To reduce cost</span></label><label><input type="radio" name="q2" value="1"> <span>To give the model a way to express doubt so borderline items go to a person</span></label><label><input type="radio" name="q2" value="2"> <span>To speed up the workflow</span></label><label><input type="radio" name="q2" value="3"> <span>To replace the fallback branch</span></label><div class="quiz-why"><strong>Why:</strong> Models are fluent even when wrong. An explicit unsure route turns doubt into a human review instead of a wrong action.</div></div><div class="quiz-q" data-answer="1"><p>4. Which task most justifies a large model rather than a small one?</p><label><input type="radio" name="q3" value="0"> <span>Classifying emails into three labels</span></label><label><input type="radio" name="q3" value="1"> <span>Drafting a reply a customer will read</span></label><label><input type="radio" name="q3" value="2"> <span>Extracting an order number from a clean form</span></label><label><input type="radio" name="q3" value="3"> <span>Trimming whitespace</span></label><div class="quiz-why"><strong>Why:</strong> Tone and accuracy are visible to the reader, so the extra quality is worth the cost. Simple classification is fine on a small model.</div></div><div class="quiz-q" data-answer="2"><p>5. Where should the AI step sit in the workflow?</p><label><input type="radio" name="q4" value="0"> <span>Before any filtering, so it sees everything</span></label><label><input type="radio" name="q4" value="1"> <span>After the consequential action, to check it</span></label><label><input type="radio" name="q4" value="2"> <span>In the middle: after cheap filters, before consequential actions</span></label><label><input type="radio" name="q4" value="3"> <span>It does not matter</span></label><div class="quiz-why"><strong>Why:</strong> Filters first save cost; placing the step before actions means its judgement can still stop something.</div></div>
+  <button class="btn btn-primary" type="button" id="quizBtn">Check answers</button>
+  <p class="quiz-score" id="quizScore"></p></form>
+</div>
+<script>
+(function(){var b=document.getElementById('quizBtn');if(!b)return;b.addEventListener('click',function(){var qs=document.querySelectorAll('.quiz-q'),ok=0;qs.forEach(function(q){var a=q.getAttribute('data-answer'),s=q.querySelector('input:checked');q.classList.remove('correct','wrong');if(s&&s.value===a){q.classList.add('correct');ok++;}else{q.classList.add('wrong');}});document.getElementById('quizScore').textContent='Score: '+ok+' / '+qs.length+(ok===qs.length?' — excellent.':ok>=qs.length*0.7?' — pass mark reached.':' — review the explanations and try again.');});})();
+</script>
+<div class="section fade-up" id="selfcheck">
+  <h2 class="section-title"><i class="fas fa-circle-question"></i> Self-check</h2>
+  <p class="section-desc">Answer in your own words first, then open the model answer.</p>
+  <details class="solution"><summary>1. For your course task from Module 1, which of the four step types would you use, and what is the exact output format?</summary><div><p>Any concrete answer with a closed list of labels or a fixed set of fields. A draft step must end in a review, not a send.</p></div></details><details class="solution"><summary>2. Describe two ways to detect low confidence in a classification step.</summary><div><p>Allow an explicit unsure label; ask for a 0 to 100 confidence and route below a threshold; or run two prompts and route disagreements.</p></div></details><details class="solution"><summary>3. A triage workflow sends zero items to the human queue. Is that good news?</summary><div><p>No. It means the model never expresses doubt, so wrong labels are going straight into branches. Aim for 5 to 15 percent in review.</p></div></details>
+</div>
+<div class="section fade-up" id="summary">
+  <h2 class="section-title"><i class="fas fa-flag-checkered"></i> Summary</h2>
+  <div class="info-box success"><h3><i class="fas fa-check"></i> Key takeaways</h3><ul><li>Every AI step is classify, summarise, extract or draft. Name the job before writing the prompt.</li><li>Step prompts pin down the exact output shape and allowed values, with a catch-all label and a fallback branch.</li><li>An 'unsure' route turns model doubt into human review and gives you the sample for improving the prompt.</li><li>Trim inputs, use small models for simple steps and set a budget alert on day one.</li></ul></div>
+  <p><strong>Further reading:</strong> <a href="/n8n.html">n8n for intelligence workflows</a> &middot; <a href="/llm_agents.html">A Visual Guide to LLM Agents</a></p>
+</div>
+<div class="page-nav"><a class="nav-btn prev" href="05_automation_basics_n8n.html">&larr; Module 5: n8n basics</a><a class="nav-btn prev" href="index.html">All modules</a><a class="nav-btn next" href="07_connecting_tools_mcp.html">Module 7: Connecting tools &rarr;</a></div>
+</div>
+<footer class="footer"><div class="footer-bottom">AI Administrator: Agentic Workflows &amp; Automation &middot; Course by Dr. Abdulkarim Albanna &middot; albanna-tutorials.com</div></footer>
+<button class="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+<script src="/assets/theme.js"></script>
+</body>
+</html>
