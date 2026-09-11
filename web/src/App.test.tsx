@@ -83,4 +83,55 @@ describe('App', () => {
     expect(languageInput.value).toBe('')
     expect(codeInput.value).toBe('')
   })
+
+  describe('search', () => {
+    async function renderWithSnippets() {
+      const fetchMock = vi.fn(() => jsonResponse([newer, older]))
+      vi.stubGlobal('fetch', fetchMock)
+      render(<App />)
+      await screen.findByText('Older')
+      return { fetchMock, search: screen.getByLabelText('Search') as HTMLInputElement }
+    }
+
+    it('narrows the list by case-insensitive substring of title or language', async () => {
+      const { fetchMock, search } = await renderWithSnippets()
+
+      fireEvent.change(search, { target: { value: 'NEW' } })
+      let items = screen.getAllByRole('listitem')
+      expect(items).toHaveLength(1)
+      expect(items[0].textContent).toContain('Newer')
+
+      fireEvent.change(search, { target: { value: 'pyth' } })
+      items = screen.getAllByRole('listitem')
+      expect(items).toHaveLength(1)
+      expect(items[0].textContent).toContain('Older')
+
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not search code', async () => {
+      const { search } = await renderWithSnippets()
+      fireEvent.change(search, { target: { value: 'print' } })
+      expect(screen.queryAllByRole('listitem')).toHaveLength(0)
+    })
+
+    it('clearing the box restores the full list', async () => {
+      const { search } = await renderWithSnippets()
+      fireEvent.change(search, { target: { value: 'new' } })
+      expect(screen.getAllByRole('listitem')).toHaveLength(1)
+
+      fireEvent.change(search, { target: { value: '' } })
+      expect(screen.getAllByRole('listitem')).toHaveLength(2)
+      expect(screen.queryByText('No snippets match.')).toBeNull()
+    })
+
+    it('shows a no-match message when nothing matches', async () => {
+      const { search } = await renderWithSnippets()
+      expect(screen.queryByText('No snippets match.')).toBeNull()
+
+      fireEvent.change(search, { target: { value: 'rust' } })
+      expect(screen.queryAllByRole('listitem')).toHaveLength(0)
+      expect(screen.getByText('No snippets match.')).toBeTruthy()
+    })
+  })
 })
