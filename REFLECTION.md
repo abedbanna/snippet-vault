@@ -117,3 +117,28 @@ The first M2 run had a failing component test. The assistant read the error, nam
 root cause (leftover DOM between tests because Testing Library's auto-cleanup needs vitest
 globals, which this project does not enable), added an explicit cleanup call, and reran.
 Root cause first, then the smallest fix.
+
+# Module 6 reflection
+
+## Which test caught the deliberate bug
+
+After validation was green, I reintroduced the failure mode on purpose: I made `create`
+accept an empty title again. Two tests went red immediately, "POST /snippets returns 400
+and saves nothing when title is ''" and the whitespace-only variant. That is the proof the
+test is real: it fails for the right reason. Reverting the one-line change turned them
+green again.
+
+## Did any AI-written test turn out to assert nothing?
+
+No test was empty, but I checked each one for a real assertion, because a test that only
+does `.expect(201)` without checking the body would pass even if the API returned the
+wrong snippet. The create test also asserts the returned id matches a UUID v4 pattern and
+the body matches the input, and the list test asserts the exact newest-first order, not
+just the length. The six validation tests were red before the guard existed, which is the
+strongest evidence they test something.
+
+## The TDD moment
+
+Writing the blank-field tests first, watching six go red, then implementing the smallest
+guard until they went green, was test-driven development with the assistant: the failing
+tests were a target it could not wander away from.
