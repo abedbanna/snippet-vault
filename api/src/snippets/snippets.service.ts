@@ -40,7 +40,7 @@ export class SnippetsService {
 
   findAll(): Snippet[] {
     // Newest first: insertion order is creation order, so reverse a copy.
-    return [...this.snippets];
+    return [...this.snippets].reverse();
   }
 
   /** Returns true if a snippet was removed, false if the id is unknown. */
