@@ -169,3 +169,29 @@ first, then `requireText` gained a limit: 200 for title, 40 for language, 20000 
 remaining four are in `multer`, which Nest's Express adapter depends on for file uploads.
 This API accepts no uploads, `npm audit fix` cannot change it without a breaking Nest
 upgrade, so it is recorded here as an accepted risk to re-check after the next Nest release.
+
+# Module 8 reflection
+
+## What my machine used to provide, and the container now provides
+
+Until this module the vault ran because this laptop had Node 24, npm, the Vite dev server
+with its `/snippets` proxy, and a shell with `PORT` and `CORS_ORIGIN` exported. All of that
+is now inside the images: `api/Dockerfile` ships Node 22 with the compiled `dist/` and the
+production `node_modules` only, running as the `node` user; `web/Dockerfile` builds the Vite
+bundle and hands it to nginx, whose `nginx.conf` proxies `/snippets` to the `api` service.
+`docker compose up --build` starts both, and `docker compose exec api node --version` answers
+22 while the host says 24: the runtime is the container's business now, not the machine's.
+
+## What the first build taught me
+
+The API image failed to build the first time: `node:22-alpine` ships npm 10, which rejects
+this project's lock file (a transitive dev dependency declares a TypeScript 5 peer while the
+project is on 6). The assistant read the error, found the cause in `package-lock.json`, pinned
+npm 11 inside the build stage, and the build passed. Containers make "works on my machine"
+visible: the image had a different npm than my laptop, and the difference surfaced at once.
+
+## No secrets in the images
+
+Both `.dockerignore` files exclude `node_modules`, `dist`, `.git` and `.env`. Configuration
+reaches the API at run time through `env_file: api/.env` in `docker-compose.yml`; `ls -a` inside
+the running container shows `dist`, `node_modules` and `package.json` and no `.env` at all.
