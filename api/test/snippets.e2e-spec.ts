@@ -48,4 +48,24 @@ describe('Snippets (e2e)', () => {
     expect(list.body[0]).toMatchObject(second);
     expect(list.body[1]).toEqual(created.body);
   });
+
+  it('DELETE /snippets/:id returns 204 and removes it from the list', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/snippets')
+      .send({ title: 'Gone', language: 'ts', code: 'x' })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/snippets/${created.body.id}`)
+      .expect(204)
+      .expect('');
+
+    await request(app.getHttpServer()).get('/snippets').expect(200).expect([]);
+  });
+
+  it('DELETE /snippets/:id returns 404 for an unknown id', () => {
+    return request(app.getHttpServer())
+      .delete('/snippets/does-not-exist')
+      .expect(404);
+  });
 });
