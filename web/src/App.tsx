@@ -62,7 +62,12 @@ function App() {
       </form>
       <label>
         Search
-        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input
+          type="search"
+          placeholder="title or language"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </label>
       {needle && visible.length === 0 && <p>No snippets match.</p>}
       <ul>
