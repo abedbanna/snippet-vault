@@ -64,6 +64,24 @@ describe('Snippets (e2e)', () => {
           .expect([]);
       },
     );
+
+    it.each([
+      ['title', 200],
+      ['language', 40],
+      ['code', 20000],
+    ])(
+      'POST /snippets returns 400 naming the field and limit when %s exceeds %i characters',
+      async (field, limit) => {
+        const res = await request(app.getHttpServer())
+          .post('/snippets')
+          .send({ ...validSnippet, [field]: 'x'.repeat(limit + 1) })
+          .expect(400);
+
+        expect(res.body.message).toBe(
+          `${field} must be at most ${limit} characters`,
+        );
+      },
+    );
   });
 
   describe('S2. See my snippets', () => {
