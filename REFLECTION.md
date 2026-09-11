@@ -142,3 +142,30 @@ strongest evidence they test something.
 Writing the blank-field tests first, watching six go red, then implementing the smallest
 guard until they went green, was test-driven development with the assistant: the failing
 tests were a target it could not wander away from.
+
+# Module 7 reflection
+
+## The gate, and the first thing it refused
+
+`npm run gate` in `api/` runs lint, the Prettier check, the unit tests and the e2e tests,
+and a pre-commit hook runs it before every commit. To prove it bites I swapped the quotes
+in the controller and tried to commit: the hook stopped at the format check and refused
+the commit. `npm run format` put the quotes back and there was nothing left to commit. The
+gate also caught the assistant itself: in the validation step it wrapped one line that
+Prettier wanted on a single line, the gate went red, and it had to fix its own formatting.
+
+## Where a secret or unvalidated input was hiding
+
+There was no secret, but there was an open door: the API had no CORS policy and a
+hard-coded port. Both now come from `api/.env` (gitignored) through `config.ts`; the
+committed `api/.env.example` documents the shape, and `CORS_ORIGIN='*'` is rejected at
+startup. On input, `POST /snippets` accepted a title of any length. Three tests went red
+first, then `requireText` gained a limit: 200 for title, 40 for language, 20000 for code.
+
+## The dependency scan
+
+`npm audit` reported nine vulnerabilities. Five were in `undici`, pulled in only by
+`@nestjs/mau`, a deploy CLI the project never uses, so the fix was `npm uninstall`. The
+remaining four are in `multer`, which Nest's Express adapter depends on for file uploads.
+This API accepts no uploads, `npm audit fix` cannot change it without a breaking Nest
+upgrade, so it is recorded here as an accepted risk to re-check after the next Nest release.
