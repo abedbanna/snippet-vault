@@ -84,6 +84,26 @@ describe('App', () => {
     expect(codeInput.value).toBe('')
   })
 
+  it('clicking Delete calls DELETE /snippets/:id and removes the item', async () => {
+    const fetchMock = vi.fn((_url: string, init?: RequestInit) =>
+      init?.method === 'DELETE'
+        ? Promise.resolve(new Response(null, { status: 204 }))
+        : jsonResponse([newer, older]),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    render(<App />)
+    await screen.findByText('Older')
+
+    const deleteButtons = screen.getAllByRole('button', { name: 'Delete' })
+    expect(deleteButtons).toHaveLength(2)
+    fireEvent.click(deleteButtons[0])
+
+    await waitFor(() => expect(screen.getAllByRole('listitem')).toHaveLength(1))
+    expect(fetchMock).toHaveBeenCalledWith('/snippets/2', { method: 'DELETE' })
+    expect(screen.queryByText('Newer')).toBeNull()
+    expect(screen.getByText('Older')).toBeTruthy()
+  })
+
   describe('search', () => {
     async function renderWithSnippets() {
       const fetchMock = vi.fn(() => jsonResponse([newer, older]))
