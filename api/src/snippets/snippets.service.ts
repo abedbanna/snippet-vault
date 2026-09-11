@@ -22,4 +22,12 @@ export class SnippetsService {
     // Newest first: insertion order is creation order, so reverse a copy.
     return [...this.snippets].reverse();
   }
+
+  /** Returns true if a snippet was removed, false if the id is unknown. */
+  remove(id: string): boolean {
+    const index = this.snippets.findIndex((s) => s.id === id);
+    if (index === -1) return false;
+    this.snippets.splice(index, 1);
+    return true;
+  }
 }
