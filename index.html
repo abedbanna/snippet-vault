@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snippet Vault</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --border: #262b36;
+    --text: #e6e8ee;
+    --muted: #8b93a5;
+    --accent: #5b9cff;
+    --accent-hover: #7cb0ff;
+    --danger: #ff6b6b;
+    --code-bg: #0b0d11;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    margin: 0 0 24px;
+    font-size: 0.95rem;
+  }
+
+  /* Search */
+  .search-row {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    padding: 8px 0 16px;
+    z-index: 1;
+  }
+  #search {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    outline: none;
+  }
+  #search:focus { border-color: var(--accent); }
+
+  /* Form */
+  form {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 28px;
+    display: grid;
+    gap: 12px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 12px;
+  }
+  @media (max-width: 560px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  input, textarea {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    min-height: 140px;
+    resize: vertical;
+    tab-size: 2;
+  }
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  button {
+    font-size: 0.9rem;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: var(--accent);
+    color: #fff;
+  }
+  button:hover { background: var(--accent-hover); }
+  button.secondary {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text);
+  }
+  button.secondary:hover { background: var(--border); }
+  button.danger {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--danger);
+  }
+  button.danger:hover { background: rgba(255, 107, 107, 0.12); }
+  .error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    min-height: 1.2em;
+  }
+
+  /* List */
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .list-header h2 {
+    font-size: 1rem;
+    margin: 0;
+  }
+  .count { color: var(--muted); font-size: 0.85rem; }
+  #list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .snippet {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .snippet-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .snippet-head:hover { background: rgba(255,255,255,0.03); }
+  .snippet-title {
+    flex: 1;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tag {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(91, 156, 255, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(91, 156, 255, 0.35);
+    white-space: nowrap;
+  }
+  .chevron {
+    color: var(--muted);
+    transition: transform 0.15s;
+  }
+  .snippet.open .chevron { transform: rotate(90deg); }
+  .snippet-body { display: none; }
+  .snippet.open .snippet-body { display: block; }
+  pre {
+    margin: 0;
+    padding: 14px;
+    background: var(--code-bg);
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    tab-size: 2;
+    white-space: pre;
+  }
+  .snippet-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .snippet-actions button {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 0;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Snippet Vault</h1>
+  <p class="subtitle">Saved in this browser via localStorage. Nothing leaves your machine.</p>
+
+  <div class="search-row">
+    <input id="search" type="search" placeholder="Search snippets by title or language…" autocomplete="off" aria-label="Search snippets by title or language">
+  </div>
+
+  <form id="snippet-form" autocomplete="off">
+    <div class="form-row">
+      <div>
+        <label for="title">Title</label>
+        <input id="title" type="text" placeholder="e.g. Debounce helper" required>
+      </div>
+      <div>
+        <label for="language">Language</label>
+        <input id="language" type="text" placeholder="e.g. javascript" list="lang-options" required>
+        <datalist id="lang-options">
+          <option value="javascript"><option value="typescript"><option value="python">
+          <option value="html"><option value="css"><option value="bash"><option value="sql">
+          <option value="go"><option value="rust"><option value="java"><option value="c">
+          <option value="cpp"><option value="json"><option value="yaml"><option value="markdown">
+        </datalist>
+      </div>
+    </div>
+    <div>
+      <label for="code">Code</label>
+      <textarea id="code" placeholder="Paste your snippet here" required spellcheck="false"></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" id="save-btn">Save snippet</button>
+      <button type="button" class="secondary" id="cancel-btn" hidden>Cancel</button>
+      <span class="error" id="form-error" role="alert"></span>
+    </div>
+  </form>
+
+  <div class="list-header">
+    <h2>Snippets</h2>
+    <span class="count" id="count"></span>
+  </div>
+  <ul id="list"></ul>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'snippet-vault:v1';
+
+  var form = document.getElementById('snippet-form');
+  var titleInput = document.getElementById('title');
+  var languageInput = document.getElementById('language');
+  var codeInput = document.getElementById('code');
+  var saveBtn = document.getElementById('save-btn');
+  var cancelBtn = document.getElementById('cancel-btn');
+  var formError = document.getElementById('form-error');
+  var searchInput = document.getElementById('search');
+  var list = document.getElementById('list');
+  var countEl = document.getElementById('count');
+
+  var snippets = load();
+  var editingId = null;
+  var openIds = {};
+
+  // ---------- storage ----------
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snippets));
+      return true;
+    } catch (e) {
+      formError.textContent = 'Could not save: browser storage is full or unavailable.';
+      return false;
+    }
+  }
+
+  function makeId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  // ---------- form ----------
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    formError.textContent = '';
+
+    var title = titleInput.value.trim();
+    var language = languageInput.value.trim().toLowerCase();
+    var code = codeInput.value;
+
+    if (!title || !language || !code.trim()) {
+      formError.textContent = 'Title, language and code are all required.';
+      return;
+    }
+
+    if (editingId) {
+      var existing = snippets.find(function (s) { return s.id === editingId; });
+      if (existing) {
+        existing.title = title;
+        existing.language = language;
+        existing.code = code;
+        existing.updatedAt = Date.now();
+      }
+    } else {
+      snippets.unshift({
+        id: makeId(),
+        title: title,
+        language: language,
+        code: code,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+    }
+
+    if (persist()) {
+      resetForm();
+      render();
+    }
+  });
+
+  cancelBtn.addEventListener('click', resetForm);
+
+  function resetForm() {
+    editingId = null;
+    form.reset();
+    saveBtn.textContent = 'Save snippet';
+    cancelBtn.hidden = true;
+    formError.textContent = '';
+  }
+
+  function startEdit(snippet) {
+    editingId = snippet.id;
+    titleInput.value = snippet.title;
+    languageInput.value = snippet.language;
+    codeInput.value = snippet.code;
+    saveBtn.textContent = 'Update snippet';
+    cancelBtn.hidden = false;
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    titleInput.focus();
+  }
+
+  function remove(id) {
+    var idx = snippets.findIndex(function (s) { return s.id === id; });
+    if (idx === -1) return;
+    if (!confirm('Delete "' + snippets[idx].title + '"?')) return;
+    snippets.splice(idx, 1);
+    delete openIds[id];
+    if (editingId === id) resetForm();
+    if (persist()) render();
+  }
+
+  function copyCode(code, button) {
+    var done = function () {
+      var original = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(function () { button.textContent = original; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(done, function () { fallbackCopy(code); done(); });
+    } else {
+      fallbackCopy(code);
+      done();
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  // ---------- search ----------
+  searchInput.addEventListener('input', render);
+
+  // ---------- render ----------
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function render() {
+    var query = searchInput.value.trim().toLowerCase();
+    var visible = query
+      ? snippets.filter(function (s) {
+          return s.title.toLowerCase().indexOf(query) !== -1 ||
+            (s.language || '').toLowerCase().indexOf(query) !== -1;
+        })
+      : snippets;
+
+    list.innerHTML = '';
+
+    countEl.textContent = query
+      ? visible.length + ' of ' + snippets.length
+      : snippets.length + (snippets.length === 1 ? ' snippet' : ' snippets');
+
+    if (visible.length === 0) {
+      var empty = el('li', 'empty', snippets.length === 0
+        ? 'No snippets yet. Save your first one above.'
+        : 'No snippets match "' + searchInput.value.trim() + '".');
+      list.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function (s) {
+      var item = el('li', 'snippet' + (openIds[s.id] ? ' open' : ''));
+
+      var head = el('div', 'snippet-head');
+      head.setAttribute('role', 'button');
+      head.setAttribute('tabindex', '0');
+      head.setAttribute('aria-expanded', openIds[s.id] ? 'true' : 'false');
+      head.appendChild(el('span', 'chevron', '▶'));
+      head.appendChild(el('span', 'snippet-title', s.title));
+      head.appendChild(el('span', 'tag', s.language));
+
+      var toggle = function () {
+        openIds[s.id] = !openIds[s.id];
+        item.classList.toggle('open', openIds[s.id]);
+        head.setAttribute('aria-expanded', openIds[s.id] ? 'true' : 'false');
+      };
+      head.addEventListener('click', toggle);
+      head.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); }
+      });
+
+      var body = el('div', 'snippet-body');
+      var pre = el('pre');
+      pre.appendChild(el('code', null, s.code));
+      body.appendChild(pre);
+
+      var actions = el('div', 'snippet-actions');
+      var copyBtn = el('button', 'secondary', 'Copy');
+      copyBtn.type = 'button';
+      copyBtn.addEventListener('click', function () { copyCode(s.code, copyBtn); });
+      var editBtn = el('button', 'secondary', 'Edit');
+      editBtn.type = 'button';
+      editBtn.addEventListener('click', function () { startEdit(s); });
+      var delBtn = el('button', 'danger', 'Delete');
+      delBtn.type = 'button';
+      delBtn.addEventListener('click', function () { remove(s.id); });
+      actions.appendChild(copyBtn);
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+      body.appendChild(actions);
+
+      item.appendChild(head);
+      item.appendChild(body);
+      list.appendChild(item);
+    });
+  }
+
+  // Keep tabs in sync if the vault is open in another tab.
+  window.addEventListener('storage', function (ev) {
+    if (ev.key === STORAGE_KEY) {
+      snippets = load();
+      render();
+    }
+  });
+
+  // Allow typing a real tab character in the code box.
+  codeInput.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Tab') {
+      ev.preventDefault();
+      var start = codeInput.selectionStart;
+      var end = codeInput.selectionEnd;
+      codeInput.value = codeInput.value.slice(0, start) + '\t' + codeInput.value.slice(end);
+      codeInput.selectionStart = codeInput.selectionEnd = start + 1;
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
