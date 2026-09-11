@@ -1,0 +1,11 @@
+#!/bin/sh
+# Pre-commit quality gate. Enable once with: git config core.hooksPath .githooks
+set -e
+
+root="$(git rev-parse --show-toplevel)"
+
+echo "[pre-commit] api: npm run gate"
+(cd "$root/api" && npm run gate)
+
+echo "[pre-commit] web: npm run lint"
+(cd "$root/web" && npm run lint)
