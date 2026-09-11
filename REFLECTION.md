@@ -64,3 +64,30 @@ storage file, CORS rules and an "open questions" section. Good thinking, but not
 two-page contract. I asked for the spec to stay under 90 lines with one-line acceptance
 criteria, and it came back at 88. I also reversed one of its decisions: delete is back in
 the MVP as story S4, because version 1 already had it.
+
+# Module 4 reflection
+
+## My history after M1
+
+```
+Add create + list endpoints for snippets (M1)
+Add module 3 reflection
+Add SPEC: stories, data model, milestones
+Add project brief
+Add module 2 reflection
+Scaffold monorepo (web + api)
+Add project context file
+Add module 1 reflection
+First vibe: snippet vault v1
+```
+
+M1 was built on `feature/m1-create-list` and merged into `main` after the diff review.
+
+## One thing the diff review caught that running the app would have hidden
+
+`create` in `snippets.service.ts` stores whatever the request body contains. The tests
+pass and the server runs, but a POST with an empty body would happily save a snippet with
+every field undefined. The spec parks validation in M5, so nothing changes today, but it
+is now written down instead of hidden behind a green test run. I also asked the assistant
+why `findAll` reverses a copy instead of `create` using `unshift`: the store stays
+append-only so the JSON file version can swap in later. Now I can explain every line.
