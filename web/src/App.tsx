@@ -42,6 +42,12 @@ function App() {
     setCode('')
   }
 
+  async function handleDelete(id: string) {
+    const res = await fetch(`/snippets/${id}`, { method: 'DELETE' })
+    if (!res.ok) return
+    setSnippets((prev) => prev.filter((s) => s.id !== id))
+  }
+
   return (
     <main>
       <h1>Snippet Vault</h1>
@@ -78,6 +84,9 @@ function App() {
             <pre>
               <code>{snippet.code}</code>
             </pre>
+            <button type="button" onClick={() => handleDelete(snippet.id)}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
