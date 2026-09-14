@@ -20,3 +20,31 @@ and JavaScript in one file, no build step.
 
 A test that proves save and search work, run automatically on every commit, before
 anyone can merge a change.
+
+# Module 2 reflection
+
+## My context file (CLAUDE.md)
+
+Stack: React in web/, NestJS in api/, one repo with two apps. Conventions: TypeScript
+everywhere, small focused commits, every feature needs a test. Don'ts: no features I did
+not ask for, no hard-coded secrets, no skipped error handling.
+
+## My prompt
+
+Goal: scaffold the snippet vault as a monorepo. Constraints: React front end in web/,
+NestJS API in api/, TypeScript. Acceptance: each app starts with one documented command;
+no features yet. Out of scope: snippets, search, styling; leave the module 1 files
+untouched. First show me the folder plan. Do not write code until I say "go".
+
+## One thing the assistant assumed, and how I steered it
+
+It proposed a root package.json with npm workspaces and root-level `npm run dev:web` /
+`npm run dev:api` scripts. I did not ask for that, so before saying "go" I corrected the
+plan: two independent apps, no root package.json, no workspaces, and a README with one
+start command per app. It also added a GET /health route on its own; I kept it, because
+"the app starts" is easier to check with one route than with none.
+
+## How the structured prompt beat "make me a snippet app"
+
+I got exactly two folders, two start commands and no features, instead of a random
+framework with choices I never made.
