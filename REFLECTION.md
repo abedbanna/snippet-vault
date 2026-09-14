@@ -195,3 +195,22 @@ visible: the image had a different npm than my laptop, and the difference surfac
 Both `.dockerignore` files exclude `node_modules`, `dist`, `.git` and `.env`. Configuration
 reaches the API at run time through `env_file: api/.env` in `docker-compose.yml`; `ls -a` inside
 the running container shows `dist`, `node_modules` and `package.json` and no `.env` at all.
+
+# Module 9 reflection
+
+## What CI caught that I might have merged locally
+
+The pipeline runs the module 7 gate on GitHub's clean runner for every push to `main` and
+every pull request, then builds both Docker images. To prove it, I opened a pull request with
+a "simplification" in the snippets service that dropped the copy-and-reverse in `list()`. The
+local pre-commit hook refused it, but a hook lives in one clone: I committed with
+`--no-verify`, exactly as a teammate without the hook would. CI went red on the newest-first
+test, and branch protection refused `gh pr merge`: "the base branch policy prohibits the
+merge". Restoring the line turned the checks green and the merge went through. The gate on my
+laptop is a convenience; the gate in CI is the one nobody can skip.
+
+## One thing worth knowing
+
+`node:22` and GitHub's Node 22 both ship npm 10, which rejects this repo's lock file, so the
+`api` job installs npm 11 before `npm ci`, mirroring the Dockerfile. CI ran on a machine that
+is not mine, and it passed: "works on my machine" is now "works on the runner".
