@@ -1,0 +1,20 @@
+# Production stack: docker compose -f docker-compose.prod.yml up -d --build
+services:
+  api:
+    build: ./api
+    image: snippet-vault-api
+    # Not published: only reachable from the web container (nginx proxies /snippets here).
+    expose:
+      - "3000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    image: snippet-vault-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped

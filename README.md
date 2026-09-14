@@ -43,6 +43,16 @@ The app is at http://localhost:5173 (nginx serves the front end and proxies `/sn
 docker compose down
 ```
 
+## Production
+
+The host needs Docker (with the compose plugin), a clone of this repo, and a `.env` at the repo root holding the API settings from the table above (set `CORS_ORIGIN` to the site's public origin, e.g. `http://vault.example.com`). The file is gitignored; create it on the server.
+
+```sh
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+This builds the `snippet-vault-api` and `snippet-vault-web` images on the host and serves the app on port 80. Only the web service is published: nginx proxies `/snippets` to the API inside the compose network, so the API is not reachable from the internet. Both containers restart automatically unless stopped.
+
 ## Quality gates
 
 Run inside `api/` (the `web/` app has `npm run lint` only):
