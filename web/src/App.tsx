@@ -13,6 +13,14 @@ function App() {
   const [title, setTitle] = useState('')
   const [language, setLanguage] = useState('')
   const [code, setCode] = useState('')
+  const [query, setQuery] = useState('')
+
+  const needle = query.trim().toLowerCase()
+  const visible = needle
+    ? snippets.filter(
+        (s) => s.title.toLowerCase().includes(needle) || s.language.toLowerCase().includes(needle),
+      )
+    : snippets
 
   useEffect(() => {
     fetch('/snippets')
@@ -52,8 +60,13 @@ function App() {
         </label>
         <button type="submit">Save</button>
       </form>
+      <label>
+        Search
+        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} />
+      </label>
+      {needle && visible.length === 0 && <p>No snippets match.</p>}
       <ul>
-        {snippets.map((snippet) => (
+        {visible.map((snippet) => (
           <li key={snippet.id}>
             <h2>{snippet.title}</h2>
             <span>{snippet.language}</span>
