@@ -1,17 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { CreateSnippetInput, Snippet } from './snippet.js';
+
+/** Returns the trimmed value, or throws a 400 naming the field if it is missing or blank. */
+function requireText(input: unknown, field: keyof CreateSnippetInput): string {
+  const value = (input as Record<string, unknown> | null)?.[field];
+  const trimmed = typeof value === 'string' ? value.trim() : '';
+  if (trimmed === '') {
+    throw new BadRequestException(`${field} must not be blank`);
+  }
+  return trimmed;
+}
 
 @Injectable()
 export class SnippetsService {
   private readonly snippets: Snippet[] = [];
 
   create(input: CreateSnippetInput): Snippet {
+    const title = requireText(input, 'title');
+    const language = requireText(input, 'language');
+    requireText(input, 'code');
     const snippet: Snippet = {
       id: randomUUID(),
-      title: input.title,
-      language: input.language,
-      code: input.code,
+      title,
+      language,
+      code: input.code, // stored verbatim per the spec
       createdAt: new Date().toISOString(),
     };
     this.snippets.push(snippet);
