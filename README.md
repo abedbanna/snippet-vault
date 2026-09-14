@@ -1,5 +1,7 @@
 # Snippet Vault
 
+[![CI](https://github.com/abedbanna/snippet-vault/actions/workflows/ci.yml/badge.svg)](https://github.com/abedbanna/snippet-vault/actions/workflows/ci.yml)
+
 Two independent apps in one repo: a React front end in `web/` and a NestJS API in `api/`.
 
 ## Start the front end
