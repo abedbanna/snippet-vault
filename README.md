@@ -58,8 +58,9 @@ This builds the `snippet-vault-api` and `snippet-vault-web` images on the host a
 `terraform/` creates one droplet (`s-1vcpu-2gb`, Ubuntu 24.04, `fra1`) with your SSH key and a firewall that only allows inbound TCP 22, 80 and 443. `ansible/` installs Docker on it, clones this repo into `/opt/snippet-vault`, writes the `.env` and starts the production stack. Three commands:
 
 ```sh
-# 1. Create the droplet. The token comes from the environment only, never from a file.
-export DIGITALOCEAN_TOKEN=...
+# 1. Create the droplet. The token comes from the environment only: never from a file,
+#    and not from your shell history either (read -s prompts for it without echo).
+read -rs DIGITALOCEAN_TOKEN && export DIGITALOCEAN_TOKEN
 terraform -chdir=terraform init
 terraform -chdir=terraform apply -var ssh_public_key_path=~/.ssh/id_ed25519.pub
 
