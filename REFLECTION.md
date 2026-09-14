@@ -48,3 +48,19 @@ start command per app. It also added a GET /health route on its own; I kept it, 
 
 I got exactly two folders, two start commands and no features, instead of a random
 framework with choices I never made.
+
+# Module 3 reflection
+
+## The non-goal I cut to keep M1 tiny
+
+Editing a snippet. It sounds small, but it needs a route, a form state and tests on both
+sides, and nothing in M1 depends on it. It is parked under Non-goals and can be promoted
+later.
+
+## Where the AI's draft over-scoped, and what I trimmed
+
+The first draft was 139 lines: a "success looks like" paragraph, the exact shape of the
+storage file, CORS rules and an "open questions" section. Good thinking, but not a
+two-page contract. I asked for the spec to stay under 90 lines with one-line acceptance
+criteria, and it came back at 88. I also reversed one of its decisions: delete is back in
+the MVP as story S4, because version 1 already had it.
