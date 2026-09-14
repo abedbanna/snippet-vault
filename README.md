@@ -14,6 +14,19 @@ cd web && npm install && npm run dev
 cd api && npm install && npm run start:dev
 ```
 
+### API configuration
+
+The API reads its settings from environment variables (see `api/src/config.ts`). The start scripts load `api/.env` if it exists via `node --env-file-if-exists`, so copy the example and edit it; the file is gitignored. You can also export the variables in your shell instead.
+
+```sh
+cp api/.env.example api/.env
+```
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `PORT` | `3000` | TCP port the API listens on. |
+| `CORS_ORIGIN` | `http://localhost:5173` | The single browser origin allowed to call the API (the Vite dev server by default). `*` is rejected at startup. |
+
 ## Quality gates
 
 Run inside `api/` (the `web/` app has `npm run lint` only):
