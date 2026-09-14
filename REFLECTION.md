@@ -91,3 +91,29 @@ every field undefined. The spec parks validation in M5, so nothing changes today
 is now written down instead of hidden behind a green test run. I also asked the assistant
 why `findAll` reverses a copy instead of `create` using `unshift`: the store stays
 append-only so the JSON file version can swap in later. Now I can explain every line.
+
+# Module 5 reflection
+
+## Where I took the wheel, and why
+
+After the search milestone landed, the search box just said "Search". The spec says code
+content is not searched, and nothing on the page told the user that. Adding a placeholder,
+"title or language", is a five-second edit, so I made it by hand instead of spending a
+prompt on it, ran the seven web tests again, and committed it separately from the
+assistant's work: "Hint that search matches title or language (hand edit)".
+
+## Acceptance criteria I verified by hand
+
+- S3: typing narrows the list live; matching is case-insensitive ("deb" and "Deb"); it
+  matches language too ("css"); clearing restores the full list; nonsense shows
+  "No snippets match."
+- S1 and S2: saving prepends the snippet and clears the form; the list survives a page
+  reload because it comes from the API.
+- S4: delete removes the item from the list and from the API.
+
+## One debugging moment worth keeping
+
+The first M2 run had a failing component test. The assistant read the error, named the
+root cause (leftover DOM between tests because Testing Library's auto-cleanup needs vitest
+globals, which this project does not enable), added an explicit cleanup call, and reran.
+Root cause first, then the smallest fix.
