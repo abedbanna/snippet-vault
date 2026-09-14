@@ -1,0 +1,70 @@
+# Provision a fresh Ubuntu 24.04 host and run the production stack.
+# Required extra vars (pass with -e, never commit them): port, cors_origin.
+- name: Deploy Snippet Vault
+  hosts: vault
+  vars:
+    app_dir: /opt/snippet-vault
+    repo_url: https://github.com/abedbanna/snippet-vault.git
+    repo_branch: main
+
+  pre_tasks:
+    - name: Check required variables are set
+      ansible.builtin.assert:
+        that:
+          - port is defined
+          - cors_origin is defined
+        fail_msg: "Pass -e port=<api port> -e cors_origin=<public origin> on the command line."
+
+  tasks:
+    - name: Install packages needed for Docker's apt repository
+      ansible.builtin.apt:
+        name: [ca-certificates, curl, git]
+        state: present
+        update_cache: true
+
+    - name: Add Docker's apt repository (fetches and pins its signing key)
+      ansible.builtin.deb822_repository:
+        name: docker
+        types: deb
+        uris: https://download.docker.com/linux/ubuntu
+        suites: "{{ ansible_distribution_release }}"
+        components: stable
+        architectures: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
+        signed_by: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Install Docker Engine and the compose plugin
+      ansible.builtin.apt:
+        name: [docker-ce, docker-ce-cli, containerd.io, docker-compose-plugin]
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker is running and enabled
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Clone or update the repository
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ repo_branch }}"
+        force: true
+      register: checkout
+
+    - name: Write the API .env file
+      ansible.builtin.copy:
+        dest: "{{ app_dir }}/.env"
+        mode: "0600"
+        content: |
+          PORT={{ port }}
+          CORS_ORIGIN={{ cors_origin }}
+      register: env_file
+
+    - name: Build and start the production stack
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.prod.yml up -d --build
+        chdir: "{{ app_dir }}"
+      register: compose
+      changed_when: checkout.changed or env_file.changed or 'Started' in compose.stderr or 'Created' in compose.stderr

@@ -53,6 +53,26 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 This builds the `snippet-vault-api` and `snippet-vault-web` images on the host and serves the app on port 80. Only the web service is published: nginx proxies `/snippets` to the API inside the compose network, so the API is not reachable from the internet. Both containers restart automatically unless stopped.
 
+### Deploy to DigitalOcean
+
+`terraform/` creates one droplet (`s-1vcpu-2gb`, Ubuntu 24.04, `fra1`) with your SSH key and a firewall that only allows inbound TCP 22, 80 and 443. `ansible/` installs Docker on it, clones this repo into `/opt/snippet-vault`, writes the `.env` and starts the production stack. Three commands:
+
+```sh
+# 1. Create the droplet. The token comes from the environment only, never from a file.
+export DIGITALOCEAN_TOKEN=...
+terraform -chdir=terraform init
+terraform -chdir=terraform apply -var ssh_public_key_path=~/.ssh/id_ed25519.pub
+
+# 2. Write the Ansible inventory from the droplet's public IP.
+printf '[vault]\n%s\n' "$(terraform -chdir=terraform output -raw droplet_ipv4)" > ansible/inventory.ini
+
+# 3. Provision the host and start the app. port and cors_origin end up in /opt/snippet-vault/.env.
+export ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/id_ed25519   # or pass --private-key ~/.ssh/id_ed25519
+ansible-playbook -e port=3000 -e cors_origin=http://$(terraform -chdir=terraform output -raw droplet_ipv4) ansible/playbook.yml
+```
+
+Run the `ansible-playbook` command from inside `ansible/` so its `ansible.cfg` is picked up, or set `ANSIBLE_CONFIG=ansible/ansible.cfg`. The playbook is idempotent: rerun it to pull the latest `main` and rebuild. `terraform destroy` removes the droplet, key and firewall. Terraform state, `*.tfvars` and `ansible/inventory.ini` are gitignored.
+
 ## Quality gates
 
 Run inside `api/` (the `web/` app has `npm run lint` only):
