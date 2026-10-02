@@ -6,7 +6,7 @@ kind: "Participant worksheet · 15 minutes · nothing to install"
 
 ## What this is
 
-Your instructor is running a real always-on agent (Hermes Agent, open source) and has connected it to a Telegram bot for this session only. You will talk to it from your phone and watch the four parts of an agent at work: **model, tools, memory, instructions**, and the **think, act, observe** loop.
+Your instructor is running a real always-on agent (Hermes Agent, open source) on a small cloud server and has connected it to a Telegram bot. You will talk to it from your phone and watch the four parts of an agent at work: **model, tools, memory, instructions**, and the **think, act, observe** loop.
 
 ## How to join (3 minutes)
 
@@ -14,7 +14,7 @@ Your instructor is running a real always-on agent (Hermes Agent, open source) an
 2. Scan the QR code on the screen, or search for the bot name the instructor gives you.
 3. Press **Start**. Say hello. If it answers, you are in.
 
-**Three rules:** use only this shared bot; share nothing personal beyond your first name and department; the bot and its memory are deleted after the session.
+**Three rules:** use only this shared bot; share nothing personal beyond your first name and department; what you tell it is deleted after the session.
 
 ## Four tasks (10 minutes)
 
@@ -55,7 +55,7 @@ What happened: ______________________________________________
 
 ## One reflection
 
-This agent lives on the instructor's laptop with the instructor's keys and permissions. What would have to be true before your department ran one? (Hint: who holds the keys, which tools it may use, who can message it, who checks the log.)
+This agent lives on a cloud server with the instructor's keys and permissions. What would have to be true before your department ran one? (Hint: who holds the keys, which tools it may use, who can message it, who checks the log.)
 
 ______________________________________________________________
 

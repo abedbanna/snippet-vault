@@ -19,7 +19,7 @@ meta:
     - "Projector or screen share; this deck (Day1_S1_Foundations.pptx) with speaker notes open."
     - "One AI assistant account logged in and tested on the teaching machine (ChatGPT, Claude, Copilot or Gemini). Ideally two tabs with two different assistants for the demo."
     - "Practical worksheet (Day1_S1_Practical_Meet_an_Agent.pdf) shared in the chat at minute 90; lab handout (Day1_S1_Lab_Handout.pdf) at minute 108."
-    - "Hermes Agent running on the instructor laptop with the Telegram bot live (Day1_S1_Hermes_Setup_Guide.pdf); phone with Telegram for a test message; the bot QR on the Join slide."
+    - "Hermes Agent gateway started on the course server with the Telegram bot live (Day1_S1_Hermes_Setup_Guide.pdf); phone with Telegram for a test message; the bot QR on the Join slide."
     - "Fallback: the two-minute screen recording of the four tasks, in case Wi-Fi, Telegram or the model provider fails."
     - "A blank spreadsheet template with the four lab columns (Task, Frequency, Minutes, Judgement) ready to share."
     - "Quiz bank (Day1_S1_Quiz_Bank.pdf) for the instructor only; five questions are also on slides."
@@ -38,7 +38,7 @@ meta:
       - "Minute 90: 'Join the agent' slide. Participants scan the QR, press Start, say hello. Help anyone without Telegram pair with a neighbour."
       - "Minute 93: 'Four tasks' slide and the worksheet PDF in the chat. Let them work. Watch the gateway terminal; read one search tool call aloud."
       - "Minute 103: 'What you saw' debrief. One observation per task, mapped to model, tools, memory, instructions and the loop. If Task 4 broke the guard for anyone, celebrate it and point to Day 6."
-      - "Minute 108: callout slide, then straight into the lab kickoff. After the session: hermes gateway stop, revoke the bot token, delete ~/.hermes/memories."
+      - "Minute 108: callout slide, then straight into the lab kickoff. After the session: hermes gateway stop and delete ~/.hermes/memories/USER.md; the server stays up for the rest of the course."
       - "Optional filler if the practical cannot run: the same admin email in two assistants (ChatGPT and Claude) with 'Summarise this and tell me what to do', then with four labelled output lines. Point out the shape changes and that neither can act: the missing part is tools."
   troubleshooting:
     - issue: Participants have no assistant account
@@ -57,12 +57,12 @@ meta:
     title: "Practical setup summary (Hermes Agent on Telegram)"
     sheet: "Day1_S1_Hermes_Setup_Guide.pdf"
     points:
-      - "Install Hermes Agent on the instructor laptop with the one-line installer; choose a free provider (Google AI Studio Gemini Flash) with hermes config set model google/gemini-2.5-flash."
+      - "Install Hermes Agent on the course droplet (hermes-day1, Ubuntu 24.04, 2 GB, kept for the whole course) with the one-line installer; choose a free provider (Google AI Studio Gemini Flash) with hermes config set model google/gemini-2.5-flash."
       - "Persona in ~/.hermes/SOUL.md: classroom agent, remembers first name and department only, says it cannot act when asked to send or pay, declines to ignore its instructions."
       - "Tools: web search only (hermes tools); terminal, files, code and image toolsets disabled."
       - "Telegram: create the bot with @BotFather, hermes gateway setup, hermes gateway to start; test the four worksheet tasks from your own phone."
-      - "Access: open bot for the 18-minute window only, gateway stopped and token revoked right after; or group mode with TELEGRAM_GROUP_ALLOWED_CHATS if open bots are not allowed."
-      - "After: hermes gateway stop; delete ~/.hermes/memories and ~/.hermes/sessions; /deletebot in BotFather."
+      - "Access: open bot while the gateway runs (started for the practical, stopped right after); or group mode with TELEGRAM_GROUP_ALLOWED_CHATS if open bots are not allowed."
+      - "After each session: hermes gateway stop; delete ~/.hermes/memories/USER.md and ~/.hermes/sessions. Server and bot stay for the whole course and are removed after Day 8."
       - "Fallback: two-minute screen recording of the four tasks."
   references:
     - "Hermes Agent documentation and source (Nous Research, MIT licence). hermes-agent.nousresearch.com/docs · github.com/NousResearch/hermes-agent"
@@ -583,7 +583,7 @@ slides:
       - "Runs all the time on a laptop or server"
       - "You message it like a colleague"
       - "Model + web search tool + memory + a short set of instructions"
-      - "Today's one lives on the instructor's laptop and is deleted after the session"
+      - "Today's one runs on a small cloud server the instructor controls; what you tell it is deleted after the session"
     notes: >
       One minute. Name the four parts as you point at the bullets. Say that OpenClaw is the other well-known one and
       that both are demonstrated properly on Day 5; today you only meet one.
@@ -600,7 +600,7 @@ slides:
     rules:
       - "Use only this shared bot"
       - "Share nothing personal beyond first name and department"
-      - "The bot and its memory are deleted after the session"
+      - "What you tell it is deleted after the session"
     notes: >
       Three minutes. Walk the room. Anyone without Telegram can pair with a neighbour. Replace the handle with your
       real bot username before the session.
@@ -642,7 +642,7 @@ slides:
 
   - layout: callout
     title: "Why this is a demo agent, not your department's agent"
-    text: "It runs on the instructor's laptop with the instructor's keys and permissions, has one tool, and is deleted after the session. Who holds the keys, which tools it may use, who can message it and who reads the log are the questions of Day 5 and Day 6."
+    text: "It runs on a small cloud server with the instructor's keys and permissions, has one tool, and forgets you after the session. Who holds the keys, which tools it may use, who can message it and who reads the log are the questions of Day 5 and Day 6."
     notes: >
       Close the practical by placing it in the course. This also keeps faith with Module 9, which says deploying
       an always-on agent is an IT and security project, not a lab.

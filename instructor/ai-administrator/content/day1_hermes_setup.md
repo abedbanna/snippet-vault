@@ -1,20 +1,20 @@
 ---
 title: "Instructor Setup: Hermes Agent for the 'Meet a Real Agent' Practical"
 subtitle: "AI Administrator · Day 1 · Session 1 · Foundations"
-kind: "Instructor-only setup sheet · allow 45 minutes the day before, 10 minutes on the day"
+kind: "Instructor-only setup sheet · one cloud server for the whole course · 45 minutes once, 10 minutes per session"
 ---
 
 ## What you are building
 
-One Hermes Agent (open source, MIT licence, by Nous Research) running on your laptop, connected to a Telegram bot, with **web search as its only tool**, a short classroom persona, and memory that you wipe afterwards. Participants message it from their phones for 15 minutes. They install nothing.
+One Hermes Agent (open source, MIT licence, by Nous Research) running on a small cloud server (DigitalOcean droplet `hermes-day1`, Ubuntu 24.04, 2 GB) that stays up for the whole course, connected to a Telegram bot, with **web search as its only tool**, a short classroom persona, and participant memory that you wipe after each session. Participants message it from their phones. They install nothing. The same server is reused on Day 5 (always-on agents demo) and Day 6 (permission settings examples).
 
 Commands and paths below were checked against the Hermes documentation at hermes-agent.nousresearch.com on 2 October 2026. Anything marked *check in the docs* may have changed since.
 
-## The day before (45 minutes)
+## Once, before Day 1 (45 minutes)
 
-### 1. Install Hermes on your laptop
+### 1. Install Hermes on the server
 
-macOS, Linux or Windows WSL2:
+SSH to the droplet as root, create a `hermes` user (`adduser --disabled-password --gecos "" hermes`), then as that user (`su - hermes`) run the installer. The same one-liner works on a laptop for rehearsal:
 
 ```
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
@@ -132,7 +132,7 @@ Record a two-minute screen video of the four tasks on your phone (Telegram chat 
 
 ## On the day (10 minutes before the session)
 
-- Laptop on mains power; sleep disabled (System Settings > Displays / Energy) for the session.
+- SSH to the server (`ssh hermes@<droplet-ip>`).
 - `hermes gateway status`; if stopped, `hermes gateway`.
 - Send one test message from your phone.
 - Check the provider's usage page and set a spending cap if the provider offers one. 40 participants doing 4 short tasks on Gemini Flash is a few thousand tokens each; expect cents, not dollars.
@@ -146,19 +146,24 @@ Record a two-minute screen video of the four tasks on your phone (Telegram chat 
 | 93 to 103 | Tasks slide up. Let them work. Watch the gateway terminal: you will see the search tool calls. Call out one interesting exchange. |
 | 103 to 108 | Debrief slide: ask for one observation per task; map each to model, tools, memory, instructions, loop. If Task 4 broke the guard for anyone, celebrate it and point to Day 6. |
 
-## After the session (5 minutes)
+## After each session (5 minutes)
 
 ```
 hermes gateway stop
 ```
 
-- In BotFather: `/revoke` or `/deletebot` for the demo bot.
-- Delete memory: remove `~/.hermes/memories/MEMORY.md` and `~/.hermes/memories/USER.md` (or the whole `~/.hermes/memories/` folder) and `~/.hermes/sessions/`.
-- Tell participants, in the next session, that this was done. It models the "delete after use" habit from Module 11.
+- Delete participant memory: remove `~/.hermes/memories/USER.md` and `~/.hermes/sessions/`; keep `SOUL.md` and the one seeded line in `MEMORY.md`.
+- Keep the bot and the server; they are reused on Day 5 and Day 6. Start the gateway again only when the next session needs it.
+- Tell participants, in the next session, that their data was deleted. It models the "delete after use" habit from Module 11.
 
-## If you prefer a cloud box instead of your laptop
+## After the course
 
-A 6 USD/month DigitalOcean droplet (Ubuntu) works with exactly the same commands over SSH; it avoids laptop sleep and venue Wi-Fi issues. Destroy the droplet after the session. The user of this course already has a DigitalOcean account used for the website.
+- In BotFather: `/deletebot` for the demo bot.
+- Destroy the droplet in the DigitalOcean console (it bills monthly while it exists).
+
+## Why a cloud server and not the instructor laptop
+
+The droplet avoids laptop sleep, venue Wi-Fi and hand-overs between instructors: any lead instructor with the SSH key can start or stop the gateway. It costs about 12 USD per month while it exists.
 
 ## Why Hermes and not OpenClaw for this practical
 
