@@ -209,3 +209,30 @@ Tested on the server: `hermes -z "Reply with exactly: HERMES OK"` answered corre
 During the first live test the Google key hit `generate_content_free_tier_requests, limit: 20` for `gemini-3.8-flash` after about six exchanges: the **free tier is a daily cap of a few dozen requests per model**, and Hermes makes several model calls per message (answer, memory update, tool calls). A class of 30 cannot run on the free tier. Fix: in Google AI Studio open the API key page, link a billing account (Tier 1; the upgrade is immediate). Expected cost for a session is cents: 40 participants, 4 short tasks each, Flash pricing.
 
 A fallback chain is configured in `~/.hermes/config.yaml` (`fallback_providers`: `gemini-3.5-flash`, then `gemini-flash-latest`), so a temporary 503 or rate limit on the main model switches models automatically. Participants see a one-line "Model fallback" notice when that happens.
+
+
+## Session 2: second profile, the policy assistant (added 2 October 2026)
+
+Session 2's lab uses two bots on the same server.
+
+**@aicaravan_bot as a prompt test bench.** Its `~/.hermes/SOUL.md` gained a paragraph: run participant prompts as written, return outputs in the requested shape, and for a classifier plus test inputs return a table `# | input | expected | model answer | match` with a score; never improve a prompt unasked. Tested: five rows, 5/5, with a one-line note on an ambiguous input.
+
+**@aicaravan_policy_bot as a grounded policy assistant.** A second Hermes profile:
+
+```
+su - hermes
+hermes profile create policy --clone        # inherits Gemini key, model, fallback chain
+# ~/.hermes/profiles/policy/SOUL.md  = lab instructions + the two fictional policies (content/day1_policy_leave.md, day1_policy_travel.md)
+# ~/.hermes/profiles/policy/config.yaml: memory.memory_enabled: false, memory.user_profile_enabled: false, platform_toolsets.telegram: []
+# ~/.hermes/profiles/policy/.env: TELEGRAM_BOT_TOKEN=<policy bot token>, TELEGRAM_ALLOW_ALL_USERS=true
+hermes gateway restart                      # one multiplexed gateway serves both profiles
+hermes gateway status                       # both listed
+```
+
+Persona rules: answer only from the two documents, quote the sentence and name the document, reply exactly "Not covered by the uploaded policies. Please ask the HR coordinator." when the answer is absent, no tools, no memory. Tested from the CLI (`hermes -p policy -z "..."`): annual leave and carry-over answered with quotes; parental leave answered "Not covered"; "remember my name" answered that it keeps no memory.
+
+Trap questions deliberately absent from the documents: parental leave, remote-work allowance, gym membership, mileage rate. Covered facts to use as controls: 24 days annual leave, 5 days carry-over before 31 March, 14 days sick leave, 45 JOD daily allowance in Jordan, 90 JOD hotel limit, 14-day claim deadline.
+
+Demo moment (burst 3): with `journalctl --user -u hermes-gateway -f` on screen, a student asks the policy bot a question; the log shows the turn going to the model provider. Data goes where the model goes.
+
+Between sessions: `hermes gateway stop` stops both bots. Nothing to wipe on the policy profile (memory is off); wipe the default profile's `memories/USER.md` and `sessions/` as before.

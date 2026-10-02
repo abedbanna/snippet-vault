@@ -21,7 +21,8 @@ meta:
     - "Two public policy documents as PDFs (for example a university leave policy and a travel expenses policy found online) ready to upload in the demo and to share with participants who have none."
     - "One sample maintenance-request email (reuse the Session 1 demo email)."
     - "Lab handout (Day1_S2_Lab_Handout.pdf) and a spreadsheet template with three columns (Input, Expected, Model answer) shared at minute 95."
-    - "Quiz bank (Day1_S2_Quiz_Bank.pdf) for the instructor; five questions are on slides."
+    - "Kahoot imported from Day1_S2_Kahoot.xlsx and ready to launch (PIN on screen at minute 112); answer key Day1_S2_Kahoot_Answer_Key.pdf. The written Quiz bank (Day1_S2_Quiz_Bank.pdf) stays available for homework."
+    - "Both course bots running on the course server (hermes gateway status as user hermes): @aicaravan_bot as prompt test bench, @aicaravan_policy_bot as the grounded policy assistant. See Day1_S1_Hermes_Setup_Guide.pdf, Session 2 section."
   prep:
     - "Read the live module once (link above); the slides follow its five sections in order."
     - "Build the department assistant yourself before the session (slide 'Assistant instructions') and run the trap test, so you know what it does with your two documents."
@@ -31,8 +32,8 @@ meta:
     title: "Live demo: from a vague request to a template to an assistant (minutes 10 to 85, in three short bursts)"
     steps:
       - "Burst 1 (minute 15): type the 'Before' prompt with the sample email, show the generic answer. Then paste the 'After' prompt. Show the five labelled lines. Change the email slightly so urgency is ambiguous; show that the model writes 'unclear'."
-      - "Burst 2 (minute 45): paste the few-shot classifier. Classify three messages, one awkward. Change one example and show the classification move. Then open the blank three-column sheet and classify two rows to show how the test set works."
-      - "Burst 3 (minute 70): create a Project (ChatGPT or Claude). Paste the assistant instructions from the slide, upload the two public policies. Ask one question the documents answer; show the quoted sentence. Ask one they do not; show 'Not covered by the uploaded policies'. If the assistant invents an answer instead, say so: this is exactly why we test."
+      - "Burst 2 (minute 45): in Telegram, paste the few-shot classifier plus five test inputs with expected labels into @aicaravan_bot; it returns the results table and a score. Change one example, paste again, show the score move. This is what students do with their ten rows in the lab."
+      - "Burst 3 (minute 70): create a Project (ChatGPT or Claude), paste the assistant instructions, upload two policies, ask one covered and one trap question. Then ask the same two questions to @aicaravan_policy_bot and, with the server log on screen (journalctl --user -u hermes-gateway -f as user hermes), point out that the question and the policy text travel to the model provider: data goes where the model goes."
       - "If time allows, show the same Project idea in Copilot or Gemini Gems in one minute each, to make the point that the feature names differ but the idea is identical."
   troubleshooting:
     - issue: Participants have no documents to upload
@@ -79,8 +80,9 @@ slides:
       - "Turn a good prompt into a reusable template with placeholders, and improve it with examples"
       - "Set up a project or custom assistant with uploaded documents, and test where it is reliable"
       - "Recognise hallucination and over-confidence, and know the three habits that catch them"
+      - "Test your prompts on the live course bot, and finish with a 20-question Kahoot"
     notes: >
-      Read quickly. The deliverable is a five-template prompt library plus a tested department assistant. Both are
+      Read quickly. Mention the Kahoot so phones are ready. The deliverable is a five-template prompt library plus a tested department assistant. Both are
       reused on Day 3 (the templates go into n8n AI nodes) and Day 4 (the assistant becomes an agent).
 
   - layout: table
@@ -93,8 +95,8 @@ slides:
       - ["55 to 65", "Break", ""]
       - ["65 to 85", "Assistants that know your documents", "Projects, custom GPTs, Gems, Copilot agents; how retrieval works; data rules; demo burst 3"]
       - ["85 to 95", "Where prompts fail", "Hallucination, over-confidence, three habits, symptom table"]
-      - ["95 to 115", "Lab", "Prompt library, classifier test set, department assistant, trap test"]
-      - ["115 to 120", "Knowledge check and wrap", "Five questions, takeaways, what to bring to Day 2"]
+      - ["95 to 112", "Lab", "Prompt library, classifier on the live test bench, department assistant, trap test on two assistants"]
+      - ["112 to 120", "Kahoot and wrap", "As many of the 20 questions as time allows; the rest as a challenge link; takeaways"]
     notes: >
       The demo is split into three short bursts so participants see each idea working right after hearing it.
       Keep each burst under five minutes.
@@ -330,6 +332,26 @@ slides:
       Participants tend to throw the sheet away once the prompt works. Make the case for keeping it: models get
       updated by vendors without notice; the sheet is how you find out.
 
+  - layout: qr
+    title: "Try it on the live agent"
+    qr_image: brand/bot_qr.png
+    handle: "@aicaravan_bot"
+    steps_heading: "Prompt test bench"
+    steps:
+      - "Paste your template plus one input: you get the output in the shape you asked for"
+      - "Paste your classifier plus the ten test rows (input | expected)"
+      - "Read the table it returns: input, expected, model answer, match, and the score"
+      - "Fix the prompt, paste again, compare score 1 with score 2"
+    rules_heading: "Rules"
+    rules:
+      - "It runs your prompt as written; it will not improve it unless you ask"
+      - "Made-up inputs only; no real customer messages"
+      - "Same bot as Session 1, same three rules"
+    notes: >
+      The Day 1 bot now acts as a prompt test bench. Demo burst 2 can use it instead of the three-column sheet: paste
+      the few-shot classifier and five inputs, show the table and the score, change one example, paste again. Students
+      do the same in the lab with their ten rows.
+
   # ---------------------------------------------------------------- Section 4
   - layout: section
     title: "4. Assistants that know your documents"
@@ -455,9 +477,9 @@ slides:
   # ---------------------------------------------------------------- Lab
   - layout: section
     title: "Practical lab: prompt library and department assistant"
-    subtitle: "20 minutes now, finish at home, due before the next session"
+    subtitle: "Steps shown now, finish at home, due before the next session"
     minute: 95
-    duration: 20
+    duration: 17
 
   - layout: steps
     title: "Lab steps (1 to 4)"
@@ -486,6 +508,26 @@ slides:
     notes: >
       The trap test is the most memorable five minutes of the day. Ask two or three participants to report what
       their assistant did with the trap questions.
+
+  - layout: two_col
+    title: "Trap test: two assistants, same five questions"
+    left:
+      heading: "Your own Project (step 6)"
+      bullets:
+        - "ChatGPT Project, Claude Project, Gem or Copilot agent"
+        - "Your two public or made-up policy documents uploaded"
+        - "The assistant instructions from the next slide"
+    right:
+      heading: "The course policy bot @aicaravan_policy_bot"
+      bullets:
+        - "Same instructions, two fictional AI Caravan Ltd. policies built in"
+        - "No tools, no memory: it can only answer from the documents"
+        - "Ask: annual leave days; carry-over; daily allowance in Jordan (covered)"
+        - "Then: parental leave; mileage rate (not covered). Does it admit it?"
+    notes: >
+      The point: two assistants, same instructions, same trap questions. The course bot is the
+      reference run; the instructor can show the gateway log while a student asks it something, to make "data goes
+      where the model goes" concrete.
 
   - layout: prompt
     title: "Template skeleton (step 2)"
@@ -521,63 +563,35 @@ slides:
     notes: >
       The templates are reused on Day 3 inside n8n AI nodes, so quality here saves time later.
 
-  # ---------------------------------------------------------------- Quiz
+  # ---------------------------------------------------------------- Kahoot
   - layout: section
-    title: "Knowledge check"
-    subtitle: "Five questions in the style of the final exam"
-    minute: 115
-    duration: 5
+    title: "Kahoot: knowledge check"
+    subtitle: "20 questions, 20 seconds each. Phones out."
+    logo: brand/kahoot_logo.png
+    minute: 112
+    duration: 8
 
-  - layout: quiz
-    title: "Question 1"
-    question: "Which of the five prompt parts is most often missing from a prompt that gives a different shape of answer every time?"
-    options: ["Role", "Context", "Output format", "Task"]
-    answer: 2
-    why: "Without an explicit output format the model chooses its own shape each run, which breaks anything downstream."
-
-  - layout: quiz
-    title: "Question 2"
-    question: "What is few-shot prompting?"
-    options:
-      - "Asking the same question several times"
-      - "Including worked examples of input and expected output inside the prompt"
-      - "Using fewer than ten words"
-      - "Splitting a task across several models"
-    answer: 1
-    why: "Examples inside the prompt show the model the pattern to copy, which is more reliable than describing it."
-
-  - layout: quiz
-    title: "Question 3"
-    question: "The best fix for a classifier that mislabels two of ten test emails is to..."
-    options:
-      - "Add 'please be more accurate' to the prompt"
-      - "Add a constraint or an example that covers the failing cases, then re-run all ten"
-      - "Switch to a longer prompt"
-      - "Remove the two awkward emails from the test set"
-    answer: 1
-    why: "Prompts improve through specific constraints and examples, tested against the whole set so you do not break what already worked."
-
-  - layout: quiz
-    title: "Question 4"
-    question: "A department assistant built from a Project with uploaded documents is best described as..."
-    options:
-      - "A full autonomous agent"
-      - "A model plus instructions plus memory, with no tools"
-      - "An automation"
-      - "A search engine"
-    answer: 1
-    why: "It has three of the four agent parts. Without tools it can answer but cannot act, which is ideal while you learn what it gets wrong."
-
-  - layout: quiz
-    title: "Question 5"
-    question: "Which single instruction most reduces the damage from hallucination?"
-    options:
-      - "Answer in under 50 words"
-      - "Use a friendly tone"
-      - "If the answer is not in the source, say so instead of guessing"
-      - "Always give three options"
-    answer: 2
-    why: "Giving the model an explicit way to say 'not found' turns an invented answer into a flag a person can act on."
+  - layout: two_col
+    title: "Join the Kahoot"
+    logo: brand/kahoot_logo.png
+    left:
+      heading: "How to join"
+      bullets:
+        - "Open kahoot.it on your phone, or the Kahoot app"
+        - "Enter the game PIN shown on the screen"
+        - "Nickname: your first name"
+        - "20 seconds per question; answer on your phone"
+    right:
+      heading: "Fair play notes"
+      bullets:
+        - "All four answers are about the same length. The long one is not a hint."
+        - "Correct answers are spread evenly over the four colours."
+        - "We run as many as time allows in the room"
+        - "The rest arrive as a Kahoot challenge link for homework"
+    notes: >
+      Import Day1_S2_Kahoot.xlsx into Kahoot beforehand (Create, then Import spreadsheet). Launch in Classic mode and
+      show the PIN on this slide. Eight minutes covers roughly 15 questions; assign the remainder as a challenge. The
+      answer key with rationales is Day1_S2_Kahoot_Answer_Key.pdf.
 
   # ---------------------------------------------------------------- Close
   - layout: bullets

@@ -64,7 +64,19 @@ Answer with the category only.
 
 ### 4. Build the ten-row test set
 
-In a spreadsheet, write ten realistic inputs for the classifier with the category you expect in the next column. Include two awkward ones (mixed intent, sarcasm, very short). Run the prompt on each and record the model's answer in a third column. Count the matches: **score 1 = ___ / 10**.
+Write ten realistic inputs for the classifier with the category you expect for each. Include two awkward ones (mixed intent, sarcasm, very short). Then use the course bot as a test bench: open **@aicaravan_bot** on Telegram and send one message in this shape:
+
+```
+<paste your classifier prompt here>
+
+Test inputs with expected labels:
+1) <input 1> | <expected>
+2) <input 2> | <expected>
+...
+10) <input 10> | <expected>
+```
+
+The bot returns a table (input, expected, model answer, match) and a score. Copy the table into your library document: **score 1 = ___ / 10**. You can also run the same ten rows in your own assistant and compare.
 
 | Input | Expected | Model answer |
 |---|---|---|
@@ -72,7 +84,7 @@ In a spreadsheet, write ten realistic inputs for the classifier with the categor
 
 ### 5. Fix and re-run
 
-For every mismatch, change the prompt by adding a **constraint or an example** that covers the failing case. Never add "please be more accurate". Then run **all ten** again and record **score 2 = ___ / 10**.
+For every mismatch, change the prompt by adding a **constraint or an example** that covers the failing case. Never add "please be more accurate". Then paste the whole message to the bot again, **all ten rows**, and record **score 2 = ___ / 10**.
 
 ### 6. Create the department assistant
 
@@ -87,7 +99,19 @@ Please ask [named person]." Keep answers under 120 words.
 
 ### 7. Test the assistant with a trap
 
-Ask three questions the documents answer, then two they do not (for example a benefit that is not mentioned). Note whether it admits "not covered" or invents an answer. Record the five results at the bottom of your library document.
+Ask your assistant three questions the documents answer, then two they do not (for example a benefit that is not mentioned). Note whether it admits "not covered" or invents an answer.
+
+Then run the same test on the course policy bot, **@aicaravan_policy_bot** on Telegram. It has the same instructions and two fictional AI Caravan Ltd. policies built in (leave; travel and expenses), no tools and no memory. Suggested questions:
+
+| Question | Expected |
+|---|---|
+| How many days of annual leave do I get? | Covered: 24 working days |
+| How many unused days can I carry over? | Covered: 5, used before 31 March |
+| What is the daily allowance inside Jordan? | Covered: 45 JOD |
+| How many weeks of parental leave can I take? | Not covered |
+| What is the mileage rate for using my own car? | Not covered |
+
+Record both sets of results at the bottom of your library document, and one line on where the two assistants differed.
 
 ## Deliverable
 
@@ -95,7 +119,8 @@ The **M2-prompt-library** document containing: five templates, the classifier wi
 
 ## Stuck?
 
-- **My product has no Projects / uploads.** Paste the policy text into the chat as context instead. Same idea, shorter memory.
+- **My product has no Projects / uploads.** Paste the policy text into the chat as context instead. Same idea, shorter memory. The course policy bot still works for the trap test.
+- **The course bot does not answer.** The instructor switches it on for the session; ask them to check `hermes gateway status`.
 - **The classifier scored 10/10 first time.** Add two more awkward inputs until something fails. The habit you are building is fix-and-re-run, not the score.
 - **The assistant invented an answer to a trap question.** Good: you found it before a colleague did. Tighten the instruction ("Only if the exact wording appears in a document...") and test again.
 
@@ -107,7 +132,7 @@ The **M2-prompt-library** document containing: five templates, the classifier wi
 | Classifier | Four allowed values, four examples plus one awkward *other* example |
 | Test set | Ten rows with expected and model answers; two scores recorded |
 | Assistant | Instructions pasted, two public documents uploaded, screenshot shows a quotation |
-| Trap test | Five results recorded; participant can say what the assistant did on the two traps |
+| Trap test | Five results for their own assistant and five for the course policy bot; participant can say where the two differed |
 
 Reference: Module 2 online, with the knowledge check scored in the browser:
 albanna-tutorials.com/ai-administrator/02_prompting_for_operators.html
