@@ -175,3 +175,31 @@ OpenClaw needs Node.js 24 or newer and a provider key, and its skills marketplac
 - Hermes Agent source: github.com/NousResearch/hermes-agent (MIT licence)
 - Google AI Studio: aistudio.google.com
 - Telegram BotFather: t.me/BotFather
+
+## Live deployment record (2 October 2026)
+
+What was actually done on the course server, so any instructor can operate it.
+
+| Item | Value |
+|---|---|
+| Server | DigitalOcean droplet `AI-Caravan`, 165.245.213.121, Ubuntu 24.04, 1 CPU, 1 GB RAM + 2 GB swap, Frankfurt |
+| Login | `ssh root@165.245.213.121` with the course SSH key (`~/.ssh/hermes_day1_ed25519` on the course author's Mac); then `su - hermes` |
+| Hermes | installed with the official one-liner as user `hermes`; needed `apt-get install libatomic1` first (Node fails to verify without it) |
+| Model | `model.default: gemini-3.8-flash`, `model.provider: gemini`; key in `~/.hermes/.env` as `GEMINI_API_KEY` (Google AI Studio) |
+| Tools on Telegram | `platform_toolsets.telegram: [web]` in `~/.hermes/config.yaml`; web search uses the built-in keyless backend and was tested |
+| Persona | `~/.hermes/SOUL.md` (classroom text above); `~/.hermes/memories/MEMORY.md` seeded with the four-parts line |
+| Access | `TELEGRAM_ALLOW_ALL_USERS=true` in `.env` (open bot while the gateway runs) |
+| Firewall | `ufw` allows SSH only; the gateway makes outbound connections only |
+
+Operate it:
+
+```
+ssh root@165.245.213.121
+su - hermes
+hermes gateway status      # is it running?
+hermes gateway start       # before the practical
+hermes gateway stop        # after the practical
+rm -f ~/.hermes/memories/USER.md; rm -rf ~/.hermes/sessions/*   # wipe participant memory between sessions
+```
+
+Tested on the server: `hermes -z "Reply with exactly: HERMES OK"` answered correctly; a web-search question about tomorrow's weather in Amman returned a sourced one-line answer; "send an email to my manager" was refused with the scripted sentence.
