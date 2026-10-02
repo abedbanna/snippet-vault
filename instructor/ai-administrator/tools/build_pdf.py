@@ -93,7 +93,7 @@ def build_guide(yaml_path, out_path):
         n += 1; lay = s["layout"]
         label = {"section": "Section", "figure": "Figure", "figures": "Figures", "table": "Table", "two_col": "Two columns",
                  "callout": "Callout", "prompt": "Prompt text", "steps": "Steps", "quiz": "Quiz", "references": "References",
-                 "articles": "Latest articles", "title": "Title", "bullets": "Bullets"}[lay]
+                 "articles": "Latest articles", "title": "Title", "bullets": "Bullets", "qr": "Join (QR)"}[lay]
         if lay == "quiz":
             body = f"<div class='slide'><div class='t'>{n}–{n+1}. {esc(s['title'])} <span class='l'>· Quiz</span></div><div class='notes'>Q: {esc(s['question'])}<br>Answer: {'ABCD'[s['answer']]}. {esc(s['why'])}</div></div>"
             n += 1
@@ -105,6 +105,10 @@ def build_guide(yaml_path, out_path):
             body = f"<div class='slide'><div class='t'>{n}. {esc(s['title'])} <span class='l'>· {label}</span>{extra}</div>" + (f"<div class='notes'>{note}</div>" if note else "") + "</div>"
         out.append(body)
     parts.append("".join(out))
+    if meta.get("practical_setup"):
+        ps = meta["practical_setup"]
+        parts.append(f"<h2>{esc(ps['title'])}</h2><ul>" + "".join(f"<li>{esc(x)}</li>" for x in ps["points"]) + "</ul>"
+                     f"<p class='notes'>Full step-by-step instructions, persona text and fallbacks: <b>{esc(ps['sheet'])}</b> (in this package).</p>")
     parts.append("<h2>Troubleshooting and cuts</h2><table><tr><th style='width:38%'>If</th><th>Then</th></tr>"
                  + "".join(f"<tr><td>{esc(t['issue'])}</td><td>{esc(t['fix'])}</td></tr>" for t in meta["troubleshooting"]) + "</table>")
     arts = [s for s in slides if s["layout"] == "articles"]

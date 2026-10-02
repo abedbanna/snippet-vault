@@ -290,9 +290,30 @@ def l_articles(prs, s, meta, n):
     footer(sl, meta, n); notes(sl, s.get("notes")); return sl
 
 
+def l_qr(prs, s, meta, n):
+    """Join slide: QR image (s['qr_image'] path, optional) or a placeholder box, bot handle, rules."""
+    sl = prs.slides.add_slide(prs.slide_layouts[6]); title_bar(sl, s["title"])
+    box = Inches(3.6); left = MARGIN; top = CONTENT_TOP + Inches(0.3)
+    img = s.get("qr_image")
+    if img and (ROOT / img).exists():
+        place_image(sl, ROOT / img, left, top, box, box)
+    else:
+        ph = sl.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, box, box)
+        ph.fill.solid(); ph.fill.fore_color.rgb = LIGHT; ph.line.color.rgb = GREY; ph.line.dash_style = 4; ph.shadow.inherit = False
+        add_text(sl, left, top + box // 2 - Inches(0.5), box, Inches(1.0), s.get("qr_placeholder", "Paste the bot's QR code here"),
+                 size=16, color=GREY, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    add_text(sl, left, top + box + Inches(0.15), box, Inches(0.5), s.get("handle", ""), size=18, bold=True, align=PP_ALIGN.CENTER)
+    rleft = left + box + Inches(0.6); rw = W - MARGIN - rleft
+    add_text(sl, rleft, top, rw, Inches(0.5), s.get("steps_heading", "How to join"), size=20, bold=True)
+    add_bullets(sl, rleft, top + Inches(0.55), rw, Inches(2.0), s["steps"], size=17, numbered=True, space_after=8)
+    add_text(sl, rleft, top + Inches(2.5), rw, Inches(0.5), s.get("rules_heading", "Three rules"), size=20, bold=True)
+    add_bullets(sl, rleft, top + Inches(3.05), rw, Inches(1.8), s["rules"], size=16, space_after=6)
+    footer(sl, meta, n); notes(sl, s.get("notes")); return sl
+
+
 LAYOUTS = {"title": l_title, "section": l_section, "bullets": l_bullets, "figure": l_figure, "figures": l_figures,
            "table": l_table, "two_col": l_two_col, "callout": l_callout, "prompt": l_prompt, "steps": l_steps,
-           "references": l_references, "articles": l_articles}
+           "references": l_references, "articles": l_articles, "qr": l_qr}
 
 
 def build(yaml_path, out_path):

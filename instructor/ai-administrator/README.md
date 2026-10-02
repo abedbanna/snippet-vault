@@ -25,10 +25,19 @@ python3 tools/build_pdf.py md content/day1_lab1.md  out/day1/Day1_S1_Lab_Handout
 python3 tools/build_pdf.py md content/day1_lab2.md  out/day1/Day1_S2_Lab_Handout.pdf
 python3 tools/build_pdf.py md content/day1_quiz1.md out/day1/Day1_S1_Quiz_Bank.pdf
 python3 tools/build_pdf.py md content/day1_quiz2.md out/day1/Day1_S2_Quiz_Bank.pdf
+python3 tools/build_pdf.py md content/day1_practical_meet_an_agent.md out/day1/Day1_S1_Practical_Meet_an_Agent.pdf
+python3 tools/build_pdf.py md content/day1_hermes_setup.md out/day1/Day1_S1_Hermes_Setup_Guide.pdf
 (cd out/day1 && zip -r AI-Administrator_Day1_Instructor_Package.zip *.pptx *.pdf)
 ```
 
 Requirements: python-pptx, PyYAML, Pillow, PyMuPDF, pandoc, Google Chrome (headless print-to-PDF).
+
+## Session 1 practical (Hermes Agent)
+
+Session 1 includes an 18-minute "Meet a real agent" practical: the instructor runs Hermes Agent on a laptop with a
+Telegram bot; participants only message it. Setup sheet: `content/day1_hermes_setup.md`; worksheet:
+`content/day1_practical_meet_an_agent.md`. Drop the bot's QR image at `brand/bot_qr.png` and rebuild the deck to fill
+the placeholder on the "Join the agent" slide (layout `qr`).
 
 ## Conventions
 
