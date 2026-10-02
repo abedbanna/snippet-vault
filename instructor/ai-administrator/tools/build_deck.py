@@ -200,6 +200,8 @@ def l_table(prs, s, meta, n):
 
 def l_two_col(prs, s, meta, n):
     sl = prs.slides.add_slide(prs.slide_layouts[6]); title_bar(sl, s["title"])
+    if s.get("logo") and (ROOT / s["logo"]).exists():
+        place_image(sl, ROOT / s["logo"], W - MARGIN - Inches(2.6), Inches(0.3), Inches(2.6), Inches(0.85))
     col_w = (W - 2 * MARGIN - Inches(0.5)) // 2; box_h = CONTENT_BOTTOM - CONTENT_TOP - Inches(0.7)
     for i, key in enumerate(("left", "right")):
         col = s[key]; left = MARGIN + i * (col_w + Inches(0.5))

@@ -126,9 +126,9 @@ The docs say to always set `TELEGRAM_ALLOWED_USERS` (comma-separated numeric Tel
 
 Create a QR code for `https://t.me/<your_bot_username>` (any QR generator, or the Telegram bot's own share link). Paste the image onto the "Join the agent" slide in the deck, replacing the placeholder box, and write the bot username under it.
 
-### 8. Prepare the fallback
+### 8. The fallback video
 
-Record a two-minute screen video of the four tasks on your phone (Telegram chat visible). If the venue Wi-Fi, Telegram or the model provider fails on the day, play the video and run the debrief from it. The practical still works as a demonstration.
+`Day1_S1_Practical_Meet_an_Agent.mp4` (75 seconds, 1080p, captioned) in this package shows the four tasks on the live bot, recorded on 2 October 2026. If the venue Wi-Fi, Telegram or the model provider fails on the day, play it and run the debrief from it. `Day1_S1_Practical_Task2_web_search.gif` is a 15-second clip of Task 2 for the course website.
 
 ## On the day (10 minutes before the session)
 
