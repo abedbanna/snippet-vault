@@ -107,6 +107,11 @@ def credit(slide, meta):
              color=GREY, align=PP_ALIGN.RIGHT, italic=True)
 
 
+def corner_logo(sl, s, top=Inches(0.3), h=Inches(0.85), w=Inches(2.6)):
+    if s.get("logo") and (ROOT / s["logo"]).exists():
+        place_image(sl, ROOT / s["logo"], W - MARGIN - w, top, w, h)
+
+
 # ------------------------------------------------------------------ layouts
 def l_title(prs, s, meta, n):
     sl = prs.slides.add_slide(prs.slide_layouts[6])
@@ -129,11 +134,13 @@ def l_section(prs, s, meta, n):
     add_text(sl, MARGIN, Inches(4.4), W - 2 * MARGIN, Inches(0.9), s.get("subtitle", ""), size=20, color=GREY)
     if "duration" in s:
         add_text(sl, MARGIN, Inches(5.3), W - 2 * MARGIN, Inches(0.5), f"About {s['duration']} minutes", size=14, color=GREY)
+    if s.get("logo") and (ROOT / s["logo"]).exists():   # big logo on section slides
+        place_image(sl, ROOT / s["logo"], W - MARGIN - Inches(5.2), Inches(2.4), Inches(5.2), Inches(1.8))
     footer(sl, meta, n); notes(sl, s.get("notes")); return sl
 
 
 def l_bullets(prs, s, meta, n):
-    sl = prs.slides.add_slide(prs.slide_layouts[6]); title_bar(sl, s["title"])
+    sl = prs.slides.add_slide(prs.slide_layouts[6]); title_bar(sl, s["title"]); corner_logo(sl, s)
     box_w, box_h = W - 2 * MARGIN, CONTENT_BOTTOM - CONTENT_TOP
     size = fit_size(s["bullets"], 22, box_w / 914400, box_h / 914400, line_h=1.6)
     add_bullets(sl, MARGIN, CONTENT_TOP + Inches(0.15), box_w, box_h, s["bullets"], size=size, space_after=12)
@@ -200,8 +207,7 @@ def l_table(prs, s, meta, n):
 
 def l_two_col(prs, s, meta, n):
     sl = prs.slides.add_slide(prs.slide_layouts[6]); title_bar(sl, s["title"])
-    if s.get("logo") and (ROOT / s["logo"]).exists():
-        place_image(sl, ROOT / s["logo"], W - MARGIN - Inches(2.6), Inches(0.3), Inches(2.6), Inches(0.85))
+    corner_logo(sl, s)
     col_w = (W - 2 * MARGIN - Inches(0.5)) // 2; box_h = CONTENT_BOTTOM - CONTENT_TOP - Inches(0.7)
     for i, key in enumerate(("left", "right")):
         col = s[key]; left = MARGIN + i * (col_w + Inches(0.5))
