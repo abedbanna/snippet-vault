@@ -18,27 +18,27 @@ meta:
   materials:
     - "Projector or screen share; this deck (Day1_S1_Foundations.pptx) with speaker notes open."
     - "One AI assistant account logged in and tested on the teaching machine (ChatGPT, Claude, Copilot or Gemini). Ideally two tabs with two different assistants for the demo."
-    - "Practical worksheet (Day1_S1_Practical_Meet_an_Agent.pdf) shared in the chat at minute 90; lab handout (Day1_S1_Lab_Handout.pdf) at minute 108."
+    - "Practical worksheet (Day1_S1_Practical_Meet_an_Agent.pdf) shared in the chat at minute 90; lab handout (Day1_S1_Lab_Handout.pdf) at minute 105."
     - "Hermes Agent gateway started on the course server with the Telegram bot live (Day1_S1_Hermes_Setup_Guide.pdf); phone with Telegram for a test message; the bot QR on the Join slide."
     - "Fallback: the two-minute screen recording of the four tasks, in case Wi-Fi, Telegram or the model provider fails."
     - "A blank spreadsheet template with the four lab columns (Task, Frequency, Minutes, Judgement) ready to share."
-    - "Quiz bank (Day1_S1_Quiz_Bank.pdf) for the instructor only; five questions are also on slides."
+    - "Kahoot imported from Day1_S1_Kahoot.xlsx and ready to launch (PIN on screen at minute 110); answer key Day1_S1_Kahoot_Answer_Key.pdf. The written Quiz bank (Day1_S1_Quiz_Bank.pdf) stays available for homework or revision."
     - "Participants: an AI assistant account and a blank document or spreadsheet. Nothing to install."
   prep:
     - "Read the live module once (link above); the slides follow its five sections in order."
-    - "The day before: follow Day1_S1_Hermes_Setup_Guide.pdf (install Hermes, free Gemini key, persona in SOUL.md, web search only, Telegram bot, test the four tasks yourself, record the fallback video)."
-    - "Paste your bot QR image as brand/bot_qr.png and rebuild, or paste it onto the Join slide by hand; put the real bot username on that slide."
+    - "The day before: on the course server run hermes gateway status as user hermes (see the Live deployment record in Day1_S1_Hermes_Setup_Guide.pdf), message @aicaravan_bot from your phone and run the four tasks yourself."
+    - "The Join slide already carries the QR for t.me/aicaravan_bot. If the bot ever changes, regenerate with tools/make_qr.py and rebuild the deck."
     - "Test that an assistant can take a pasted table (the lab's step 4 prompt)."
     - "Decide the break time with the co-instructor (planned at minute 60)."
     - "Ask participants in advance to bring a list of what they do in a typical week."
   demo:
-    title: "Practical: Meet a real agent (minutes 90 to 108)"
+    title: "Practical: Meet a real agent (minutes 90 to 105)"
     steps:
       - "Minute 88: hermes gateway status; start it if needed. Send one test message from your phone."
       - "Minute 90: 'Join the agent' slide. Participants scan the QR, press Start, say hello. Help anyone without Telegram pair with a neighbour."
       - "Minute 93: 'Four tasks' slide and the worksheet PDF in the chat. Let them work. Watch the gateway terminal; read one search tool call aloud."
-      - "Minute 103: 'What you saw' debrief. One observation per task, mapped to model, tools, memory, instructions and the loop. If Task 4 broke the guard for anyone, celebrate it and point to Day 6."
-      - "Minute 108: callout slide, then straight into the lab kickoff. After the session: hermes gateway stop and delete ~/.hermes/memories/USER.md; the server stays up for the rest of the course."
+      - "Minute 101: 'What you saw' debrief. One observation per task, mapped to model, tools, memory, instructions and the loop. If Task 4 broke the guard for anyone, celebrate it and point to Day 6."
+      - "Minute 105: callout slide, then straight into the lab kickoff. After the session: hermes gateway stop and delete ~/.hermes/memories/USER.md; the server stays up for the rest of the course."
       - "Optional filler if the practical cannot run: the same admin email in two assistants (ChatGPT and Claude) with 'Summarise this and tell me what to do', then with four labelled output lines. Point out the shape changes and that neither can act: the missing part is tools."
   troubleshooting:
     - issue: Participants have no assistant account
@@ -57,11 +57,11 @@ meta:
     title: "Practical setup summary (Hermes Agent on Telegram)"
     sheet: "Day1_S1_Hermes_Setup_Guide.pdf"
     points:
-      - "Install Hermes Agent on the course droplet (hermes-day1, Ubuntu 24.04, 2 GB, kept for the whole course) with the one-line installer; choose a free provider (Google AI Studio Gemini Flash) with hermes config set model google/gemini-2.5-flash."
+      - "Live since 2 Oct 2026 on the course droplet AI-Caravan (165.245.213.121, Ubuntu 24.04, 1 GB + swap, kept for the whole course). Hermes installed as user hermes; model.provider gemini, model.default gemini-3.8-flash, key GEMINI_API_KEY from Google AI Studio."
       - "Persona in ~/.hermes/SOUL.md: classroom agent, remembers first name and department only, says it cannot act when asked to send or pay, declines to ignore its instructions."
-      - "Tools: web search only (hermes tools); terminal, files, code and image toolsets disabled."
-      - "Telegram: create the bot with @BotFather, hermes gateway setup, hermes gateway to start; test the four worksheet tasks from your own phone."
-      - "Access: open bot while the gateway runs (started for the practical, stopped right after); or group mode with TELEGRAM_GROUP_ALLOWED_CHATS if open bots are not allowed."
+      - "Tools: platform_toolsets.telegram: [web] in config.yaml, so Telegram users get web search only; the keyless search backend was tested."
+      - "Telegram: bot @aicaravan_bot (t.me/aicaravan_bot), TELEGRAM_BOT_TOKEN in ~/.hermes/.env; gateway installed as a systemd user service: hermes gateway start / stop / status (as user hermes)."
+      - "Access: TELEGRAM_ALLOW_ALL_USERS=true, so anyone with the link can talk to it while the gateway runs; start it for the practical, stop it right after."
       - "After each session: hermes gateway stop; delete ~/.hermes/memories/USER.md and ~/.hermes/sessions. Server and bot stay for the whole course and are removed after Day 8."
       - "Fallback: two-minute screen recording of the four tasks."
   references:
@@ -123,9 +123,9 @@ slides:
       - ["60 to 70", "Break", ""]
       - ["70 to 85", "The agent loop", "Think, act, observe; ReAct; iteration limits; where the human fits"]
       - ["85 to 90", "Examples", "Five admin tasks and their best design; the pattern in the human's column"]
-      - ["90 to 108", "Practical: meet a real agent", "Join a live Hermes agent on Telegram; four tasks; debrief on the four parts"]
-      - ["108 to 116", "Lab kickoff", "Task inventory: ten tasks, tagged, classified, challenged by an assistant (finished at home)"]
-      - ["116 to 120", "Knowledge check and wrap", "Five questions, key takeaways, what to bring to Session 2"]
+      - ["90 to 105", "Practical: meet a real agent", "Join the live agent on Telegram; four tasks; debrief on the four parts"]
+      - ["105 to 110", "Lab kickoff", "Task inventory steps shown; finished at home"]
+      - ["110 to 120", "Kahoot and wrap", "As many of the 30 questions as time allows; the rest as a challenge link; key takeaways"]
     notes: >
       Show this for ten seconds. Participants like knowing when the break is. The lab is shown in the room and
       finished at home, which is fine. The deliverable is due before Day 2.
@@ -570,7 +570,7 @@ slides:
     title: "Practical: Meet a real agent"
     subtitle: "Talk to a live always-on agent from your phone. Nothing to install."
     minute: 90
-    duration: 18
+    duration: 15
     notes: >
       Start the gateway if it is not running (hermes gateway status). Share the worksheet PDF in the chat. This is
       the moment the four parts stop being a diagram; keep it light and let participants play.
@@ -592,7 +592,7 @@ slides:
     title: "Join the agent"
     qr_image: brand/bot_qr.png
     qr_placeholder: "Paste the Telegram bot QR code here (see setup sheet, step 7)"
-    handle: "@aicaravan_day1_bot"
+    handle: "@aicaravan_bot"
     steps:
       - "Open Telegram on your phone"
       - "Scan the code, or search the bot name"
@@ -651,8 +651,8 @@ slides:
   - layout: section
     title: "Practical lab: your task inventory"
     subtitle: "Steps shown now, finish at home, due before the next session"
-    minute: 108
-    duration: 8
+    minute: 105
+    duration: 5
 
   - layout: steps
     title: "Lab steps"
@@ -691,59 +691,34 @@ slides:
       Be explicit that this document is reused on Days 2, 3 and 5. Participants who skip it will have nothing to map
       tomorrow.
 
-  # ---------------------------------------------------------------- Quiz
+  # ---------------------------------------------------------------- Kahoot
   - layout: section
-    title: "Knowledge check"
-    subtitle: "Five questions in the style of the final exam"
-    minute: 116
-    duration: 4
+    title: "Kahoot: knowledge check"
+    subtitle: "30 questions, 20 seconds each. Phones out."
+    minute: 110
+    duration: 10
 
-  - layout: quiz
-    title: "Question 1"
-    question: "Which statement best describes an agent, as opposed to an automation?"
-    options:
-      - "It runs on a schedule instead of a trigger"
-      - "A language model decides the steps at run time"
-      - "It always sends its output to a human"
-      - "It cannot use external tools"
-    answer: 1
-    why: "In an automation every step is fixed in advance; in an agent the model chooses which tool to use next and when to stop."
-
-  - layout: quiz
-    title: "Question 2"
-    question: "Which of these is NOT one of the four building blocks of an agent?"
-    options: ["Model", "Tools", "Memory", "Dashboard"]
-    answer: 3
-    why: "The four parts are model, tools, memory and instructions. A dashboard is a way to monitor, not a part of the agent."
-
-  - layout: quiz
-    title: "Question 3"
-    question: "Sorting support emails into billing, technical and sales is best built as a..."
-    options: ["Full autonomous agent", "Workflow with an AI classification step", "Manual task", "Scheduled report"]
-    answer: 1
-    why: "The path is fixed (read, classify, route) and only one step needs a model. That is the workflow-with-AI-step pattern."
-
-  - layout: quiz
-    title: "Question 4"
-    question: "Why does an agent need an iteration limit?"
-    options:
-      - "To make it run faster"
-      - "Because each loop costs tokens and a confused agent can keep going in the wrong direction"
-      - "So it can use more tools"
-      - "Because models forget after ten steps"
-    answer: 1
-    why: "Without a limit a stuck agent burns money and may take more actions than intended. The limit is a basic control."
-
-  - layout: quiz
-    title: "Question 5"
-    question: "Which task should generally stay with a person rather than be automated?"
-    options:
-      - "Creating accounts for a new hire"
-      - "Summarising five trackers into a report draft"
-      - "Approving a refund above the policy limit"
-      - "Chasing late timesheets"
-    answer: 2
-    why: "Automation removes copying and chasing. Decisions involving money, people or legal exposure need human accountability."
+  - layout: two_col
+    title: "Join the Kahoot"
+    left:
+      heading: "How to join"
+      bullets:
+        - "Open kahoot.it on your phone, or the Kahoot app"
+        - "Enter the game PIN shown on the screen"
+        - "Nickname: your first name"
+        - "20 seconds per question; answer on your phone"
+    right:
+      heading: "Fair play notes"
+      bullets:
+        - "All four answers are about the same length. The long one is not a hint."
+        - "Correct answers are spread evenly over the four colours."
+        - "We run as many as time allows in the room"
+        - "The rest arrive as a Kahoot challenge link for homework"
+    notes: >
+      Import Day1_S1_Kahoot.xlsx into Kahoot beforehand (Create, then Import spreadsheet). Launch in Classic mode,
+      show the PIN on this slide. Ten minutes covers roughly 15 to 20 questions with brief comments; assign the
+      remainder as a challenge with a one-week deadline. The answer key with rationales is Day1_S1_Kahoot_Answer_Key.pdf.
+      Say out loud that answer lengths are balanced, so participants stop guessing by length.
 
   # ---------------------------------------------------------------- Close
   - layout: bullets
