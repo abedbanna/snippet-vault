@@ -117,7 +117,7 @@ def build_guide(yaml_path, out_path):
             f"<li><b>{esc(a['title'])}</b>. {esc(a['source'])}, {esc(a['date'])}. {esc(a['url'])}<br><span class='notes'>{esc(a['takeaway'])}</span></li>"
             for s in arts for a in s["items"]) + "</ul>")
     parts.append("<h2>References</h2><ol>" + "".join(f"<li>{esc(r)}</li>" for r in meta["references"]) + "</ol>"
-                 f"<p class='notes'>{esc(meta['figure_credit'])}. Figures reused from the course tutorial albanna-tutorials.com/llm_agents.html with credit.</p>")
+                 f"<p class='notes'>{esc(meta['figure_credit'])}. Figures also appear in the course tutorial albanna-tutorials.com/llm_agents.html.</p>")
     footer = "IEEE CS Region 8 AI Caravan 2026 · AI Administrator track · Instructor guide prepared by Dr. Abdulkarim Al-Banna · albanna-tutorials.com"
     to_pdf(wrap(meta["title"], f"Instructor guide · Day {meta['day']} · Session {meta['session']}", meta["subtitle"], "".join(parts), footer), out_path)
 

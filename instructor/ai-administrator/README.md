@@ -5,7 +5,7 @@ Not deployed to the website; the website modules in `src/ai-administrator/` are 
 
 ```
 brand/        logos extracted from the curriculum PDF header (ieee-cs, gac, ai-caravan, dvp, region8) + header_strip.png
-figures/      the 44 diagrams hot-linked by src/llm_agents.html (M. Grootendorst, A Visual Guide to LLM Agents) + manifest.json
+figures/      the 44 diagrams hot-linked by src/llm_agents.html (Alammar & Grootendorst, Hands-On Large Language Models, O'Reilly 2024) + manifest.json
 content/      one YAML per session (slides + speaker notes + guide metadata), one .md per lab handout and quiz bank
 tools/        fetch_figures.py, extract_logos.py, build_deck.py (YAML -> PPTX), build_pdf.py (YAML/MD -> PDF)
 out/dayN/     generated decks, guides, handouts, quiz banks, and the zip to email
