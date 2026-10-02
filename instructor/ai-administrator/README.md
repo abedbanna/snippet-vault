@@ -27,7 +27,9 @@ python3 tools/build_pdf.py md content/day1_quiz1.md out/day1/Day1_S1_Quiz_Bank.p
 python3 tools/build_pdf.py md content/day1_quiz2.md out/day1/Day1_S2_Quiz_Bank.pdf
 python3 tools/build_pdf.py md content/day1_practical_meet_an_agent.md out/day1/Day1_S1_Practical_Meet_an_Agent.pdf
 python3 tools/build_pdf.py md content/day1_hermes_setup.md out/day1/Day1_S1_Hermes_Setup_Guide.pdf
-(cd out/day1 && zip -r AI-Administrator_Day1_Instructor_Package.zip *.pptx *.pdf)
+python3 tools/build_kahoot.py content/day1_kahoot_session1.yaml out/day1/Day1_S1_Kahoot.xlsx content/day1_kahoot_session1_key.md
+python3 tools/build_pdf.py md content/day1_kahoot_session1_key.md out/day1/Day1_S1_Kahoot_Answer_Key.pdf
+(cd out/day1 && zip -r AI-Administrator_Day1_Instructor_Package.zip *.pptx *.pdf *.xlsx)
 ```
 
 Requirements: python-pptx, PyYAML, Pillow, PyMuPDF, pandoc, Google Chrome (headless print-to-PDF).
