@@ -203,3 +203,9 @@ rm -f ~/.hermes/memories/USER.md; rm -rf ~/.hermes/sessions/*   # wipe participa
 ```
 
 Tested on the server: `hermes -z "Reply with exactly: HERMES OK"` answered correctly; a web-search question about tomorrow's weather in Amman returned a sourced one-line answer; "send an email to my manager" was refused with the scripted sentence.
+
+### Quota finding and fallback chain (2 October 2026)
+
+During the first live test the Google key hit `generate_content_free_tier_requests, limit: 20` for `gemini-3.8-flash` after about six exchanges: the **free tier is a daily cap of a few dozen requests per model**, and Hermes makes several model calls per message (answer, memory update, tool calls). A class of 30 cannot run on the free tier. Fix: in Google AI Studio open the API key page, link a billing account (Tier 1; the upgrade is immediate). Expected cost for a session is cents: 40 participants, 4 short tasks each, Flash pricing.
+
+A fallback chain is configured in `~/.hermes/config.yaml` (`fallback_providers`: `gemini-3.5-flash`, then `gemini-flash-latest`), so a temporary 503 or rate limit on the main model switches models automatically. Participants see a one-line "Model fallback" notice when that happens.
