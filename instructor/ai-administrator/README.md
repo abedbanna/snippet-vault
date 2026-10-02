@@ -1,0 +1,48 @@
+# AI Administrator: instructor packages
+
+Teaching material handed to the lead instructors of the IEEE CS Region 8 AI Caravan 2026 "AI Administrator" track.
+Not deployed to the website; the website modules in `src/ai-administrator/` are the content source.
+
+```
+brand/        logos extracted from the curriculum PDF header (ieee-cs, gac, ai-caravan, dvp, region8) + header_strip.png
+figures/      the 44 diagrams hot-linked by src/llm_agents.html (M. Grootendorst, A Visual Guide to LLM Agents) + manifest.json
+content/      one YAML per session (slides + speaker notes + guide metadata), one .md per lab handout and quiz bank
+tools/        fetch_figures.py, extract_logos.py, build_deck.py (YAML -> PPTX), build_pdf.py (YAML/MD -> PDF)
+out/dayN/     generated decks, guides, handouts, quiz banks, and the zip to email
+```
+
+## Regenerate Day 1
+
+```bash
+cd instructor/ai-administrator
+python3 tools/fetch_figures.py                                   # only needed once, or after llm_agents.html changes
+python3 tools/extract_logos.py                                   # only needed once (reads ~/Downloads/Course Curriculum_ AI Administrator.pdf)
+python3 tools/build_deck.py content/day1_session1.yaml out/day1/Day1_S1_Foundations.pptx
+python3 tools/build_deck.py content/day1_session2.yaml out/day1/Day1_S2_Prompting_for_Operators.pptx
+python3 tools/build_pdf.py guide content/day1_session1.yaml out/day1/Day1_S1_Instructor_Guide.pdf
+python3 tools/build_pdf.py guide content/day1_session2.yaml out/day1/Day1_S2_Instructor_Guide.pdf
+python3 tools/build_pdf.py md content/day1_lab1.md  out/day1/Day1_S1_Lab_Handout.pdf
+python3 tools/build_pdf.py md content/day1_lab2.md  out/day1/Day1_S2_Lab_Handout.pdf
+python3 tools/build_pdf.py md content/day1_quiz1.md out/day1/Day1_S1_Quiz_Bank.pdf
+python3 tools/build_pdf.py md content/day1_quiz2.md out/day1/Day1_S2_Quiz_Bank.pdf
+(cd out/day1 && zip -r AI-Administrator_Day1_Instructor_Package.zip *.pptx *.pdf)
+```
+
+Requirements: python-pptx, PyYAML, Pillow, PyMuPDF, pandoc, Google Chrome (headless print-to-PDF).
+
+## Conventions
+
+- Slides: 16:9, white background, black text; the IEEE orange (#F7A11A) appears only on thin rules and step markers.
+- Every figure slide carries the credit line from `meta.figure_credit`; the references slide lists the source once.
+- Slide layouts available in `build_deck.py`: title, section, bullets, figure, figures, table, two_col, callout, prompt,
+  steps, quiz (renders two slides: question, answer), articles (latest reading), references.
+- `section` slides with `minute` and `duration` drive the run-of-show table in the instructor guide.
+- Speaker notes come from each slide's `notes`; the guide prints them as slide-by-slide talking points.
+- The "Latest reading" slide is meant to be refreshed before each delivery: keep source, date, URL, one-line takeaway.
+- Session 1 and Session 2 are on different calendar days in practice (curriculum calls both "Day 1"); the wording
+  avoids "today" for the other session.
+
+## Adding Day 2+
+
+Copy `content/day1_session1.yaml` to `content/day2_session3.yaml`, update `meta`, rewrite `slides` from the matching
+module in `src/ai-administrator/`, add lab/quiz markdown, and run the same commands with `out/day2/`.

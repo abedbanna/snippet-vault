@@ -1,0 +1,714 @@
+meta:
+  day: 1
+  session: 1
+  short: Foundations
+  title: "Foundations: Agents and Automation, Explained"
+  subtitle: "What agents and automations are, the four parts of an agent, workflow versus agent, real admin examples"
+  instructors: ["Mousa AL-Akhras", "Mohammed Abdelmajeed"]
+  duration_min: 120
+  module_url: https://albanna-tutorials.com/ai-administrator/01_agents_and_automation.html
+  footer: "IEEE CS Region 8 AI Caravan 2026 · AI Administrator · Day 1 · Session 1"
+  figure_credit: "Figure: M. Grootendorst, A Visual Guide to LLM Agents"
+  objectives:
+    - "Explain the difference between an automation (fixed steps) and an agent (a model that decides its own steps)."
+    - "Name the four building blocks of an agent: model, tools, memory and instructions."
+    - "Describe the think, act, observe loop and why it needs an iteration limit and good tools."
+    - "Recognise the three designs used in this course: automation, workflow with AI steps, agent."
+    - "List three tasks from their own job that suit automation, and one that should stay with a person."
+  materials:
+    - "Projector or screen share; this deck (Day1_S1_Foundations.pptx) with speaker notes open."
+    - "One AI assistant account logged in and tested on the teaching machine (ChatGPT, Claude, Copilot or Gemini). Ideally two tabs with two different assistants for the demo."
+    - "Lab handout (Day1_S1_Lab_Handout.pdf) shared in the meeting chat at minute 95."
+    - "A blank spreadsheet template with the four lab columns (Task, Frequency, Minutes, Judgement) ready to share."
+    - "Quiz bank (Day1_S1_Quiz_Bank.pdf) for the instructor only; five questions are also on slides."
+    - "Participants: an AI assistant account and a blank document or spreadsheet. Nothing to install."
+  prep:
+    - "Read the live module once (link above); the slides follow its five sections in order."
+    - "Prepare one real-looking example email for the demo (a maintenance or refund request) with a name, a date and an order number in it."
+    - "Test that the assistant can take a pasted table (the lab's step 4 prompt)."
+    - "Decide the break time with the co-instructor (planned at minute 60)."
+    - "Ask participants in advance to bring a list of what they do in a typical week."
+  demo:
+    title: "Live demo: the same admin task in four assistants (minutes 85 to 95)"
+    steps:
+      - "Paste the sample email into ChatGPT with the plain prompt: 'Summarise this and tell me what to do.' Point out the generic answer and the fact that it decided on its own what 'what to do' means."
+      - "Repeat in Claude (or Copilot / Gemini) with the same plain prompt. Point out that the shape of the answer differs. This difference is the problem Session 2 fixes."
+      - "Now ask either assistant: 'Extract the requester, location, issue and urgency as four labelled lines. If urgency is unclear write unclear.' Show that the output is now something a spreadsheet or workflow could consume."
+      - "Ask the assistant: 'What would you need to actually create the maintenance ticket?' It will say it cannot act. Name that gap: the four parts are there except tools. Tools come on Day 3 and Day 4."
+      - "If time allows, show Copilot or Gemini inside a Microsoft 365 / Google Workspace document to make the point that the model is the same idea wherever it lives."
+  troubleshooting:
+    - issue: Participants have no assistant account
+      fix: Pair them with a neighbour for the lab; the deliverable is a document, not a chat log. Remind them of the pre-course tool list.
+    - issue: Assistant refuses or gives a very long answer in the demo
+      fix: Add 'Answer in under 60 words' and repeat. Use it to foreshadow constraints in Session 2.
+    - issue: Participants say 'everything in my job needs judgement'
+      fix: Ask them to split one task into its steps (read, decide, copy, send, chase). Usually only the 'decide' step needs judgement; the rest is automation.
+    - issue: Running behind at the break
+      fix: Cut slides 41 and 42 (multi-agent preview) and compress the examples table to the first three rows. Do not cut the lab kickoff.
+  references:
+    - "Al-Banna, A. (2026). AI Administrator, Module 1: Agents and Automation, Explained. albanna-tutorials.com/ai-administrator/01_agents_and_automation.html"
+    - "Al-Banna, A. (2025). LLM Agents, explained visually (tutorial). albanna-tutorials.com/llm_agents.html"
+    - "Grootendorst, M. (2025). A Visual Guide to LLM Agents. newsletter.maartengrootendorst.com (source of the diagrams in this deck)"
+    - "Alammar, J. and Grootendorst, M. (2024). Hands-On Large Language Models. O'Reilly Media"
+    - "Yao, S. et al. (2023). ReAct: Synergizing Reasoning and Acting in Language Models. ICLR 2023"
+    - "Schick, T. et al. (2023). Toolformer: Language Models Can Teach Themselves to Use Tools. NeurIPS 2023"
+    - "Anthropic (2024). Introducing the Model Context Protocol. modelcontextprotocol.io"
+    - "Anthropic (2024). Building Effective Agents. anthropic.com/research/building-effective-agents"
+    - "IEEE CS Region 8 AI Caravan (2026). AI Administrator Track Curriculum. aicaravan.org"
+
+slides:
+  - layout: title
+    title: "Agents and Automation, Explained"
+    subtitle: "AI Administrator: Agentic Workflows & Automation · Day 1 · Session 1 · Foundations"
+    notes: >
+      Welcome participants. Introduce yourself and the co-instructor. State the promise of the session in one
+      sentence: by the end of two hours everyone can tell an automation from an agent, name the four parts of any
+      agent, and will have a list of their own tasks to automate during the course. No code today, and no tools to
+      install.
+
+  - layout: bullets
+    title: "Where this session sits"
+    minute: 0
+    bullets:
+      - "28-hour track, 8 days, 14 two-hour sessions, IEEE CS certificate at the end"
+      - "Three threads run through everything: workflow mapping, agents and automation, human-in-the-loop controls"
+      - "Session 1 (this deck): what agents and automations are"
+      - "Session 2 (next meeting): prompting for operators"
+      - "Day 2: workflow mapping · Day 3: first n8n automations · Day 4: tools and your first agent"
+      - "Day 5 and 6: multi-agent, controls, security, monitoring · Day 7 and 8: capstone and exam"
+    notes: >
+      Give the shape of the whole course so today's vocabulary has somewhere to land. Mention that the final exam is
+      40 multiple-choice questions plus a timed practical in n8n, and that the knowledge checks at the end of every
+      session are written in the same style.
+
+  - layout: bullets
+    title: "What you will be able to do after this session"
+    bullets:
+      - "Explain the difference between an automation (fixed steps) and an agent (model decides the steps)"
+      - "Name the four building blocks of an agent: model, tools, memory, instructions"
+      - "Describe the think, act, observe loop and why it needs limits"
+      - "Recognise the three designs: automation, workflow with AI steps, agent"
+      - "List three tasks from your own job that suit automation, and one that should stay with a person"
+    notes: >
+      Read the objectives quickly. The last one is the lab deliverable: a one-page task inventory. Everything else in
+      the course builds on that inventory, so it matters more than the quiz.
+
+  - layout: table
+    title: "Run of show (120 minutes)"
+    columns: ["Minutes", "Block", "What happens"]
+    rows:
+      - ["0 to 10", "Welcome and why now", "Course map, objectives, the shift LLMs caused"]
+      - ["10 to 35", "Automation versus agent", "Definitions, comparison table, the middle ground, rule of thumb"]
+      - ["35 to 60", "The four parts of an agent", "Model, tools, memory, instructions, with diagrams"]
+      - ["60 to 70", "Break", ""]
+      - ["70 to 85", "The agent loop", "Think, act, observe; ReAct; iteration limits; where the human fits"]
+      - ["85 to 95", "Examples and live demo", "Five admin tasks and their best design; same task in four assistants"]
+      - ["95 to 115", "Lab", "Task inventory: ten tasks, tagged, classified, challenged by an assistant"]
+      - ["115 to 120", "Knowledge check and wrap", "Five questions, key takeaways, what to bring to Session 2"]
+    notes: >
+      Show this for ten seconds. Participants like knowing when the break is. The lab is twenty minutes of working
+      time; most participants will finish the inventory at home, which is fine. The deliverable is due before Day 2.
+
+  # ---------------------------------------------------------------- Section 1
+  - layout: section
+    title: "1. Why administrators are learning this now"
+    subtitle: "The boundary of what software can do just moved"
+    minute: 3
+    duration: 7
+
+  - layout: bullets
+    title: "Office work is a chain of small decisions"
+    bullets:
+      - "Read this request, decide who handles it, copy the details, send a reply, chase the follow-up"
+      - "For twenty years software automated only the perfectly regular parts"
+      - "Anything that needed reading, judgement or writing stayed with people"
+      - "Large language models moved that boundary"
+      - "A model can now read an email, classify it, extract the order number, draft a reply, and hand it to you"
+    notes: >
+      Make it personal: ask two participants to name the first three things they did at work this morning. Almost
+      always it is reading something, deciding something, and copying something between systems. Those three verbs
+      are exactly what language models added to the automatable set.
+
+  - layout: figure
+    title: "What a language model actually does: predict the next word"
+    figure: llm-token-prediction
+    caption: "Given the words so far, the model produces the most likely next token, one at a time."
+    notes: >
+      Keep this to one minute. Participants do not need to know how the model is trained. They need to know that it
+      produces plausible continuations, because that single fact explains both its strengths (fluent reading and
+      writing) and its main weakness (confident, plausible, wrong answers), which we meet in Session 2.
+
+  - layout: figure
+    title: "A conversation is the same trick, repeated"
+    figure: llm-conversation-example
+    caption: "Your message plus the whole history is the input; the reply is predicted word by word."
+    notes: >
+      Point out that the model does not 'remember' in the human sense; the entire conversation is handed back to it
+      every turn. That is why long chats slow down and why, later, we will talk about memory as something you
+      design rather than something the model has.
+
+  - layout: figure
+    title: "Alone, the model forgets"
+    figure: llm-memory-limitation
+    caption: "Without memory, nothing from a previous session survives. Memory has to be added."
+    bullets:
+      - "No memory of yesterday's conversation"
+      - "No knowledge of your organisation's documents"
+      - "Both are fixable: that is the 'memory' part of an agent"
+    notes: >
+      This is the first of the two limitations that make the four-part agent necessary. Ask: 'How would you brief a
+      temp who forgets everything overnight?' You would write it down. That written briefing is the memory and
+      instructions we design.
+
+  - layout: figure
+    title: "Alone, the model guesses at facts and numbers"
+    figure: llm-math-limitation
+    caption: "Arithmetic, look-ups and live data are not what next-word prediction is good at."
+    bullets:
+      - "Can get a sum, a date or a price wrong while sounding certain"
+      - "Fix: give it a calculator, a database, a search: that is the 'tools' part of an agent"
+    notes: >
+      Second limitation, second part of the agent. Tools are how the model stops guessing and starts looking things
+      up. For administrators the message is: never ask a bare model for a number that exists in a system.
+
+  - layout: bullets
+    title: "The job of an AI administrator: four verbs"
+    bullets:
+      - "Map the work (Day 2)"
+      - "Design the automation or agent that does it (Days 3 to 5)"
+      - "Connect the tools it needs (Day 4)"
+      - "Decide where a human must stay in the loop (Days 5 and 6)"
+      - "You will not write code. The people who understand the process decide what gets automated and how it is controlled."
+    notes: >
+      This slide is the course in one breath. Repeat the four verbs out loud: map, design, connect, control. Stress
+      that the shift of power is real: the process owner, not the programmer, now decides.
+
+  # ---------------------------------------------------------------- Section 2
+  - layout: section
+    title: "2. Automation versus agent"
+    subtitle: "Who decides the steps?"
+    minute: 10
+    duration: 25
+
+  - layout: two_col
+    title: "Two different things"
+    left:
+      heading: "Automation"
+      bullets:
+        - "A fixed recipe: when X happens, do A, then B, then C"
+        - "Someone wrote every step in advance"
+        - "Never surprises you"
+        - "Example: form submission creates a spreadsheet row and sends a confirmation email"
+    right:
+      heading: "Agent"
+      bullets:
+        - "Given a goal and a set of tools"
+        - "A language model decides which steps, in what order, and when it is finished"
+        - "The path is not known in advance"
+        - "Example: 'Find out why this invoice was rejected and prepare a corrected version'"
+    notes: >
+      The single question to ask about any system is 'who decides the steps?'. If a person wrote them down, it is
+      an automation. If the model chooses at run time, it is an agent. Everything else in the comparison table
+      follows from that one difference.
+
+  - layout: table
+    title: "Automation versus agent, side by side"
+    columns: ["", "Automation", "Agent"]
+    rows:
+      - ["Who decides the steps", "The designer, in advance", "The model, at run time"]
+      - ["Best for", "Regular, high-volume, well-defined work", "Variable work needing reading, judgement or research"]
+      - ["Predictability", "Very high", "Lower; needs limits and checks"]
+      - ["Cost per run", "Near zero", "Model tokens on every step"]
+      - ["Failure style", "Stops with an error", "Can keep going in the wrong direction"]
+      - ["Typical tools", "n8n, Make, Zapier, Power Automate", "n8n AI Agent, Copilot Studio, OpenClaw, Hermes"]
+    notes: >
+      Walk the rows. Dwell on 'failure style': an automation that breaks stops, an agent that is confused keeps
+      acting. That is why agents need the controls we design on Day 5. Mention the tool names so they are familiar
+      when they appear on Day 3 and Day 4, but do not demo them today.
+
+  - layout: figure
+    title: "Automation in a picture: a fixed order of tools"
+    figure: fixed-tool-order
+    caption: "The designer decided the sequence. The model, if there is one, only fills in a step."
+    notes: >
+      Connect the picture to the definition: the arrows were drawn by a person. Nothing the model does can change
+      the order. This is what you build in n8n on Day 3.
+
+  - layout: figure
+    title: "Agent in a picture: the model chooses the tool"
+    figure: autonomous-tool-selection
+    caption: "Given the goal, the model picks which tool to call next, and may pick differently every run."
+    notes: >
+      Same tools, different wiring: now the model is in charge of the arrows. Ask the room which picture they would
+      trust with sending an email to a customer. Most say the first; that intuition is correct and is the point of
+      the rule of thumb coming up.
+
+  - layout: bullets
+    title: "The middle ground: workflows with AI steps"
+    bullets:
+      - "A fixed automation where one or two steps call a model"
+      - "The model classifies, summarises, extracts or drafts; it does not choose the path"
+      - "Most of the benefit with most of the predictability"
+      - "This course teaches the middle ground first (Days 3 and 4) and full agents after it"
+    notes: >
+      This is the most important design idea of the day. Most 'AI automation' that works in real offices is exactly
+      this: n8n or Power Automate with one AI node. Participants should leave able to say 'workflow with an AI step'
+      as a third category, not just automation or agent.
+
+  - layout: figure
+    title: "Autonomy is a dial, not a switch"
+    figure: agent-autonomy-levels
+    caption: "From a model that only suggests, to one that acts without asking. You choose the level per task."
+    notes: >
+      Use the levels to place the three designs: automation sits at the fixed end, workflow with AI step in the
+      middle, agent at the autonomous end. Where the human sits on this dial is Day 5's whole topic (controls),
+      so just plant the idea now.
+
+  - layout: callout
+    title: "Rule of thumb"
+    text: "Start with the least autonomous design that solves the problem. Add agency only where the path genuinely cannot be written down in advance."
+    notes: >
+      Have participants write this down. It is the answer to roughly a quarter of the exam questions, and it is
+      what separates an administrator who ships reliable automations from one who demos impressive agents that
+      break.
+
+  # ---------------------------------------------------------------- Section 3
+  - layout: section
+    title: "3. The four parts of every agent"
+    subtitle: "Model · Tools · Memory · Instructions"
+    minute: 35
+    duration: 25
+
+  - layout: figure
+    title: "An agent, in the most general picture"
+    figure: agent-framework
+    caption: "Something that senses its environment, decides, and acts on it. The language model is the deciding part."
+    notes: >
+      Classic agent picture from AI textbooks: sensors in, actuators out, a brain in the middle. For us the
+      'environment' is email, spreadsheets, ticketing systems, and the brain is the language model. Whatever
+      product you buy, you are buying this picture.
+
+  - layout: figure
+    title: "The augmented language model"
+    figure: augmented-llm
+    caption: "A bare model plus retrieval, tools and memory. The additions are what make it useful at work."
+    notes: >
+      This slide fixes the two limitations shown earlier. Forgetting is fixed by memory and retrieval; guessing is
+      fixed by tools. 'Augmented LLM' is the term used in Anthropic's 'Building Effective Agents' guide, which is in
+      the references.
+
+  - layout: figure
+    title: "The four parts wired together"
+    figure: agent-components
+    caption: "Planning (the model reasoning), tools, memory, and the instructions that steer all of it."
+    bullets:
+      - "Model: reads, reasons, writes"
+      - "Tools: actions it may take"
+      - "Memory: what it can recall"
+      - "Instructions: who it is, what it must and must not do"
+    notes: >
+      Spend time here. Ask participants to find each of the four parts in the picture. Learn to see them and every
+      vendor demo becomes readable: 'which model, which tools, what memory, and who wrote the instructions?'
+
+  - layout: figure
+    title: "Part 1: the model"
+    figure: augmented-llm-framework
+    caption: "GPT, Claude, Gemini, Llama or a smaller local model. You choose it for quality, speed, cost and where your data may go."
+    bullets:
+      - "Quality: does it read and write well enough for this task?"
+      - "Speed and cost: tokens on every step"
+      - "Data residency: where is the text sent? (Day 6)"
+    notes: >
+      Administrators rarely train or tune models. They choose one. The choice criteria are the bullets. Data
+      residency often decides it in regulated organisations; park that for Day 6 but name it now.
+
+  - layout: figure
+    title: "Part 2: tools, by type"
+    figure: tool-types
+    caption: "Search, read, write, calculate, call another system. No tools means the agent can only talk."
+    notes: >
+      Give admin examples for each type: search the web, read a calendar, look up a customer, send an email, create
+      a ticket. Tools are also where the risk is: a read-only tool cannot do damage; a 'send email' tool can.
+
+  - layout: figure
+    title: "A tool call, step by step"
+    figure: tool-use-example
+    caption: "The model decides a tool is needed, requests it, receives the result, and continues with that fact in hand."
+    notes: >
+      Narrate the figure left to right. The important moment is the hand-back: the tool result enters the
+      conversation, and the model continues as if it had always known. This is also why tool quality is answer
+      quality: a stale price list produces a confident wrong quote.
+
+  - layout: figure
+    title: "How the model asks for a tool: a structured request"
+    figure: json-tool-call
+    caption: "The model writes a small structured message naming the tool and its inputs. Software runs it. No code from you."
+    notes: >
+      You are not teaching JSON. The point is that the model does not 'do' anything itself; it writes a request, and
+      the platform (n8n, Copilot Studio) executes it. That boundary is where approval gates live on Day 5: the
+      request can be shown to a human before it runs.
+
+  - layout: figure
+    title: "The platform handles the plumbing"
+    figure: function-calling
+    caption: "Function calling: the model names the function, the system executes it and returns the result."
+    notes: >
+      One sentence: 'function calling' is the vendor term for the previous slide. When you see it in a product
+      menu, you now know what it means. Move on.
+
+  - layout: figures
+    title: "Models learned to use tools (Toolformer, 2023)"
+    figures: [toolformer-step-1, toolformer-step-2, toolformer-step-3]
+    caption: "Research showed models can learn when a calculator, a search or a calendar would help, and insert the call themselves."
+    notes: >
+      Optional history slide; thirty seconds. It explains why every modern assistant can use tools: it was taught to
+      recognise the moment a tool would help. Skip if behind schedule.
+
+  - layout: figure
+    title: "Preview: one plug for every tool (Day 4)"
+    figure: mcp-components
+    caption: "The Model Context Protocol lets any assistant connect to any tool through one standard connector."
+    notes: >
+      Plant the idea only. On Day 4 participants will connect tools through connectors and MCP servers without code.
+      Today the message is: tools are becoming plug-and-play, so the administrator's job is choosing and
+      permitting them, not building them.
+
+  - layout: figure
+    title: "Part 3: memory, by type"
+    figure: memory-types
+    caption: "The current conversation, past sessions, a knowledge base of your documents, learned skills."
+    notes: >
+      Memory is what makes an assistant feel like it knows your organisation. The types matter because they are
+      priced and controlled differently: conversation memory is free and transient; a document knowledge base is a
+      design decision with privacy consequences.
+
+  - layout: figure
+    title: "Short-term memory is the context window"
+    figure: context-window
+    caption: "Everything the model can see right now. Finite. Anything outside it does not exist for the model."
+    notes: >
+      Return to the conversation slide: the context window is the whole history handed back each turn. It has a
+      size limit, so long documents and long conversations must be summarised or retrieved in pieces. Session 2 uses
+      this to explain why you give the model the source rather than hope it knows.
+
+  - layout: figure
+    title: "Long-term memory is stored outside and fetched when needed"
+    figure: long-term-memory
+    caption: "Past conversations and documents live in a store; relevant pieces are pulled into the window on demand."
+    notes: >
+      This is the mechanism behind 'Projects' and 'custom GPTs' with uploaded files, which participants build in
+      Session 2, and behind RAG on Day 4. Keep it conceptual: a filing cabinet the model can search.
+
+  - layout: bullets
+    title: "Part 4: instructions, your main control surface"
+    bullets:
+      - "The system prompt: who the agent is, what it must and must not do"
+      - "The tone it uses"
+      - "When it must stop and ask a person"
+      - "Written by you, the administrator, in plain language"
+      - "Instructions plus tool permissions are the two levers you control most directly"
+    notes: >
+      Of the four parts, this is the one administrators own. The whole of Session 2 is about writing these well.
+      Ask: 'If a new temp started tomorrow, what would your one-page briefing say?' That briefing is the system
+      prompt.
+
+  - layout: bullets
+    title: "Always-on personal agents add two ideas"
+    bullets:
+      - "OpenClaw and Hermes Agent run all the time as a service you message on WhatsApp or Telegram"
+      - "They can save a workflow they figured out as a reusable skill"
+      - "Demonstrated on Day 5 (Module 9)"
+      - "The four parts are still the same: model, tools, memory, instructions"
+    notes: >
+      Participants may have seen these on social media. Acknowledge them, place them in the framework, and promise
+      the demo on Day 5. Do not install anything today.
+
+  # ---------------------------------------------------------------- Section 4
+  - layout: section
+    title: "4. How an agent actually works: the loop"
+    subtitle: "Think · Act · Observe · Repeat"
+    minute: 70
+    duration: 15
+
+  - layout: steps
+    title: "The agent loop"
+    steps:
+      - heading: "Think"
+        text: "Given the goal, the instructions and what it knows so far, the model decides the next action."
+      - heading: "Act"
+        text: "It calls one tool, for example 'search the CRM for order 4471'."
+      - heading: "Observe"
+        text: "The tool result comes back and is added to the agent's working memory."
+      - heading: "Repeat"
+        text: "Until the model produces a final answer, or a limit is reached."
+    notes: >
+      Act it out with the co-instructor: one plays the model, one plays the tool. Goal: 'Find why invoice 4471 was
+      rejected.' Model: 'Look up invoice 4471.' Tool: 'Rejected: PO number missing.' Model: 'Draft a corrected
+      invoice with PO field.' Three loops, done. Then ask: what if the tool had said 'not found'?
+
+  - layout: figure
+    title: "ReAct: reason, then act"
+    figure: react-framework
+    caption: "The model writes a short thought, chooses an action, reads the observation, and thinks again."
+    notes: >
+      Name the pattern: ReAct, from the 2023 paper in the references. Participants will see 'ReAct agent' as an
+      option in n8n's AI Agent node on Day 4. They only need to recognise the name and know it means this loop.
+
+  - layout: figure
+    title: "The cycle, as the platform runs it"
+    figure: react-cycle
+    caption: "Thought, action, observation, round and round, until a final answer or a stop condition."
+    notes: >
+      Emphasise the stop condition. The loop has no natural end; something must say 'enough'. Either the model
+      decides it has the answer, or a limit set by the administrator fires. Lead into the next slide.
+
+  - layout: figure
+    title: "Planning is deciding the next step, every step"
+    figure: llm-planning-behavior
+    caption: "Breaking a goal into steps, choosing the next one, revising when an observation surprises it."
+    notes: >
+      Planning sounds grand; in practice it is this loop plus the model's ability to break a goal into sub-steps.
+      Good instructions make planning better: 'Always check the policy document before answering' is a planning
+      instruction.
+
+  - layout: two_col
+    title: "Two consequences for administrators"
+    left:
+      heading: "Every loop costs time and money"
+      bullets:
+        - "Each turn sends the whole context to the model again"
+        - "A confused agent can loop in the wrong direction"
+        - "So: set an iteration limit, always"
+    right:
+      heading: "The agent only knows what its tools tell it"
+      bullets:
+        - "Tool quality is answer quality"
+        - "A stale price list gives confident, wrong quotes"
+        - "So: fix the data source before blaming the model"
+    notes: >
+      These two are exam material and real-world material. The iteration limit is the first control anyone sets
+      on an agent. The tool-quality point saves weeks of prompt fiddling: when answers are wrong, check what the
+      tool returned first.
+
+  - layout: bullets
+    title: "Where the human fits in the loop"
+    bullets:
+      - "Approving a tool call before it runs ('send email', 'issue refund')"
+      - "Reviewing the final answer before it leaves"
+      - "Being escalated to when the agent is unsure"
+      - "Designing these points is Day 5 (Module 10): approve, edit, reject, escalate"
+    notes: >
+      Draw the three positions on the loop by hand if you have a whiteboard: before the act, after the final
+      answer, and as an exit from the loop. The lab's last column, 'Human's role', is a first draft of this.
+
+  # ---------------------------------------------------------------- Section 5
+  - layout: section
+    title: "5. Examples from administration and operations"
+    subtitle: "Which design fits which task, and what the human still does"
+    minute: 85
+    duration: 10
+
+  - layout: table
+    title: "Five tasks, five designs"
+    columns: ["Task", "Best design", "Human's role"]
+    rows:
+      - ["New-hire onboarding: create accounts, send welcome pack, book induction", "Automation", "Approves the start date once"]
+      - ["Sort incoming support emails into billing, technical, sales", "Workflow with an AI classification step", "Reviews the 'unsure' bucket"]
+      - ["Weekly status report compiled from five project trackers", "Workflow with an AI summarising step", "Edits and sends"]
+      - ["Research three suppliers and prepare a comparison table", "Agent with web search and a document tool", "Checks facts, makes the decision"]
+      - ["Approve a refund over the policy limit", "Not automated", "Decides; the system only prepares the file"]
+    notes: >
+      Go row by row and ask the room to justify each design using 'who decides the steps' and 'how much judgement'.
+      Row 2 is the course's running example: it is built in n8n on Day 3 and gets an approval gate on Day 5.
+
+  - layout: callout
+    title: "Notice the pattern in the last column"
+    text: "Automation removes the copying and chasing. It rarely removes the deciding, and where money, people or reputation are at stake, it should not."
+    notes: >
+      This sentence answers the fear in the room about jobs. The work that goes is the copying and chasing nobody
+      enjoys; the deciding stays, and becomes more visible. It is also the ethical frame for Day 6.
+
+  - layout: figure
+    title: "Preview: when one agent is not enough (Day 5)"
+    figure: multi-agent-system
+    caption: "Several agents with different roles, passing work between them, often with one supervisor."
+    notes: >
+      Optional if time is short. Plant the vocabulary: supervisor, worker, critic. Day 5 covers sequential, parallel
+      and supervisor patterns and when multi-agent is overkill (usually).
+
+  - layout: figure
+    title: "Preview: a multi-agent architecture"
+    figure: multi-agent-architecture
+    caption: "Each agent has its own four parts; a protocol decides who speaks when. Still model, tools, memory, instructions."
+    notes: >
+      One sentence: more agents does not mean a new kind of thing, it means the same four parts repeated with
+      hand-offs between them. Cut this slide if running behind.
+
+  - layout: bullets
+    title: "Live demo: the same admin task in four assistants"
+    bullets:
+      - "Paste one maintenance email into ChatGPT: 'Summarise this and tell me what to do'"
+      - "Repeat in Claude, Copilot or Gemini: notice the shape of the answer differs"
+      - "Ask for four labelled lines (requester, location, issue, urgency): now a workflow could use it"
+      - "Ask 'what would you need to create the ticket?': it cannot act. The missing part is tools"
+      - "Same idea in every product: model, instructions, memory, and (not yet) tools"
+    notes: >
+      Follow the demo script in the instructor guide. The purpose is to make the four parts visible in products
+      people already use, and to set up Session 2: the shape of the answer is the problem prompting solves.
+
+  # ---------------------------------------------------------------- Lab
+  - layout: section
+    title: "Practical lab: your task inventory"
+    subtitle: "20 minutes now, finish at home, due before the next session"
+    minute: 95
+    duration: 20
+
+  - layout: steps
+    title: "Lab steps"
+    steps:
+      - heading: "1. List ten recurring tasks"
+        text: "Things you do at least weekly. Concrete: 'reply to leave requests', not 'emails'."
+      - heading: "2. Tag each task"
+        text: "Frequency (daily, weekly, monthly); Minutes per occurrence; Judgement needed (none, some, a lot)."
+      - heading: "3. Classify the design"
+        text: "Automation, Workflow with AI step, Agent, or Keep human. Use the five-tasks table as a guide."
+      - heading: "4. Ask your assistant to challenge you"
+        text: "Paste the table with the prompt on the next slide. Note where it disagrees."
+      - heading: "5. Pick your course task"
+        text: "One 'Workflow with AI step' task taking 30+ minutes a week. You will map, build and control it over the course."
+    notes: >
+      Share the handout and the spreadsheet template in the chat. Circulate (or watch the shared screens) during
+      steps 1 to 3; the common mistake is tasks that are too vague. Step 4 is where participants get their first
+      taste of using an assistant as a colleague.
+
+  - layout: prompt
+    title: "Step 4: the challenge prompt"
+    text: |
+      You are an operations consultant. Here is a table of my recurring tasks with my proposed design for each
+      (Automation, Workflow with AI step, Agent, Keep human). For each row, say whether you agree, and if not, why.
+      Then rank the top three tasks by time saved per week. Be brief.
+
+      [paste your table here]
+    notes: >
+      Read it aloud and point at the parts: a role, a description of the input, a task, an output order, a
+      constraint ('be brief'). Say: 'Tomorrow in Session 2 you will learn why this prompt is shaped like this.'
+
+  - layout: callout
+    title: "Deliverable"
+    text: "A one-page task inventory (ten rows, four columns) with your chosen course task highlighted, saved as M1-task-inventory in your course folder. Bring it to the next session."
+    notes: >
+      Be explicit that this document is reused on Days 2, 3 and 5. Participants who skip it will have nothing to map
+      tomorrow.
+
+  # ---------------------------------------------------------------- Quiz
+  - layout: section
+    title: "Knowledge check"
+    subtitle: "Five questions in the style of the final exam"
+    minute: 115
+    duration: 5
+
+  - layout: quiz
+    title: "Question 1"
+    question: "Which statement best describes an agent, as opposed to an automation?"
+    options:
+      - "It runs on a schedule instead of a trigger"
+      - "A language model decides the steps at run time"
+      - "It always sends its output to a human"
+      - "It cannot use external tools"
+    answer: 1
+    why: "In an automation every step is fixed in advance; in an agent the model chooses which tool to use next and when to stop."
+
+  - layout: quiz
+    title: "Question 2"
+    question: "Which of these is NOT one of the four building blocks of an agent?"
+    options: ["Model", "Tools", "Memory", "Dashboard"]
+    answer: 3
+    why: "The four parts are model, tools, memory and instructions. A dashboard is a way to monitor, not a part of the agent."
+
+  - layout: quiz
+    title: "Question 3"
+    question: "Sorting support emails into billing, technical and sales is best built as a..."
+    options: ["Full autonomous agent", "Workflow with an AI classification step", "Manual task", "Scheduled report"]
+    answer: 1
+    why: "The path is fixed (read, classify, route) and only one step needs a model. That is the workflow-with-AI-step pattern."
+
+  - layout: quiz
+    title: "Question 4"
+    question: "Why does an agent need an iteration limit?"
+    options:
+      - "To make it run faster"
+      - "Because each loop costs tokens and a confused agent can keep going in the wrong direction"
+      - "So it can use more tools"
+      - "Because models forget after ten steps"
+    answer: 1
+    why: "Without a limit a stuck agent burns money and may take more actions than intended. The limit is a basic control."
+
+  - layout: quiz
+    title: "Question 5"
+    question: "Which task should generally stay with a person rather than be automated?"
+    options:
+      - "Creating accounts for a new hire"
+      - "Summarising five trackers into a report draft"
+      - "Approving a refund above the policy limit"
+      - "Chasing late timesheets"
+    answer: 2
+    why: "Automation removes copying and chasing. Decisions involving money, people or legal exposure need human accountability."
+
+  # ---------------------------------------------------------------- Close
+  - layout: bullets
+    title: "Key takeaways"
+    bullets:
+      - "Automations follow fixed steps; agents let a model choose the steps. Most useful systems are workflows with a few AI steps."
+      - "Every agent is model + tools + memory + instructions. Instructions and tool permissions are your control surface."
+      - "Agents run a think, act, observe loop and need iteration limits and good tools."
+      - "Automation removes copying and chasing; deciding stays with people, always where money, people or law are involved."
+    notes: >
+      Read the four takeaways. Then say what the next session, Session 2, is: writing instructions (prompts) that produce the same shape
+      of answer every time, and building a first assistant that knows your documents.
+
+  - layout: figure
+    title: "Further reading"
+    figure: local-book
+    caption: "Hands-On Large Language Models (Alammar and Grootendorst, O'Reilly 2024), whose visual style the figures in this deck follow."
+    bullets:
+      - "Module 1 online, with the lab and quiz: albanna-tutorials.com/ai-administrator"
+      - "LLM Agents explained visually: albanna-tutorials.com/llm_agents.html"
+      - "A Visual Guide to LLM Agents (M. Grootendorst)"
+      - "Next session: Prompting for Operators"
+    notes: >
+      Optional reading only. The online module repeats everything in this deck, with the knowledge check scored in
+      the browser, so participants can revise alone.
+
+  - layout: articles
+    title: "Latest reading on agents at work (2026)"
+    items:
+      - title: "How AI agents will reshape digital workplace IT operations"
+        source: "CIO Dive, by Autumn Stanish (Gartner)"
+        date: "19 March 2026"
+        url: "ciodive.com/news/agentic-AI-IT-operations-gartner-digital-workplace/814244"
+        takeaway: "Gartner expects nearly a third of organisations to run 80% of digital-workplace services autonomously by 2030, from zero in 2025; 84% of IT leaders say extra controls will be needed to govern agents. Controls are the job, not the afterthought."
+      - title: "State of AI trust in 2026: shifting to the agentic era"
+        source: "McKinsey"
+        date: "25 March 2026"
+        url: "mckinsey.com/capabilities/tech-and-ai/our-insights/tech-forward/state-of-ai-trust-in-2026-shifting-to-the-agentic-era"
+        takeaway: "Adoption is moving from pilots to scaled, increasingly agentic deployments, but only about 30% of organisations reach a mature level of strategy, governance and agent controls. The gap this course fills."
+      - title: "Future of Work with AI Agents: auditing automation and augmentation potential across the U.S. workforce"
+        source: "Stanford (Shao, Brynjolfsson, Yang et al.), arXiv 2506.06576"
+        date: "revised 1 February 2026"
+        url: "arxiv.org/abs/2506.06576"
+        takeaway: "An audit of 844 tasks in 104 occupations: workers want agents on the information-heavy, repetitive tasks and want to keep the interpersonal and judgement ones. Exactly the automation-versus-keep-human split in today's lab."
+      - title: "Context Engineering: from prompts to corporate multi-agent architecture"
+        source: "V. Vishnyakova, arXiv 2603.09619"
+        date: "10 March 2026"
+        url: "arxiv.org/abs/2603.09619"
+        takeaway: "Argues that managing what an agent knows (its context) is a discipline of its own, with a four-level maturity model. The 'memory' and 'instructions' parts of today's four-part agent, taken seriously at company scale."
+    notes: >
+      Optional two minutes, or leave for self-study. Each item links a headline from the last few months to something
+      taught today. Instructors may swap in newer pieces; keep the pattern: source, date, one-line takeaway tied to the
+      session.
+
+  - layout: references
+    title: "References"
+    notes: >
+      Leave on screen during questions. All figures in this deck are from Maarten Grootendorst's 'A Visual Guide to
+      LLM Agents', reused with credit as on the course website.

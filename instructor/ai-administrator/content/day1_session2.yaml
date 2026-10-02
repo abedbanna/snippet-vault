@@ -1,0 +1,636 @@
+meta:
+  day: 1
+  session: 2
+  short: Prompting_for_Operators
+  title: "Prompting for Operators"
+  subtitle: "Roles, context, structured outputs, reusable prompt templates, and AI assistants with projects and files"
+  instructors: ["Robina Mirbahar"]
+  duration_min: 120
+  module_url: https://albanna-tutorials.com/ai-administrator/02_prompting_for_operators.html
+  footer: "IEEE CS Region 8 AI Caravan 2026 · AI Administrator · Day 1 · Session 2"
+  figure_credit: "Figure: M. Grootendorst, A Visual Guide to LLM Agents"
+  objectives:
+    - "Use the five parts of a working prompt: role, context, task, constraints, output format."
+    - "Ask for structured outputs (tables, checklists, labelled fields) that can be copied into a spreadsheet or a workflow."
+    - "Turn a good prompt into a reusable template with placeholders, and improve it with few-shot examples and a ten-row test set."
+    - "Set up a project or custom assistant with uploaded documents, and test where it is reliable and where it is not."
+    - "Recognise hallucination and over-confidence, and apply the three habits that catch them."
+  materials:
+    - "Projector or screen share; this deck (Day1_S2_Prompting_for_Operators.pptx) with speaker notes open."
+    - "Two assistants logged in for the demo, ideally ChatGPT (Projects or a custom GPT) and Claude (Projects); Copilot or Gemini Gems as a third if available."
+    - "Two public policy documents as PDFs (for example a university leave policy and a travel expenses policy found online) ready to upload in the demo and to share with participants who have none."
+    - "One sample maintenance-request email (reuse the Session 1 demo email)."
+    - "Lab handout (Day1_S2_Lab_Handout.pdf) and a spreadsheet template with three columns (Input, Expected, Model answer) shared at minute 95."
+    - "Quiz bank (Day1_S2_Quiz_Bank.pdf) for the instructor; five questions are on slides."
+  prep:
+    - "Read the live module once (link above); the slides follow its five sections in order."
+    - "Build the department assistant yourself before the session (slide 'Assistant instructions') and run the trap test, so you know what it does with your two documents."
+    - "Run the few-shot classifier on five made-up messages so the demo has no surprises."
+    - "Check the data terms of the consumer tier you will demo on; say out loud that only public documents are used."
+  demo:
+    title: "Live demo: from a vague request to a template to an assistant (minutes 10 to 85, in three short bursts)"
+    steps:
+      - "Burst 1 (minute 15): type the 'Before' prompt with the sample email, show the generic answer. Then paste the 'After' prompt. Show the five labelled lines. Change the email slightly so urgency is ambiguous; show that the model writes 'unclear'."
+      - "Burst 2 (minute 45): paste the few-shot classifier. Classify three messages, one awkward. Change one example and show the classification move. Then open the blank three-column sheet and classify two rows to show how the test set works."
+      - "Burst 3 (minute 70): create a Project (ChatGPT or Claude). Paste the assistant instructions from the slide, upload the two public policies. Ask one question the documents answer; show the quoted sentence. Ask one they do not; show 'Not covered by the uploaded policies'. If the assistant invents an answer instead, say so: this is exactly why we test."
+      - "If time allows, show the same Project idea in Copilot or Gemini Gems in one minute each, to make the point that the feature names differ but the idea is identical."
+  troubleshooting:
+    - issue: Participants have no documents to upload
+      fix: Share your two public policy PDFs in the chat. Any public policy works; the content matters less than the trap test.
+    - issue: Consumer-tier assistant will not accept uploads or has no Projects feature
+      fix: Paste the policy text directly into the conversation as context. The 'assistants that know your documents' idea still holds; note that pasting is the context-window version, uploading is the long-term-memory version.
+    - issue: The classifier scores 10/10 on the first try
+      fix: Ask the participant to add two more awkward inputs (mixed intent, sarcasm, a message in another language) until something fails. The lab is about the fix-and-re-run habit, not the score.
+    - issue: Running behind at the break
+      fix: Cut the CAMEL and Generative Agents slides (role-prompting and memory previews) and shorten the products table to one minute. Do not cut the trap test in the lab.
+  references:
+    - "Al-Banna, A. (2026). AI Administrator, Module 2: Prompting for Operators. albanna-tutorials.com/ai-administrator/02_prompting_for_operators.html"
+    - "Al-Banna, A. (2025). LLM Agents, explained visually (tutorial). albanna-tutorials.com/llm_agents.html"
+    - "Grootendorst, M. (2025). A Visual Guide to LLM Agents. newsletter.maartengrootendorst.com (source of the diagrams in this deck)"
+    - "Wei, J. et al. (2022). Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. NeurIPS 2022"
+    - "Kojima, T. et al. (2022). Large Language Models are Zero-Shot Reasoners. NeurIPS 2022"
+    - "Madaan, A. et al. (2023). Self-Refine: Iterative Refinement with Self-Feedback. NeurIPS 2023"
+    - "Shinn, N. et al. (2023). Reflexion: Language Agents with Verbal Reinforcement Learning. NeurIPS 2023"
+    - "Li, G. et al. (2023). CAMEL: Communicative Agents for 'Mind' Exploration of Large Language Model Society. NeurIPS 2023"
+    - "Park, J. S. et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior. UIST 2023"
+    - "Lewis, P. et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS 2020"
+    - "OpenAI Help Center: Projects in ChatGPT; Creating a GPT. help.openai.com"
+    - "Anthropic Help Center: What are Projects? support.claude.com"
+    - "Microsoft Learn: Copilot agents and Copilot Notebooks. learn.microsoft.com"
+    - "Google: Gems in Gemini. support.google.com/gemini"
+    - "IEEE CS Region 8 AI Caravan (2026). AI Administrator Track Curriculum. aicaravan.org"
+
+slides:
+  - layout: title
+    title: "Prompting for Operators"
+    subtitle: "AI Administrator: Agentic Workflows & Automation · Day 1 · Session 2"
+    notes: >
+      Welcome. Recap Session 1 in two sentences: an agent is model, tools, memory and instructions; the
+      instructions are the part you own. This session is about writing those instructions so they work inside an
+      automation, not just in a chat.
+
+  - layout: bullets
+    title: "What you will be able to do after this session"
+    minute: 0
+    bullets:
+      - "Use the five parts of a working prompt: role, context, task, constraints, output format"
+      - "Ask for structured outputs that can be copied straight into a spreadsheet or a workflow"
+      - "Turn a good prompt into a reusable template with placeholders, and improve it with examples"
+      - "Set up a project or custom assistant with uploaded documents, and test where it is reliable"
+      - "Recognise hallucination and over-confidence, and know the three habits that catch them"
+    notes: >
+      Read quickly. The deliverable is a five-template prompt library plus a tested department assistant. Both are
+      reused on Day 3 (the templates go into n8n AI nodes) and Day 4 (the assistant becomes an agent).
+
+  - layout: table
+    title: "Run of show (120 minutes)"
+    columns: ["Minutes", "Block", "What happens"]
+    rows:
+      - ["0 to 10", "Recap and the standard", "A prompt is a work instruction; repeatability"]
+      - ["10 to 35", "The five parts", "Before and after, the parts table, the most valuable sentence; demo burst 1"]
+      - ["35 to 55", "Structured outputs and examples", "Fields not prose, few-shot, iterating with a test set; demo burst 2"]
+      - ["55 to 65", "Break", ""]
+      - ["65 to 85", "Assistants that know your documents", "Projects, custom GPTs, Gems, Copilot agents; how retrieval works; data rules; demo burst 3"]
+      - ["85 to 95", "Where prompts fail", "Hallucination, over-confidence, three habits, symptom table"]
+      - ["95 to 115", "Lab", "Prompt library, classifier test set, department assistant, trap test"]
+      - ["115 to 120", "Knowledge check and wrap", "Five questions, takeaways, what to bring to Day 2"]
+    notes: >
+      The demo is split into three short bursts so participants see each idea working right after hearing it.
+      Keep each burst under five minutes.
+
+  # ---------------------------------------------------------------- Section 1
+  - layout: section
+    title: "1. A prompt is a work instruction"
+    subtitle: "Vague instruction, vague output"
+    minute: 2
+    duration: 8
+
+  - layout: bullets
+    title: "How you brief a new temp"
+    bullets:
+      - "You do not say 'deal with the inbox'"
+      - "You say who they are standing in for, what the team does, what exactly to do"
+      - "What they must not do, and what the finished result should look like"
+      - "A prompt is the same instruction, written for a model"
+    notes: >
+      The temp analogy carries the whole session. Every time a prompt fails, ask 'what would a temp have needed to
+      know?'. Participants who manage people find this immediately natural.
+
+  - layout: bullets
+    title: "The standard: repeatability"
+    bullets:
+      - "A chat you enjoyed is not the same as a prompt you can put inside an automation"
+      - "On Day 3 the same prompt runs hundreds of times a day without you watching"
+      - "It must produce the same shape of answer for every input"
+      - "That is the standard you are learning to write to now"
+    notes: >
+      This reframes prompting from a creative skill to an operations skill. The test is not 'did I like the answer'
+      but 'would the same prompt give the same shape of answer on the next hundred emails'.
+
+  - layout: figure
+    title: "Why the model needs everything spelled out"
+    figure: context-window-memory
+    caption: "The model knows only what is in its context window right now: your prompt, the pasted text, the uploaded files."
+    notes: >
+      Link to Session 1: the context window is the model's whole world for this task. Your policies, your
+      definitions of 'urgent', your team's vocabulary are not in it unless you put them there. That is what the
+      'context' part of a prompt does.
+
+  - layout: steps
+    title: "The five parts of a working prompt"
+    steps:
+      - heading: "Role"
+        text: "Who the model is standing in for."
+      - heading: "Context"
+        text: "What it needs to know: facts and definitions it cannot guess."
+      - heading: "Task"
+        text: "The one thing to do. One verb, one deliverable."
+      - heading: "Constraints"
+        text: "Limits, tone, what not to do, what to do when unsure."
+      - heading: "Output format"
+        text: "The exact shape of the answer."
+    notes: >
+      Most weak prompts are missing two of these, usually context and output format. Have participants hold up
+      fingers for the five parts; you will refer to them by number for the rest of the session.
+
+  # ---------------------------------------------------------------- Section 2
+  - layout: section
+    title: "2. The five parts, with a before and after"
+    subtitle: "A real request from an office coordinator"
+    minute: 10
+    duration: 25
+
+  - layout: prompt
+    title: "Before"
+    text: |
+      Summarise this email and tell me what to do.
+    notes: >
+      Run it live (demo burst 1). The answer will be fluent and useless: a paragraph, a different one each time,
+      and the model has decided for itself what 'what to do' means.
+
+  - layout: prompt
+    title: "After"
+    text: |
+      Role: You are an assistant to the facilities coordinator of a 200-person office.
+      Context: We receive maintenance requests by email. Urgent means a safety risk or a stopped
+      service (lift, water, power, access).
+      Task: Read the email below and produce a triage note.
+      Constraints: Do not invent details that are not in the email. If the urgency is unclear,
+      say "unclear" rather than guessing. Maximum 80 words.
+      Output format, exactly these labelled lines:
+      Requester:
+      Location:
+      Issue (one sentence):
+      Urgency (urgent / normal / unclear):
+      Suggested next action:
+
+      Email: [paste email here]
+    notes: >
+      Run it on the same email. Point at each of the five parts as you read. Then edit the email so the urgency is
+      genuinely ambiguous and run again: the model writes 'unclear'. That moment is the whole point of constraints.
+
+  - layout: table
+    title: "What each part does, and what goes wrong without it"
+    columns: ["Part", "What it does", "What goes wrong without it"]
+    rows:
+      - ["Role", "Sets vocabulary, tone and assumed knowledge", "Generic, over-long answers"]
+      - ["Context", "Gives the facts and definitions the model cannot know", "The model guesses your policies"]
+      - ["Task", "One verb, one deliverable", "The model does three things badly"]
+      - ["Constraints", "Length, tone, forbidden actions, what to do when unsure", "Invented details, wrong register"]
+      - ["Output format", "Makes the answer machine- and colleague-readable", "Different shape every run; nothing downstream can use it"]
+    notes: >
+      The right-hand column is a diagnostic table. When a prompt misbehaves, find the symptom here and add the
+      missing part. Participants will use the same idea in the symptom table at the end of the session.
+
+  - layout: callout
+    title: "The most valuable sentence in the prompt"
+    text: "If the urgency is unclear, say \"unclear\" rather than guessing. It turns a confident wrong answer into a flag a person can act on. You will reuse it in every AI step you build."
+    notes: >
+      Say it twice. On Day 3 the 'unclear' output becomes a branch in n8n that routes the item to a person. On Day 5
+      it is the basis of the human-in-the-loop pattern. One sentence in a prompt, one control in a workflow.
+
+  - layout: figure
+    title: "Role is powerful enough to build whole systems on"
+    figure: camel-roles
+    caption: "Research on role-playing agents (CAMEL): two models given clear roles solve tasks together that neither does alone."
+    notes: >
+      Thirty seconds. The point for operators: the 'Role' line is not decoration. It changes vocabulary, assumed
+      knowledge and tone so much that research systems are built from nothing but roles talking to each other.
+      Skip if behind.
+
+  - layout: figure
+    title: "Roles in collaboration"
+    figure: camel-collaboration
+    caption: "A user-role agent and an assistant-role agent exchanging instructions and results. Day 5 uses this pattern with a supervisor."
+    notes: >
+      Optional. Preview of Day 5's multi-agent patterns. Keep it to one sentence and move on.
+
+  # ---------------------------------------------------------------- Section 3
+  - layout: section
+    title: "3. Structured outputs and few-shot examples"
+    subtitle: "An automation cannot read prose. It reads fields."
+    minute: 35
+    duration: 20
+
+  - layout: bullets
+    title: "Ask for fields, and say the allowed values out loud"
+    bullets:
+      - "Labelled lines, a fixed set of categories, a markdown table, or a few key-value pairs"
+      - "'Category must be one of: billing, technical, sales, other'"
+      - "Allowed values stop the model inventing a fifth category on Tuesday"
+      - "Fields are what a spreadsheet column or an n8n node can consume"
+    notes: >
+      Show the triage note from the 'After' prompt again and point out that each labelled line is a column. On Day 3
+      those lines are mapped to spreadsheet columns and Slack messages with no code.
+
+  - layout: prompt
+    title: "Few-shot examples: show the pattern instead of describing it"
+    text: |
+      Classify each message as billing, technical, sales or other.
+      Example 1: "My invoice shows the old price" -> billing
+      Example 2: "The portal logs me out every minute" -> technical
+      Example 3: "Do you offer a plan for schools?" -> sales
+      Example 4: "Thanks for the quick help yesterday" -> other
+      Now classify: "[message]"
+      Answer with the category only.
+    notes: >
+      Demo burst 2. Classify three messages, one awkward ('My invoice is wrong AND the portal is down'). Then change
+      an example and show the classification move. Models copy patterns better than they follow descriptions; two
+      or three worked examples beat a paragraph of rules.
+
+  - layout: figure
+    title: "Examples with reasoning: chain-of-thought"
+    figure: chain-of-thought-prompting
+    caption: "When the examples show the reasoning as well as the answer, the model reasons before answering too."
+    notes: >
+      For operators: if a classification needs a judgement ('is this a complaint or a question?'), write the
+      example as 'message -> reason -> category'. The model will then give its reason, which a reviewer can check.
+
+  - layout: figure
+    title: "The one-line version: 'think step by step'"
+    figure: zero-shot-chain-of-thought
+    caption: "A single constraint asking the model to reason first improves accuracy on multi-step tasks, with no examples."
+    notes: >
+      Cheap trick worth knowing. Add 'Work through the steps before giving the final answer' to the constraints
+      when the task has more than one step. Not needed for simple classification; useful for summaries that
+      must reconcile several sources.
+
+  - layout: figure
+    title: "Ask for the reasoning, then the answer"
+    figure: reasoning-process
+    caption: "Reasoning first, conclusion last. The reasoning is also your audit trail when something goes wrong."
+    notes: >
+      Link to Day 5 and Day 6: a model that writes 'Urgent because the email mentions a stopped lift' is auditable;
+      one that writes only 'Urgent' is not. Put the reason line in the output format when a human will review.
+
+  - layout: figure
+    title: "One verb, one deliverable: break big tasks into steps"
+    figure: planning-process
+    caption: "A large request is split into sub-tasks, each with a clear output. Do that split yourself when you design the prompt."
+    notes: >
+      'Summarise this and tell me what to do' is two tasks. Make it two prompts, or one prompt with two clearly
+      labelled output sections. On Day 3 the split becomes two AI nodes in a row.
+
+  - layout: steps
+    title: "Iterating on a prompt"
+    steps:
+      - heading: "1. Collect ten real inputs"
+        text: "Including two awkward ones."
+      - heading: "2. Run and mark"
+        text: "Run the prompt on all ten; mark each answer right or wrong in a sheet."
+      - heading: "3. Fix specifically"
+        text: "Add a constraint or an example for the wrong ones. Never fix by adding 'be more accurate'."
+      - heading: "4. Re-run all ten"
+        text: "Stop when you are at nine or ten out of ten twice in a row."
+    notes: >
+      Open the three-column sheet in the demo and do two rows. The discipline is re-running all ten, not just the
+      ones that failed; fixes often break something that worked.
+
+  - layout: figure
+    title: "Models can refine their own output (Self-Refine)"
+    figure: self-refine-process
+    caption: "Draft, critique, revise. You can ask for this inside one prompt: 'Draft, then check against the constraints, then give the final version.'"
+    notes: >
+      Useful for drafting tasks (replies, reports). Ask the model to review its own draft against the constraints
+      before output. Costs more tokens, catches obvious misses. It does not replace your ten-row test set.
+
+  - layout: figure
+    title: "Learning from mistakes (Reflexion)"
+    figure: reflexion-process
+    caption: "An agent that records what went wrong and feeds it into the next attempt. Your test set is the human version."
+    notes: >
+      Two sentences: research agents keep a memory of failures to improve the next run. Your ten-row sheet and the
+      notes you add to a template are the same loop, run by you. Skip if behind.
+
+  - layout: callout
+    title: "That ten-row sheet is your first test set"
+    text: "Keep it. On Day 6 (Module 12) you will run it again every time you change the prompt or the model, and it will tell you immediately whether quality dropped."
+    notes: >
+      Participants tend to throw the sheet away once the prompt works. Make the case for keeping it: models get
+      updated by vendors without notice; the sheet is how you find out.
+
+  # ---------------------------------------------------------------- Section 4
+  - layout: section
+    title: "4. Assistants that know your documents"
+    subtitle: "Projects, custom GPTs, Gems, Copilot agents"
+    minute: 65
+    duration: 20
+
+  - layout: table
+    title: "The names differ; the idea is the same"
+    columns: ["Product", "Feature", "What you can upload", "Sharing"]
+    rows:
+      - ["ChatGPT", "Projects, custom GPTs", "PDF, Word, spreadsheets, text", "Custom GPTs can be shared with a team or link"]
+      - ["Claude", "Projects with project knowledge", "PDF, Word, text, images", "Shared within a Team or Enterprise workspace"]
+      - ["Microsoft Copilot", "Copilot agents, Copilot Notebooks", "SharePoint and OneDrive files", "Through Microsoft 365 permissions"]
+      - ["Google Gemini", "Gems", "Google Drive files", "Shared with Workspace users"]
+    notes: >
+      Every major assistant lets you save standing instructions together with uploaded files so you do not repeat
+      the context each time. Ask who uses which product at work; most rooms are split between Microsoft and Google,
+      with ChatGPT on personal accounts.
+
+  - layout: figure
+    title: "How documents become memory: summarise what does not fit"
+    figure: memory-summarization
+    caption: "Long material is condensed so the essentials fit in the context window."
+    notes: >
+      First of two mechanisms. When a document or a long conversation would not fit, the platform summarises it.
+      Good for gist, bad for exact clauses, which is why the next mechanism exists.
+
+  - layout: figure
+    title: "How documents become memory: index them"
+    figure: vector-database-creation
+    caption: "Uploaded files are cut into chunks and indexed by meaning, so the right passage can be found later."
+    notes: >
+      Keep it to the metaphor of a very good index at the back of a book. No maths. This is what happens when you
+      click 'upload' in a Project. Day 4 calls this RAG and builds it in n8n.
+
+  - layout: figure
+    title: "...and fetch only the relevant passage"
+    figure: vector-database-retrieval
+    caption: "Your question finds the closest chunks; they are placed in the context window; the model answers from them."
+    notes: >
+      This explains both the power and the failure mode: if the right passage is not retrieved, the model answers
+      from general knowledge and may invent. Hence the instruction 'quote the sentence you relied on'.
+
+  - layout: bullets
+    title: "The department assistant: the simplest agent you will meet"
+    bullets:
+      - "A model, instructions, and memory in the form of your documents"
+      - "No tools yet, so it can answer but not act"
+      - "That is a good thing while you learn what it gets wrong"
+      - "On Day 4 (Module 8) the same assistant gets tools and becomes an agent"
+    notes: >
+      Tie back to the four parts from Session 1: three of four present. Participants build exactly this in the lab
+      today and extend it on Day 4.
+
+  - layout: figure
+    title: "Preview: memory at full scale (Generative Agents, 2023)"
+    figure: generative-agents
+    caption: "Simulated characters with a memory stream, reflection and planning. Your department assistant is the first rung of this ladder."
+    notes: >
+      Optional, one sentence. Shows where document memory leads: agents that remember, reflect and plan over long
+      periods. Day 5 touches on this with always-on personal agents.
+
+  - layout: callout
+    title: "Data goes where the model goes"
+    text: "Before you upload a policy, a contract or anything with personal data, check your organisation's rules and the product's data terms. Consumer tiers may use uploads for training; business tiers usually do not. Until Day 6 covers this properly, use public or dummy documents in the labs."
+    notes: >
+      Non-negotiable. State clearly that today's lab uses public documents only. If anyone has uploaded a real
+      internal file during the session, ask them to delete the Project afterwards.
+
+  # ---------------------------------------------------------------- Section 5
+  - layout: section
+    title: "5. Where prompts fail: hallucination and over-confidence"
+    subtitle: "A plausible fact looks exactly like a correct one"
+    minute: 85
+    duration: 10
+
+  - layout: figure
+    title: "What hallucination is"
+    figure: llm-memory-issues
+    caption: "The model produces the most plausible next words. When it lacks a fact, it produces a plausible fact instead."
+    bullets:
+      - "It looks exactly like a correct answer"
+      - "It is more likely when the source is missing or not retrieved"
+    notes: >
+      Return to the first idea of the day: next-word prediction. Hallucination is not a bug to be patched away; it is
+      what the mechanism does when starved of facts. The remedy is to feed it facts and give it an exit.
+
+  - layout: steps
+    title: "Three habits that catch most of it"
+    steps:
+      - heading: "Ground it"
+        text: "Give the model the source (paste the email, upload the policy) and instruct it to answer only from that source, quoting the line it used."
+      - heading: "Give it an exit"
+        text: "'If the answer is not in the document, say so.' A model told it may say 'not found' will say it."
+      - heading: "Check the checkable"
+        text: "Names, dates, numbers, order IDs and policy clauses can be verified in seconds. Verify them before they leave your desk."
+    notes: >
+      These three go on the wall. They also map onto the course: grounding is Day 4 (RAG), the exit is Day 5
+      (routing to a human), checking the checkable is Day 6 (evaluation).
+
+  - layout: table
+    title: "Symptom, likely cause, fix"
+    columns: ["Symptom", "Likely cause", "Fix"]
+    rows:
+      - ["Cites a policy section that does not exist", "No source provided, or source not searched", "Upload the policy, require a quote"]
+      - ["Different category for the same email on two runs", "Categories not defined, no examples", "List allowed values, add few-shot examples"]
+      - ["Long, polite, says nothing", "No task, no format", "One verb, labelled output lines, word limit"]
+      - ["Confident answer to an ambiguous request", "No 'unclear' option", "Add the unsure clause and route unclear items to a person"]
+    notes: >
+      Participants can use this table during the lab when the classifier misbehaves. Every fix is a missing prompt
+      part or a missing example; none of them is 'be more accurate'.
+
+  - layout: figure
+    title: "Tools change fast; your templates and test set travel with you"
+    figure: framework-growth
+    caption: "The number of agent frameworks and products keeps growing. The five parts and the ten-row test set work in all of them."
+    notes: >
+      Closing thought before the lab. Participants worry about picking the wrong product. The skills in this session
+      are product-independent: a template written in five parts pastes into ChatGPT, Claude, Copilot, Gemini or an
+      n8n node unchanged.
+
+  # ---------------------------------------------------------------- Lab
+  - layout: section
+    title: "Practical lab: prompt library and department assistant"
+    subtitle: "20 minutes now, finish at home, due before the next session"
+    minute: 95
+    duration: 20
+
+  - layout: steps
+    title: "Lab steps (1 to 4)"
+    steps:
+      - heading: "1. Create the library document"
+        text: "Name it M2-prompt-library. Five headings: Triage an email, Summarise a meeting transcript, Draft a reply, Extract fields from a form, Classify a request."
+      - heading: "2. Write each template with the five parts"
+        text: "Role, context, task, constraints, output format, with [square-bracket] placeholders a colleague can fill in."
+      - heading: "3. Add examples to the classifier"
+        text: "Four allowed categories, one example each, plus a fifth awkward example that should be 'other'."
+      - heading: "4. Build the ten-row test set"
+        text: "Ten realistic inputs with the expected category; run the prompt; record the model's answer; count matches."
+    notes: >
+      Share the handout and the three-column sheet. Most participants will write two or three templates in the room
+      and finish the rest at home. Make sure everyone reaches step 4 at least once so the test-set habit is formed.
+
+  - layout: steps
+    title: "Lab steps (5 to 7)"
+    steps:
+      - heading: "5. Fix and re-run"
+        text: "For every mismatch, change the prompt (a constraint or an example) and run all ten again. Record the second score."
+      - heading: "6. Create the department assistant"
+        text: "A Project, custom GPT, Gem or Copilot agent. Paste the instructions on the next slide; upload two public policy documents."
+      - heading: "7. Test the assistant with a trap"
+        text: "Three questions the documents answer, two they do not. Does it say 'not covered' or invent? Record the results."
+    notes: >
+      The trap test is the most memorable five minutes of the day. Ask two or three participants to report what
+      their assistant did with the trap questions.
+
+  - layout: prompt
+    title: "Template skeleton (step 2)"
+    text: |
+      Role: You are an assistant to the [role] in [department].
+      Context: [two or three facts and definitions the model must know]
+      Task: [one verb, one deliverable]
+      Constraints: Use only the information provided. If something is unclear or missing,
+      write "unclear". Maximum [N] words. Tone: [plain / formal].
+      Output format (exactly these lines):
+      [Field 1]:
+      [Field 2]:
+      [Field 3]:
+
+      Input: [paste text]
+    notes: >
+      Point out that the constraints line is pre-filled with the unsure clause. Participants should never remove it.
+
+  - layout: prompt
+    title: "Assistant instructions (step 6)"
+    text: |
+      You are the [department] policy assistant. Answer questions only from the uploaded documents.
+      For every answer, quote the sentence you relied on and name the document.
+      If the answer is not in the documents, reply: "Not covered by the uploaded policies.
+      Please ask [named person]." Keep answers under 120 words.
+    notes: >
+      Demo burst 3 uses exactly this text. Note the three habits inside it: grounded (only from the documents), an
+      exit (not covered), and checkable (quote the sentence).
+
+  - layout: callout
+    title: "Deliverable"
+    text: "The M2-prompt-library document (five templates, test scores before and after, the assistant's trap-test results) plus a screenshot of the assistant answering one question with a quotation. Bring it to the next session."
+    notes: >
+      The templates are reused on Day 3 inside n8n AI nodes, so quality here saves time later.
+
+  # ---------------------------------------------------------------- Quiz
+  - layout: section
+    title: "Knowledge check"
+    subtitle: "Five questions in the style of the final exam"
+    minute: 115
+    duration: 5
+
+  - layout: quiz
+    title: "Question 1"
+    question: "Which of the five prompt parts is most often missing from a prompt that gives a different shape of answer every time?"
+    options: ["Role", "Context", "Output format", "Task"]
+    answer: 2
+    why: "Without an explicit output format the model chooses its own shape each run, which breaks anything downstream."
+
+  - layout: quiz
+    title: "Question 2"
+    question: "What is few-shot prompting?"
+    options:
+      - "Asking the same question several times"
+      - "Including worked examples of input and expected output inside the prompt"
+      - "Using fewer than ten words"
+      - "Splitting a task across several models"
+    answer: 1
+    why: "Examples inside the prompt show the model the pattern to copy, which is more reliable than describing it."
+
+  - layout: quiz
+    title: "Question 3"
+    question: "The best fix for a classifier that mislabels two of ten test emails is to..."
+    options:
+      - "Add 'please be more accurate' to the prompt"
+      - "Add a constraint or an example that covers the failing cases, then re-run all ten"
+      - "Switch to a longer prompt"
+      - "Remove the two awkward emails from the test set"
+    answer: 1
+    why: "Prompts improve through specific constraints and examples, tested against the whole set so you do not break what already worked."
+
+  - layout: quiz
+    title: "Question 4"
+    question: "A department assistant built from a Project with uploaded documents is best described as..."
+    options:
+      - "A full autonomous agent"
+      - "A model plus instructions plus memory, with no tools"
+      - "An automation"
+      - "A search engine"
+    answer: 1
+    why: "It has three of the four agent parts. Without tools it can answer but cannot act, which is ideal while you learn what it gets wrong."
+
+  - layout: quiz
+    title: "Question 5"
+    question: "Which single instruction most reduces the damage from hallucination?"
+    options:
+      - "Answer in under 50 words"
+      - "Use a friendly tone"
+      - "If the answer is not in the source, say so instead of guessing"
+      - "Always give three options"
+    answer: 2
+    why: "Giving the model an explicit way to say 'not found' turns an invented answer into a flag a person can act on."
+
+  # ---------------------------------------------------------------- Close
+  - layout: bullets
+    title: "Key takeaways"
+    bullets:
+      - "A prompt is a work instruction: role, context, task, constraints, output format. Missing parts cause most failures."
+      - "Ask for labelled fields and allowed values, and show examples; that is what makes an answer usable by an automation."
+      - "Improve prompts with a ten-row test set, one constraint or example at a time, and keep the set for later."
+      - "Projects and custom assistants give the model your documents as memory; check data rules before uploading anything real."
+      - "Ground the model, give it an exit, and verify the checkable facts."
+    notes: >
+      Read the five takeaways. Then set up the next session (Day 2, workflow mapping): bring the M1 task inventory and the M2 prompt library; next time we
+      map the chosen task as a current-state process in Miro or draw.io.
+
+  - layout: figure
+    title: "Preview of Day 5: many assistants, one system"
+    figure: multi-agent-components
+    caption: "Each agent is model, tools, memory, instructions; a supervisor hands out work; a critic reviews it. Everything today scales up to this."
+    bullets:
+      - "Module 2 online, with the lab and quiz: albanna-tutorials.com/ai-administrator"
+      - "LLM Agents explained visually: albanna-tutorials.com/llm_agents.html"
+      - "Next: Day 2, Workflow Mapping I and II"
+    notes: >
+      Close on the big picture. Day 2 goes back to the process itself: before building anything, map it.
+
+  - layout: articles
+    title: "Latest reading on prompting for work (2026)"
+    items:
+      - title: "Prompting best practices (official Claude platform documentation)"
+        source: "Anthropic, living document updated with each model release"
+        date: "2026"
+        url: "platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+        takeaway: "Be explicit about output format and constraints, give 2 to 5 worked examples, and separate context, instructions and examples with clear labels. The vendor's own version of today's five parts and few-shot examples."
+      - title: "Prompt engineering for business: the 2026 practical guide"
+        source: "Gend"
+        date: "5 January 2026 (updated 30 March 2026)"
+        url: "gend.co/blog/prompt-engineering-for-business"
+        takeaway: "Proposes a business template, R-TCC-COE: role, task, context, content, constraints, output, evaluation. Same skeleton as today's template, plus an explicit evaluation rubric, which is what your ten-row test set provides."
+      - title: "Production prompt engineering in 2026: structured outputs, prompt chaining and optimisation"
+        source: "AI Workflow Lab, by Marcus Holloway"
+        date: "13 February 2026 (updated 2 June 2026)"
+        url: "aiworkflowlab.dev/article/production-prompt-engineering-2026-structured-outputs-prompt-chaining-dspy"
+        takeaway: "Treat prompts as engineered, versioned, tested artefacts; constrain outputs to a fixed shape; split big tasks into chains of small prompts. The 'one verb, one deliverable' and 'fields not prose' rules, written for engineers."
+      - title: "Context Engineering: from prompts to corporate multi-agent architecture"
+        source: "V. Vishnyakova, arXiv 2603.09619"
+        date: "10 March 2026"
+        url: "arxiv.org/abs/2603.09619"
+        takeaway: "Beyond the prompt, what matters is the whole information environment the model works in: documents, definitions, memory. Today's 'context' part and the department assistant's uploaded policies are the first step of that discipline."
+    notes: >
+      Optional two minutes, or leave for self-study. Each item ties a recent piece to something taught today.
+      Instructors may swap in newer pieces; keep the pattern: source, date, one-line takeaway tied to the session.
+
+  - layout: references
+    title: "References"
+    notes: >
+      Leave on screen during questions. All diagrams in this deck are from Maarten Grootendorst's 'A Visual Guide
+      to LLM Agents', reused with credit as on the course website.
