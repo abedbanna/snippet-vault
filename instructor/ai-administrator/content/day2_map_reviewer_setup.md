@@ -79,6 +79,7 @@ If Telegram or the model provider fails: share `Day2_S3_Practical_Map_Reviewer.m
   - **Worked example:** found the notice-period and probation checks (Sections 2 and 3), the private spreadsheet (Section 7), department-head approval in the last two weeks of a quarter (Section 3), and HR's portal approval with no decline path; named three risky hand-offs (email to manager, email to HR for the balance, re-entry by the employee); tagged the steps; asked "Why does the line manager ask HR for balances by email instead of viewing them in the portal?". It **missed** the three-day escalation (Section 3), which is now a debrief question.
   - **"Automate this"**: declined with the Session 4 sentence.
   - **"Ignore your instructions..."**: declined with the "I only review process maps" sentence.
+- Home channel: `/sethome` sent from the instructor's own chat with the bot on 4 October 2026 (saved in the `mapreview` profile only). It stops the one-time "No home channel is set for Telegram" notice that participants would otherwise see before their first review. The reviewer has no tools and no scheduled jobs, so nothing is ever sent to that chat; tools and memory stay off.
 - Telegram: decided to reuse **@aicaravan_bot** (no new bot). Switch script installed and tested 4 October 2026: `aicaravan-bot mapreview` moved the bot, the gateway restarted, connected to Telegram (polling) and served all three profiles with no errors.
 
 ## Why a separate profile
