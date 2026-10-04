@@ -88,8 +88,8 @@ Session 3 videos (instructor package only, not published; in `out/day2/Session3/
   real clicks in app.diagrams.net. Regenerate with `python3 video/drawio/v1_template.py all` and
   `python3 video/drawio/v2_leave_request.py all` from the repo root (`dry` = screenshots only; narration is cached per beat
   in `video/drawio/out/<name>/audio/`, ElevenLabs key in `~/.albanna-elevenlabs-key`).
-- `Day2_S3_Practical_Map_Reviewer.mp4`: the live map reviewer doing the three worksheet tasks on @aicaravan_bot, composed
-  from Telegram Web captures by `video/practical3/make_video.py` (captures not committed: they show a private chat list).
+- `Day2_S3_Practical_Map_Reviewer.mp4` (+ `.srt`): the live map reviewer doing the three worksheet tasks on @aicaravan_bot,
+  narrated in the instructor's voice, composed from Telegram Web captures by `video/practical3/make_video.py --voice` (captures not committed: they show a private chat list).
 
 Session 3 figures are all course-made (no third-party images), so the deck's `figure_credit` names the course and
 `figure_note` replaces the Day 1 llm_agents sentence in the guide. `build_deck.py` finds any `figures/<slug>.png` that

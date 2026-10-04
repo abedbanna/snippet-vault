@@ -2,7 +2,7 @@
 """Day 2 Session 3 practical video: the live map reviewer on @aicaravan_bot.
 Composes Telegram Web captures (frames/) into captioned 1920x1080 slides in the Day 1 practical style, then ffmpeg.
 Usage: python3 make_video.py  ->  out/Day2_S3_Practical_Map_Reviewer.mp4"""
-import os, subprocess
+import json, os, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -57,13 +57,64 @@ def shot(path, title, sub):
 
 
 lst = []
+# Narration, one line per slide, in the instructor's cloned voice (python3 make_video.py --voice).
+# Lines end on an open sound: ElevenLabs tends to clip a final plosive.
+SAY = [
+    "In this practical, you send a business process to a live AI reviewer on Telegram, and it answers in a fixed shape. "
+    "Three tasks: the example, your own task, and a test of its limits.",
+    "Open the course bot, A I Caravan bot, and paste the whole leave-request step list from the worksheet as one message.",
+    "Nine steps, each with its touch time, and the waits in brackets.",
+    "In a few seconds the reviewer answers. First, the missing steps: it checks the process against the leave policy, "
+    "and finds the notice-period check, the quarter-end approval, and the private spreadsheets the policy forbids. "
+    "Then, a decision with no no-path: HR's approval in the portal can never decline.",
+    "Next, the three riskiest hand-offs, a pain-point tag for every step, and one question to ask a colleague. "
+    "Compare this with the map on screen. What did it miss?",
+    "Task two: your own task. Five to eight steps, one per line, who does what. Use roles, never real names.",
+    "For an expense claim, it spots a missing hand-off to finance, and two approvals with no no-path. "
+    "Do you agree? And who would you ask to check?",
+    "Task three: test its boundary. Ask it to automate the process for you.",
+    "It declines. Automation is Session 4; today it only reviews the current state. That boundary is written into its instructions.",
+    "Remember, the reviewer is a colleague, not an authority. Check every finding against the policy, "
+    "and with the people who do the work, every time.",
+]
+VOICE, MODEL, GAP = "0f6a8dmX40t9NZBAo3ci", "eleven_multilingual_v2", 0.9
+voice = "--voice" in sys.argv
+if voice:
+    sys.path.insert(0, os.path.dirname(HERE)); import narrate   # video/narrate.py (ElevenLabs key in ~/.albanna-elevenlabs-key)
+    AUD = os.path.join(OUT, "audio"); os.makedirs(AUD, exist_ok=True); billed = 0; cues = []; t = 0.0
+
+
+def audio_len(p):
+    return float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", p]))
+
+
 for i, (src, title, sub, dur) in enumerate(SLIDES):
     im = card(title, sub) if src == "card" else shot(src, title, sub)
-    p = os.path.join(OUT, f"slide_{i:02d}.png"); im.save(p); lst.append((p, dur))
+    p = os.path.join(OUT, f"slide_{i:02d}.png"); im.save(p)
+    if voice:
+        mp3, tj, aj = (os.path.join(AUD, f"s{i:02d}{e}") for e in (".mp3", ".txt", ".align.json"))
+        if not (os.path.exists(mp3) and os.path.exists(tj) and open(tj).read() == SAY[i]):
+            al = narrate.speak(SAY[i], VOICE, mp3, model_id=MODEL)
+            json.dump(al, open(aj, "w")); open(tj, "w").write(SAY[i]); billed += len(SAY[i])
+        lead = 0.5 if i == 0 else 0.3
+        dur = round(lead + audio_len(mp3) + GAP, 2)
+        cues += narrate.cues_from_alignment(json.load(open(aj)), offset=t + lead, max_chars=90); t += dur
+    lst.append((p, dur))
 with open(os.path.join(OUT, "list.txt"), "w") as f:
     for p, dur in lst: f.write(f"file '{p}'\nduration {dur}\n")
     f.write(f"file '{lst[-1][0]}'\n")
 mp4 = os.path.join(OUT, "Day2_S3_Practical_Map_Reviewer.mp4")
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", os.path.join(OUT, "list.txt"),
-                "-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-crf", "18", "-movflags", "+faststart", mp4], check=True)
+cmd = ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", os.path.join(OUT, "list.txt")]
+if voice:   # lay each slide's narration at its slide start
+    starts, t0 = [], 0.0
+    for _, dur in lst: starts.append(t0); t0 += dur
+    fl = []
+    for i in range(len(lst)):
+        cmd += ["-i", os.path.join(AUD, f"s{i:02d}.mp3")]; ms = int((starts[i] + (0.5 if i == 0 else 0.3)) * 1000)
+        fl.append(f"[{i + 1}:a]adelay={ms}|{ms},apad[a{i}]")
+    fl.append("".join(f"[a{i}]" for i in range(len(lst))) + f"amix=inputs={len(lst)}:normalize=0:duration=longest,atrim=0:{t0:.2f}[aout]")
+    cmd += ["-filter_complex", ";".join(fl), "-map", "0:v", "-map", "[aout]", "-c:a", "aac", "-b:a", "160k"]
+    narrate.write_srt(cues, mp4.replace(".mp4", ".srt")); print(f"narration: {billed} characters billed this run")
+cmd += ["-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-crf", "18", "-movflags", "+faststart", mp4]
+subprocess.run(cmd, check=True)
 print(mp4)
