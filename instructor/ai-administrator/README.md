@@ -60,3 +60,27 @@ this repo. Session 1 closes with a Kahoot (`tools/build_kahoot.py`, balanced ans
 
 Copy `content/day1_session1.yaml` to `content/day2_session3.yaml`, update `meta`, rewrite `slides` from the matching
 module in `src/ai-administrator/`, add lab/quiz markdown, and run the same commands with `out/day2/`.
+
+## Regenerate Day 2, Session 3 (Workflow Mapping I: The Current State)
+
+```bash
+cd instructor/ai-administrator
+python3 tools/make_day2_figures.py                     # figures/d2s3_*.png (leave-request example, drawn for the course)
+python3 tools/make_day2_drawio.py out/day2              # Day2_S3_Swimlane_Template.drawio + Day2_S3_Leave_Request_Example.drawio
+python3 tools/make_qr.py aicaravan_mapreview_bot brand/mapreview_bot_qr.png   # once the BotFather bot exists
+python3 tools/build_deck.py content/day2_session3.yaml out/day2/Day2_S3_Mapping_Current_State.pptx
+python3 tools/build_pdf.py guide content/day2_session3.yaml out/day2/Day2_S3_Instructor_Guide.pdf
+python3 tools/build_pdf.py md content/day2_lab3.md out/day2/Day2_S3_Lab_Handout.pdf
+python3 tools/build_pdf.py md content/day2_quiz3.md out/day2/Day2_S3_Quiz_Bank.pdf
+python3 tools/build_kahoot.py content/day2_kahoot_session3.yaml out/day2/Day2_S3_Kahoot.xlsx content/day2_kahoot_session3_key.md
+python3 tools/build_pdf.py md content/day2_kahoot_session3_key.md out/day2/Day2_S3_Kahoot_Answer_Key.pdf
+python3 tools/build_pdf.py md content/day2_practical_map_reviewer.md out/day2/Day2_S3_Practical_Map_Reviewer.pdf
+python3 tools/build_pdf.py md content/day2_map_reviewer_setup.md out/day2/Day2_S3_Map_Reviewer_Setup_Guide.pdf
+python3 tools/build_pdf.py md content/day2_leave_request_steps.md out/day2/Day2_S3_Leave_Request_Steps.pdf
+```
+
+Session 3 figures are all course-made (no third-party images), so the deck's `figure_credit` names the course and
+`figure_note` replaces the Day 1 llm_agents sentence in the guide. `build_deck.py` finds any `figures/<slug>.png` that
+is not in `figures/manifest.json`. The practical is a third Hermes profile, **mapreview** (persona:
+`content/day2_mapreview_soul.md`, setup and test record: `content/day2_map_reviewer_setup.md`). The Day 2 zip is made
+after Session 4.

@@ -92,7 +92,10 @@ def notes(slide, text):
 
 def fig_path(slug):
     info = MANIFEST.get(slug)
-    if not info: raise SystemExit(f"unknown figure slug: {slug}")
+    if not info:  # course-made figures (e.g. tools/make_day2_figures.py) live in figures/<slug>.png
+        local = FIG / f"{slug}.png"
+        if not local.exists(): raise SystemExit(f"unknown figure slug: {slug}")
+        used_figures.add(slug); return local
     used_figures.add(slug); return FIG / info["file"]
 
 

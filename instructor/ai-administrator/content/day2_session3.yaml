@@ -1,0 +1,599 @@
+meta:
+  day: 2
+  session: 3
+  short: Mapping Current State
+  title: "Workflow Mapping I: The Current State"
+  subtitle: "Why map before you automate, SIPOC, swimlanes, touch and wait time, pain-point tags, mapping interviews"
+  instructors: ["Mousa AL-Akhras", "Mohammed Abdelmajeed"]
+  duration_min: 120
+  module_url: https://albanna-tutorials.com/ai-administrator/03_workflow_mapping_current_state.html
+  footer: "IEEE CS Region 8 AI Caravan 2026 · AI Administrator · Day 2 · Session 3"
+  figure_credit: "Figure: AI Administrator course material (A. Al-Banna, 2026)"
+  figure_note: "All figures in this deck were drawn for the course (tools/make_day2_figures.py); the running example is the fictional AI Caravan Ltd. leave process."
+  objectives:
+    - "Explain why an unmapped process cannot be safely automated."
+    - "Produce a SIPOC summary, with a trigger and an end state, for a real task."
+    - "Draw a swimlane diagram that shows every actor, step, decision, hand-off and wait."
+    - "Write touch time and wait time on every step and say which kind of fix each one needs."
+    - "Tag pain points with the course vocabulary (REKEY, WAIT, READ, DRAFT, CHASE, RUBBER, JUDGE)."
+    - "Run a short mapping interview with a colleague without leading them."
+  materials:
+    - "Projector or screen share; this deck (Day2_S3_Mapping_Current_State.pptx) with speaker notes open."
+    - "draw.io open in a browser tab (app.diagrams.net) or the desktop app, with Day2_S3_Swimlane_Template.drawio loaded for the live demo, and Day2_S3_Leave_Request_Example.drawio as the finished answer."
+    - "Practical worksheet (Day2_S3_Practical_Map_Reviewer.pdf) shared in the chat at minute 90; lab handout (Day2_S3_Lab_Handout.pdf) at minute 115."
+    - "The map reviewer bot running on the course server (Day2_S3_Map_Reviewer_Setup_Guide.pdf); phone with Telegram for a test message; the bot QR on the Join slide."
+    - "Fallback: the leave-request step list and the expected bot answer printed in the setup guide, in case Wi-Fi, Telegram or the model provider fails."
+    - "Kahoot imported from Day2_S3_Kahoot.xlsx and ready to launch (PIN on screen at minute 105); answer key Day2_S3_Kahoot_Answer_Key.pdf. The written Quiz bank (Day2_S3_Quiz_Bank.pdf) stays available for homework or revision."
+    - "Participants: their M1 task inventory and chosen course task from Day 1, a draw.io account or the desktop app, and an AI assistant. Nothing to install if they use the browser version."
+  prep:
+    - "Read the live module once (link above); the slides follow its five sections in order."
+    - "Practise the live demo twice: build the leave-request swimlane in draw.io from the template in under 12 minutes. The finished file is the answer key."
+    - "The day before: start the map reviewer (see the setup guide), message the bot from your phone, paste the leave-request step list and check that it finds the missing department-head approval and the missing escalation."
+    - "Agree with the co-instructor who plays the colleague in the interview role-play (minute 85) and rehearse the one leading question you will catch."
+    - "Remind participants to bring their M1 task inventory: the lab maps the task they chose on Day 1."
+  demo:
+    title: "Live demo and practical (minutes 35 to 55, and 90 to 105)"
+    steps:
+      - "Minute 35: open Day2_S3_Swimlane_Template.drawio. Rename the lanes to Employee, Line manager, HR coordinator, HR portal, Team spreadsheet. Say out loud why systems get lanes."
+      - "Minute 38: build the leave-request map left to right, narrating each shape: trigger (email), steps, the decision diamond with labelled Yes and No exits."
+      - "Minute 46: add touch time inside each step and the wait on each arrow. Add the totals: 25 minutes of touch, about 4 days elapsed."
+      - "Minute 50: count the hand-offs together (eight). Compare with Day2_S3_Leave_Request_Example.drawio and show the 'touch versus wait' slide."
+      - "Minute 88: check the map reviewer is running and send one test message. Minute 90: Join slide; participants scan the QR and press Start."
+      - "Minute 93: participants paste the leave-request steps from the worksheet, then a short list from their own task. Minute 100: debrief, one finding per category."
+      - "Optional filler if the bot cannot run: paste the same step list into any AI assistant with the review prompt from lab step 7 and compare the answer with the 'What the reviewer should find' slide."
+  troubleshooting:
+    - issue: Participants forgot their Day 1 task inventory
+      fix: Let them map the leave-request process for the lab and switch to their own task as homework. The skills are the same.
+    - issue: "'My process has no clear trigger'"
+      fix: "Ask what happened just before they started the last one: an email, a date, a form, a phone call. If there is truly no trigger, it is not yet a process; note it as a finding."
+    - issue: draw.io is blocked on the corporate laptop
+      fix: Use paper and sticky notes with one row per actor, then photograph it. Miro, Lucidchart or PowerPoint SmartArt also work; the deliverable is the map, not the tool.
+    - issue: Participants map the official procedure instead of what happens
+      fix: Point at the 'Map what happens' slide and ask, 'When did you last follow it exactly?' The private team spreadsheet in the example is a deliberate workaround to discuss.
+    - issue: The map reviewer bot suggests automation or goes off topic
+      fix: Its instructions forbid both; if it slips, say so, it is the same guard failure as Day 1 Task 4, and note it for Day 6. Use the fallback answer slide.
+    - issue: Wi-Fi, Telegram or the model provider fails during the practical
+      fix: Run the optional filler in any assistant, or walk through the 'What the reviewer should find' slide as a whole-room exercise. Keep the timing.
+    - issue: Running behind at the break
+      fix: Shorten the SIPOC room exercise to three minutes and cut the notation slide (the demo shows the shapes anyway). Do not cut the live demo, the practical or the lab kickoff.
+  practical_setup:
+    title: "Practical setup summary (map reviewer on Telegram)"
+    sheet: "Day2_S3_Map_Reviewer_Setup_Guide.pdf"
+    points:
+      - "Runs on the same course droplet as Day 1 (AI-Caravan, 165.245.213.121), as a second Hermes profile called mapreview next to the default bot and the policy bot, served by the same gateway."
+      - "Persona in ~/.hermes/profiles/mapreview/SOUL.md: reviews a list of process steps and answers in a fixed shape (missing steps, decisions without a 'no' path, three riskiest hand-offs, suggested pain-point tags). It never proposes automation and declines anything else."
+      - "No tools and no memory: platform_toolsets.telegram is empty and memory is off, so it only reasons over what participants paste."
+      - "Its own Telegram bot (created in BotFather by the course author) with the token in the profile's .env on the server only, never in this repository."
+      - "After the session: hermes gateway stop and delete the profile's sessions folder. The server and bots stay for the whole course."
+  references:
+    - "Al-Banna, A. (2026). AI Administrator, Module 3: Workflow Mapping I, The Current State. albanna-tutorials.com/ai-administrator/03_workflow_mapping_current_state.html"
+    - "Rummler, G. A. and Brache, A. P. (2012). Improving Performance: How to Manage the White Space on the Organization Chart, 3rd ed. Jossey-Bass (origin of the swimlane 'process map' with cross-functional lanes)"
+    - "George, M. L., Rowlands, D., Price, M. and Maxey, J. (2005). The Lean Six Sigma Pocket Toolbook. McGraw-Hill (SIPOC, value-stream and process-mapping tools)"
+    - "Rother, M. and Shook, J. (2003). Learning to See: Value Stream Mapping to Add Value and Eliminate Muda. Lean Enterprise Institute (process time versus lead time)"
+    - "Object Management Group (2013). Business Process Model and Notation (BPMN) 2.0.2. omg.org/spec/BPMN (the formal notation behind pools and lanes)"
+    - "draw.io / diagrams.net documentation: swimlanes and containers. drawio.com/doc"
+    - "Hermes Agent documentation and source (Nous Research, MIT licence). hermes-agent.nousresearch.com/docs · github.com/NousResearch/hermes-agent"
+    - "IEEE CS Region 8 AI Caravan (2026). AI Administrator Track Curriculum. aicaravan.org"
+
+slides:
+  - layout: title
+    title: "Workflow Mapping I: The Current State"
+    subtitle: "AI Administrator: Agentic Workflows & Automation · Day 2 · Session 3"
+    notes: >
+      Welcome back. One sentence promise: by the end of these two hours everyone has a method to draw the process
+      they chose on Day 1 exactly as it runs today, with numbers and named pain points, and has had the map checked
+      by a live AI reviewer. Still no code; the first automation is built on Day 3.
+
+  - layout: bullets
+    title: "Where this session sits"
+    logo: brand/kahoot_logo.png
+    minute: 0
+    bullets:
+      - "Day 1: what agents and automations are; prompting for operators; your task inventory"
+      - "Day 2 (now): mapping. Session 3 the current state, Session 4 the future state"
+      - "Day 3: first automations in n8n, built from the future-state map"
+      - "Days 4 to 6: tools, agents, multi-agent, controls, security, monitoring · Days 7 and 8: capstone and exam"
+      - "The process we use as the example today: annual-leave requests at AI Caravan Ltd. (the policy from Session 2)"
+      - "At minute 105: a 20-question Kahoot on this session. Keep your phone handy."
+    notes: >
+      Link back to Day 1: participants left with a task inventory and one chosen course task. Today they map that task.
+      The leave policy from Session 2 is reused on purpose: everyone already knows the official rules, so the gap between
+      the rules and what really happens is easy to see.
+
+  - layout: bullets
+    title: "What you will be able to do after this session"
+    logo: brand/kahoot_logo.png
+    bullets:
+      - "Explain why automating an unmapped process is risky"
+      - "Write a SIPOC with a clear trigger and end state"
+      - "Draw a swimlane map with actors, steps, decisions, hand-offs and waits"
+      - "Put touch time and wait time on every step, and know which fix each needs"
+      - "Tag pain points with seven course tags, and protect the JUDGE steps"
+      - "Interview a colleague about a process without leading them"
+    notes: >
+      Read quickly. The deliverable is the current-state map of their own course task; it is the input to Session 4
+      and to everything built on Day 3. Mention the Kahoot so phones are ready.
+
+  - layout: table
+    title: "Run of show (120 minutes)"
+    columns: ["Minutes", "Block", "What happens"]
+    rows:
+      - ["0 to 5", "Welcome", "Course map, objectives, the leave-request example"]
+      - ["5 to 15", "Why map before you automate", "Automation freezes workarounds; the stranger rule"]
+      - ["15 to 30", "SIPOC", "Boundaries, trigger, end state; five-minute room exercise"]
+      - ["30 to 55", "Swimlanes", "Notation; live draw.io demo; touch time versus wait time"]
+      - ["55 to 65", "Break", ""]
+      - ["65 to 80", "Pain-point tags", "Seven tags on the example; JUDGE is protected"]
+      - ["80 to 90", "Mapping interviews", "Five openers, rules, a role-play with one leading question"]
+      - ["90 to 105", "Practical: live map reviewer", "Send a step list to the reviewer bot; debrief"]
+      - ["105 to 115", "Kahoot", "20 questions"]
+      - ["115 to 120", "Lab kickoff and wrap", "Map your own task; due before Session 4"]
+    notes: >
+      Ten seconds on screen. The break is earlier than on Day 1 because the demo is long.
+
+  # ---------------------------------------------------------------- Section 1
+  - layout: section
+    title: "1. Why map before you automate"
+    subtitle: "Automation makes a process rigid. Look at it before you freeze it."
+    minute: 5
+    duration: 10
+    notes: >
+      Ten minutes. The point to land: automation freezes whatever you show it, so look first.
+
+  - layout: callout
+    title: "The most common automation failure is not technical"
+    text: "It is automating the process as one person thinks it works, then discovering the exceptions three other people quietly handle every week."
+    notes: >
+      Ask: who has seen a new system go live and then everyone kept their old spreadsheet anyway? Hands up. That
+      spreadsheet is the real process. Automation freezes what you show it; if you never looked, you freeze the
+      workarounds too, or you break them.
+
+  - layout: figure
+    title: "The process people describe, and the one that runs"
+    figure: d2s3_freeze
+    caption: "Ask a manager and you hear three portal steps. Watch the work and you see email, a private team sheet and a chase to HR."
+    notes: >
+      Walk the two rows. Top: what the leave policy says (Session 2's document). Bottom: what actually happens. The
+      orange boxes are steps nobody mentioned. Automating the top row would either break the bottom row or leave
+      people doing both. Every orange box is a finding from mapping, not from a tool.
+
+  - layout: bullets
+    title: "Mapping is cheap, and often fixes a third of the problem"
+    bullets:
+      - "Two hours with a whiteboard or draw.io"
+      - "It reveals duplicated data entry, approvals nobody reads, and days of waiting for minutes of work"
+      - "Many of those are fixed by a conversation, before any tool is involved"
+      - "What is left is a clear, honest specification for the automation"
+    notes: >
+      Make the economics plain: an automation project costs weeks; a map costs hours. The map is also what the
+      future-state design in Session 4 and the n8n build on Day 3 are drawn from.
+
+  - layout: callout
+    title: "The rule"
+    text: "You may only automate a step you can describe precisely enough that a stranger could do it from your description. Mapping is how you find out which steps those are."
+    notes: >
+      This is the sentence to remember. Steps a stranger cannot do from the description are usually JUDGE steps or
+      steps with hidden knowledge. Both must be found before automating.
+
+  # ---------------------------------------------------------------- Section 2
+  - layout: section
+    title: "2. Start wide: the SIPOC"
+    subtitle: "Fix the boundaries before you draw a single step"
+    minute: 15
+    duration: 15
+    notes: >
+      Fifteen minutes including the room exercise. Boundaries before boxes.
+
+  - layout: table
+    title: "SIPOC: five questions"
+    columns: ["Letter", "Question", "Leave requests"]
+    rows:
+      - ["S · Suppliers", "Who provides the inputs?", "Employees, line managers, HR coordinator, HR portal"]
+      - ["I · Inputs", "What arrives to start or feed the process?", "Leave request, balance, team calendar, policy HR-POL-02"]
+      - ["P · Process", "The five to seven biggest steps, no detail yet", "Request, check, decide, record, confirm"]
+      - ["O · Outputs", "What leaves the process?", "Decision, updated balance, updated calendar"]
+      - ["C · Customers", "Who receives the outputs?", "Employee, team, payroll"]
+    notes: >
+      SIPOC is a one-line summary that stops you mapping the wrong thing. Fill it top to bottom or start from P; both
+      work. The P column is deliberately coarse: five to seven boxes. The detail comes in the swimlane.
+
+  - layout: figure
+    title: "The leave-request SIPOC"
+    figure: d2s3_sipoc
+    caption: "Trigger and end state sit above the table. Without a clear trigger there is nothing for an automation to listen for."
+    notes: >
+      Point at the trigger line. Today the trigger is an email; officially it is a portal submission. That mismatch is
+      itself a finding. Automation tools need something to listen for: an email arriving, a form submitted, a date.
+      End state: how do you know it is finished? If nobody can say, the process never really ends.
+
+  - layout: steps
+    title: "Room exercise (5 minutes): SIPOC for ordering office supplies"
+    steps:
+      - heading: "Pairs"
+        text: "Turn to your neighbour. One sheet of paper, five columns."
+      - heading: "Trigger and end state first"
+        text: "What starts an order? How do you know it is finished?"
+      - heading: "Fill the five columns"
+        text: "Suppliers, Inputs, Process (five to seven steps), Outputs, Customers."
+      - heading: "Share"
+        text: "Two pairs read their trigger aloud. Are they the same?"
+    notes: >
+      Expect two different triggers ('stock runs low' versus 'someone emails the office manager'). Good: that is the
+      point of writing the trigger down. Model answer: Suppliers = staff, office manager, vendor; Inputs = request,
+      budget, catalogue; Process = request, check budget, approve, order, receive, distribute; Outputs = delivered
+      items, invoice; Customers = staff, finance. Trigger: a request or a low-stock check. End: items delivered and
+      invoice matched.
+
+  # ---------------------------------------------------------------- Section 3
+  - layout: section
+    title: "3. The swimlane diagram"
+    subtitle: "One lane per actor. Every lane crossing is a hand-off."
+    minute: 30
+    duration: 25
+    notes: >
+      Twenty-five minutes, most of it the live draw.io demo. Have the template open before you click.
+
+  - layout: bullets
+    title: "What a swimlane shows"
+    bullets:
+      - "One horizontal lane per actor: each person, team or system that touches the work"
+      - "Each step sits in the lane of whoever does it"
+      - "An arrow that crosses lanes is a hand-off"
+      - "Hand-offs are where time is lost and information is dropped"
+      - "Systems get their own lane: typing into the HR portal is a hand-off too"
+    notes: >
+      The swimlane is older than any software: it comes from Rummler and Brache's cross-functional process maps
+      (references). BPMN calls them pools and lanes. We use the plain version.
+
+  - layout: figure
+    title: "Four shapes are enough"
+    figure: d2s3_notation
+    caption: "Trigger (rounded, far left), step (a verb and an object), decision (yes/no with labelled exits), wait (written on the arrow)."
+    notes: >
+      One action per box. If a decision has more than two exits it is usually two decisions. Waits are written on the
+      arrows, and they are usually longer than the work.
+
+  - layout: callout
+    title: "Live demo: build the leave-request map in draw.io"
+    text: "Template: Day2_S3_Swimlane_Template.drawio. Five lanes, left to right, one shape at a time. Finished version: Day2_S3_Leave_Request_Example.drawio."
+    notes: >
+      About 15 minutes. Follow the demo steps in the instructor guide. Narrate every choice: why the spreadsheet gets
+      a lane, why the decision has two labelled exits, where the email sits. Ask the room for the next step before you
+      draw it. If you run short of time, open the finished file and walk it instead.
+
+  - layout: figure
+    title: "The current state, as it really runs"
+    figure: d2s3_swimlane
+    caption: "Employee, line manager, HR coordinator, HR portal and the manager's own team spreadsheet. Eight hand-offs."
+    notes: >
+      Compare with the demo. Count the hand-offs together: eight arrows cross lanes. Point at the dashed lookups (the
+      manager's private sheet, the HR record) and at the decision's No exit. Ask: what is missing? Hold the answer:
+      the bot will find it in the practical (department-head approval at quarter end, escalation after three days).
+
+  - layout: two_col
+    title: "Two numbers on every step"
+    left:
+      heading: "Touch time"
+      bullets:
+        - "Minutes of actual work on the step"
+        - "Written inside the box"
+        - "Large touch time on reading or writing: fix with an AI step"
+    right:
+      heading: "Wait time"
+      bullets:
+        - "How long the work sits before that step starts"
+        - "Written on the arrow"
+        - "Large waits: fix with notifications, routing, reminders"
+    notes: >
+      This distinction decides what you automate. People feel slow; usually the process is slow because it queues. In
+      lean terms, process time versus lead time (Rother and Shook in the references).
+
+  - layout: figure
+    title: "25 minutes of work, four days of waiting"
+    figure: d2s3_touch_wait
+    caption: "The black slivers are the work. The orange blocks are the queues. Speeding up the work barely changes the total."
+    notes: >
+      Read the totals from the map: 25 minutes of touch time, about 4 working days elapsed, six queues. Ask: if an AI
+      step cut the manager's reading time from 6 minutes to 1, how much faster is the process? Almost not at all. The
+      queues are the target, and queues are fixed by routing and reminders, not by AI.
+
+  - layout: callout
+    title: "Map what happens, not what should"
+    text: "Include the workaround: the private team spreadsheet, the email to HR, the re-typing. That is the real process. The official procedure is fiction until someone follows it. Automate reality."
+    notes: >
+      The leave policy even says managers must not keep separate spreadsheets. They do. That is not a reason to leave
+      it off the map; it is the reason to put it on.
+
+  # ---------------------------------------------------------------- Break
+  - layout: section
+    title: "Break"
+    subtitle: "10 minutes"
+    minute: 55
+    duration: 10
+    notes: >
+      Ten minutes. Restart at minute 65 sharp; the tags section is short and the practical cannot slip.
+
+  # ---------------------------------------------------------------- Section 4
+  - layout: section
+    title: "4. Tagging pain points"
+    subtitle: "One vocabulary for every map, so maps can be compared"
+    minute: 65
+    duration: 15
+    notes: >
+      Fifteen minutes. Seven tags, applied to the map everyone has just seen built.
+
+  - layout: figure
+    title: "Seven tags"
+    figure: d2s3_tags
+    caption: "REKEY, WAIT, READ, DRAFT, CHASE, RUBBER and JUDGE, each with its typical fix."
+    notes: >
+      Go row by row with an example from the room for each. The fix column previews Session 4 and Day 3. Spend time on
+      RUBBER: approvals that are always given without reading. They feel like control; they are only delay.
+
+  - layout: figure
+    title: "The leave-request map, tagged"
+    figure: d2s3_tagged
+    caption: "Three REKEY steps, a CHASE to HR, a RUBBER approval, a DRAFT reply, and one JUDGE decision to protect."
+    notes: >
+      Ask the room to justify three tags. Why is HR's portal approval RUBBER? Because the manager already decided and HR
+      approves every request. Why is re-entering in the portal REKEY? Because the request already exists in the email.
+      Where is the JUDGE? The manager's decision on clashes: a real decision about the team.
+
+  - layout: callout
+    title: "JUDGE is a tag, not a problem"
+    text: "A JUDGE step is a real decision that needs a person's judgement or accountability. Do not automate it. Protect it, and give the person a better summary. Marking it now is how the human stays in the loop by design, not by accident (Day 5, Module 10)."
+    notes: >
+      This closes the fear many participants have: mapping is not a plan to remove them. It is how the decisions that
+      need them get named and protected.
+
+  # ---------------------------------------------------------------- Section 5
+  - layout: section
+    title: "5. Mapping with colleagues"
+    subtitle: "You rarely know the whole process"
+    minute: 80
+    duration: 10
+    notes: >
+      Ten minutes including the three-minute role-play.
+
+  - layout: two_col
+    title: "Ask this, not that"
+    left:
+      heading: "Ask"
+      bullets:
+        - "'Walk me through the last one you handled'"
+        - "'What did you have to look up, and where?'"
+        - "'Who did you wait for, and how long?'"
+        - "'When does this go wrong, and what then?'"
+        - "'Is there a step you do that isn't official?'"
+    right:
+      heading: "Avoid"
+      bullets:
+        - "'How does this process work?' (gets the official version)"
+        - "'You follow the procedure, right?' (leading)"
+        - "'Wouldn't it be faster if...?' (proposing fixes)"
+        - "Interviewing without the real email, form or sheet in front of you"
+    notes: >
+      The last real case contains the exceptions; a general description leaves them out. Ask 'what happens if' at every
+      decision: if the manager is on leave, if the balance is negative, if the form is incomplete.
+
+  - layout: steps
+    title: "Role-play (3 minutes)"
+    steps:
+      - heading: "Setup"
+        text: "One instructor is the HR coordinator. The other interviews about leave requests."
+      - heading: "Watch for"
+        text: "One leading question is planted. Raise your hand when you hear it."
+      - heading: "Then"
+        text: "What did the interviewer learn that is not on the official policy?"
+    notes: >
+      Rehearsed beforehand. The planted leading question: 'You always check the balance in the portal, right?' The HR
+      coordinator answers 'Yes' and only later admits managers email her for balances because they have no portal
+      access. That is the CHASE step on the map. Close with the rules on the next slide.
+
+  - layout: bullets
+    title: "Five rules for an honest interview"
+    bullets:
+      - "Ask for the last real case, not the general process"
+      - "At every decision ask 'what happens if...?'"
+      - "Ask for the artefacts: the email, the sheet, the form (screenshots with permission)"
+      - "Do not propose fixes during the interview; people stop describing and start defending"
+      - "Confirm the map with them afterwards. A map nobody checked is a guess with boxes."
+    notes: >
+      These come straight from the module. The last rule is the one people skip; the lab makes it a required step.
+
+  # ---------------------------------------------------------------- Practical
+  - layout: section
+    title: "Practical: a live map reviewer"
+    subtitle: "Send your step list to an AI reviewer from your phone. Nothing to install."
+    minute: 90
+    duration: 15
+    notes: >
+      Check the reviewer is running (setup guide). Share the worksheet PDF in the chat. Same server as the Day 1 agent,
+      a different job: it only reviews maps.
+
+  - layout: bullets
+    title: "Meet the map reviewer"
+    bullets:
+      - "An AI reviewer that reads a list of process steps"
+      - "Answers in a fixed shape: missing steps, decisions with no 'no' path, the three riskiest hand-offs, suggested tags"
+      - "It never suggests automation. That is Session 4."
+      - "No tools, no memory: it only sees what you paste"
+      - "Like Session 2's policy bot: one job, written into its instructions"
+    notes: >
+      One minute. Link to Day 1: same four parts (model, tools, memory, instructions), but here tools and memory are
+      deliberately switched off. A narrow job makes a reliable assistant.
+
+  - layout: qr
+    title: "Join the map reviewer"
+    qr_image: brand/mapreview_bot_qr.png
+    qr_placeholder: "Paste the map reviewer bot QR code here (see setup guide)"
+    handle: "@aicaravan_mapreview_bot"
+    steps:
+      - "Open Telegram on your phone"
+      - "Scan the code, or search the bot name"
+      - "Press Start"
+    rules:
+      - "Paste process steps only"
+      - "No real names or personal data; use roles"
+      - "Messages are deleted after the session"
+    notes: >
+      Three minutes. Pair anyone without Telegram with a neighbour.
+
+  - layout: steps
+    title: "Three tasks (10 minutes)"
+    steps:
+      - heading: "1. The example"
+        text: "Paste the leave-request step list from the worksheet. Compare its findings with the map on screen."
+      - heading: "2. Your own task"
+        text: "Type five to eight steps of your course task, one per line: who does what. Read what it says is missing."
+      - heading: "3. Test its boundary"
+        text: "Ask it: 'Now automate this for me.' What does it do?"
+    notes: >
+      Walk the room. In Task 1 most people will get the department-head approval at quarter end and the missing
+      escalation after three working days; if not, show the next slide. Task 3 should be politely declined.
+
+  - layout: two_col
+    title: "What the reviewer should find in the example"
+    left:
+      heading: "Missing steps and paths"
+      bullets:
+        - "Department-head approval for leave in the last two weeks of a quarter"
+        - "Escalation to HR when the manager does not answer in three working days"
+        - "HR's portal approval has no 'decline' path"
+        - "Notice-period and probation checks are never done"
+    right:
+      heading: "Riskiest hand-offs and tags"
+      bullets:
+        - "Manager to HR by email: the balance request (CHASE)"
+        - "Approval email to employee re-entry in the portal (REKEY)"
+        - "Portal confirmation to the private team sheet (REKEY)"
+        - "Manager's clash decision stays human (JUDGE)"
+    notes: >
+      Five minutes of debrief. Ask for one finding per category from the room. In testing (4 October 2026) the bot
+      found the notice-period, probation and department-head gaps and HR's missing decline path, but missed the
+      three-day escalation. Ask the room what it missed: the answer is in the leave policy, Section 3. That is how you
+      verify an AI reviewer: compare it with a source you trust.
+
+  - layout: callout
+    title: "The reviewer is a colleague, not an authority"
+    text: "It finds gaps fast, but it only knows what you pasted. Check every finding against the policy and against the people who do the work. Your colleague interview still decides what is true."
+    notes: >
+      This is the same lesson as Session 2's trap questions: verify against the source. It also keeps the lab honest:
+      the bot review is step 7, the colleague confirmation is step 8.
+
+  # ---------------------------------------------------------------- Kahoot
+  - layout: section
+    title: "Kahoot: knowledge check"
+    logo: brand/kahoot_logo.png
+    subtitle: "20 questions, 20 seconds each. Phones out."
+    minute: 105
+    duration: 10
+    notes: >
+      Launch the Kahoot now; ten minutes.
+
+  - layout: two_col
+    title: "Join the Kahoot"
+    logo: brand/kahoot_logo.png
+    left:
+      heading: "How to join"
+      bullets:
+        - "Open kahoot.it on your phone, or the Kahoot app"
+        - "Enter the game PIN shown on the screen"
+        - "Nickname: your first name"
+        - "20 seconds per question; answer on your phone"
+    right:
+      heading: "Fair play notes"
+      bullets:
+        - "All four answers are about the same length. The long one is not a hint."
+        - "Correct answers are spread evenly over the four colours."
+        - "We run as many as time allows in the room"
+        - "The rest arrive as a Kahoot challenge link for homework"
+    notes: >
+      Import Day2_S3_Kahoot.xlsx into Kahoot beforehand (Create, then Import spreadsheet). Launch in Classic mode and
+      show the PIN on this slide. Ten minutes covers most of the 20 questions; assign the rest as a challenge. The answer
+      key with rationales is Day2_S3_Kahoot_Answer_Key.pdf.
+
+  # ---------------------------------------------------------------- Lab
+  - layout: section
+    title: "Practical lab: map your own task"
+    subtitle: "Steps shown now, finish before Session 4"
+    minute: 115
+    duration: 5
+    notes: >
+      Five minutes to show the lab; the work itself is done before Session 4.
+
+  - layout: steps
+    title: "Lab steps"
+    steps:
+      - heading: "1. SIPOC, trigger, end state"
+        text: "For the course task you chose on Day 1."
+      - heading: "2. Interview one colleague (15 min)"
+        text: "Five openers from the handout. Write down every exception."
+      - heading: "3 to 5. Draw it in draw.io"
+        text: "Lanes for every actor and system; steps, decisions, hand-offs; touch time in boxes, waits on arrows, totals."
+      - heading: "6. Tag the pain points"
+        text: "REKEY, WAIT, READ, DRAFT, CHASE, RUBBER, JUDGE."
+      - heading: "7 and 8. Review, then confirm"
+        text: "Ask the map reviewer (or your assistant) for gaps; then show the map to your colleague and correct it."
+    notes: >
+      Share the handout and the template in the chat. Walk the steps in four minutes. The common mistakes: no systems
+      lanes, no wait times, mapping the official version. The deliverable is saved as M3-current-state.
+
+  - layout: prompt
+    title: "Step 7: the review prompt (for any assistant)"
+    text: |
+      This is a current-state swimlane map of a business process. List (1) any step that seems to be missing between
+      two connected steps, (2) decisions that have no "no" path, and (3) the three hand-offs most likely to lose
+      information. Do not suggest automation yet.
+
+      [paste your step list, or upload the PNG]
+    notes: >
+      The same instructions the reviewer bot runs on, so participants without Telegram get the same result in any
+      assistant. Point at the constraint 'Do not suggest automation yet': that is Session 4.
+
+  - layout: callout
+    title: "Deliverable"
+    text: "Your current-state swimlane (PNG and draw.io file) with SIPOC, touch and wait times, pain-point tags, the hand-off count in the title, and five lines on what the colleague interview changed. Saved as M3-current-state. Bring it to Session 4."
+    notes: >
+      Be explicit that Session 4 starts from this file. Without it there is nothing to redesign.
+
+  # ---------------------------------------------------------------- Close
+  - layout: bullets
+    title: "Key takeaways"
+    bullets:
+      - "Automation freezes a process. Map what really happens, workarounds included, before freezing anything."
+      - "SIPOC fixes the boundaries; a swimlane shows actors, steps, decisions, hand-offs and waits."
+      - "Two numbers on every step: touch time and wait time. They decide whether routing or AI is the fix."
+      - "Tag pain points with one vocabulary, and mark JUDGE steps to protect the human decision."
+      - "Interview with 'walk me through the last one', ask 'what if', and confirm the map with the people who do the work."
+    notes: >
+      Read the five. Then preview Session 4: the same map, redesigned. Remove the RUBBER step, route the waits, add AI
+      only where READ and DRAFT appear, and keep the JUDGE step with a better summary.
+
+  - layout: articles
+    title: "Latest reading: map before you automate (2026)"
+    items:
+      - title: "Stop Automating Old Processes. Design New Ones Instead."
+        source: "Harvard Business Review, by Masha Shunko and Serguei Netessine"
+        date: "14 September 2026"
+        url: "hbr.org/2026/09/stop-automating-old-processes-design-new-ones-instead"
+        takeaway: "Companies doubling AI spend still miss returns because they automate individual tasks instead of redesigning the end-to-end workflow. Today's map is the end-to-end view; Session 4 is the redesign."
+      - title: "Process Intelligence Landscape 2026: Mining, Orchestration, and the Agentic AI Shift"
+        source: "Kai Waehner"
+        date: "22 July 2026"
+        url: "kai-waehner.de/blog/2026/07/22/process-intelligence-landscape-2026-mining-orchestration-and-the-agentic-ai-shift"
+        takeaway: "Process mining reconstructs how work really runs from system logs, and 'most of the value lands before an agent enters the picture'. A hand-drawn current-state map is the manual version of the same idea."
+      - title: "2026 Work Trend Index: Agents, Human Agency, and the Opportunity for Every Organization"
+        source: "Microsoft WorkLab"
+        date: "5 May 2026"
+        url: "microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization"
+        takeaway: "Defining the desired outcome and designing how work flows across people and AI must come before handing work to agents; organisational factors matter more than individual skill. The JUDGE tag is where that design starts."
+    notes: >
+      Optional two minutes or self-study. Instructors may swap in newer pieces; keep the pattern of source, date and a
+      one-line takeaway tied to the session.
+
+  - layout: references
+    title: "References"
+    notes: >
+      Leave on screen during questions. All figures were drawn for this course; the leave process and AI Caravan Ltd. are
+      fictional.

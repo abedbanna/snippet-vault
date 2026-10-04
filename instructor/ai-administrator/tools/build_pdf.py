@@ -70,7 +70,7 @@ def build_guide(yaml_path, out_path):
     parts.append("<h2>Session at a glance</h2><table><tr><th>Day / session</th><td>Day %s · Session %s · %s minutes</td></tr>"
                  "<tr><th>Lead instructors</th><td>%s</td></tr><tr><th>Online module</th><td>%s</td></tr><tr><th>Deck</th><td>%s</td></tr></table>"
                  % (meta["day"], meta["session"], meta["duration_min"], esc(", ".join(meta["instructors"])), esc(meta["module_url"]),
-                    esc(f"Day{meta['day']}_S{meta['session']}_{meta['short']}.pptx, {sum(2 if s['layout']=='quiz' else 1 for s in slides)} slides, speaker notes included")))
+                    esc(f"Day{meta['day']}_S{meta['session']}_{meta['short'].replace(' ', '_')}.pptx, {sum(2 if s['layout']=='quiz' else 1 for s in slides)} slides, speaker notes included")))
     parts.append("<h2>Learning objectives</h2><ul>" + "".join(f"<li>{esc(o)}</li>" for o in meta["objectives"]) + "</ul>")
     # run of show from section slides
     secs = [s for s in slides if s["layout"] == "section" and "minute" in s]
@@ -117,7 +117,7 @@ def build_guide(yaml_path, out_path):
             f"<li><b>{esc(a['title'])}</b>. {esc(a['source'])}, {esc(a['date'])}. {esc(a['url'])}<br><span class='notes'>{esc(a['takeaway'])}</span></li>"
             for s in arts for a in s["items"]) + "</ul>")
     parts.append("<h2>References</h2><ol>" + "".join(f"<li>{esc(r)}</li>" for r in meta["references"]) + "</ol>"
-                 f"<p class='notes'>{esc(meta['figure_credit'])}. Figures also appear in the course tutorial albanna-tutorials.com/llm_agents.html.</p>")
+                 f"<p class='notes'>{esc(meta['figure_credit'])}. {esc(meta.get('figure_note', 'Figures also appear in the course tutorial albanna-tutorials.com/llm_agents.html.'))}</p>")
     footer = "IEEE CS Region 8 AI Caravan 2026 · AI Administrator track · Instructor guide prepared by Dr. Abdulkarim Al-Banna · albanna-tutorials.com"
     to_pdf(wrap(meta["title"], f"Instructor guide · Day {meta['day']} · Session {meta['session']}", meta["subtitle"], "".join(parts), footer), out_path)
 
