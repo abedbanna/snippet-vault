@@ -59,30 +59,31 @@ this repo. Session 1 closes with a Kahoot (`tools/build_kahoot.py`, balanced ans
 ## Adding Day 2+
 
 Copy `content/day1_session1.yaml` to `content/day2_session3.yaml`, update `meta`, rewrite `slides` from the matching
-module in `src/ai-administrator/`, add lab/quiz markdown, and run the same commands with `out/day2/`.
+module in `src/ai-administrator/`, add lab/quiz markdown, and run the same commands with `out/day2/`. Day 2 outputs are arranged per session: `out/day2/Session3/` holds
+`01_Slides`, `02_Instructor_Guides`, `03_Participant_Handouts`, `04_Assessment`, `05_drawio_Files` and `06_Videos`.
 
 ## Regenerate Day 2, Session 3 (Workflow Mapping I: The Current State)
 
 ```bash
 cd instructor/ai-administrator
 python3 tools/make_day2_figures.py                     # figures/d2s3_*.png (leave-request example, drawn for the course)
-python3 tools/make_day2_drawio.py out/day2              # Day2_S3_Swimlane_Template.drawio + Day2_S3_Leave_Request_Example.drawio
-python3 tools/build_deck.py content/day2_session3.yaml out/day2/Day2_S3_Mapping_Current_State.pptx
-python3 tools/build_pdf.py guide content/day2_session3.yaml out/day2/Day2_S3_Instructor_Guide.pdf
-python3 tools/build_pdf.py md content/day2_lab3.md out/day2/Day2_S3_Lab_Handout.pdf
-python3 tools/build_pdf.py md content/day2_quiz3.md out/day2/Day2_S3_Quiz_Bank.pdf
-python3 tools/build_kahoot.py content/day2_kahoot_session3.yaml out/day2/Day2_S3_Kahoot.xlsx content/day2_kahoot_session3_key.md
-python3 tools/build_pdf.py md content/day2_kahoot_session3_key.md out/day2/Day2_S3_Kahoot_Answer_Key.pdf
-python3 tools/build_pdf.py md content/day2_practical_map_reviewer.md out/day2/Day2_S3_Practical_Map_Reviewer.pdf
-python3 tools/build_pdf.py md content/day2_map_reviewer_setup.md out/day2/Day2_S3_Map_Reviewer_Setup_Guide.pdf
-python3 tools/build_pdf.py md content/day2_leave_request_steps.md out/day2/Day2_S3_Leave_Request_Steps.pdf
+python3 tools/make_day2_drawio.py out/day2/Session3/05_drawio_Files            # Day2_S3_Swimlane_Template.drawio + Day2_S3_Leave_Request_Example.drawio
+python3 tools/build_deck.py content/day2_session3.yaml out/day2/Session3/01_Slides/Day2_S3_Mapping_Current_State.pptx
+python3 tools/build_pdf.py guide content/day2_session3.yaml out/day2/Session3/02_Instructor_Guides/Day2_S3_Instructor_Guide.pdf
+python3 tools/build_pdf.py md content/day2_lab3.md out/day2/Session3/03_Participant_Handouts/Day2_S3_Lab_Handout.pdf
+python3 tools/build_pdf.py md content/day2_quiz3.md out/day2/Session3/04_Assessment/Day2_S3_Quiz_Bank.pdf
+python3 tools/build_kahoot.py content/day2_kahoot_session3.yaml out/day2/Session3/04_Assessment/Day2_S3_Kahoot.xlsx content/day2_kahoot_session3_key.md
+python3 tools/build_pdf.py md content/day2_kahoot_session3_key.md out/day2/Session3/04_Assessment/Day2_S3_Kahoot_Answer_Key.pdf
+python3 tools/build_pdf.py md content/day2_practical_map_reviewer.md out/day2/Session3/03_Participant_Handouts/Day2_S3_Practical_Map_Reviewer.pdf
+python3 tools/build_pdf.py md content/day2_map_reviewer_setup.md out/day2/Session3/02_Instructor_Guides/Day2_S3_Map_Reviewer_Setup_Guide.pdf
+python3 tools/build_pdf.py md content/day2_leave_request_steps.md out/day2/Session3/03_Participant_Handouts/Day2_S3_Leave_Request_Steps.pdf
 ```
 
 Session 3 photos (slides 6, 8, 15, 19, 21, 26, 30) are openly licensed Wikimedia Commons images in `figures/web/`, with
 author, licence and source in `figures/web/CREDITS.md`; each slide carries a credit line (`credit:` in the YAML) and the
 last slide lists them all ("Image credits"). Keep the credits if you reuse a photo.
 
-Session 3 videos (instructor package only, not published):
+Session 3 videos (instructor package only, not published; in `out/day2/Session3/06_Videos/`, copy new renders there):
 - `Day2_S3_Video1_Swimlane_Template.mp4` / `Day2_S3_Video2_Leave_Request_Map.mp4` (+ `.srt`): narrated draw.io screencasts,
   real clicks in app.diagrams.net. Regenerate with `python3 video/drawio/v1_template.py all` and
   `python3 video/drawio/v2_leave_request.py all` from the repo root (`dry` = screenshots only; narration is cached per beat

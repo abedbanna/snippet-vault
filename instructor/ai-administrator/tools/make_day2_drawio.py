@@ -2,7 +2,7 @@
 """Write the Day 2 Session 3 draw.io files: an empty swimlane template and the finished leave-request example.
 
 The example uses the same steps, lanes, waits and tags as figures/d2s3_swimlane.png (tools/make_day2_figures.py).
-Usage: python3 tools/make_day2_drawio.py out/day2
+Usage: python3 tools/make_day2_drawio.py out/day2/Session3/05_drawio_Files
 """
 import sys, pathlib
 from xml.sax.saxutils import escape
@@ -97,6 +97,6 @@ def example(out):
 
 
 if __name__ == "__main__":
-    out = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "out/day2"); out.mkdir(parents=True, exist_ok=True)
+    out = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "out/day2/Session3/05_drawio_Files"); out.mkdir(parents=True, exist_ok=True)
     template(out); example(out)
     print("wrote", out / "Day2_S3_Swimlane_Template.drawio", out / "Day2_S3_Leave_Request_Example.drawio")

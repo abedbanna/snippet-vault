@@ -4,7 +4,7 @@ Same steps, waits and tags as figures/d2s3_swimlane.png.   python3 v2_leave_requ
 import dvlib as V
 
 NAME = "Day2_S3_Video2_Leave_Request_Map"
-TPL = "/Users/abedelkarimalbanna/albanna-portal/instructor/ai-administrator/out/day2/Day2_S3_Swimlane_Template.drawio"
+TPL = "/Users/abedelkarimalbanna/albanna-portal/instructor/ai-administrator/out/day2/Session3/05_drawio_Files/Day2_S3_Swimlane_Template.drawio"
 LANES = ["Employee", "Line manager", "HR coordinator", "HR portal", "Team sheet (manager)"]
 # template cells: c2 title, c3-c7 lanes, c9 trigger, c10 step, c11 decision, c12 end, c16-c22 tags
 LEGEND = {"trigger": "c9", "step": "c10", "decision": "c11", "end": "c12"}
