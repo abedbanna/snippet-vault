@@ -21,14 +21,14 @@ meta:
     - "Projector or screen share; this deck (Day2_S3_Mapping_Current_State.pptx) with speaker notes open."
     - "draw.io open in a browser tab (app.diagrams.net) or the desktop app, with Day2_S3_Swimlane_Template.drawio loaded for the live demo, and Day2_S3_Leave_Request_Example.drawio as the finished answer."
     - "Practical worksheet (Day2_S3_Practical_Map_Reviewer.pdf) shared in the chat at minute 90; lab handout (Day2_S3_Lab_Handout.pdf) at minute 115."
-    - "The map reviewer bot running on the course server (Day2_S3_Map_Reviewer_Setup_Guide.pdf); phone with Telegram for a test message; the bot QR on the Join slide."
+    - "The course bot @aicaravan_bot switched to the map reviewer on the course server (Day2_S3_Map_Reviewer_Setup_Guide.pdf: aicaravan-bot mapreview); phone with Telegram for a test message; the same QR as Day 1 on the Join slide."
     - "Fallback: the leave-request step list and the expected bot answer printed in the setup guide, in case Wi-Fi, Telegram or the model provider fails."
     - "Kahoot imported from Day2_S3_Kahoot.xlsx and ready to launch (PIN on screen at minute 105); answer key Day2_S3_Kahoot_Answer_Key.pdf. The written Quiz bank (Day2_S3_Quiz_Bank.pdf) stays available for homework or revision."
     - "Participants: their M1 task inventory and chosen course task from Day 1, a draw.io account or the desktop app, and an AI assistant. Nothing to install if they use the browser version."
   prep:
     - "Read the live module once (link above); the slides follow its five sections in order."
     - "Practise the live demo twice: build the leave-request swimlane in draw.io from the template in under 12 minutes. The finished file is the answer key."
-    - "The day before: start the map reviewer (see the setup guide), message the bot from your phone, paste the leave-request step list and check that it finds the missing department-head approval and the missing escalation."
+    - "The day before: on the course server run aicaravan-bot mapreview as user hermes (see the setup guide), message @aicaravan_bot from your phone, paste the leave-request step list and check that it finds the department-head approval, notice-period and probation gaps."
     - "Agree with the co-instructor who plays the colleague in the interview role-play (minute 85) and rehearse the one leading question you will catch."
     - "Remind participants to bring their M1 task inventory: the lab maps the task they chose on Day 1."
   demo:
@@ -38,7 +38,7 @@ meta:
       - "Minute 38: build the leave-request map left to right, narrating each shape: trigger (email), steps, the decision diamond with labelled Yes and No exits."
       - "Minute 46: add touch time inside each step and the wait on each arrow. Add the totals: 25 minutes of touch, about 4 days elapsed."
       - "Minute 50: count the hand-offs together (eight). Compare with Day2_S3_Leave_Request_Example.drawio and show the 'touch versus wait' slide."
-      - "Minute 88: check the map reviewer is running and send one test message. Minute 90: Join slide; participants scan the QR and press Start."
+      - "Minute 88: aicaravan-bot status must say mapreview; send one test message. Minute 90: Join slide; participants scan the QR (same as Day 1) and send a message."
       - "Minute 93: participants paste the leave-request steps from the worksheet, then a short list from their own task. Minute 100: debrief, one finding per category."
       - "Optional filler if the bot cannot run: paste the same step list into any AI assistant with the review prompt from lab step 7 and compare the answer with the 'What the reviewer should find' slide."
   troubleshooting:
@@ -60,11 +60,11 @@ meta:
     title: "Practical setup summary (map reviewer on Telegram)"
     sheet: "Day2_S3_Map_Reviewer_Setup_Guide.pdf"
     points:
-      - "Runs on the same course droplet as Day 1 (AI-Caravan, 165.245.213.121), as a second Hermes profile called mapreview next to the default bot and the policy bot, served by the same gateway."
+      - "Uses the same Telegram bot as Day 1, @aicaravan_bot. On the course droplet (AI-Caravan, 165.245.213.121) the reviewer is its own Hermes profile, mapreview; the script ~/bin/aicaravan-bot moves the bot between profiles: aicaravan-bot mapreview before the session, aicaravan-bot default to give it back to the Day 1 agent, aicaravan-bot status to check."
       - "Persona in ~/.hermes/profiles/mapreview/SOUL.md: reviews a list of process steps and answers in a fixed shape (missing steps, decisions without a 'no' path, three riskiest hand-offs, suggested pain-point tags). It never proposes automation and declines anything else."
       - "No tools and no memory: platform_toolsets.telegram is empty and memory is off, so it only reasons over what participants paste."
-      - "Its own Telegram bot (created in BotFather by the course author) with the token in the profile's .env on the server only, never in this repository."
-      - "After the session: hermes gateway stop and delete the profile's sessions folder. The server and bots stay for the whole course."
+      - "The bot token stays only on the server; the script moves it between the two profiles' .env files without printing it. Never in this repository."
+      - "After the session: aicaravan-bot default (or hermes gateway stop until the next session) and delete ~/.hermes/profiles/mapreview/sessions/. The server and bot stay for the whole course."
   references:
     - "Al-Banna, A. (2026). AI Administrator, Module 3: Workflow Mapping I, The Current State. albanna-tutorials.com/ai-administrator/03_workflow_mapping_current_state.html"
     - "Rummler, G. A. and Brache, A. P. (2012). Improving Performance: How to Manage the White Space on the Organization Chart, 3rd ed. Jossey-Bass (origin of the swimlane 'process map' with cross-functional lanes)"
@@ -408,8 +408,8 @@ slides:
     minute: 90
     duration: 15
     notes: >
-      Check the reviewer is running (setup guide). Share the worksheet PDF in the chat. Same server as the Day 1 agent,
-      a different job: it only reviews maps.
+      Check aicaravan-bot status says mapreview (setup guide). Share the worksheet PDF in the chat. Same bot and server as
+      the Day 1 agent, a different job today: it only reviews maps.
 
   - layout: bullets
     title: "Meet the map reviewer"
@@ -418,16 +418,16 @@ slides:
       - "Answers in a fixed shape: missing steps, decisions with no 'no' path, the three riskiest hand-offs, suggested tags"
       - "It never suggests automation. That is Session 4."
       - "No tools, no memory: it only sees what you paste"
-      - "Like Session 2's policy bot: one job, written into its instructions"
+      - "Same bot as Day 1, new job: today its instructions say review maps, nothing else"
     notes: >
       One minute. Link to Day 1: same four parts (model, tools, memory, instructions), but here tools and memory are
       deliberately switched off. A narrow job makes a reliable assistant.
 
   - layout: qr
     title: "Join the map reviewer"
-    qr_image: brand/mapreview_bot_qr.png
-    qr_placeholder: "Paste the map reviewer bot QR code here (see setup guide)"
-    handle: "@aicaravan_mapreview_bot"
+    qr_image: brand/bot_qr.png
+    qr_placeholder: "Paste the course bot QR code here (see setup guide)"
+    handle: "@aicaravan_bot"
     steps:
       - "Open Telegram on your phone"
       - "Scan the code, or search the bot name"
@@ -437,7 +437,9 @@ slides:
       - "No real names or personal data; use roles"
       - "Messages are deleted after the session"
     notes: >
-      Three minutes. Pair anyone without Telegram with a neighbour.
+      Three minutes. It is the same @aicaravan_bot as Day 1, switched to the reviewer job for this session (setup guide:
+      aicaravan-bot mapreview). Participants who already chatted with it on Day 1 just send a new message. Pair anyone without
+      Telegram with a neighbour.
 
   - layout: steps
     title: "Three tasks (10 minutes)"

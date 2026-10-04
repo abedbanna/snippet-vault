@@ -67,7 +67,6 @@ module in `src/ai-administrator/`, add lab/quiz markdown, and run the same comma
 cd instructor/ai-administrator
 python3 tools/make_day2_figures.py                     # figures/d2s3_*.png (leave-request example, drawn for the course)
 python3 tools/make_day2_drawio.py out/day2              # Day2_S3_Swimlane_Template.drawio + Day2_S3_Leave_Request_Example.drawio
-python3 tools/make_qr.py aicaravan_mapreview_bot brand/mapreview_bot_qr.png   # once the BotFather bot exists
 python3 tools/build_deck.py content/day2_session3.yaml out/day2/Day2_S3_Mapping_Current_State.pptx
 python3 tools/build_pdf.py guide content/day2_session3.yaml out/day2/Day2_S3_Instructor_Guide.pdf
 python3 tools/build_pdf.py md content/day2_lab3.md out/day2/Day2_S3_Lab_Handout.pdf
@@ -81,6 +80,7 @@ python3 tools/build_pdf.py md content/day2_leave_request_steps.md out/day2/Day2_
 
 Session 3 figures are all course-made (no third-party images), so the deck's `figure_credit` names the course and
 `figure_note` replaces the Day 1 llm_agents sentence in the guide. `build_deck.py` finds any `figures/<slug>.png` that
-is not in `figures/manifest.json`. The practical is a third Hermes profile, **mapreview** (persona:
+is not in `figures/manifest.json`. The practical is a third Hermes profile, **mapreview**, answering on the same bot as Day 1 (@aicaravan_bot); the server
+script `tools/aicaravan-bot.sh` (installed as `/home/hermes/bin/aicaravan-bot`) moves the bot between profiles (persona:
 `content/day2_mapreview_soul.md`, setup and test record: `content/day2_map_reviewer_setup.md`). The Day 2 zip is made
 after Session 4.

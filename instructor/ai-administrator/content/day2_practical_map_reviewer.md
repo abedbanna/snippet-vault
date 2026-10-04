@@ -6,13 +6,13 @@ kind: "Participant worksheet · 15 minutes · nothing to install"
 
 ## What this is
 
-Your instructor runs an AI **map reviewer** on the course server and has connected it to a Telegram bot. You send it a process as a list of steps; it answers in a fixed shape: **missing steps**, **decisions with no "no" path**, the **three riskiest hand-offs**, and **suggested pain-point tags**. It never suggests automation (that is Session 4), it has no tools and no memory, and it only sees what you paste.
+Today the course Telegram bot from Day 1, **@aicaravan_bot**, has a new job: it is an AI **map reviewer**. You send it a process as a list of steps; it answers in a fixed shape: **missing steps**, **decisions with no "no" path**, the **three riskiest hand-offs**, and **suggested pain-point tags**. It never suggests automation (that is Session 4), it has no tools and no memory, and it only sees what you paste.
 
 ## How to join (3 minutes)
 
 1. Open Telegram on your phone (or telegram.org/dl on a laptop).
-2. Scan the QR code on the screen, or search for the bot name the instructor gives you.
-3. Press **Start**.
+2. Scan the QR code on the screen (the same one as Day 1), or search for **@aicaravan_bot**.
+3. Press **Start**, or just send a new message if you already chatted with it on Day 1.
 
 **Three rules:** paste process steps only; use roles, never real names or personal data; messages are deleted after the session.
 
