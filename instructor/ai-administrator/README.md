@@ -78,6 +78,18 @@ python3 tools/build_pdf.py md content/day2_map_reviewer_setup.md out/day2/Day2_S
 python3 tools/build_pdf.py md content/day2_leave_request_steps.md out/day2/Day2_S3_Leave_Request_Steps.pdf
 ```
 
+Session 3 photos (slides 6, 8, 15, 19, 21, 26, 30) are openly licensed Wikimedia Commons images in `figures/web/`, with
+author, licence and source in `figures/web/CREDITS.md`; each slide carries a credit line (`credit:` in the YAML) and the
+last slide lists them all ("Image credits"). Keep the credits if you reuse a photo.
+
+Session 3 videos (instructor package only, not published):
+- `Day2_S3_Video1_Swimlane_Template.mp4` / `Day2_S3_Video2_Leave_Request_Map.mp4` (+ `.srt`): narrated draw.io screencasts,
+  real clicks in app.diagrams.net. Regenerate with `python3 video/drawio/v1_template.py all` and
+  `python3 video/drawio/v2_leave_request.py all` from the repo root (`dry` = screenshots only; narration is cached per beat
+  in `video/drawio/out/<name>/audio/`, ElevenLabs key in `~/.albanna-elevenlabs-key`).
+- `Day2_S3_Practical_Map_Reviewer.mp4`: the live map reviewer doing the three worksheet tasks on @aicaravan_bot, composed
+  from Telegram Web captures by `video/practical3/make_video.py` (captures not committed: they show a private chat list).
+
 Session 3 figures are all course-made (no third-party images), so the deck's `figure_credit` names the course and
 `figure_note` replaces the Day 1 llm_agents sentence in the guide. `build_deck.py` finds any `figures/<slug>.png` that
 is not in `figures/manifest.json`. The practical is a third Hermes profile, **mapreview**, answering on the same bot as Day 1 (@aicaravan_bot); the server

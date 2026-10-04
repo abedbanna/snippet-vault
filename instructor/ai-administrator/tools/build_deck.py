@@ -93,8 +93,8 @@ def notes(slide, text):
 def fig_path(slug):
     info = MANIFEST.get(slug)
     if not info:  # course-made figures (e.g. tools/make_day2_figures.py) live in figures/<slug>.png
-        local = FIG / f"{slug}.png"
-        if not local.exists(): raise SystemExit(f"unknown figure slug: {slug}")
+        local = next((FIG / f"{slug}{ext}" for ext in (".png", ".jpg") if (FIG / f"{slug}{ext}").exists()), None)
+        if not local: raise SystemExit(f"unknown figure slug: {slug}")   # web/<key> = licensed photo, see figures/web/CREDITS.md
         used_figures.add(slug); return local
     used_figures.add(slug); return FIG / info["file"]
 
@@ -105,8 +105,9 @@ def place_image(slide, path, left, top, max_w, max_h):
     return slide.shapes.add_picture(str(path), left + (max_w - pw) // 2, top + (max_h - ph) // 2, pw, ph)
 
 
-def credit(slide, meta):
-    add_text(slide, W - MARGIN - Inches(5), H - Inches(0.92), Inches(5), Inches(0.3), meta["figure_credit"], size=9,
+def credit(slide, meta, s=None):
+    text = (s or {}).get("credit", meta["figure_credit"])   # per-slide credit for third-party images
+    add_text(slide, W - MARGIN - Inches(7.5), H - Inches(0.92), Inches(7.5), Inches(0.3), text, size=9,
              color=GREY, align=PP_ALIGN.RIGHT, italic=True)
 
 
@@ -163,7 +164,7 @@ def l_figure(prs, s, meta, n):
         left = MARGIN + fig_w + Inches(0.4); bw = W - MARGIN - left
         size = fit_size(s["bullets"], 18, bw / 914400, fig_h / 914400, line_h=1.6)
         add_bullets(sl, left, CONTENT_TOP + Inches(0.2), bw, fig_h, s["bullets"], size=size, space_after=10)
-    credit(sl, meta); footer(sl, meta, n); notes(sl, s.get("notes")); return sl
+    credit(sl, meta, s); footer(sl, meta, n); notes(sl, s.get("notes")); return sl
 
 
 def l_figures(prs, s, meta, n):
@@ -175,7 +176,7 @@ def l_figures(prs, s, meta, n):
         place_image(sl, fig_path(slug), MARGIN, top, W - 2 * MARGIN, each); top += each + gap
     if s.get("caption"):
         add_text(sl, MARGIN, CONTENT_BOTTOM - cap_h - Inches(0.2), W - 2 * MARGIN, cap_h, s["caption"], size=13, color=GREY, italic=True)
-    credit(sl, meta); footer(sl, meta, n); notes(sl, s.get("notes")); return sl
+    credit(sl, meta, s); footer(sl, meta, n); notes(sl, s.get("notes")); return sl
 
 
 def l_table(prs, s, meta, n):
