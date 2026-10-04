@@ -125,7 +125,7 @@ BEATS = [
     {"chip": "10 · Title and save", "do": b_title,
      "say": "Add a title line at the top for the process, the trigger, the end state and the number of hand-offs. "
             "Then save it with File, Save as, and keep the dot drawio file. That's your template. "
-            "Make a copy of it for every process you map."},
+            "Make a copy of it for every process you map, and you're ready."},
 ]
 
 if __name__ == "__main__":
