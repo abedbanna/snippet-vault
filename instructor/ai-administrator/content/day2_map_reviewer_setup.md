@@ -54,7 +54,7 @@ Installed at `/home/hermes/bin/aicaravan-bot` (run as user `hermes`). The QR on 
 
 1. As user `hermes`: `~/bin/aicaravan-bot mapreview`, then `~/bin/aicaravan-bot status` must say `mapreview`.
 2. From your phone, send the leave-request step list to @aicaravan_bot and check the answer arrives in the five-part shape.
-3. Have the worksheet PDF ready to share in the chat at minute 90.
+3. Have the worksheet PDF and the link t.me/aicaravan_bot ready to paste in the meeting chat at minute 90.
 
 ## During (minutes 90 to 105)
 
@@ -69,7 +69,7 @@ Installed at `/home/hermes/bin/aicaravan-bot` (run as user `hermes`). The QR on 
 
 ## Fallback
 
-If Wi-Fi, Telegram or the model provider fails: participants paste the same step list into any AI assistant with the review prompt from lab step 7, or the instructor walks the "What the reviewer should find" slide with the room. The expected findings are in `content/day2_leave_request_steps.md` and below.
+If Telegram or the model provider fails: share `Day2_S3_Practical_Map_Reviewer.mp4` (the bot doing the three tasks), or participants paste the same step list into any AI assistant with the review prompt from lab step 7, or the instructor walks the "What the reviewer should find" slide with the group on screen share. The expected findings are in `content/day2_leave_request_steps.md` and below.
 
 ## Live deployment record (4 October 2026)
 

@@ -10,8 +10,8 @@ Today the course Telegram bot from Day 1, **@aicaravan_bot**, has a new job: it 
 
 ## How to join (3 minutes)
 
-1. Open Telegram on your phone (or telegram.org/dl on a laptop).
-2. Scan the QR code on the screen (the same one as Day 1), or search for **@aicaravan_bot**.
+1. Click **t.me/aicaravan_bot** in the meeting chat (opens Telegram on your phone, Telegram Desktop, or web.telegram.org).
+2. Or scan the QR code on the shared screen (the same one as Day 1), or search for **@aicaravan_bot**.
 3. Press **Start**, or just send a new message if you already chatted with it on Day 1.
 
 **Three rules:** paste process steps only; use roles, never real names or personal data; messages are deleted after the session.
@@ -39,7 +39,7 @@ Trigger: an employee asks for leave
 End state: the employee has a decision, and the balance and calendar are updated.
 ```
 
-Compare its answer with the map on the screen. Which finding surprised you? Is there a rule from the leave policy (Session 2) that it **missed**?
+Compare its answer with the map on the shared screen. Which finding surprised you? Is there a rule from the leave policy (Session 2) that it **missed**?
 
 What it found that you had not: ______________________________________________
 
@@ -61,7 +61,7 @@ What happened: ______________________________________________
 
 ## Debrief (5 minutes)
 
-| Category | One finding from the room |
+| Category | One finding from the chat |
 |---|---|
 | Missing step | |
 | Decision with no "no" path | |
@@ -72,7 +72,7 @@ What happened: ______________________________________________
 
 ## No Telegram?
 
-Pair with a neighbour, or paste the same step list into any AI assistant with this prompt:
+Follow the instructor's shared screen, or paste the same step list into any AI assistant with this prompt:
 
 ```
 This is a current-state swimlane map of a business process. List (1) any step that
