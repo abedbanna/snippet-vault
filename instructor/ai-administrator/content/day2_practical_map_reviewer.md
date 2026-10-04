@@ -10,7 +10,7 @@ Today the course Telegram bot from Day 1, **@aicaravan_bot**, has a new job: it 
 
 ## How to join (3 minutes)
 
-1. Click **t.me/aicaravan_bot** in the meeting chat (opens Telegram on your phone, Telegram Desktop, or web.telegram.org).
+1. Click **t.me/aicaravan_bot** in the Zoom chat (opens Telegram on your phone, Telegram Desktop, or web.telegram.org).
 2. Or scan the QR code on the shared screen (the same one as Day 1), or search for **@aicaravan_bot**.
 3. Press **Start**, or just send a new message if you already chatted with it on Day 1.
 

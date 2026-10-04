@@ -54,7 +54,7 @@ Installed at `/home/hermes/bin/aicaravan-bot` (run as user `hermes`). The QR on 
 
 1. As user `hermes`: `~/bin/aicaravan-bot mapreview`, then `~/bin/aicaravan-bot status` must say `mapreview`.
 2. From your phone, send the leave-request step list to @aicaravan_bot and check the answer arrives in the five-part shape.
-3. Have the worksheet PDF and the link t.me/aicaravan_bot ready to paste in the meeting chat at minute 90.
+3. Have the worksheet PDF and the link t.me/aicaravan_bot ready to paste in the Zoom chat (co-host) at minute 90.
 
 ## During (minutes 90 to 105)
 
