@@ -35,7 +35,7 @@ def lanes(doc, names, width, auto_index=None):
                                sf="#fffaf0" if i == auto_index else ("#ffffff" if i % 2 else "#f8fafc"))
         if i == auto_index:
             st = st.replace("strokeColor=#d1d5db", "strokeColor=#F7A11A")
-        doc.add(name.replace("\n", " "), st, X0, Y0 + i * LANE_H, width, LANE_H)
+        doc.add(name, st, X0, Y0 + i * LANE_H, width, LANE_H)
 
 
 def legend(doc, y, extra):

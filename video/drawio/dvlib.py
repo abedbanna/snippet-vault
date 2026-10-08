@@ -20,6 +20,7 @@ MODEL = "eleven_multilingual_v2"
 OUT = os.path.join(HERE, "out")
 GAP = 0.6                              # seconds of breathing room after each beat
 URL = "https://app.diagrams.net/?splash=0&lang=en"
+SESSION = "3"                          # shown on the title banner; a video script may set V.SESSION
 
 HOOK = """
 (() => {
@@ -148,7 +149,7 @@ class D:
     async def preset(self, colour):
         await self.click(*PRESET[colour], 0.35)
 
-    async def connect(self, a, b, label=None, side="r"):
+    async def connect(self, a, b, label=None, side="r", into=None):
         """Hover a, drag its blue hover arrow onto b, optionally type a label on the new edge."""
         ra = await self.rect(a); x, y = ra["x"] + ra["w"] / 2, ra["y"] + ra["h"] / 2
         arrows = []
@@ -168,6 +169,8 @@ class D:
         # (5 px inside it: exactly on the border the pointer is over the lane behind, and the arrow is left dangling)
         if abs(dy) > 30: bx, by = rb["x"] + rb["w"] / 2, (rb["y"] + 5 if dy > 0 else rb["y"] + rb["h"] - 5)
         else: bx, by = (rb["x"] + 5 if dx > 0 else rb["x"] + rb["w"] - 5), rb["y"] + rb["h"] / 2
+        if into == "l": bx, by = rb["x"] + 5, rb["y"] + rb["h"] / 2          # force the side of the target it enters
+        elif into == "t": bx, by = rb["x"] + rb["w"] / 2, rb["y"] + 5
         await self.move(pick["x"], pick["y"]); await self.p.mouse.down(); await self.pause(0.15)
         await self.move(bx, by); await self.p.wait_for_timeout(450); await self.p.mouse.up()   # let draw.io highlight the target shape; await self.pause(0.4)
         eid = await self.p.evaluate(JS_SEL)
@@ -190,7 +193,7 @@ class D:
     async def banner(self, title, sub=""):
         html = ("" if not title else
                 f"<div style='text-align:center;font-family:Inter,Helvetica,Arial,sans-serif'>"
-                f"<div style='font:700 26px Inter,Helvetica,Arial;color:#F7A11A;letter-spacing:.06em'>AI ADMINISTRATOR · DAY 2 · SESSION 3</div>"
+                f"<div style='font:700 26px Inter,Helvetica,Arial;color:#F7A11A;letter-spacing:.06em'>AI ADMINISTRATOR · DAY 2 · SESSION {SESSION}</div>"
                 f"<div style='font:800 64px Inter,Helvetica,Arial;color:#111;margin:18px 0'>{title}</div>"
                 f"<div style='font:500 30px Inter,Helvetica,Arial;color:#4b5563'>{sub}</div>"
                 f"<div style='font:500 22px Inter,Helvetica,Arial;color:#6b7280;margin-top:40px'>Dr. Abdulkarim Albanna · IEEE CS AI Caravan 2026</div></div>")
