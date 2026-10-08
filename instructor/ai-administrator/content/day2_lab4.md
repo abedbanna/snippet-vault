@@ -113,6 +113,10 @@ Saved as **M4-future-state**:
 
 Bring it to Day 3: you build that candidate in n8n.
 
+## On Day 3: n8n
+
+You build your chosen candidate in **n8n** on Day 3. **Do not sign up in advance.** At the start of Day 3 everyone opens the free **14-day n8n Cloud trial** together, in the session, with the instructor: nothing to install. The trial counts from the moment you sign up, so opening it on Day 3 keeps it running for the days that follow. Bring an e-mail address you can open during the session.
+
 ## Stuck?
 
 - **"Everything is red."** Look inside each red box: reading, typing, looking up, reminding. The decision is human; the preparation around it rarely is.
