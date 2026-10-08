@@ -96,4 +96,30 @@ Session 3 figures are all course-made (no third-party images), so the deck's `fi
 is not in `figures/manifest.json`. The practical is a third Hermes profile, **mapreview**, answering on the same bot as Day 1 (@aicaravan_bot); the server
 script `tools/aicaravan-bot.sh` (installed as `/home/hermes/bin/aicaravan-bot`) moves the bot between profiles (persona:
 `content/day2_mapreview_soul.md`, setup and test record: `content/day2_map_reviewer_setup.md`). The Day 2 zip is made
-after Session 4.
+after Session 4 (see below).
+
+## Regenerate Day 2, Session 4 (Workflow Mapping II: Designing the Future State)
+
+```bash
+cd instructor/ai-administrator
+python3 tools/make_day2s4_figures.py                   # figures/d2s4_*.png; prints the six scored leave candidates
+python3 tools/make_day2s4_sheets.py out/day2/Session4/03_Participant_Handouts    # M4-scoring template + filled example (live formulas)
+python3 tools/make_day2s4_drawio.py out/day2/Session4/05_drawio_Files           # 2 pages: current state classified, future state
+python3 tools/build_deck.py content/day2_session4.yaml out/day2/Session4/01_Slides/Day2_S4_Future_State.pptx
+python3 tools/build_pdf.py guide content/day2_session4.yaml out/day2/Session4/02_Instructor_Guides/Day2_S4_Instructor_Guide.pdf
+python3 tools/build_pdf.py md content/day2_risk_challenger_setup.md out/day2/Session4/02_Instructor_Guides/Day2_S4_Risk_Challenger_Setup_Guide.pdf
+python3 tools/build_pdf.py md content/day2_lab4.md out/day2/Session4/03_Participant_Handouts/Day2_S4_Lab_Handout.pdf
+python3 tools/build_pdf.py md content/day2_practical_risk_challenger.md out/day2/Session4/03_Participant_Handouts/Day2_S4_Practical_Risk_Challenger.pdf
+python3 tools/build_pdf.py md content/day2_quiz4.md out/day2/Session4/04_Assessment/Day2_S4_Quiz_Bank.pdf
+python3 tools/build_kahoot.py content/day2_kahoot_session4.yaml out/day2/Session4/04_Assessment/Day2_S4_Kahoot.xlsx content/day2_kahoot_session4_key.md
+python3 tools/build_pdf.py md content/day2_kahoot_session4_key.md out/day2/Session4/04_Assessment/Day2_S4_Kahoot_Answer_Key.pdf
+(cd out/day2 && rm -f AI-Administrator_Day2_Instructor_Package.zip && zip -rq AI-Administrator_Day2_Instructor_Package.zip Session3 Session4 -x '*.DS_Store' '*~$*')
+```
+
+The running example is the Session 3 leave process, redesigned: four steps removed (e-mail chase, re-entry, HR's RUBBER
+click, the private sheet), an Automation lane owned by the HR coordinator, a manager gate and a department-head gate that
+applies only in the last two weeks of a quarter. `CANDIDATES` in `make_day2s4_figures.py` is the single source for the
+matrix slide, the scoring example and the practical. All figures are course-made; no third-party images in Session 4.
+
+The practical is a fourth Hermes profile, **riskreview** (persona `content/day2_riskreview_soul.md`, setup and test record
+`content/day2_risk_challenger_setup.md`), on the same @aicaravan_bot: `aicaravan-bot riskreview` before the session.
