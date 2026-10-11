@@ -1,0 +1,588 @@
+meta:
+  day: 3
+  session: 5
+  short: Automation Basics with n8n
+  title: "Automation Basics with n8n"
+  subtitle: "Open the trial together; triggers, actions and items; the leave request as a live workflow; build the request-intake lab; test, then publish"
+  instructors: ["Mousa AL-Akhras", "Mohammed Abdelmajeed"]
+  duration_min: 120
+  module_url: https://albanna-tutorials.com/ai-administrator/05_automation_basics_n8n.html
+  footer: "IEEE CS Region 8 AI Caravan 2026 · AI Administrator · Day 3 · Session 5"
+  figure_credit: "Screenshot: n8n Cloud (n8n GmbH), captured 11 October 2026 on the course trial workspace"
+  figure_note: "Every n8n screen in this deck is a real screenshot taken on 11 October 2026 on the instructors' n8n Cloud trial (version 2.4x, the 'Publish' editor). Two conceptual figures were drawn for the course (tools/make_day3s5_figures.py). The running example is the fictional AI Caravan Ltd. leave process from Sessions 3 and 4; all names in the screenshots are fictional."
+  objectives:
+    - "Open an n8n Cloud trial and know its limits: 14 days, 1,000 executions, export your workflows every day."
+    - "Describe what an automation platform does and compare n8n, Make, Zapier and Power Automate."
+    - "Tell a trigger from an action and explain how items and fields flow from node to node."
+    - "Read a workflow against the Session 4 future-state map: which node implements which step."
+    - "Build a Form Trigger, Google Sheets, IF and Gmail workflow, test it step by step and read each node's output."
+    - "Connect credentials safely, add Retry on Fail and an error workflow, and publish only after testing."
+  materials:
+    - "Online session on Zoom. The presenting instructor is host; the second instructor is co-host (Participants, More, Make co-host) and runs the chat, the breakout rooms and the 'stuck' room during sign-up and the lab."
+    - "Zoom settings, once, in the Zoom web portal (Settings, Meeting): Breakout room on; Chat on; Non-verbal feedback (Raise hand) on; 'Allow participants to share in breakout rooms' on, so the co-host can see a participant's n8n screen."
+    - "Share Screen of this deck (Day3_S5_Automation_Basics_with_n8n.pptx) in PowerPoint slide show with Presenter View on a second screen; for the demo share a separate browser window with the n8n editor, zoomed to 125%."
+    - "Instructor n8n Cloud workspace prepared the day before (Day3_S5_Demo_Setup_Guide.pdf): the leave demo imported, Google Sheets and Gmail connected, three test runs done, test rows cleared."
+    - "Google Sheet made from Day3_S5_Leave_Demo_Sheet.xlsx (File, Save as Google Sheets) open in a second tab, on the Requests tab."
+    - "Files for the chat: Day3_S5_n8n_Signup_Sheet.pdf (minute 5), Day3_S5_Lab_Handout.pdf and Day3_S5_Requests_Template.xlsx (minute 60), Day3_S5_Request_Intake_Solution.json (after the session only)."
+    - "Kahoot imported from Day3_S5_Kahoot.xlsx and ready to launch (PIN on screen at minute 108); answer key Day3_S5_Kahoot_Answer_Key.pdf. The written Quiz bank (Day3_S5_Quiz_Bank.pdf) stays available for homework or revision."
+    - "No bot this session: @aicaravan_bot is not used and must not be switched."
+    - "Three narrated videos in 06_Videos (real n8n screens, subtitles in .srt): Video1 Open Your Workspace (1:26) for late joiners or anyone stuck at sign-up; Video2 Leave Request Demo (2:09) as the fallback if the live demo fails; Video3 Lab Request Intake (2:25) to share with the lab handout. Play with Zoom Share sound and Optimize for video clip."
+    - "Participants: an e-mail address they can open during the session (for the n8n verification mail), a Google account with Sheets and Gmail (the same account for both), a laptop (n8n does not work well on a phone), and their M4-future-state file from Session 4."
+  prep:
+    - "Read the live module once (link above); the lab slides follow its eight lab steps, with two corrections found while testing (see the two 'trap' slides)."
+    - "The day before: follow Day3_S5_Demo_Setup_Guide.pdf on your own n8n trial. Open your trial no more than a few days before the session, so it is still active on the last n8n day."
+    - "Run the three demo tests once (pass, short notice, over balance) and check the Requests tab and your inbox; then delete the test rows so the sheet is empty for the live demo."
+    - "Import Day3_S5_Kahoot.xlsx into Kahoot (Create, Import spreadsheet) and do a one-question test game."
+    - "Refresh the 'Latest reading' slide if something newer has appeared."
+  demo:
+    title: "Live sign-up and demo (minutes 5 to 20 and 35 to 55)"
+    steps:
+      - "Minute 5: the co-host posts n8n.io/pricing and the sign-up sheet in the chat. Do the sign-up yourself on screen at the same pace (a fresh browser profile works), so participants copy each click."
+      - "Minute 12: the co-host opens breakout room 'Stuck at sign-up' and moves anyone with a missing verification e-mail or a blocked workspace there."
+      - "Minute 35: in your prepared workspace open 'S5 Demo - Leave request'. Point at each node and say which Session 4 step it is (slide 'One step, one node')."
+      - "Minute 40: double-click the form node, show Test URL versus Production URL, click Execute workflow, open the test form in a new tab and submit Omar Khalil, 15 to 17 November (passes)."
+      - "Minute 44: back in the editor, open each node and read its output panel aloud: 1 item in, 1 item out. Show the decision card arrive in your inbox."
+      - "Minute 48: run twice more: Sara Nasser, one day the day after tomorrow (short notice) and Lina Haddad, 15 to 17 November (only 2 days left). Show the false branch, the Reason column in the sheet and the Executions tab."
+      - "Minute 53: open Settings, Retry on Fail on a Gmail node, and say what the session lab adds: guard, retry, error workflow."
+  troubleshooting:
+    - issue: "The n8n verification e-mail does not arrive"
+      fix: "Check spam and the Promotions tab; wait two minutes; then sign up with another address. The co-host handles this in the 'Stuck at sign-up' room so the main room keeps going."
+    - issue: "A participant has used the n8n trial before with the same e-mail"
+      fix: "Use another e-mail address (a personal Gmail is fine). One trial per address."
+    - issue: "'Sign in with Google' does nothing"
+      fix: "The browser blocked the pop-up. Allow pop-ups for app.n8n.cloud (address bar icon) and click again."
+    - issue: "Google Sheets node: 'Could not load list, 403 Forbidden, the caller does not have permission' or an empty document list"
+      fix: "The Google account connected in n8n is not the account that owns the sheet, or a box was left unticked on Google's consent screen. Open the credential, Switch account, choose the sheet owner's account and tick every box. Seen live while preparing this session."
+    - issue: "The document is an uploaded .xlsx (green 'XLSX' badge next to its name)"
+      fix: "n8n's Sheets node reads native Google Sheets only. In Sheets: File, Save as Google Sheets, then use the new link."
+    - issue: "The form says 'Form Submitted' but nothing appears in the editor"
+      fix: "The test URL only listens after you click Execute workflow (or Execute step on the trigger), and only for one submission. Click it again before each test."
+    - issue: "IF compares wrongly, for example 900 is 'smaller' than 500"
+      fix: "The value is text, not a number. Choose the Number operator (is greater than), or turn on 'Convert types where required' in the IF node."
+    - issue: "An empty Amount passes the 'not empty' guard and is logged as 0"
+      fix: "Expected: n8n forms send 0 for an empty number field (verified 11 October 2026). Use 'Amount is greater than 0' as the guard (lab step 6, corrected)."
+    - issue: "Publish is greyed out or refuses"
+      fix: "From n8n 2.43 (released 6 October 2026; the course workspace still ran 2.42.6 on 11 October) a workflow with an unconnected required input cannot be published. On any version, open the node with the red triangle and fill the missing field or credential."
+    - issue: "A participant's connection drops"
+      fix: "Their workflow is saved automatically in n8n; they rejoin, reopen the workflow and continue. Post the lab handout again in the chat."
+    - issue: "Running behind at the break"
+      fix: "Skip the second and third demo runs (show the Executions tab instead) and shorten the platform table to one sentence. Do not cut the sign-up, the lab or the export reminder."
+  practical_setup:
+    title: "Demo setup summary (instructor n8n workspace)"
+    sheet: "Day3_S5_Demo_Setup_Guide.pdf"
+    points:
+      - "Instructor's own n8n Cloud trial, opened a few days before the session. Import workflows/Day3_S5_Leave_Request_Demo.json (menu, Import, From file)."
+      - "A native Google Sheet with tabs Balances and Requests (from Day3_S5_Leave_Demo_Sheet.xlsx, File, Save as Google Sheets), owned by the same Google account you connect in n8n."
+      - "Connect Google Sheets and Gmail with 'Sign in with Google', ticking every permission box. Paste the sheet link into the three Sheets nodes; change 'Flag to HR' to your own address."
+      - "Three test runs (pass, short notice, over balance), then delete the test rows. No bot, no server, no API keys in this session."
+  references:
+    - "Al-Banna, A. (2026). AI Administrator, Module 5: Automation Basics with n8n. albanna-tutorials.com/ai-administrator/05_automation_basics_n8n.html"
+    - "n8n documentation: n8n Form Trigger node. docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger"
+    - "n8n documentation: Google credentials and the Google Sheets node. docs.n8n.io/integrations/builtin/credentials/google"
+    - "n8n documentation: Error handling, Error Trigger and Retry on Fail. docs.n8n.io/flow-logic/error-handling"
+    - "n8n documentation: Data structure, items. docs.n8n.io/data/data-structure"
+    - "n8n release notes 2.43.0 (6 October 2026): publishing blocked for workflows with unconnected required inputs. docs.n8n.io/release-notes"
+    - "n8n Cloud pricing and free trial (14 days, 1,000 executions). n8n.io/pricing"
+    - "Al-Banna, A. (2026). AI Administrator, Module 4: Workflow Mapping II, Designing the Future State (the leave-request future state used in the demo)."
+    - "IEEE CS Region 8 AI Caravan (2026). AI Administrator Track Curriculum. aicaravan.org"
+
+slides:
+  - layout: title
+    title: "Automation Basics with n8n"
+    subtitle: "AI Administrator: Agentic Workflows & Automation · Day 3 · Session 5"
+    notes: >
+      Welcome to Day 3. One-sentence promise: by the end of these two hours everyone has an n8n workspace, has watched
+      the leave request from Session 4 run as a real workflow, and has built and tested their own first automation.
+      Still no code for participants.
+
+  - layout: bullets
+    title: "Where this session sits"
+    logo: brand/kahoot_logo.png
+    minute: 0
+    bullets:
+      - "Session 3: the leave request mapped as it really runs (25 minutes of work, about 4 days of waiting, 8 hand-offs)"
+      - "Session 4: the future state, an Automation lane, and one chosen first build"
+      - "Session 5 (now): that first build, running in n8n, and your own first workflow"
+      - "Session 6: AI steps inside the workflow (classify, extract, draft)"
+      - "At minute 108: a 20-question Kahoot. Keep your phone handy."
+    notes: >
+      Ask everyone to have two things ready: an e-mail inbox they can open now, and their M4-future-state file. We
+      open n8n together in five minutes.
+
+  - layout: bullets
+    title: "What you will be able to do after this session"
+    logo: brand/kahoot_logo.png
+    bullets:
+      - "Open an n8n trial and keep your work safe (export every day)"
+      - "Say what an automation platform does, and how n8n differs from Make, Zapier and Power Automate"
+      - "Tell a trigger from an action, and follow items from node to node"
+      - "Read a workflow against a future-state map"
+      - "Build, test and publish a Form, Sheets, IF and Gmail workflow"
+      - "Add a guard, Retry on Fail and an error workflow"
+    notes: >
+      The deliverable is the lab: a published request-intake workflow with three test runs, plus the exported JSON.
+
+  - layout: table
+    title: "Run of show (120 minutes)"
+    columns: ["Minutes", "Block", "What happens"]
+    rows:
+      - ["0 to 5", "Welcome", "Where we are, objectives"]
+      - ["5 to 20", "Sign up together", "n8n Cloud trial, step by step; a breakout room for anyone stuck"]
+      - ["20 to 35", "What an automation platform is", "Four platforms; triggers, actions, items; credentials"]
+      - ["35 to 55", "Demo: the leave request runs", "One step, one node; three test runs; the Executions log"]
+      - ["55 to 60", "Break", ""]
+      - ["60 to 100", "Lab: request intake", "Build in breakout rooms; form, sheet, IF, two e-mails, guard"]
+      - ["100 to 108", "Make it safe", "Retry on Fail, error workflow, test then publish"]
+      - ["108 to 118", "Kahoot", "20 questions"]
+      - ["118 to 120", "Close", "Export your JSON; preview Session 6"]
+    notes: >
+      Ten seconds on screen. The lab is in the session this time, not homework: forty minutes in breakout rooms.
+
+  # ---------------------------------------------------------------- Section 1
+  - layout: section
+    title: "1. Open n8n together"
+    subtitle: "Same clicks, same minute, everyone"
+    minute: 5
+    duration: 15
+    notes: >
+      The co-host posts n8n.io/pricing and Day3_S5_n8n_Signup_Sheet.pdf in the chat now. You sign up on screen at the
+      same pace.
+
+  - layout: steps
+    title: "Sign up in six clicks"
+    steps:
+      - heading: "1. n8n.io/pricing, then 'Start free trial'"
+        text: "n8n Cloud. No credit card required."
+      - heading: "2. Your e-mail and a password"
+        text: "Later you connect one Google account to Sheets and Gmail: the same account that owns your sheet."
+      - heading: "3. Verify"
+        text: "Open the verification e-mail (check spam and Promotions). Stuck? The co-host moves you to the 'Stuck' room."
+      - heading: "4. Name your workspace"
+        text: "Your workspace gets its own address, like yourname.app.n8n.cloud. Write it down."
+      - heading: "5. Two onboarding questions"
+        text: "Answer or skip; they only tailor suggestions."
+      - heading: "6. 'Start automating'"
+        text: "You land on 'Let's build your first automation'. Stop there and wait for the group."
+    notes: >
+      Go slowly; do every click yourself on screen. At minute 12 ask for a Raise Hand from anyone who is not yet on the
+      'Let's build your first automation' page; the co-host takes them to the breakout room.
+
+  - layout: figure
+    title: "What you see while the workspace starts"
+    figure: d3s5_shot_01_instance_ready
+    caption: "'Your instance is ready!' after about a minute. Click Start automating."
+    notes: >
+      The animated preview below the button is a sample workflow; ignore it for now. Some participants will see the
+      AI Assistant ask questions first; skipping is fine.
+
+  - layout: figure
+    title: "The trial clock is always on screen"
+    figure: d3s5_shot_02_trial_onboarding
+    caption: "Top left: 14 days left, 0/1000 executions. Every test run counts as one execution."
+    notes: >
+      Point at the counter. 1,000 executions is plenty for the course if nobody publishes a schedule that runs every
+      minute.
+
+  - layout: callout
+    title: "Three rules for the trial"
+    text: "1. It lasts 14 days from today, and then the workspace is deleted. 2. It allows 1,000 executions; a test run is one. 3. At the end of every session: menu, Export JSON. Your workflows live in your Downloads folder, not only in n8n."
+    notes: >
+      Make this the one thing everyone remembers. We repeat it at the close of every n8n session. If the course ran
+      past 14 days, exported JSON is what lets them continue in a new trial.
+
+  - layout: figure
+    title: "Your daily habit: Export JSON"
+    figure: d3s5_shot_07_menu_export
+    caption: "The three-dots menu next to the workflow name. Import, From file loads it back into any workspace."
+    notes: >
+      Show where the menu is now, even with an empty workflow. Settings in the same menu is where the error workflow
+      is chosen later.
+
+  # ---------------------------------------------------------------- Section 2
+  - layout: section
+    title: "2. What an automation platform is"
+    subtitle: "A trigger, then actions, with data flowing between them"
+    minute: 20
+    duration: 15
+    notes: >
+      Fifteen minutes of concepts, each tied to a screen they now have open.
+
+  - layout: table
+    title: "Four platforms, one idea"
+    columns: ["Platform", "Strength", "Watch out for", "Cost model"]
+    rows:
+      - ["n8n", "Self-host or cloud; branching; code when needed; AI nodes", "More technical settings", "Per workflow execution (cloud); free self-hosted"]
+      - ["Make", "Visual scenarios, many apps", "Operations add up fast", "Per operation"]
+      - ["Zapier", "Largest app catalogue, simplest start", "Price per task at scale", "Per task"]
+      - ["Power Automate", "Inside Microsoft 365", "Licensing tiers", "Per user or per flow"]
+    notes: >
+      The module has the full table. The skills transfer: every one of these has triggers, actions, data mapping,
+      conditions and credentials. We use n8n because it can also run on your own server, which matters for data that
+      must not leave the organisation.
+
+  - layout: figure
+    title: "Where you are now"
+    figure: d3s5_shot_03_overview
+    caption: "Build a workflow opens an empty canvas. (Run live demo and Build an agent come later.)"
+    notes: >
+      Everyone clicks Build a workflow now. We do not use the AI builder today: you should know what each node does
+      before you let anything generate one.
+
+  - layout: figure
+    title: "Every workflow starts with one trigger"
+    figure: d3s5_shot_05_trigger_picker
+    caption: "'What triggers this workflow?' Manually, on an app event, on a schedule, a webhook, a form, another workflow, a chat message."
+    notes: >
+      Read the list. The trigger answers 'when does this run?'. Today's trigger is On form submission.
+
+  - layout: two_col
+    title: "Trigger and actions"
+    left:
+      heading: "Trigger (exactly one)"
+      bullets:
+        - "When does this run?"
+        - "A form is submitted, a schedule fires, an e-mail arrives, a webhook is called"
+        - "In Session 4 terms: the start event of the future-state map"
+    right:
+      heading: "Actions (one or many)"
+      bullets:
+        - "What happens next, in order"
+        - "Read or write a sheet, send an e-mail, check a condition, call an API"
+        - "In Session 4 terms: the steps in the Automation lane"
+    notes: >
+      A second event needs a second workflow, or a trigger that covers both. Quiz question.
+
+  - layout: figure
+    title: "Data moves as items"
+    figure: d3s5_items_flow
+    credit: "Figure: AI Administrator course material (A. Al-Banna, 2026)"
+    caption: "Each node runs once per item it receives. Three rows, three e-mails."
+    notes: >
+      The single most useful idea in n8n. Many 'it sent 40 e-mails' accidents come from forgetting it.
+
+  - layout: figure
+    title: "An item is a set of fields"
+    figure: d3s5_shot_13_form_output_json
+    caption: "One form submission = 1 item with 7 fields (plus submittedAt and formMode). Switch Schema, Table, JSON to read it."
+    notes: >
+      This is the real output of the leave form. Point at '1 item' above the JSON. Fields are what you drag into the
+      next node.
+
+  - layout: figure
+    title: "Credentials: sign in once, reuse everywhere"
+    figure: d3s5_shot_15_gmail_credential
+    caption: "Sign in with Google creates a credential in n8n's credential store. Nodes refer to it; the secret never sits in a node."
+    notes: >
+      Three rules from the module: least privilege, a shared or service account for production work, never paste a key
+      into a node field or a sticky note.
+
+  - layout: figure
+    title: "The trap we hit while preparing: 403 Forbidden"
+    figure: d3s5_shot_19_error_403_no_permission
+    caption: "'The caller does not have permission': n8n was connected to a different Google account from the one that owns the sheet."
+    notes: >
+      Real error from preparing this session. Two causes: a different Google account, or an unticked box on Google's
+      consent screen. Fix: open the credential, Switch account, same account as the sheet, tick every box. And the sheet
+      must be a native Google Sheet, not an uploaded .xlsx.
+
+  # ---------------------------------------------------------------- Section 3
+  - layout: section
+    title: "3. Demo: the leave request runs"
+    subtitle: "Session 4's first build, as a real workflow"
+    minute: 35
+    duration: 20
+    notes: >
+      Switch to the browser window with the prepared workspace. Participants watch; they do not build this one.
+
+  - layout: figure
+    title: "One step, one node"
+    figure: d3s5_map_to_nodes
+    credit: "Figure: AI Administrator course material (A. Al-Banna, 2026)"
+    caption: "The Automation lane from Session 4, read as n8n nodes. The manager's decision stays human."
+    notes: >
+      This is the bridge from Session 4. Ask the chat: which Session 4 candidate is this? (Candidates 2 and 3: look up
+      the balance, run the policy checks, prepare the decision card.)
+
+  - layout: figure
+    title: "The workflow, before credentials"
+    figure: d3s5_shot_06_leave_canvas_unconnected
+    caption: "Red triangles = something to fill in, here the Google credentials and the sheet link. Publish stays disabled until they are gone."
+    notes: >
+      Imported from Day3_S5_Leave_Request_Demo.json. The sticky note says what the workflow is for; a good habit.
+
+  - layout: figure
+    title: "The trigger: an n8n form"
+    figure: d3s5_shot_09_form_node
+    caption: "Test URL works while you click Execute; Production URL works after you publish. Fields: name, two e-mails, type, dates, notes."
+    notes: >
+      Click Production URL to show the second address. The form is hosted by n8n; nothing to install.
+
+  - layout: figure
+    title: "What the employee sees"
+    figure: d3s5_shot_10_test_form
+    caption: "'This is a test version of your form' disappears on the production URL."
+    notes: >
+      Submit Omar Khalil, Annual leave, 15 to 17 November, your own address as manager. Then go back to the editor.
+
+  - layout: figure
+    title: "The policy checks (written once by the instructor)"
+    figure: d3s5_shot_17_code_policy_checks
+    caption: "Working days, notice needed (2 or 10), balance, quarter end. You will not write code today; Edit Fields and IF can do simple checks."
+    notes: >
+      Keep this short. The point is that every rule here is one sentence from the leave policy (HR-POL-02): exactly the
+      green steps of Session 4. Session 6 adds the amber step (reading the free-text note).
+
+  - layout: figure
+    title: "The condition: All checks pass?"
+    figure: d3s5_shot_14_if_node_empty
+    caption: "One condition, 'Checks pass' is true. True goes to the manager, false goes to HR."
+    notes: >
+      Point at 'Convert types where required'. Then run the workflow.
+
+  - layout: figure
+    title: "Run 1: checks pass"
+    figure: d3s5_shot_20_run_pass_green
+    caption: "Green path: logged as 'Pending manager', decision card e-mailed. '1 item' on every arrow."
+    notes: >
+      Open your inbox and show the decision card. The manager still decides: the workflow prepared, it did not approve.
+
+  - layout: figure
+    title: "Runs 2 and 3: flagged for HR"
+    figure: d3s5_shot_21_run_flagged_executions
+    caption: "False path: logged and sent to HR, not to the manager. Left: the Executions list, every run kept."
+    notes: >
+      Sara asks for tomorrow with one day's notice; Lina asks for 3 days with 2 left. The Executions tab is the audit
+      log: click any run to see exactly what happened.
+
+  - layout: figure
+    title: "The record"
+    figure: d3s5_shot_23_sheet_rows_status
+    caption: "Reason and Status written by the workflow: one 'Pending manager', two 'Flagged for HR' with the reason in plain words."
+    notes: >
+      The sheet stands in for the HR portal. Note what changed from Session 3: no re-typing, the checks are done before
+      the manager sees anything, and HR only sees the exceptions.
+
+  - layout: callout
+    title: "What the demo deliberately does not do"
+    text: "It does not approve or decline: the manager decides (Day 5 builds the approval gate). It does not chase the manager yet (candidate 4, a reminder, comes later). It does not read the free-text note (Session 6 adds the AI step)."
+    notes: >
+      Tie back to the prioritisation matrix: we built the high value, low risk candidates first.
+
+  - layout: section
+    title: "Break"
+    subtitle: "Five minutes. Keep your n8n tab open."
+    minute: 55
+    duration: 5
+    notes: >
+      The co-host prepares breakout rooms of three or four, mixing faster and slower participants.
+
+  # ---------------------------------------------------------------- Section 4: Lab
+  - layout: section
+    title: "4. Lab: request intake"
+    subtitle: "Build it yourself, in breakout rooms, 40 minutes"
+    minute: 60
+    duration: 40
+    notes: >
+      The co-host posts Day3_S5_Lab_Handout.pdf and Day3_S5_Requests_Template.xlsx. Open the rooms at minute 63.
+
+  - layout: steps
+    title: "Lab steps 1 to 4"
+    steps:
+      - heading: "1. The sheet"
+        text: "Google Sheets, new sheet 'Requests', headers: Timestamp, Name, Email, Department, Amount, Description, Status. Same Google account as n8n."
+      - heading: "2. The trigger"
+        text: "New workflow 'M5 Request intake'. On form submission: Name, Email, Department (dropdown), Amount (number), Description. Execute step, submit once, read the output."
+      - heading: "3. Log the row"
+        text: "Google Sheets, Append row. Sign in with Google. Drag each field into its column; Status = New. Execute step; check the sheet."
+      - heading: "4. Branch on amount"
+        text: "IF: Amount, Number, is greater than, 500. Test once above and once below 500."
+    notes: >
+      Steps follow the module. Rooms of three or four: one shares their screen, all build in their own workspace.
+
+  - layout: steps
+    title: "Lab steps 5 to 8"
+    steps:
+      - heading: "5. Two e-mails"
+        text: "Gmail, Send on each branch: 'needs approval' (true) and 'being processed' (false). To: drag Email; body with Name and Amount."
+      - heading: "6. Guard"
+        text: "IF right after the form: Email is not empty AND Amount is greater than 0. False: Edit Fields Status = Incomplete, then append the row. No e-mail."
+      - heading: "7. Retry and error workflow"
+        text: "Gmail Settings: Retry On Fail, 3 tries, 5000 ms. A second workflow 'Error notifier': Error Trigger, then Gmail to you."
+      - heading: "8. Test, then publish"
+        text: "Three tests: small, large, no amount. Three rows, two e-mails. Then Publish, copy the production URL, open Executions."
+    notes: >
+      Step 6 is corrected from the module text; next slide. 'Activate' in the module is 'Publish' in today's n8n.
+
+  - layout: callout
+    title: "Trap 1: an empty number is 0, not empty"
+    text: "Tested on 11 October 2026: when Amount is left blank, the n8n form sends Amount = 0. A guard 'Amount is not empty' lets it through, logs it as New and sends an e-mail. Use 'Amount is greater than 0'."
+    notes: >
+      We found this by running the lab ourselves. It is a good lesson in itself: test the empty case, do not assume.
+      The module text will be updated to match.
+
+  - layout: figure
+    title: "The form participants build"
+    figure: d3s5_shot_24_lab_form
+    caption: "Name and Department required; Email and Amount optional on purpose, so the guard has something to catch."
+    notes: >
+      If a participant makes every field required, the guard never fires. That is fine in real life; for the lab, leave
+      Amount optional.
+
+  - layout: figure
+    title: "The finished lab, run 3: incomplete"
+    figure: d3s5_shot_26_lab_run_incomplete
+    caption: "Form, Complete?, then either Log request and Amount > 500 (two e-mails) or Mark incomplete and Log incomplete."
+    notes: >
+      The solution file Day3_S5_Request_Intake_Solution.json is shared after the session, not during the lab.
+
+  - layout: figure
+    title: "Three tests, three rows"
+    figure: d3s5_shot_25_lab_sheet_rows
+    caption: "200 = New (being processed), 900 = New (needs approval), blank = Incomplete with no e-mail."
+    notes: >
+      This is what each room should show the co-host before minute 100.
+
+  - layout: bullets
+    title: "In your breakout room"
+    bullets:
+      - "Everyone builds in their own workspace; one person shares their screen at a time"
+      - "Stuck for more than three minutes? Ask for help (button at the bottom of Zoom)"
+      - "Execute step after every node, and read the output panel before adding the next"
+      - "Done early? Add the Error notifier, then help someone in your room"
+      - "At minute 98 the rooms close; bring a screenshot of your sheet"
+    notes: >
+      The two instructors rotate through the rooms. Most common issues: wrong Google account (403), uploaded .xlsx,
+      forgetting to click Execute before submitting the test form, IF set to String instead of Number.
+
+  # ---------------------------------------------------------------- Section 5
+  - layout: section
+    title: "5. Make it safe, then publish"
+    subtitle: "Retry, an error workflow, and the difference between test and production"
+    minute: 100
+    duration: 8
+    notes: >
+      Back in the main room. Eight minutes.
+
+  - layout: figure
+    title: "Retry on Fail"
+    figure: d3s5_shot_16_retry_on_fail
+    caption: "Node Settings: Retry On Fail, Max. Tries 3, Wait 5000 ms. Most failures are a mail server or an API that hiccups once."
+    notes: >
+      'On Error' below it decides what happens after the last try: stop the workflow (default) or continue.
+
+  - layout: two_col
+    title: "When it still fails: the error workflow"
+    left:
+      heading: "Build once"
+      bullets:
+        - "A separate workflow: Error Trigger, then Gmail to you"
+        - "Message: workflow name and the execution link"
+        - "Publish it"
+    right:
+      heading: "Attach to every workflow"
+      bullets:
+        - "Workflow menu, Settings, Error workflow"
+        - "Now a silent failure becomes an e-mail"
+        - "The link opens the failed run in Executions"
+    notes: >
+      An automation that fails silently is worse than no automation: people stop checking because they think it works.
+
+  - layout: two_col
+    title: "Test, then publish"
+    left:
+      heading: "Testing"
+      bullets:
+        - "Execute step: one node, with the data before it"
+        - "Execute workflow: the whole run, once"
+        - "Test URL listens for one submission"
+        - "Runs show in Executions with a flask icon"
+    right:
+      heading: "Published"
+      bullets:
+        - "Publish (top right) makes it live"
+        - "Production URL works for everyone, any time"
+        - "n8n 2.43 and later: no publishing with unconnected required inputs"
+        - "Change something? Test again, publish again"
+    notes: >
+      The module and older tutorials say 'Activate'; today's n8n says Publish. Same idea.
+
+  # ---------------------------------------------------------------- Kahoot
+  - layout: section
+    title: "Kahoot"
+    subtitle: "20 questions on today"
+    logo: brand/kahoot_logo.png
+    minute: 108
+    duration: 10
+    notes: >
+      Launch the kahoot imported from Day3_S5_Kahoot.xlsx; PIN on screen.
+
+  - layout: two_col
+    title: "Join the Kahoot"
+    left:
+      heading: "How to join"
+      bullets:
+        - "kahoot.it on your phone, or the Kahoot app"
+        - "Enter the PIN on the screen"
+        - "Use your real first name"
+    right:
+      heading: "The rules"
+      bullets:
+        - "20 seconds per question"
+        - "Correct answers are spread evenly over the four colours"
+        - "The rest arrive as a challenge link for homework"
+    notes: >
+      Answer key with all 20 questions: Day3_S5_Kahoot_Answer_Key.pdf.
+
+  # ---------------------------------------------------------------- Close
+  - layout: callout
+    title: "Deliverable"
+    minute: 118
+    text: "A published 'M5 Request intake' workflow with three test runs (small, large, incomplete), the Requests sheet showing three rows, and the exported JSON file. Optional: the Error notifier attached. Saved as M5-request-intake."
+    notes: >
+      Anyone who did not finish completes it before Session 6; the solution JSON is shared after the session.
+
+  - layout: callout
+    title: "Before you close the tab"
+    text: "Menu, Export JSON, for every workflow you built today. The trial deletes the workspace after 14 days; your JSON files are your copy."
+    notes: >
+      Wait twenty seconds while they do it. Ask for a thumbs-up reaction in Zoom when done.
+
+  - layout: bullets
+    title: "Key takeaways"
+    bullets:
+      - "One trigger, then actions; data moves as items and each node runs once per item."
+      - "Every node implements one step of the future-state map; the human decisions stay human."
+      - "Execute step after every node and read its output; test the empty case on purpose."
+      - "Credentials live in the credential store, on the same account as your data."
+      - "Retry, an error workflow, then publish. Export your JSON every day."
+    notes: >
+      Preview Session 6: the same request intake gets an AI step that classifies the description, with an 'unsure'
+      route to a person.
+
+  - layout: articles
+    title: "Latest reading: n8n and automation at scale (2026)"
+    items:
+      - title: "n8n 2.43.0 release"
+        source: "n8n release notes"
+        date: "6 October 2026"
+        url: "docs.n8n.io/release-notes"
+        takeaway: "Stronger guardrails and better publishing: a workflow with unconnected required inputs can no longer be published. The red triangles you saw today now block Publish."
+      - title: "No-Code Workflow Automation at Scale for IT Operations Teams"
+        source: "Intellistack"
+        date: "16 September 2026"
+        url: "intellistack.com/resources/blog/no-code-workflow-automation-at-scale-for-it-operations-teams"
+        takeaway: "When building outruns governance you get workflow sprawl and unknown owners. Why every automation needs an owner (Session 4) and an error workflow (today)."
+      - title: "In The Loop 2026, n8n's first conference"
+        source: "n8n"
+        date: "13 to 14 October 2026, Berlin"
+        url: "n8n.io/intheloop"
+        takeaway: "Talks and workshops on production automation and agents, this week. Recordings are a good follow-up to Sessions 5 and 6."
+    notes: >
+      Optional two minutes or self-study. Checked on 11 October 2026; instructors may swap in newer pieces, keeping
+      source, date and a one-line takeaway tied to the session.
+
+  - layout: references
+    title: "References"
+    notes: >
+      Leave on screen during questions. All n8n screens are real screenshots; AI Caravan Ltd., its employees and its
+      leave policy are fictional.

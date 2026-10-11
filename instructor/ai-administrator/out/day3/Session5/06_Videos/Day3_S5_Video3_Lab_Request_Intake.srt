@@ -1,0 +1,199 @@
+1
+00:00:00,500 --> 00:00:05,457
+Now you build your first workflow: a request
+form, logged to a sheet, with an IF, two e-mails,
+
+2
+00:00:05,457 --> 00:00:06,050
+and a guard.
+
+3
+00:00:06,050 --> 00:00:09,602
+After every node, click Execute
+step and read the output.
+
+4
+00:00:10,740 --> 00:00:12,992
+This is where you will
+end up: seven nodes.
+
+5
+00:00:12,992 --> 00:00:15,245
+Build them in this order,
+testing as you go.
+
+6
+00:00:16,390 --> 00:00:20,628
+Step one: a Google Sheet called
+Requests, with seven column headers.
+
+7
+00:00:20,628 --> 00:00:24,749
+It must be a native Google Sheet, in the
+same Google account you connect to n8n.
+
+8
+00:00:25,880 --> 00:00:30,663
+Step two: create a workflow, click Add
+first step, and choose On form submission.
+
+9
+00:00:31,810 --> 00:00:37,290
+Add five fields: Name, Email, a Department
+dropdown, Amount as a number, and Description.
+
+10
+00:00:38,420 --> 00:00:41,775
+Click Execute step, open the test
+URL, and submit one request.
+
+11
+00:00:41,775 --> 00:00:43,424
+Leave Email and Amount optional.
+
+12
+00:00:43,424 --> 00:00:45,525
+The guard in step six needs that.
+
+13
+00:00:46,650 --> 00:00:48,693
+Step three: add a Google Sheets node.
+
+14
+00:00:49,840 --> 00:00:50,711
+Choose Append Row.
+
+15
+00:00:50,711 --> 00:00:53,323
+Sign in with Google, using the
+account that owns your sheet.
+
+16
+00:00:53,323 --> 00:00:54,983
+Pick the sheet, and map each column.
+
+17
+00:00:54,983 --> 00:00:57,967
+For Status, type the fixed value: New.
+
+18
+00:00:59,120 --> 00:01:00,780
+Step four: an IF node.
+
+19
+00:01:00,780 --> 00:01:04,136
+Amount, a Number operator, is
+greater than, five hundred.
+
+20
+00:01:04,136 --> 00:01:06,829
+Make sure it is a Number
+operator, not text.
+
+21
+00:01:07,980 --> 00:01:10,325
+Step five: a Gmail node on each branch.
+
+22
+00:01:10,325 --> 00:01:14,621
+Send it to the requester's e-mail, with a subject,
+and a short message using Name and Amount.
+
+23
+00:01:15,770 --> 00:01:18,057
+Step six: a guard, right after the form.
+
+24
+00:01:18,057 --> 00:01:20,832
+Email is not empty, and
+Amount is greater than zero.
+
+25
+00:01:21,960 --> 00:01:23,167
+Why greater than zero?
+
+26
+00:01:23,167 --> 00:01:26,476
+We tested it: a blank number field
+arrives as zero, not as empty.
+
+27
+00:01:26,476 --> 00:01:28,241
+A check for not empty lets it through.
+
+28
+00:01:28,241 --> 00:01:30,459
+Always test the empty case on purpose.
+
+29
+00:01:31,600 --> 00:01:36,267
+On the false side of the guard, an Edit Fields
+node sets Status to Incomplete, and a second
+
+30
+00:01:36,267 --> 00:01:37,684
+Sheets node logs the row.
+
+31
+00:01:37,684 --> 00:01:38,891
+No e-mail is sent.
+
+32
+00:01:40,040 --> 00:01:44,278
+Step seven: open each Gmail node's Settings,
+and turn on Retry On Fail: three tries, five
+
+33
+00:01:44,278 --> 00:01:45,102
+seconds apart.
+
+34
+00:01:46,230 --> 00:01:50,630
+Then make a second workflow, the error notifier:
+an Error Trigger, followed by a Gmail node
+
+35
+00:01:50,630 --> 00:01:51,292
+to yourself.
+
+36
+00:01:52,420 --> 00:01:57,540
+Back in the lab workflow, open Settings from the
+workflow menu, and choose the error notifier
+
+37
+00:01:57,540 --> 00:01:58,922
+as the Error Workflow.
+
+38
+00:02:00,050 --> 00:02:05,658
+Step eight: test three times: an amount of two
+hundred, nine hundred, and one left blank.
+
+39
+00:02:05,658 --> 00:02:08,688
+Here, the blank one takes
+the incomplete path.
+
+40
+00:02:09,820 --> 00:02:12,328
+Check the sheet: three rows,
+new, new, and incomplete.
+
+41
+00:02:12,328 --> 00:02:14,046
+And two e-mails in your inbox.
+
+42
+00:02:15,180 --> 00:02:18,373
+Finally, click Publish, and copy
+the production form address.
+
+43
+00:02:18,373 --> 00:02:20,892
+Then export your workflow as JSON.
+
+44
+00:02:20,892 --> 00:02:23,818
+Well done: that is your first automation.
+

@@ -1,0 +1,659 @@
+{
+  "name": "S5 Demo - Leave request",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI Caravan Ltd. - Leave request",
+        "formDescription": "Fictional company, for training only. Your manager receives a decision card.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Work email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Manager email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Leave type",
+              "fieldType": "dropdown",
+              "requiredField": true,
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Annual leave"
+                  },
+                  {
+                    "option": "Unpaid leave"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "First day",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last day",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Notes for your manager",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thank you. Your request was received and is being checked against the leave policy."
+            }
+          }
+        }
+      },
+      "id": "e5a46698-029b-42b2-aa38-0e9f07f79514",
+      "name": "Leave request form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "515c9013-d2a0-4ac3-8dc5-ab9cdf0ec27d"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "PASTE-YOUR-GOOGLE-SHEET-URL-HERE"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Balances"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json['Work email'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "80006590-5776-4ce4-a654-ffd012eb4618",
+      "name": "Look up balance",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Policy HR-POL-02 (fictional): 1-2 day requests need 2 working days notice, 3+ days need 10.\n// Weekend in Jordan = Friday + Saturday. Last two weeks of a quarter also need the department head.\nconst f = $('Leave request form').first().json;\nconst bal = $input.first().json || {};\nconst day = s => { const d = new Date(s + 'T00:00:00'); return d; };\nconst isWork = d => d.getDay() !== 5 && d.getDay() !== 6;\nfunction workDays(a, b) {           // inclusive a..b\n  let n = 0; const d = new Date(a);\n  while (d <= b) { if (isWork(d)) n++; d.setDate(d.getDate() + 1); }\n  return n;\n}\nconst first = day(f['First day']), last = day(f['Last day']);\nconst today = new Date(); today.setHours(0, 0, 0, 0);\nconst tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);\nconst dayBefore = new Date(first); dayBefore.setDate(first.getDate() - 1);\nconst days = last >= first ? workDays(first, last) : 0;\nconst notice = first > today ? workDays(tomorrow, dayBefore) : 0;\nconst noticeNeeded = days <= 2 ? 2 : 10;\nconst remaining = bal['Remaining days'] === undefined || bal['Remaining days'] === '' ? null : Number(bal['Remaining days']);\nconst qEnd = new Date(first.getFullYear(), Math.floor(first.getMonth() / 3) * 3 + 3, 0);\nconst quarterEnd = (qEnd - first) / 86400000 < 14;\n\nconst reasons = [];\nif (days === 0) reasons.push('the last day is before the first day');\nif (f['Leave type'] !== 'Annual leave') reasons.push('unpaid leave needs 20 days notice and the department head');\nif (remaining === null) reasons.push('no balance found for ' + f['Work email']);\nelse if (days > remaining) reasons.push(`asks for ${days} days but only ${remaining} remain`);\nif (notice < noticeNeeded) reasons.push(`${notice} working day${notice === 1 ? '' : 's'} notice, policy needs ${noticeNeeded}`);\n\nreturn [{ json: {\n  'Request ID': 'LR-' + Date.now().toString().slice(-6),\n  'Submitted': new Date().toISOString().slice(0, 16).replace('T', ' '),\n  'Employee': f['Full name'], 'Email': f['Work email'], 'Manager email': f['Manager email'],\n  'Leave type': f['Leave type'], 'First day': f['First day'], 'Last day': f['Last day'],\n  'Working days': days, 'Notice (working days)': notice, 'Notice needed': noticeNeeded,\n  'Remaining before': remaining === null ? '' : remaining,\n  'Quarter end': quarterEnd ? 'Yes' : 'No',\n  'Checks pass': reasons.length === 0,\n  'Reason': reasons.join('; '),\n  'Status': reasons.length === 0 ? 'Pending manager' : 'Flagged for HR',\n  'Notes': f['Notes for your manager'] || ''\n} }];"
+      },
+      "id": "0e92c8c4-6259-47d1-a2cd-8f192c8b4406",
+      "name": "Run policy checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "347a8e93-5090-475a-9438-aba203d9a9fc",
+              "leftValue": "={{ $json[\"Checks pass\"] }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "35b5b064-5c63-4daa-a6fe-2efd365655ac",
+      "name": "All checks pass?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "PASTE-YOUR-GOOGLE-SHEET-URL-HERE"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Request ID": "={{ $json[\"Request ID\"] }}",
+            "Submitted": "={{ $json[\"Submitted\"] }}",
+            "Employee": "={{ $json[\"Employee\"] }}",
+            "Email": "={{ $json[\"Email\"] }}",
+            "Manager email": "={{ $json[\"Manager email\"] }}",
+            "Leave type": "={{ $json[\"Leave type\"] }}",
+            "First day": "={{ $json[\"First day\"] }}",
+            "Last day": "={{ $json[\"Last day\"] }}",
+            "Working days": "={{ $json[\"Working days\"] }}",
+            "Notice (working days)": "={{ $json[\"Notice (working days)\"] }}",
+            "Notice needed": "={{ $json[\"Notice needed\"] }}",
+            "Remaining before": "={{ $json[\"Remaining before\"] }}",
+            "Quarter end": "={{ $json[\"Quarter end\"] }}",
+            "Reason": "={{ $json[\"Reason\"] }}",
+            "Status": "={{ $json[\"Status\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted",
+              "displayName": "Submitted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee",
+              "displayName": "Employee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Manager email",
+              "displayName": "Manager email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Leave type",
+              "displayName": "Leave type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First day",
+              "displayName": "First day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last day",
+              "displayName": "Last day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Working days",
+              "displayName": "Working days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notice (working days)",
+              "displayName": "Notice (working days)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notice needed",
+              "displayName": "Notice needed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Remaining before",
+              "displayName": "Remaining before",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quarter end",
+              "displayName": "Quarter end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7938d728-6faa-4703-a1cd-6d547342cf39",
+      "name": "Log request",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "PASTE-YOUR-GOOGLE-SHEET-URL-HERE"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Request ID": "={{ $json[\"Request ID\"] }}",
+            "Submitted": "={{ $json[\"Submitted\"] }}",
+            "Employee": "={{ $json[\"Employee\"] }}",
+            "Email": "={{ $json[\"Email\"] }}",
+            "Manager email": "={{ $json[\"Manager email\"] }}",
+            "Leave type": "={{ $json[\"Leave type\"] }}",
+            "First day": "={{ $json[\"First day\"] }}",
+            "Last day": "={{ $json[\"Last day\"] }}",
+            "Working days": "={{ $json[\"Working days\"] }}",
+            "Notice (working days)": "={{ $json[\"Notice (working days)\"] }}",
+            "Notice needed": "={{ $json[\"Notice needed\"] }}",
+            "Remaining before": "={{ $json[\"Remaining before\"] }}",
+            "Quarter end": "={{ $json[\"Quarter end\"] }}",
+            "Reason": "={{ $json[\"Reason\"] }}",
+            "Status": "={{ $json[\"Status\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted",
+              "displayName": "Submitted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee",
+              "displayName": "Employee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Manager email",
+              "displayName": "Manager email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Leave type",
+              "displayName": "Leave type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First day",
+              "displayName": "First day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last day",
+              "displayName": "Last day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Working days",
+              "displayName": "Working days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notice (working days)",
+              "displayName": "Notice (working days)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notice needed",
+              "displayName": "Notice needed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Remaining before",
+              "displayName": "Remaining before",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quarter end",
+              "displayName": "Quarter end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bbc1200a-6dbb-4621-a276-d3b88d01b585",
+      "name": "Log flagged request",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Run policy checks').item.json['Manager email'] }}",
+        "subject": "=Leave request {{ $('Run policy checks').item.json['Request ID'] }}: {{ $('Run policy checks').item.json['Employee'] }}, {{ $('Run policy checks').item.json['Working days'] }} days",
+        "emailType": "text",
+        "message": "={{ $('Run policy checks').item.json['Employee'] }} asks for {{ $('Run policy checks').item.json['Leave type'].toLowerCase() }}:\n{{ $('Run policy checks').item.json['First day'] }} to {{ $('Run policy checks').item.json['Last day'] }} ({{ $('Run policy checks').item.json['Working days'] }} working days).\n\nPolicy checks (automatic, all passed):\n- Balance: {{ $('Run policy checks').item.json['Remaining before'] }} days remaining before this request\n- Notice: {{ $('Run policy checks').item.json['Notice (working days)'] }} working days (policy needs {{ $('Run policy checks').item.json['Notice needed'] }})\n{{ $('Run policy checks').item.json['Quarter end'] === 'Yes' ? '- Last two weeks of the quarter: the department head must also approve.' : '' }}\nEmployee note: {{ $('Run policy checks').item.json['Notes'] || 'none' }}\n\nThe decision is yours. Reply Approve or Decline within three working days.\n(Training demo, AI Caravan Ltd. is fictional.)",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a65ba655-d62a-4ca6-8cee-58d4f4ed50c2",
+      "name": "Decision card to manager",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        -120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "sendTo": "hr@example.com",
+        "subject": "=Check needed: leave request {{ $('Run policy checks').item.json['Request ID'] }} ({{ $('Run policy checks').item.json['Employee'] }})",
+        "emailType": "text",
+        "message": "=A leave request did not pass the automatic policy checks and was NOT sent to the manager.\n\nEmployee: {{ $('Run policy checks').item.json['Employee'] }} ({{ $('Run policy checks').item.json['Email'] }})\nDates: {{ $('Run policy checks').item.json['First day'] }} to {{ $('Run policy checks').item.json['Last day'] }}\nReason: {{ $('Run policy checks').item.json['Reason'] }}\n\nPlease contact the employee. (Training demo, AI Caravan Ltd. is fictional.)",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "81682ae2-01b7-4e9d-bb0a-037775ebb462",
+      "name": "Flag to HR",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "content": "## Leave request: first build\nSession 4 candidates 2 + 3: look up the balance, run the policy checks, prepare the manager's decision card.\n\n**Green steps only.** The manager still decides; failed checks go to HR, not to the employee.\n\nBefore testing: paste your Google Sheet URL into both Sheets nodes and connect your Google account.",
+        "width": 520,
+        "height": 230,
+        "color": 4
+      },
+      "id": "79fa56a5-61e7-4a12-89f3-4ebd9c71c0f0",
+      "name": "Note 2d7d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -330
+      ]
+    }
+  ],
+  "connections": {
+    "Leave request form": {
+      "main": [
+        [
+          {
+            "node": "Look up balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look up balance": {
+      "main": [
+        [
+          {
+            "node": "Run policy checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run policy checks": {
+      "main": [
+        [
+          {
+            "node": "All checks pass?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All checks pass?": {
+      "main": [
+        [
+          {
+            "node": "Log request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log flagged request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log request": {
+      "main": [
+        [
+          {
+            "node": "Decision card to manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log flagged request": {
+      "main": [
+        [
+          {
+            "node": "Flag to HR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {}
+}

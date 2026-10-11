@@ -1,0 +1,489 @@
+{
+  "name": "M5 Request intake (solution)",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Request intake",
+        "formDescription": "Submit a request to Operations.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Department",
+              "fieldType": "dropdown",
+              "requiredField": true,
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Finance"
+                  },
+                  {
+                    "option": "HR"
+                  },
+                  {
+                    "option": "IT"
+                  },
+                  {
+                    "option": "Operations"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Amount",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Description",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "94a7908f-beea-4b40-a011-954f62dcea2e",
+      "name": "Request form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "be658122-d2a6-4ed6-abc8-05500dacff08"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "816d6d6a-f878-4a07-8417-92a689051d39",
+              "leftValue": "={{ $json.Email }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            },
+            {
+              "id": "7b254b47-3b4c-4329-8f06-79fcdc77d65b",
+              "leftValue": "={{ $json.Amount }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "rightValue": 0
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "04f9ae31-7561-48ef-80d2-f85e59d60b77",
+      "name": "Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "PASTE-YOUR-GOOGLE-SHEET-URL-HERE"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toFormat(\"yyyy-MM-dd HH:mm\") }}",
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Department": "={{ $json.Department }}",
+            "Amount": "={{ $json.Amount }}",
+            "Description": "={{ $json.Description }}",
+            "Status": "New"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f61d64c-54d9-4682-861e-d90f89651526",
+      "name": "Log request",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a896adc-fd8f-419a-b7c2-f819724290bc",
+              "name": "Status",
+              "value": "Incomplete",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "822885d9-2d46-4066-853b-fe0db667cab4",
+      "name": "Mark incomplete",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "PASTE-YOUR-GOOGLE-SHEET-URL-HERE"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toFormat(\"yyyy-MM-dd HH:mm\") }}",
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Department": "={{ $json.Department }}",
+            "Amount": "={{ $json.Amount }}",
+            "Description": "={{ $json.Description }}",
+            "Status": "={{ $json.Status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9d0c3d25-c59d-4000-bebb-bd6c7d4349e7",
+      "name": "Log incomplete",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3018fec8-9eac-4063-a2b2-aa455c7971af",
+              "leftValue": "={{ $('Request form').item.json.Amount }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "rightValue": 500
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "59b8a3f8-1d14-4122-aa74-25b1f0b41bdd",
+      "name": "Amount > 500?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Request form').item.json.Email }}",
+        "subject": "Request received - needs approval",
+        "emailType": "text",
+        "message": "=Hello {{ $('Request form').item.json.Name }},\nWe have received your request for {{ $('Request form').item.json.Amount }}. Because it is above 500 it will be reviewed by a manager before processing. We will confirm within two working days.\nRegards,\nOperations",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f583865d-7842-4f80-aa23-03e284311dfc",
+      "name": "Needs approval email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -200
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Request form').item.json.Email }}",
+        "subject": "Request received - being processed",
+        "emailType": "text",
+        "message": "=Hello {{ $('Request form').item.json.Name }},\nWe have received your request for {{ $('Request form').item.json.Amount }} and it is being processed.\nRegards,\nOperations",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d9697eba-ecac-4ed2-9ca8-bc113a6e9b00",
+      "name": "Being processed email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "connections": {
+    "Request form": {
+      "main": [
+        [
+          {
+            "node": "Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complete?": {
+      "main": [
+        [
+          {
+            "node": "Log request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark incomplete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark incomplete": {
+      "main": [
+        [
+          {
+            "node": "Log incomplete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log request": {
+      "main": [
+        [
+          {
+            "node": "Amount > 500?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Amount > 500?": {
+      "main": [
+        [
+          {
+            "node": "Needs approval email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Being processed email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {}
+}

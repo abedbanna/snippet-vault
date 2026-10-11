@@ -123,3 +123,32 @@ matrix slide, the scoring example and the practical. All figures are course-made
 
 The practical is a fourth Hermes profile, **riskreview** (persona `content/day2_riskreview_soul.md`, setup and test record
 `content/day2_risk_challenger_setup.md`), on the same @aicaravan_bot: `aicaravan-bot riskreview` before the session.
+
+## Regenerate Day 3, Session 5 (Automation Basics with n8n)
+
+```
+python3 tools/make_day3s5_figures.py                                   # figures/d3s5_map_to_nodes.png, d3s5_items_flow.png
+python3 tools/make_day3s5_workflows.py                                 # workflows/Day3_S5_*.json (importable, no credentials)
+python3 tools/make_day3s5_sheets.py out/day3/Session5/03_Participant_Handouts   # demo sheet + lab template
+mv out/day3/Session5/03_Participant_Handouts/Day3_S5_Leave_Demo_Sheet.xlsx out/day3/Session5/02_Instructor_Guides/
+python3 tools/build_deck.py content/day3_session5.yaml out/day3/Session5/01_Slides/Day3_S5_Automation_Basics_with_n8n.pptx
+python3 tools/build_pdf.py guide content/day3_session5.yaml out/day3/Session5/02_Instructor_Guides/Day3_S5_Instructor_Guide.pdf
+python3 tools/build_pdf.py md content/day3_demo_setup.md out/day3/Session5/02_Instructor_Guides/Day3_S5_Demo_Setup_Guide.pdf
+python3 tools/build_pdf.py md content/day3_n8n_signup.md out/day3/Session5/03_Participant_Handouts/Day3_S5_n8n_Signup_Sheet.pdf
+python3 tools/build_pdf.py md content/day3_lab5.md out/day3/Session5/03_Participant_Handouts/Day3_S5_Lab_Handout.pdf
+python3 tools/build_pdf.py md content/day3_quiz5.md out/day3/Session5/04_Assessment/Day3_S5_Quiz_Bank.pdf
+python3 tools/build_kahoot.py content/day3_kahoot_session5.yaml out/day3/Session5/04_Assessment/Day3_S5_Kahoot.xlsx content/day3_kahoot_session5_key.md
+python3 tools/build_pdf.py md content/day3_kahoot_session5_key.md out/day3/Session5/04_Assessment/Day3_S5_Kahoot_Answer_Key.pdf
+mkdir -p out/day3/Session5/05_n8n_Workflows && cp workflows/Day3_S5_*.json out/day3/Session5/05_n8n_Workflows/
+```
+
+No bot this session (@aicaravan_bot is not used). The n8n screens in the deck are real screenshots
+(figures/d3s5_shot_*.jpg) taken on 11 October 2026 on the instructor's n8n Cloud trial (the "Publish" editor);
+retake them if the n8n UI changes. Both workflows were imported and run end to end there: the leave demo (pass,
+short notice, over balance) and the lab solution (200, 900, blank amount). Two findings are built into the
+material: an empty Number field on an n8n form arrives as 0 (guard on "greater than 0", not "not empty"), and a
+Sheets credential on a different Google account from the sheet's owner gives "403, the caller does not have
+permission". Participants open the 14-day trial together at minute 5.
+Videos: `python3 video/practical5/make_videos.py --voice` (repo root) builds the three narrated Session 5 videos from
+the same screenshots plus video/practical5/shots/ (pricing page, dashboard, lab nodes; personal e-mails blurred), then
+copy out/*.mp4 and *.srt into out/day3/Session5/06_Videos.
